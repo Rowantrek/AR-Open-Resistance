@@ -1,0 +1,65 @@
+# REAPER airborne QRF experiment
+
+The [shared tactical commander](QRF_TACTICAL_COMMANDER.md) now stages larger airborne responses: level 5 dispatches three transport/fireteam/gunship pairs first and holds two pairs unspawned, requiring two free slots under the six-live-aircraft ceiling. Landed infantry shares ground tactical sector/search/withdrawal rules. This supersedes the original all-five-before-activation policy below. The new wave integration requires fresh Workbench compilation/Play; the normal fixture remains ground-only.
+
+**Current Chicken fixture:** one truck plus one IFV under the authored `combined_arms_l1` ground recipe. The REAPER override is off. See [Truck/IFV test instructions](TRUCK_IFV_QRF_TEST.md); this current fixture supersedes older forced-profile/level-5 instructions below.
+
+Gunship contact reporting, search, traffic avoidance and future outpost origins are documented in [QRF air support](QRF_AIR_SUPPORT.md). Those newer policies supersede the original gunship altitude/pass settings below and require a fresh compile/Play test.
+
+The normal Open Resistance project loads REAPER directly on this experimental branch. Open the existing Everon_Chicken world; no CMD launcher or separate project is needed. Chicken enables **Reaper QRF Test** on the existing executor. Clear it to restore ground dispatch; REAPER remains a load-time dependency until removed separately.
+
+## Observed first run
+
+Jasper observed flight and landing. The 2026-10-23 run logged four infantry boarded, airborne insertion, approach, five stable ground-contact ticks and completed passenger exits. It also logged friendly explosive damage from the other REAPER pilot and a later infantry-group disappearance followed by immediate package cleanup. This establishes basic backend movement/landing/unloading, not the new behavior below.
+
+## Current level-5 test
+
+Chicken now sets **Workbench Response Level = 5**. With Reaper QRF Test enabled this requests **five transports, five fireteams and five gunships** under one operation ID: expected 20 infantry and 10 pilots with the current US fireteam. It reserves 15 groups, 10 aircraft and 100 personnel slots within the current 20/10/128 limits. Retained earlier forces can delay the request; it never silently shrinks the level. Each transport receives its own sampled clear landing pad where available. Search covers all directions around the town/offset, using a 400 m default radius that expands to the town radius plus 150 m (capped at 800 m). Pads/corridors must be at least 90 m apart by default. Different pads can land concurrently; there is no global landing lock. If the bounded search finds only some of the requested pads, those pads are reused and only overlapping users wait locally. Response strength is never silently reduced. Zero clear pads fails safely.
+
+Planning retains its cursor across ticks, examines at most two candidates per tick and stops when enough pads are found or after 73 candidates (about 37 ticks maximum). It never repeats a full scan each second. Air construction remains one transport/gunship pair per tick, held against falling during asynchronous boarding. A blocked pad triggers an alternate search for that package only; alternate searches share a fleet-wide two-candidate-per-tick budget, exclude other reserved pads and honor the flight-stage deadline. Existing clear pads and the rest of the fleet are not moved.
+
+The 09:57 run logged activation and stable touchdown under the previous shared-LZ policy; Jasper reported excessive hovering. The current policy commits each cleared transport directly to Land, with no mandatory approach-hover stop. Any queued transport holds outside town, at least 700 m behind its pad. Ingress is commanded at 160 km/h maximum and 60 m AGL; departure at 180 km/h, with altitude bands while holding/departing. REAPER still controls actual speed, braking and descent. Two stable ground-contact ticks start animated exits immediately, and takeoff waits for actual living-passenger exits. Separate-pad concurrency and this tuning need fresh Workbench compilation/flight/FPS verification.
+
+
+The REAPER adapter uses the existing Workbench level override for levels 1–5; without an override it retains a one-package default. Weighted airborne selection and non-Workbench air strength configuration are not introduced by this test.
+
+| Area | Rules/defaults |
+|---|---|
+| Force | One complete transport/fireteam/gunship package per level; reserve the whole response before spawning |
+| Insertion | Aircraft spawn 120 m above terrain in checked air volumes, held against falling while personnel board; normal simulation and airborne engine startup resume at dispatch |
+| Construction | Whole fleet reserved first; at most one transport/gunship pair constructed per executor tick; player/objective launch-distance checks retained |
+| Formation | Common ingress heading; escort guided 75 m to the side and behind, at 25 m higher commanded altitude; guidance refreshed every 8 seconds; package launch lanes 200 m apart, altitude bands 15 m apart |
+| LZ | Sample town vicinity out to max(400 m configured radius, town radius + 150 m), capped at 800 m; 18 m rotor-pad half width, terrain variation <=2 m, ocean rejection and vertical entity sweep. Reserve separate pads at least 90 m apart, recheck before landing; different corridors can land concurrently. Partial results queue only shared-pad users |
+| Unload | Two stable ground-contact ticks start animated exits in the same tick; departure requires completed living-passenger exits; no time-only delivery claim |
+| Infantry | Investigate the shared last reported contact, then four town patrol sectors and defend the marker; per-leg deadlines, native perception/combat, no live-player position tracking |
+| Transport | After unloading, immediately order outward egress at 180 km/h and 60 m AGL plus package band; remove only after at least 10 s, airborne >10 m, >=500 m from LZ and >=1,500 m horizontally from **every** controlled player |
+| Gunship | Moving passes around last contact/town, 100 km/h and 80 m commanded AGL, bounded leg deadlines, 300 s support then egress; no stationary Hover order for rocket runs |
+| Engagement | REAPER still chooses perceived targets. Additional policy requires campaign-faction hostility, target within town vicinity, and no non-hostile living character/vehicle within 100 m of the aim point; transport/ingress/egress rocket attacks disabled, no automatic ammunition refill |
+| Aircraft/pilot loss | Keep aircraft and casualties; recover surviving grounded passengers when possible; delivered infantry and remaining air element continue independently |
+| Terminal retention | At least 600 s after operation termination **and** every owned member/aircraft beyond 1,500 m from all players; retained entities keep consuming capacity. World unload flushes timers/ownership |
+
+Formation is coordinated waypoint guidance, not a rigid flight constraint; REAPER turning/completion tolerances still govern actual spacing. Candidate checks are conservative and bounded, not a full terrain/flight-path certification. A blocked search waits/fails rather than landing blindly. Moving friendlies or obstacles can still invalidate a pad after the last check. The explosive-target filter does not certify every backend turret/weapon path or eliminate all splash risk.
+
+Retention here is **within the current session**, not campaign save persistence. Wrecks near players can remain indefinitely and block additional force capacity; this is deliberate rather than deleting them under observation. Egress never sets REAPER's auto-delete flag. Captured/player-controlled entities remain protected by existing cleanup rules.
+
+## Next acceptance run
+
+1. Stop Play, compile Game scripts, reload Chicken from disk, then start a new Play session and complete setup. The shared-LZ/staged-construction revision activated and reached stable touchdown in Jasper's run. The latest separate-pad/concurrent-landing/fast-exit revision has **not** been compiled or run by Codex. Planning can take up to about 37 ticks, followed by five construction ticks and asynchronous boarding; expect the planning log once, a landing-plan pad count, then package logs.
+2. Trigger the configured US defender. Watch for one QRF with `level=5`, package logs `1/5` through `5/5`, ten aircraft, faction verification and separate landing pads and concurrent Land orders. If fewer clear pads are found, verify that only shared-pad users queue. No package may activate before all are ready. Confirm a cleared transport receives direct Land without first stopping at the holding point; queued transports should remain outside town. Measure landing-order-to-touchdown, touchdown-to-exit and exit-to-departure times. Confirm it does not land on roofs/trees, take off with living passengers still boarding/exiting, hover indefinitely or lose ingress spacing.
+3. Let the transport finish unloading. Watch infantry investigate/patrol; verify actual takeoff and flight away. With a second player near the departing aircraft, it must remain; after all players are far enough and the departure conditions pass, it may disappear. A stale waypoint/timeout alone must never delete it nearby.
+4. In a fresh run, kill the pilot before touchdown and again after unloading. Confirm the aircraft/wreck remains, safe survivors can disembark, and healthy delivered infantry/escort are not deleted. No new crew should respawn. Eliminate one complete active package and confirm the other four remain; only loss of the final package should fail the whole active operation.
+5. Watch repeated moving gunship passes and actual hostile engagement. Bring a friendly vehicle/infantry close to a target: rockets should be refused. Check same-faction-damage diagnostics and confirm civilians/friendlies are never intentionally selected. Friendly-fire protection and backend weapon behavior need explicit engine validation.
+6. Leave a wreck nearby across operation timeout: it must remain after the minimum retention period while observed. Moving all players beyond cleanup distance should eventually release retained capacity. Verify Stop/Play does not leave timers or reservations behind.
+7. Toggle Reaper QRF Test off and confirm native ground dispatch still works. Dedicated-server/multiple-client acceptance remains outstanding.
+
+## Offline validation
+
+Eleven source-adapted planner scenarios passed outside the engine: early/late success, bounded exhaustion, two candidates per tick, duplicate-call suppression, cached results, five separated pads, partial-result fallback, reserved-pad exclusion and reinitialization. Geometry/native terrain acceptance was mocked; these checks do not compile Enforce Script or measure FPS. The Workbench-only landing-search smoke tests exercise the production cursor/candidate geometry with overridden native acceptance, including fresh initialization, multi-pad separation, partial results and reserved-pad exclusion; they remain unrun. Native simulation-state API signatures were checked in the installed SDK. Ten live aircraft can still be expensive even after planner work is bounded.
+
+## Binding evidence and deployment
+
+Installed backend: REAPER 1.0.8 (`69A4D664A6284E06`). Existing pilot/Move/Land/Hover GUIDs were read from installed indexes. Native airborne-start/physics/trace APIs were checked in installed Tools SDK documentation.
+
+The controller getter, weapon setter, waypoint setters and perceived-target filter signatures are evidenced by the actual [ArmaForces flight integration](https://github.com/ArmaForces/DefenseInDepth/blob/9972e5bb83310850c75adb23b31ba7efa505c321/addons/DefenseInDepth/Scripts/Game/DiD/Spawners/AFM_DiDAirSpawnerComponent.c), [extraction landing setup](https://github.com/ArmaForces/DefenseInDepth/blob/9972e5bb83310850c75adb23b31ba7efa505c321/addons/DefenseInDepth/Scripts/Game/DiD/Spawners/AFM_DiDExtractionComponent.c), and [target-filter override](https://github.com/ArmaForces/DefenseInDepth/blob/9972e5bb83310850c75adb23b31ba7efa505c321/addons/DefenseInDepth/Scripts/Game/Modded/AFM_M_REAPER_AiHelicopterControllerComponent.c). That integration documents REAPER 1.0.7; the newly used signatures must still compile against installed 1.0.8. No backend implementation was copied or guessed.
+
+Local discovery uses a junction from the standard Tools Workbench/addons/REAPER_AiHelicopters folder to Jasper's installed addon. Other developers must install/register REAPER or provide an equivalent search path. `OptionalAddons/OpenResistanceREAPER` retains only the disabled standalone diagnostic, not the QRF adapter. Multi-package dispatch now requires engine verification. Fuel-aware resupply, full route validation and durable aircraft saves remain future work.

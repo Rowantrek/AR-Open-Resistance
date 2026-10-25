@@ -39,6 +39,13 @@ class AROR_OperationTestComponent : SCR_BaseGameModeComponent
 		{
 			AROR_ForcePoolSmokeTests.Run();
 			AROR_ResponseScaleSmokeTests.Run();
+			AROR_QRFSearchPlanSmokeTests.Run_S();
+			AROR_ReaperLandingSearchSmokeTests.Run_S();
+			AROR_AirTrafficPolicySmokeTests.Run_S();
+			AROR_GroundQRFRecipeSmokeTests.Run_S();
+			AROR_QRFSelectionSmokeTests.Run_S();
+			AROR_QRFTacticalSmokeTests.Run_S();
+			AROR_QRFStrategySmokeTests.Run_S();
 			AROR_OperationSmokeTests.Run_S(m_sSmokeAttackTargetId, m_sSmokeDefendedTargetId);
 			return;
 		}
@@ -51,7 +58,9 @@ class AROR_OperationTestComponent : SCR_BaseGameModeComponent
 	protected void ReportTestAttack(AROR_OperationManagerComponent operations, AROR_EFactionRole role, string targetId)
 	{
 		string id = operations.ReportAttack_S(role, targetId);
-		if (id.IsEmpty())
+		if (id.IsEmpty() && operations.HasPendingQRFThreat(role, targetId))
+			Print(string.Format("[AROR TEST] Simulated attack queued: role=%1 target=%2; waiting for strategic admission", role, targetId), LogLevel.NORMAL);
+		else if (id.IsEmpty())
 			Print(string.Format("[AROR TEST] QRF report rejected: role=%1 target=%2; check target, cooldown, capacity and conflicting attack", role, targetId), LogLevel.ERROR);
 		else
 			Print(string.Format("[AROR TEST] Simulated attack: role=%1 target=%2 QRF=%3", role, targetId, id), LogLevel.NORMAL);

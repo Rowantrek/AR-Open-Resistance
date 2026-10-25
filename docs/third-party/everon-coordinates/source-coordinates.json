@@ -1,0 +1,162 @@
+{
+  "locSaintPhillipe": [
+    4500.872,
+    10776.053
+  ],
+  "locMontignac": [
+    4775.641,
+    7086.945
+  ],
+  "locEntreDeux": [
+    5760.571,
+    7061.821
+  ],
+  "locMeaux": [
+    4517.52,
+    9467.668
+  ],
+  "locSaintPierre": [
+    9689.432,
+    1558.166
+  ],
+  "locMorton": [
+    5137.254,
+    4009.941
+  ],
+  "locFigari": [
+    5256.366,
+    5341.263
+  ],
+  "locLamentin": [
+    1281.055,
+    5946.839
+  ],
+  "locChotain": [
+    7087.74,
+    6011.904
+  ],
+  "locLevie": [
+    7456.592,
+    4737.094
+  ],
+  "locDurras": [
+    8826.12,
+    2746.123
+  ],
+  "locCamurac": [
+    6594.162,
+    3116.684
+  ],
+  "locProvins": [
+    5488.17,
+    6083.411
+  ],
+  "locAndresBeacon": [
+    6843.832,
+    8191.218
+  ],
+  "locKermovan": [
+    6359.376,
+    9668.684
+  ],
+  "locGravette": [
+    4128.282,
+    7792.364
+  ],
+  "locQuarry": [
+    8786.965,
+    3913.078
+  ],
+  "locRegina": [
+    7188.38,
+    2312.382
+  ],
+  "locVilleneuve": [
+    2847.008,
+    6339.848
+  ],
+  "locTyrone": [
+    4948.837,
+    9075.68
+  ],
+  "locAirport": [
+    4893.46,
+    11800.709
+  ],
+  "locPowerplant": [
+    5826.642,
+    9786.735
+  ],
+  "resourceDepotFarm": [
+    5009.537,
+    9964.422
+  ],
+  "resourceDepotMeauxHarbor": [
+    4304.272,
+    9517.466
+  ],
+  "resourceDepotGorey": [
+    4844.906,
+    8088.995
+  ],
+  "resourceDepotPinewoodLake": [
+    4871.928,
+    5675.194
+  ],
+  "resourceDepotLevie": [
+    6918,
+    4450
+  ],
+  "resourceDepotDurrasHill": [
+    9044.778,
+    2741.715
+  ],
+  "resourceDepotSawmill": [
+    3114.358,
+    5221.5
+  ],
+  "resourceDepotRegina": [
+    7089.407,
+    2072.731
+  ],
+  "resourceDepotChotainIndustrial": [
+    6455.525,
+    6487.396
+  ],
+  "capPointOldWood": [
+    3293.234,
+    4488.741
+  ],
+  "capPointMortonValley": [
+    4517.589,
+    4967.065
+  ],
+  "capPointLaruns": [
+    7429.288,
+    5318.843
+  ],
+  "capPointQuarry": [
+    8797.021,
+    3905.115
+  ],
+  "militaryBaseChotain": [
+    7444.065,
+    6697.595
+  ],
+  "militaryBaseLevie": [
+    7476.739,
+    4301.884
+  ],
+  "militaryHospital": [
+    3904.698,
+    8450.042
+  ],
+  "coastalBaseLamentin": [
+    1062.89,
+    6047.846
+  ],
+  "coastalBaseMorton": [
+    4956.796,
+    3875.627
+  ]
+}

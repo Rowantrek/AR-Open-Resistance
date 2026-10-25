@@ -7,6 +7,10 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
   }
   AROR_AdminMenuComponent "{6AAE5E823BD31825}" {
   }
+  AROR_EconomyComponent "{F317694D57DF9B7A}" {
+  }
+  AROR_IncomeComponent "{3C7E9B2A51D84F06}" {
+  }
   AROR_FactionRolesComponent "{6AAE5E8BB415C942}" {
   }
   AROR_GameFlowComponent "{6AAA8D6D8EB1E454}" {
@@ -19,6 +23,8 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
    m_sSelectorLayout "{9B65C8ACFFEE4DD6}UI/Layouts/Map/AROR_MapIconSelector.layout"
   }
   AROR_NotificationManagerComponent "{EEF432965439E1C5}" {
+  }
+  AROR_PhoneComponent "{059A3EBE5C463A90}" {
   }
   AROR_RecaptureComponent "{6AAE785D6545A5DE}" {
   }

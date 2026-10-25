@@ -2,6 +2,37 @@
 //! so setup requests and replies travel through the player's controller and are handled by AROR_GameFlowComponent.
 modded class SCR_PlayerController
 {
+	//! Only an observation-suppression bit, never a spotting target or coordinates.
+	void AROR_SetQRFMapOpen(bool open)
+	{
+		if (Replication.IsServer())
+			AROR_RpcAsk_QRFMapOpen(open);
+		else
+			Rpc(AROR_RpcAsk_QRFMapOpen, open);
+	}
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void AROR_RpcAsk_QRFMapOpen(bool open)
+	{
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		if (operations)
+			operations.SetQRFObserverMapOpen_S(GetPlayerId(), open);
+	}
+	//! Only the server originates this owner-targeted snapshot; clients cannot submit sightings.
+	void AROR_SendQRFIntel_S(array<string> ids, array<vector> positions, array<int> kinds, array<int> ages, int lifetime, array<int> sides)
+	{
+		if (!Replication.IsServer())
+			return;
+		if (AROR_IsLocal())
+			AROR_RpcDo_QRFIntel(ids, positions, kinds, ages, lifetime, sides);
+		else
+			Rpc(AROR_RpcDo_QRFIntel, ids, positions, kinds, ages, lifetime, sides);
+	}
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void AROR_RpcDo_QRFIntel(array<string> ids, array<vector> positions, array<int> kinds, array<int> ages, int lifetime, array<int> sides)
+	{
+		AROR_QRFMapIntel.Receive(ids, positions, kinds, ages, lifetime, sides);
+	}
+
 	//! Separator for the save list, sent as a single string
 	protected static const string AROR_SAVE_LIST_SEPARATOR = "\n";
 
@@ -89,6 +120,44 @@ modded class SCR_PlayerController
 		AROR_AdminMenuComponent adminMenu = AROR_AdminMenuComponent.GetInstance();
 		if (adminMenu)
 			adminMenu.SendTestNotifications_S(GetPlayerId());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Admin menu: add money to a faction's funds, or (selfMoney) to this player's own money
+	void AROR_RequestAdminMoney(AROR_EFactionRole role, bool selfMoney, int amount)
+	{
+		if (Replication.IsServer())
+			AROR_RpcAsk_AdminMoney(role, selfMoney, amount);
+		else
+			Rpc(AROR_RpcAsk_AdminMoney, role, selfMoney, amount);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Admin menu: run an income payment now
+	void AROR_RequestAdminPayIncome()
+	{
+		if (Replication.IsServer())
+			AROR_RpcAsk_AdminPayIncome();
+		else
+			Rpc(AROR_RpcAsk_AdminPayIncome);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void AROR_RpcAsk_AdminPayIncome()
+	{
+		AROR_AdminMenuComponent adminMenu = AROR_AdminMenuComponent.GetInstance();
+		if (adminMenu)
+			adminMenu.PayIncomeNow_S(GetPlayerId());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void AROR_RpcAsk_AdminMoney(int role, bool selfMoney, int amount)
+	{
+		AROR_AdminMenuComponent adminMenu = AROR_AdminMenuComponent.GetInstance();
+		if (adminMenu)
+			adminMenu.GiveMoney_S(GetPlayerId(), role, selfMoney, amount);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -225,6 +294,26 @@ modded class SCR_PlayerController
 			color = Color.FromInt(packedColor);
 
 		AROR_NotificationManagerComponent.ShowHint(text, color, sound);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	// Economy: server -> owning client (see AROR_EconomyComponent)
+	//------------------------------------------------------------------------------------------------
+	void AROR_SendPlayerMoney_S(int money)
+	{
+		if (AROR_IsLocal())
+			AROR_RpcDo_PlayerMoney(money);
+		else
+			Rpc(AROR_RpcDo_PlayerMoney, money);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void AROR_RpcDo_PlayerMoney(int money)
+	{
+		AROR_EconomyComponent economy = AROR_EconomyComponent.GetInstance();
+		if (economy)
+			economy.OnLocalPlayerMoneyReceived(money);
 	}
 
 	//------------------------------------------------------------------------------------------------

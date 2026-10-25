@@ -1,6 +1,8 @@
 # Prepared Chicken force-pool test
 
-The pool supports randomized strength levels 1–5 and randomized supported profiles; see [RESPONSE_SCALE.md](RESPONSE_SCALE.md). Each level deploys that many complete ground packages. The saved Chicken preset currently forces level 3 `us_mechanized` for Jasper's LAV test: three LAV-25 packages with crews and infantry. Aircraft findings are recorded in [AIR_OPERATIONS_RESEARCH.md](AIR_OPERATIONS_RESEARCH.md).
+**Current Chicken fixture:** [paid strategic selection](QRF_STRATEGY_ECONOMY.md), war level 2, tactical coordination and [FIA spotting](QRF_SPOTTING.md) are enabled. Responses come from five authored ground tiers with finite waves; REAPER dispatch and Invader admission remain off. This supersedes older forced-profile/level-5 instructions below. The exact [truck/IFV regression test](TRUCK_IFV_QRF_TEST.md) requires strategic economy off. Compile and reload before testing these additions.
+
+The legacy homogeneous pool supports randomized strength levels 1-5 and supported profiles; see [RESPONSE_SCALE.md](RESPONSE_SCALE.md). Current strategic recipes use an explicit element list rather than multiplying one profile. The [REAPER test](AIRBORNE_QRF_PROTOTYPE.md) is a separate explicit configuration, currently disabled. Aircraft research remains in [AIR_OPERATIONS_RESEARCH.md](AIR_OPERATIONS_RESEARCH.md).
 
 For real combat instead of a simulated report, follow [QRF_COMBAT_REPORTS.md](QRF_COMBAT_REPORTS.md): assign `AROR_QRFDefenseComponent` to a defender and clear the simulated target fields first.
 

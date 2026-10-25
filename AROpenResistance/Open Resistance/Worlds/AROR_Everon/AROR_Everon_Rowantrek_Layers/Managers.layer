@@ -1,0 +1,30 @@
+SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR_GameMode_Base.et" {
+ components {
+  AROR_GameFlowComponent "{6AAA8D6D8EB1E454}" {
+   m_bWorkbenchAutoNewPlaythrough 0
+   m_vWorkbenchHQPosition 6500 0 6075
+  }
+  AROR_LocationMapIconsComponent "{6AAC8BBFBA047D89}" {
+   m_sSelectorLayout "{9B65C8ACFFEE4DD6}UI/Layouts/Map/AROR_MapIconSelector.layout"
+  }
+  SCR_RespawnSystemComponent "{56B2B4793051E7C9}" {
+   m_SpawnLogic AROR_ResistanceSpawnLogic "{5D36888CC966608A}" {
+   }
+  }
+ }
+ coords 451.826 62.247 784.105
+}
+SCR_FactionManager AROR_FactionManager1 : "{906843134C8EF19C}Prefabs/Managers/AROR_FactionManager.et" {
+ coords 449.89 63.003 783.61
+}
+SCR_SpawnPoint : "{95D749133F568A23}Prefabs/Gameflow/AROR_StagingSpawn.et" {
+ coords 3412.831 20.149 1596.428
+}
+SCR_LoadoutManager : "{DB9B95B4E54CBE08}Prefabs/Managers/AROR_LoadoutManager.et" {
+ coords 1065.152 533.487 1109.837
+ m_aPlayerLoadouts {
+  SCR_FactionPlayerLoadout "{6AAC8BBB7DC34043}" {
+   m_sAffiliatedFaction "AROR_RESISTANCE"
+  }
+ }
+}

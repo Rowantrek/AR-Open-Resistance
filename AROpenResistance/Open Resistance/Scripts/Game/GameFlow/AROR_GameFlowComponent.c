@@ -143,6 +143,13 @@ class AROR_GameFlowComponent : SCR_BaseGameModeStateComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! True once a playthrough has been started or loaded (setup is over)
+	bool IsPlaythroughReady()
+	{
+		return m_bPlaythroughReady;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override bool CanAdvanceState(SCR_EGameModeState nextState)
 	{
 		return m_bPlaythroughReady;

@@ -20,6 +20,17 @@ class AROR_OperationSmokeTests
 			return false;
 		}
 
+		if (!manager.AreInvaderOperationsEnabled())
+		{
+			bool gated = Check(manager.ReportAttack_S(AROR_EFactionRole.INVADERS, defendedLocationId).IsEmpty(), "Invader QRF gate");
+			gated = Check(manager.ScheduleAttack_S(AROR_EFactionRole.INVADERS, attackTargetId).IsEmpty(), "Invader attack gate") && gated;
+			gated = Check(manager.ReportAttackAt_S(AROR_EFactionRole.INVADERS, defendedLocationId, "0 0 0").IsEmpty(), "Invader damage-report gate") && gated;
+			Print("[AROR TEST] Invader dispatch is disabled; dual-role scheduling tests skipped. Enable only in a disposable test world when explicitly testing Invaders.", LogLevel.NORMAL);
+			manager.GetOperations(existing);
+			gated = Check(existing.Count() == 0, "Disabled requests created no operations") && gated;
+			return gated;
+		}
+
 		bool passed = true;
 		string occupierAttack = manager.ScheduleAttack_S(AROR_EFactionRole.OCCUPIERS, attackTargetId, 86400);
 		string invaderAttack = manager.ScheduleAttack_S(AROR_EFactionRole.INVADERS, attackTargetId, 86400);
@@ -30,6 +41,8 @@ class AROR_OperationSmokeTests
 		string invaderQRF = manager.ReportAttack_S(AROR_EFactionRole.INVADERS, defendedLocationId);
 		passed = Check(!occupierQRF.IsEmpty() && !invaderQRF.IsEmpty() && occupierQRF != invaderQRF, "Reserved QRF capacity while attacks are planned") && passed;
 		passed = Check(manager.ReportAttack_S(AROR_EFactionRole.OCCUPIERS, defendedLocationId) == occupierQRF, "Repeated combat report deduplication") && passed;
+		passed = Check(manager.ReportAttackAt_S(AROR_EFactionRole.OCCUPIERS, defendedLocationId, "0 0 0") == occupierQRF, "Contact report reuses existing QRF") && passed;
+		passed = Check(manager.GetOperation(occupierQRF).GetQRFSearchPlan() && !manager.GetOperation(occupierAttack).GetQRFSearchPlan(), "Only QRFs own a search plan") && passed;
 		passed = Check(manager.ScheduleAttack_S(AROR_EFactionRole.RESISTANCE, attackTargetId).IsEmpty(), "Resistance cannot schedule autonomous attacks") && passed;
 		passed = Check(manager.ReportAttack_S(AROR_EFactionRole.RESISTANCE, defendedLocationId).IsEmpty(), "Resistance cannot request enemy QRFs") && passed;
 		passed = Check(manager.ScheduleAttack_S(AROR_EFactionRole.OCCUPIERS, "").IsEmpty(), "Empty target rejected") && passed;

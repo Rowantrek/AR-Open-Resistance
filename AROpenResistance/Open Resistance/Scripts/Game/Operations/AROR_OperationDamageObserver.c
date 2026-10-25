@@ -1,4 +1,4 @@
-//! Optional server diagnostic: one same-faction damage report per watched entity.
+//! Server combat-report observer, with optional one-time same-faction damage diagnostics.
 //! Records damage, not an inference that the attacker deliberately targeted a friendly.
 class AROR_OperationDamageObserver
 {
@@ -7,13 +7,14 @@ class AROR_OperationDamageObserver
 	protected string m_sOperationId;
 	protected int m_iPackageIndex;
 	protected bool m_bReported;
+	protected bool m_bLogFriendlyDamage;
 
 	IEntity GetEntity()
 	{
 		return m_Entity;
 	}
 
-	bool Attach_S(IEntity entity, string operationId, int packageIndex)
+	bool Attach_S(IEntity entity, string operationId, int packageIndex, bool logFriendlyDamage = true)
 	{
 		if (!Replication.IsServer() || !entity)
 			return false;
@@ -23,13 +24,16 @@ class AROR_OperationDamageObserver
 		m_Entity = entity;
 		m_sOperationId = operationId;
 		m_iPackageIndex = packageIndex;
+		m_bLogFriendlyDamage = logFriendlyDamage;
 		m_DamageManager.GetOnDamage().Insert(OnDamage);
 		return true;
 	}
 
 	protected void OnDamage(BaseDamageContext context)
 	{
-		if (!Replication.IsServer() || m_bReported || !m_Entity || !context || context.damageValue <= 0 || !context.instigator)
+		if (!Replication.IsServer() || !m_Entity || !context)
+			return;
+		if (context.damageValue <= 0 || !context.instigator)
 			return;
 		if (context.damageType == EDamageType.HEALING || context.damageType == EDamageType.REGENERATION || context.instigator.GetInstigatorType() == InstigatorType.INSTIGATOR_GM)
 			return;
@@ -38,6 +42,26 @@ class AROR_OperationDamageObserver
 			return;
 		FactionAffiliationComponent victimFaction = FactionAffiliationComponent.Cast(m_Entity.FindComponent(FactionAffiliationComponent));
 		FactionAffiliationComponent attackerFaction = FactionAffiliationComponent.Cast(attacker.FindComponent(FactionAffiliationComponent));
+		if (victimFaction && attackerFaction)
+		{
+			Faction ours = victimFaction.GetAffiliatedFaction();
+			Faction theirs = attackerFaction.GetAffiliatedFaction();
+			AROR_OperationManagerComponent manager = AROR_OperationManagerComponent.GetInstance();
+			AROR_Operation operation;
+			if (manager)
+				operation = manager.GetOperation(m_sOperationId);
+			bool hostile = false;
+			if (ours && theirs)
+				hostile = ours.IsFactionEnemy(theirs);
+			if (hostile && operation && !operation.IsTerminal())
+			{
+				AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
+				if (roles && victimFaction.GetAffiliatedFactionKey() == roles.GetFactionKey(operation.GetRole()))
+					manager.ReportCombatContact_S(operation.GetRole(), operation.GetTargetLocationId(), attacker.GetOrigin());
+			}
+		}
+		if (!m_bLogFriendlyDamage || m_bReported)
+			return;
 		if (!victimFaction || !attackerFaction || victimFaction.GetAffiliatedFactionKey().IsEmpty() || victimFaction.GetAffiliatedFactionKey() != attackerFaction.GetAffiliatedFactionKey())
 			return;
 		m_bReported = true;

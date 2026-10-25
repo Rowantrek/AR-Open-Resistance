@@ -22,6 +22,17 @@ class AROR_LocationComponent : ScriptComponent
 	[Attribute("250", UIWidgets.Slider, desc: "Radius of the location in metres. Set per town in the World Editor.", params: "10 2000 5")]
 	protected float m_fRadius;
 
+	[Attribute("0", desc: "Ground this static scenario location on terrain before registration. Use for coordinate-catalog placements whose height is not authored; leave off for manually positioned locations.", category: "Placement")]
+	protected bool m_bGroundOnInit;
+
+	[Attribute("0", desc: "Opt this settlement into flag capture and weighted AI recapture. Capture updates existing support as well as control. Off preserves normal support-only settlement rules.", category: "Control")]
+	protected bool m_bSettlementFlagCapture;
+
+	bool AllowsSettlementFlagCapture()
+	{
+		return m_bSettlementFlagCapture && (m_eType == AROR_ELocationType.TOWN || m_eType == AROR_ELocationType.CITY);
+	}
+
 	[Attribute("", UIWidgets.ResourcePickerThumbnail, desc: "Icon drawn on the map for this location. White on transparent so it can be tinted.", params: "edds imageset")]
 	protected ResourceName m_sMapIcon;
 
@@ -211,6 +222,18 @@ class AROR_LocationComponent : ScriptComponent
 	{
 		if (!GetGame().InPlayMode())
 			return;
+
+		// Static scenario geometry, resolved identically on server and clients before registry use.
+		// This does not change campaign ownership or any saved economic/support state.
+		if (m_bGroundOnInit)
+		{
+			vector position = owner.GetOrigin();
+			position[1] = GetGame().GetWorld().GetSurfaceY(position[0], position[2]);
+			owner.SetOrigin(position);
+			owner.Update();
+			if (position[1] <= 0)
+				Print(string.Format("[AROR] Location '%1' catalog coordinate is at/below sea level; verify its placement", m_sId), LogLevel.WARNING);
+		}
 
 		if (m_sId.IsEmpty())
 			Print(string.Format("[AROR] Location '%1' has no ID and cannot be referenced by saves", m_sName), LogLevel.WARNING);

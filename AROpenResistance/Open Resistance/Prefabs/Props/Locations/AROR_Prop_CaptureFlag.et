@@ -1,6 +1,10 @@
 GenericEntity {
  ID "6AACA42B1A6E3AEF"
  components {
+  AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+   m_bEnabled 1
+   m_fSearchRadius 60
+  }
   MeshObject "{6AACA42B022505CD}" {
    Object "{C41BFB78E6FFFBCB}Assets/Structures/Military/Flags/FlagPole_01/FlagPole_01.xob"
   }

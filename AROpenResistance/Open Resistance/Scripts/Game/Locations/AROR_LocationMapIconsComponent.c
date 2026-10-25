@@ -44,6 +44,7 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	protected static bool s_bInfoPopupSuppressed;
 
 	protected Widget m_wIconParent;
+	protected ref AROR_QRFMapIntel m_QRFIntel = new AROR_QRFMapIntel();
 	protected ref array<AROR_LocationComponent> m_aIconLocations = {};
 	protected ref array<Widget> m_aIconWidgets = {};
 	protected ref AROR_LocationInfoPopup m_Popup;
@@ -58,6 +59,7 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	protected void OnMapOpen(MapConfiguration config)
 	{
+		SetQRFObserverMapOpen(true);
 		SCR_MapEntity mapEntity = SCR_MapEntity.GetMapInstance();
 		if (!mapEntity || !mapEntity.GetMapWidget())
 			return;
@@ -100,6 +102,7 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	protected void OnMapClose(MapConfiguration config)
 	{
+		SetQRFObserverMapOpen(false);
 		GetGame().GetCallqueue().Remove(UpdateIconPositions);
 
 		AROR_LocationManagerComponent locationManager = AROR_LocationManagerComponent.GetInstance();
@@ -240,6 +243,7 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	protected void ClearIcons()
 	{
+		m_QRFIntel.ClearWidgets();
 		foreach (Widget widget : m_aIconWidgets)
 		{
 			if (widget)
@@ -249,6 +253,12 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 		m_aIconLocations.Clear();
 		m_aIconWidgets.Clear();
 		m_wIconParent = null;
+	}
+	protected void SetQRFObserverMapOpen(bool open)
+	{
+		SCR_PlayerController controller = SCR_PlayerController.Cast(GetGame().GetPlayerController());
+		if (controller)
+			controller.AROR_SetQRFMapOpen(open);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -307,6 +317,7 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 		}
 
 		UpdateSelector(mapEntity, workspace);
+		m_QRFIntel.Update(m_wIconParent, m_sIconLayout, mapEntity);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -355,6 +366,7 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 
 		if (!GetGame().InPlayMode() || RplSession.Mode() == RplMode.Dedicated)
 			return;
+		AROR_QRFMapIntel.Clear();
 
 		SCR_MapEntity.GetOnMapOpen().Insert(OnMapOpen);
 		SCR_MapEntity.GetOnMapClose().Insert(OnMapClose);

@@ -1,0 +1,23 @@
+GenericEntity : "{357CE0E8EC82AFED}Prefabs/Locations/AROR_Location_Factory.et" {
+ coords 5591.082 205.067 7235.609
+}
+GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_provins"
+   m_sName "Provins"
+  }
+  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+   m_iPopulation 45
+  }
+ }
+ coords 5503.833 96.354 6081.837
+}
+$grp GenericEntity : "{DFDDE00B63706BEF}Prefabs/Locations/AROR_Location_Resources.et" {
+ {
+  coords 5526.961 200.03 7115.338
+ }
+ {
+  coords 5568.75 205.11 7071.537
+ }
+}

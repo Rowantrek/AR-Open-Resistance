@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{C61D9CAF9A19A727}Worlds/AROR_Everon/AROR_Everon_Rowantrek.ent"
+ Configurations {
+  ENTResourceClass PC {
+  }
+  ENTResourceClass XBOX_ONE : PC {
+  }
+  ENTResourceClass XBOX_SERIES : PC {
+  }
+  ENTResourceClass PS4 : PC {
+  }
+  ENTResourceClass PS5 : PC {
+  }
+  ENTResourceClass HEADLESS : PC {
+  }
+ }
+}

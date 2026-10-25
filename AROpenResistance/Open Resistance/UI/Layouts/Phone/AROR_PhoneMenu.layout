@@ -1,0 +1,187 @@
+FrameWidgetClass {
+ Name "AROR_PhoneMenu"
+ {
+  ImageWidgetClass "{6AB4E0F1A2B51001}" {
+   Name "Dim"
+   Slot FrameWidgetSlot "{6AB4E0F1A2B51101}" {
+    Anchor 0 0 0 0
+   }
+  }
+  ImageWidgetClass "{6AB4E0F1A2B51002}" {
+   Name "PhonePortrait"
+   Slot FrameWidgetSlot "{6AB4E0F1A2B51102}" {
+    Anchor 0 0 0 0
+   }
+  }
+  ImageWidgetClass "{6AB4E0F1A2B51003}" {
+   Name "PhoneLandscape"
+   Slot FrameWidgetSlot "{6AB4E0F1A2B51103}" {
+    Anchor 0 0 0 0
+   }
+  }
+  FrameWidgetClass "{6AB4E0F1A2B52001}" {
+   Name "Home"
+   Slot FrameWidgetSlot "{6AB4E0F1A2B52101}" {
+    Anchor 0 0 0 0
+   }
+   {
+    ImageWidgetClass "{6AB4E0F1A2B52009}" {
+     Name "BankTile"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B52109}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB4E0F1A2B5200A}" {
+     Name "BankTileLabel"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B5210A}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ButtonWidgetClass "{6AB4E0F1A2B5200B}" {
+     Name "BankTileButton"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B5210B}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB4E0F1A2B52005}" {
+     Name "TestTile"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B52105}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB4E0F1A2B52006}" {
+     Name "TestTileGlyph"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B52106}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB4E0F1A2B52007}" {
+     Name "TestTileLabel"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B52107}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ButtonWidgetClass "{6AB4E0F1A2B52008}" {
+     Name "TestTileButton"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B52108}" {
+      Anchor 0 0 0 0
+     }
+    }
+   }
+  }
+  FrameWidgetClass "{6AB4E0F1A2B53001}" {
+   Name "App"
+   Slot FrameWidgetSlot "{6AB4E0F1A2B53101}" {
+    Anchor 0 0 0 0
+   }
+   {
+    ImageWidgetClass "{6AB4E0F1A2B53002}" {
+     Name "AppPanel"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B53102}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB4E0F1A2B53003}" {
+     Name "AppTitle"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B53103}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB4E0F1A2B53004}" {
+     Name "AppBody"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B53104}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB4E0F1A2B53005}" {
+     Name "AppBackBackground"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B53105}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB4E0F1A2B53006}" {
+     Name "AppBackLabel"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B53106}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ButtonWidgetClass "{6AB4E0F1A2B53007}" {
+     Name "AppBackButton"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B53107}" {
+      Anchor 0 0 0 0
+     }
+    }
+   }
+  }
+  FrameWidgetClass "{6AB4E0F1A2B54001}" {
+   Name "BankApp"
+   Slot FrameWidgetSlot "{6AB4E0F1A2B54101}" {
+    Anchor 0 0 0 0
+   }
+   {
+    ImageWidgetClass "{6AB4E0F1A2B54002}" {
+     Name "BankBackground"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B54102}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB4E0F1A2B54003}" {
+     Name "BankName"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B54103}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB4E0F1A2B54004}" {
+     Name "BankPersonal"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B54104}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB4E0F1A2B54005}" {
+     Name "BankResistance"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B54105}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ButtonWidgetClass "{6AB4E0F1A2B54006}" {
+     Name "BankTransferButton"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B54106}" {
+      Anchor 0 0 0 0
+     }
+    }
+   }
+  }
+  FrameWidgetClass "{6AB4E0F1A2B55001}" {
+   Name "StatusBar"
+   Slot FrameWidgetSlot "{6AB4E0F1A2B55101}" {
+    Anchor 0 0 0 0
+   }
+   {
+    RichTextWidgetClass "{6AB4E0F1A2B52002}" {
+     Name "Clock"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B52102}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB4E0F1A2B52003}" {
+     Name "Signal"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B52103}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB4E0F1A2B52004}" {
+     Name "Battery"
+     Slot FrameWidgetSlot "{6AB4E0F1A2B52104}" {
+      Anchor 0 0 0 0
+     }
+    }
+   }
+  }
+  ButtonWidgetClass "{6AB4E0F1A2B51005}" {
+   Name "HomeButton"
+   Slot FrameWidgetSlot "{6AB4E0F1A2B51105}" {
+    Anchor 0 0 0 0
+   }
+  }
+ }
+}

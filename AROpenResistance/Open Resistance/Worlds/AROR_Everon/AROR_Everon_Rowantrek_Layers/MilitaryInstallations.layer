@@ -1,0 +1,9 @@
+GenericEntity : "{ED619C5A68ED5FAB}Prefabs/Locations/AROR_Location_Airport.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_airport"
+   m_sName "Everon International Airport"
+  }
+ }
+ coords 4913.476 28.251 11787.395
+}

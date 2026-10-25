@@ -4,6 +4,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_bWorkbenchAutoNewPlaythrough 0
    m_vWorkbenchHQPosition 6500 0 6075
   }
+  AROR_LocationMapIconsComponent "{6AAC8BBFBA047D89}" {
+   m_sSelectorLayout "{9B65C8ACFFEE4DD6}UI/Layouts/Map/AROR_MapIconSelector.layout"
+  }
   SCR_RespawnSystemComponent "{56B2B4793051E7C9}" {
    m_SpawnLogic AROR_ResistanceSpawnLogic "{5D36888CC966608A}" {
    }

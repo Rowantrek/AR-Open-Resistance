@@ -15,10 +15,33 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 			case AROR_ELocationType.MILITARY_BASE:
 			case AROR_ELocationType.PORT:
 			case AROR_ELocationType.RESOURCES:
+			case AROR_ELocationType.OUTPOST:
 				return true;
 		}
 
 		return false;
+	}
+
+	//! Existing military types remain unchanged; settlement flags are explicit prefab opt-ins.
+	static bool IsCapturableLocation(AROR_LocationComponent location)
+	{
+		return location && (IsCapturableType(location.GetLocationType()) || location.AllowsSettlementFlagCapture());
+	}
+
+	//! Use the existing settlement authority so a flag capture cannot leave support contradicting control.
+	static bool CaptureLocation_S(AROR_LocationComponent location, AROR_EFactionRole role)
+	{
+		if (!Replication.IsServer() || !IsCapturableLocation(location) || !location.CanBeTakenBy(role))
+			return false;
+		if (location.AllowsSettlementFlagCapture())
+		{
+			AROR_SettlementComponent settlement = AROR_SettlementComponent.Cast(location.GetOwner().FindComponent(AROR_SettlementComponent));
+			if (!settlement)
+				return false;
+			settlement.SetSupport_S(role, 100);
+			return location.GetControllingRole() == role;
+		}
+		return location.SetControllingRole_S(role);
 	}
 
 	//! The hostile check queries a large area, so cache it while the player looks at the flag
@@ -77,7 +100,7 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 	override bool CanBeShownScript(IEntity user)
 	{
 		AROR_LocationComponent location = GetLocation();
-		if (!location || location.IsControlFixed() || !IsCapturableType(location.GetLocationType()))
+		if (!IsCapturableLocation(location) || location.IsControlFixed())
 			return false;
 
 		AROR_EFactionRole role;
@@ -94,7 +117,7 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 		AROR_LocationComponent location = GetLocation();
 		AROR_EFactionRole role;
 		Faction faction;
-		if (!location || !GetUserRole(user, role, faction))
+		if (!IsCapturableLocation(location) || !GetUserRole(user, role, faction))
 			return false;
 
 		if (!location.CanBeTakenBy(role))
@@ -121,14 +144,14 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 		AROR_LocationComponent location = GetLocation();
 		AROR_EFactionRole role;
 		Faction faction;
-		if (!location || !GetUserRole(pUserEntity, role, faction))
+		if (!IsCapturableLocation(location) || !GetUserRole(pUserEntity, role, faction))
 			return;
 
 		// Authoritative re-check without the cache; the player is told why it failed
 		string rejection;
 		if (HasHostiles(faction, false))
 			rejection = "Can't capture: hostiles in the area";
-		else if (!location.SetControllingRole_S(role))
+		else if (!CaptureLocation_S(location, role))
 			rejection = "Can't capture: recently captured";
 
 		if (!rejection.IsEmpty())

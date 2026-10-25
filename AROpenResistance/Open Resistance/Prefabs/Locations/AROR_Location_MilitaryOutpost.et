@@ -1,0 +1,9 @@
+GenericEntity : "{118F89378FB3D213}Prefabs/Locations/AROR_Location_MilitaryBase.et" {
+ ID "BA7AAC223B754BF2"
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_eType MILITARY_BASE
+   m_fRadius 150
+  }
+ }
+}

@@ -1,0 +1,759 @@
+GenericEntity AROR_Location_everon_outpost_farm : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_farm"
+   m_sName "Farm Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 5009.537 25.7643 9964.422
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0.003 0.905946 12.498
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_meaux_harbour : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_meaux_harbour"
+   m_sName "Meaux Harbour Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 4304.272 1.125 9517.466
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 8.838 0.905826 8.834
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_gorey : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_gorey"
+   m_sName "Gorey Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 4844.906 112.307 8088.995
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0.004 0.904946 12.505
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_pinewood_lake : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_pinewood_lake"
+   m_sName "Pinewood Lake Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 4871.928 52.5011 5675.194
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0.002 0.905846 12.496
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_levie_hillside : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_levie_hillside"
+   m_sName "Levie Hillside Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 6918 54.8828 4450
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0 0.905946 12.5
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_durras_hill : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_durras_hill"
+   m_sName "Durras Hill Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 9044.778 125.263 2741.715
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 12.502 0.905946 0.005
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_sawmill : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_sawmill"
+   m_sName "Sawmill Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 3114.358 119.148 5221.5
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 12.502 0.905946 0
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_regina_south : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_regina_south"
+   m_sName "Regina South Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 7089.407 156.573 2072.731
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0.003 0.905946 12.499
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_chotain_industrial : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_chotain_industrial"
+   m_sName "Chotain Industrial Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 6455.525 162.381 6487.396
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords -0.005 0.905946 12.504
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_old_wood : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_old_wood"
+   m_sName "Old Wood Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 3293.234 120.562 4488.741
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 8.836 0.904946 8.839
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_morton_valley : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_morton_valley"
+   m_sName "Morton Valley Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 4517.589 64.0358 4967.065
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 8.841 0.906046 8.835
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_laruns : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_laruns"
+   m_sName "Laruns Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 7429.288 111.347 5318.843
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 8.842 0.905946 8.837
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_quarry : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_quarry"
+   m_sName "Quarry Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 8797.021 198.203 3905.115
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 8.839 0.905946 8.835
+  }
+ }
+}
+GenericEntity AROR_Location_everon_outpost_andres_beacon : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_outpost_andres_beacon"
+   m_sName "Andres Beacon Outpost"
+   m_eType OUTPOST
+   m_fRadius 100
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 6843.832 82.5811 8191.218
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords -0.002 0.905646 12.502
+  }
+ }
+}
+GenericEntity AROR_Location_everon_military_outpost_chotain : "{9B2CAF507D694BA5}Prefabs/Locations/AROR_Location_MilitaryOutpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_military_outpost_chotain"
+   m_sName "Chotain Military Outpost"
+   m_eType MILITARY_BASE
+   m_fRadius 150
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 7444.065 7.875 6697.595
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords -0.005 0.905826 15.005
+  }
+ }
+}
+GenericEntity AROR_Location_everon_military_outpost_levie : "{9B2CAF507D694BA5}Prefabs/Locations/AROR_Location_MilitaryOutpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_military_outpost_levie"
+   m_sName "Levie Military Outpost"
+   m_eType MILITARY_BASE
+   m_fRadius 150
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 7476.739 164.563 4301.884
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0.001 0.904946 14.996
+  }
+ }
+}
+GenericEntity AROR_Location_everon_military_outpost_hospital : "{9B2CAF507D694BA5}Prefabs/Locations/AROR_Location_MilitaryOutpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_military_outpost_hospital"
+   m_sName "Military Hospital Outpost"
+   m_eType MILITARY_BASE
+   m_fRadius 150
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 3904.698 15.1087 8450.042
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0.002 0.905846 14.998
+  }
+ }
+}
+GenericEntity AROR_Location_everon_military_outpost_lamentin : "{9B2CAF507D694BA5}Prefabs/Locations/AROR_Location_MilitaryOutpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_military_outpost_lamentin"
+   m_sName "Lamentin Military Outpost"
+   m_eType MILITARY_BASE
+   m_fRadius 150
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 1062.89 2.79539 6047.846
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.61 0.905726 10.604
+  }
+ }
+}
+GenericEntity AROR_Location_everon_military_outpost_morton : "{9B2CAF507D694BA5}Prefabs/Locations/AROR_Location_MilitaryOutpost.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_military_outpost_morton"
+   m_sName "Morton Military Outpost"
+   m_eType MILITARY_BASE
+   m_fRadius 150
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 4956.796 2.20941 3875.627
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.604 0.905886 10.603
+  }
+ }
+}
+GenericEntity AROR_Location_everon_airport : "{ED619C5A68ED5FAB}Prefabs/Locations/AROR_Location_Airport.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_airport"
+   m_sName "Everon International Airport"
+   m_eType AIRPORT
+   m_fRadius 500
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 4913.476 28.251 11787.395
+ {
+  GenericEntity {
+   ID "6AACA42BFC76C266"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0.004 1.248746 15.005
+  }
+ }
+}
+GenericEntity AROR_Location_everon_factory_north_ridge : "{357CE0E8EC82AFED}Prefabs/Locations/AROR_Location_Factory.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_factory_north_ridge"
+   m_sName "North Ridge Factory"
+   m_eType FACTORY
+   m_fRadius 250
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 5591.082 205.067 7235.609
+ {
+  GenericEntity {
+   ID "6AACA42C2C775A3A"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 14.998 4.437946 0.001
+  }
+ }
+}
+GenericEntity AROR_Location_everon_resources_north_ridge_west : "{DFDDE00B63706BEF}Prefabs/Locations/AROR_Location_Resources.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_resources_north_ridge_west"
+   m_sName "North Ridge Resources West"
+   m_eType RESOURCES
+   m_fRadius 250
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 5526.961 200.03 7115.338
+ {
+  GenericEntity {
+   ID "6AACA42C07095538"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.609 2.643946 10.602
+  }
+ }
+}
+GenericEntity AROR_Location_everon_resources_north_ridge_east : "{DFDDE00B63706BEF}Prefabs/Locations/AROR_Location_Resources.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_resources_north_ridge_east"
+   m_sName "North Ridge Resources East"
+   m_eType RESOURCES
+   m_fRadius 250
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+ }
+ coords 5568.75 205.11 7071.537
+ {
+  GenericEntity {
+   ID "6AACA42C07095538"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.61 3.525946 10.603
+  }
+ }
+}

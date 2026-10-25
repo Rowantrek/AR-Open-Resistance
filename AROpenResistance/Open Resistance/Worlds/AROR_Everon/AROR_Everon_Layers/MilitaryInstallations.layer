@@ -1,3 +1,33 @@
+$grp GenericEntity : "{BACC096222622272}Prefabs/Locations/AROR_Location_Port.et" {
+ {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_morton_port"
+    m_sName "Morton Port"
+    m_fRadius 140
+   }
+  }
+  coords 4988.401 2.238 3887.584
+  {
+   GenericEntity {
+    ID "6AACA42C304AE078"
+    coords 7.627 -0.042 4.869
+    angles 0 81.644 0
+   }
+  }
+ }
+ {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_lamentin_port"
+    m_sName "Lamentin Port"
+    m_fRadius 360
+   }
+  }
+  coords 906.293 2.98 6152.122
+  angles 0 36.529 0
+ }
+}
 GenericEntity : "{ED619C5A68ED5FAB}Prefabs/Locations/AROR_Location_Airport.et" {
  components {
   AROR_LocationComponent "{6AA28237301A1CF9}" {

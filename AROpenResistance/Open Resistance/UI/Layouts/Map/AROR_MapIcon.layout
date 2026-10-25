@@ -1,6 +1,12 @@
 FrameWidgetClass {
  Name "rootFrame"
  {
+  RichTextWidgetClass {
+   Name "QRFLabel"
+   Slot FrameWidgetSlot {
+    Anchor 0 0 0 0
+   }
+  }
   ImageWidgetClass "{6AAC8BB98839396A}" {
    Name "Icon"
    Slot FrameWidgetSlot "{6AAC8BB988393ADF}" {

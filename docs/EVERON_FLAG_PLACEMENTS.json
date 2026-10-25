@@ -1,0 +1,211 @@
+{
+    "Source":  "World Editor Audit all campaign flags, script.log logs_2026-10-24_23-14-08, 2026-10-24 23:50:47",
+    "Method":  "Physical WORLD trace terrain and local model bounds read from all 41 loaded poles. Placed pole/root prefabs have identity orientation; corrected world Y = measured terrain - model minimum Y + 0.1m. Root transforms and pole X/Z unchanged.",
+    "Flags":  {
+                  "everon_outpost_laruns":  [
+                                                "7438.13",
+                                                "112.252946",
+                                                "5327.68"
+                                            ],
+                  "everon_outpost_sawmill":  [
+                                                 "3126.86",
+                                                 "120.053946",
+                                                 "5221.5"
+                                             ],
+                  "everon_regina":  [
+                                        "7188.38",
+                                        "138.383946",
+                                        "2327.38"
+                                    ],
+                  "everon_outpost_levie_hillside":  [
+                                                        "6918",
+                                                        "55.788746",
+                                                        "4462.5"
+                                                    ],
+                  "everon_kermovan":  [
+                                          "6369.98",
+                                          "7.653936",
+                                          "9658.08"
+                                      ],
+                  "everon_gravette":  [
+                                          "4138.89",
+                                          "37.481246",
+                                          "7802.97"
+                                      ],
+                  "everon_military_outpost_lamentin":  [
+                                                           "1073.5",
+                                                           "3.701116",
+                                                           "6058.45"
+                                                       ],
+                  "everon_outpost_gorey":  [
+                                               "4844.91",
+                                               "113.211946",
+                                               "8101.5"
+                                           ],
+                  "everon_military_outpost_chotain":  [
+                                                          "7444.06",
+                                                          "8.780826",
+                                                          "6712.6"
+                                                      ],
+                  "everon_outpost_meaux_harbour":  [
+                                                       "4313.11",
+                                                       "2.030826",
+                                                       "9526.3"
+                                                   ],
+                  "everon_lamentin_town":  [
+                                               "1319.12",
+                                               "40.461746",
+                                               "5996.19"
+                                           ],
+                  "everon_levie":  [
+                                       "7445.99",
+                                       "138.178946",
+                                       "4726.49"
+                                   ],
+                  "everon_outpost_morton_valley":  [
+                                                       "4526.43",
+                                                       "64.941846",
+                                                       "4975.9"
+                                                   ],
+                  "everon_saint_philippe":  [
+                                                "4500.87",
+                                                "13.737146",
+                                                "10791.1"
+                                            ],
+                  "everon_outpost_chotain_industrial":  [
+                                                            "6455.52",
+                                                            "163.286946",
+                                                            "6499.9"
+                                                        ],
+                  "everon_military_outpost_morton":  [
+                                                         "4967.4",
+                                                         "3.115296",
+                                                         "3886.23"
+                                                     ],
+                  "everon_military_outpost_hospital":  [
+                                                           "3904.7",
+                                                           "16.014546",
+                                                           "8465.04"
+                                                       ],
+                  "everon_durras":  [
+                                        "8841.12",
+                                        "95.974046",
+                                        "2746.12"
+                                    ],
+                  "everon_tyrone":  [
+                                        "4948.84",
+                                        "39.030246",
+                                        "9060.68"
+                                    ],
+                  "everon_provins":  [
+                                         "5514.44",
+                                         "96.416446",
+                                         "6092.44"
+                                     ],
+                  "everon_outpost_quarry":  [
+                                                "8805.86",
+                                                "199.108946",
+                                                "3913.95"
+                                            ],
+                  "everon_outpost_pinewood_lake":  [
+                                                       "4871.93",
+                                                       "53.406946",
+                                                       "5687.69"
+                                                   ],
+                  "everon_outpost_regina_south":  [
+                                                      "7089.41",
+                                                      "157.478946",
+                                                      "2085.23"
+                                                  ],
+                  "everon_resources_north_ridge_west":  [
+                                                            "5537.57",
+                                                            "202.673946",
+                                                            "7125.94"
+                                                        ],
+                  "everon_saint_pierre":  [
+                                              "9700.04",
+                                              "13.474546",
+                                              "1547.56"
+                                          ],
+                  "everon_villeneuve":  [
+                                            "2862.01",
+                                            "87.750046",
+                                            "6339.85"
+                                        ],
+                  "everon_chotain":  [
+                                         "7098.35",
+                                         "119.771946",
+                                         "6022.51"
+                                     ],
+                  "everon_outpost_durras_hill":  [
+                                                     "9057.28",
+                                                     "126.168946",
+                                                     "2741.72"
+                                                 ],
+                  "everon_airport":  [
+                                         "4913.48",
+                                         "29.499746",
+                                         "11802.4"
+                                     ],
+                  "everon_figari":  [
+                                        "5266.97",
+                                        "63.552346",
+                                        "5351.87"
+                                    ],
+                  "everon_resources_north_ridge_east":  [
+                                                            "5579.36",
+                                                            "208.635946",
+                                                            "7082.14"
+                                                        ],
+                  "everon_morton_town":  [
+                                             "5132.02",
+                                             "15.329246",
+                                             "4023.56"
+                                         ],
+                  "everon_entre_deux":  [
+                                            "5775.57",
+                                            "218.187946",
+                                            "7061.82"
+                                        ],
+                  "everon_montignac":  [
+                                           "4775.64",
+                                           "164.959946",
+                                           "7101.94"
+                                       ],
+                  "everon_outpost_andres_beacon":  [
+                                                       "6843.83",
+                                                       "83.486746",
+                                                       "8203.72"
+                                                   ],
+                  "everon_meaux":  [
+                                       "4528.13",
+                                       "15.368146",
+                                       "9478.27"
+                                   ],
+                  "everon_camurac":  [
+                                         "6604.77",
+                                         "7.019406",
+                                         "3106.08"
+                                     ],
+                  "everon_military_outpost_levie":  [
+                                                        "7476.74",
+                                                        "165.467946",
+                                                        "4316.88"
+                                                    ],
+                  "everon_factory_north_ridge":  [
+                                                     "5606.08",
+                                                     "209.504946",
+                                                     "7235.61"
+                                                 ],
+                  "everon_outpost_farm":  [
+                                              "5009.54",
+                                              "26.670246",
+                                              "9976.92"
+                                          ],
+                  "everon_outpost_old_wood":  [
+                                                  "3302.07",
+                                                  "121.466946",
+                                                  "4497.58"
+                                              ]
+              }
+}

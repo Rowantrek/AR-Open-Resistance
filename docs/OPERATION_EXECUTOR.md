@@ -1,6 +1,8 @@
 # Infantry executor and QRF testing in Everon_Chicken
 
-Chicken now has preconfigured force pools and ground execution paths: use [FORCE_POOL_QUICKSTART.md](FORCE_POOL_QUICKSTART.md) for the current setup. The infantry-only instructions below remain available when `m_aForceProfiles` is empty. Helicopter/gunship profiles are configured but excluded until a flight adapter exists.
+**Current Chicken fixture:** [paid strategic selection](QRF_STRATEGY_ECONOMY.md) is enabled, initially war level 2, with five authored ground tiers per role and [FIA spotting markers](QRF_SPOTTING.md). Tactical coordination and finite waves are enabled. REAPER dispatch and Invader admission remain off. To restore the exact two-vehicle fixture, disable strategic economy and use the [Truck/IFV test](TRUCK_IFV_QRF_TEST.md). New strategy/marker/return behavior requires fresh compilation and Play verification.
+
+Chicken has preconfigured force pools and ground execution paths. The infantry-only instructions below apply when `m_aForceProfiles` is empty and strategic economy is disabled. The [REAPER airborne experiment](AIRBORNE_QRF_PROTOTYPE.md) is a separate explicit fixture; normal weighted airborne selection remains excluded.
 
 Use `Worlds/AROR_Everon/AROR_Everon_Chicken.ent`. Its `AROR_GameMode_Base1` instance now contains `AROR_OperationExecutorComponent` and `AROR_OperationTestComponent`. These additions are in Chicken's Managers layer; the original Everon world and shared game-mode prefab do not receive the executor or test component. Existing shared commander/scheduler scripts still apply to both worlds.
 
@@ -9,13 +11,13 @@ The script default is disabled, but the prepared Chicken override now enables th
 ## Test QRF scheduling first
 
 1. Compile in Script Editor, then select `AROR_GameMode_Base1` in Chicken's Managers layer.
-2. Keep `m_bEnabled` off on the executor. Clear both automatic attack target IDs on the operation manager so those attacks do not conflict with this test.
-3. On `AROR_OperationTestComponent`, set both `m_sOccupiersQRFTestTargetId` and `m_sInvadersQRFTestTargetId` to `everon_provins`. Leave `m_bRunSchedulerSmokeTests` off. The default report delay is 15 seconds after campaign readiness.
-4. Play and complete setup. Expect two `[AROR TEST] Simulated attack` messages with different QRF IDs. The normal operation logs should show `role=1 type=1` and `role=2 type=1`, followed by SPAWNING and eventually spawn timeout. That timeout is expected while the executor is disabled.
+2. Keep `m_bEnabled` off on the executor and disable `m_bQRFStrategicEconomy` for this isolated immediate-scheduler test. Clear both automatic attack target IDs.
+3. On `AROR_OperationTestComponent`, set `m_sOccupiersQRFTestTargetId` to `everon_provins`. Keep the Invader target empty and its admission gate off. Leave `m_bRunSchedulerSmokeTests` off. The default report delay is 15 seconds after campaign readiness.
+4. Play and complete setup. Expect one Occupier `[AROR TEST] Simulated attack` ID, then SPAWNING and an eventual timeout with no executor. A dual-role scheduler test requires a separate explicit disposable configuration with valid Invader targets; normal Chicken keeps Invaders disabled.
 
-These are simulated reports for isolated testing, not a claim that both factions own Provins. Firing a weapon still does not generate real QRF reports. The component sends each configured report once per world run; clear the fields afterward. It runs only on the Workbench server and is inert in packaged builds.
+These are simulated reports for isolated testing, not a claim that both factions own Provins. Firing without damaging an assigned defender does not generate a defense report. The component sends each configured report once per world run; clear the fields afterward. It runs only on the Workbench server and is inert in packaged builds.
 
-For the broader request/state-machine tests instead, start a fresh world with automatic targets and QRF test targets empty, executor disabled, and default scheduler limits/cooldowns. Set `m_bRunSchedulerSmokeTests` on. The test component calls the existing helper after readiness using `everon_provins` and `resistance_hq`; both must be registered. Expect `Operation smoke tests passed=1`. Restart before rerunning because cooldowns are deliberately retained.
+For the broader request/state-machine tests instead, start a fresh world with automatic targets and QRF test targets empty, executor disabled, strategic economy disabled, and default scheduler limits/cooldowns. Set `m_bRunSchedulerSmokeTests` on. The test component calls the existing helper after readiness using `everon_provins` and `resistance_hq`; both must be registered. Expect `Operation smoke tests passed=1`. Restart before rerunning because cooldowns are deliberately retained.
 
 ## Configure physical forces
 

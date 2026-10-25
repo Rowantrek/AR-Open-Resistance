@@ -1,0 +1,990 @@
+{
+    "Source":  "World Editor Audit all campaign flags, script.log logs_2026-10-24_23-14-08, 2026-10-24 23:50:47",
+    "Method":  "Physical WORLD trace terrain and local model bounds read from all 41 loaded poles. Placed pole/root prefabs have identity orientation; corrected world Y = measured terrain - model minimum Y + 0.1m. Root transforms and pole X/Z unchanged.",
+    "Measurements":  {
+                         "everon_outpost_laruns":  {
+                                                       "Before":  [
+                                                                      7438.13,
+                                                                      111.447,
+                                                                      5327.68
+                                                                  ],
+                                                       "Ground":  111.347,
+                                                       "Clear":  true,
+                                                       "BoundsMin":  [
+                                                                         -0.066763,
+                                                                         -0.805946,
+                                                                         -0.213512
+                                                                     ],
+                                                       "BoundsMax":  [
+                                                                         0.065198999999999993,
+                                                                         6.00618,
+                                                                         0.066927
+                                                                     ],
+                                                       "CorrectedWorld":  [
+                                                                              7438.13,
+                                                                              112.252946,
+                                                                              5327.68
+                                                                          ]
+                                                   },
+                         "everon_outpost_sawmill":  {
+                                                        "Before":  [
+                                                                       3126.86,
+                                                                       119.248,
+                                                                       5221.5
+                                                                   ],
+                                                        "Ground":  119.148,
+                                                        "Clear":  true,
+                                                        "BoundsMin":  [
+                                                                          -0.066763,
+                                                                          -0.805946,
+                                                                          -0.213512
+                                                                      ],
+                                                        "BoundsMax":  [
+                                                                          0.065198999999999993,
+                                                                          6.00618,
+                                                                          0.066927
+                                                                      ],
+                                                        "CorrectedWorld":  [
+                                                                               3126.86,
+                                                                               120.053946,
+                                                                               5221.5
+                                                                           ]
+                                                    },
+                         "everon_regina":  {
+                                               "Before":  [
+                                                              7188.38,
+                                                              137.578,
+                                                              2327.38
+                                                          ],
+                                               "Ground":  137.478,
+                                               "Clear":  true,
+                                               "BoundsMin":  [
+                                                                 -0.066763,
+                                                                 -0.805946,
+                                                                 -0.213512
+                                                             ],
+                                               "BoundsMax":  [
+                                                                 0.065198999999999993,
+                                                                 6.00618,
+                                                                 0.066927
+                                                             ],
+                                               "CorrectedWorld":  [
+                                                                      7188.38,
+                                                                      138.383946,
+                                                                      2327.38
+                                                                  ]
+                                           },
+                         "everon_outpost_levie_hillside":  {
+                                                               "Before":  [
+                                                                              6918,
+                                                                              54.9828,
+                                                                              4462.5
+                                                                          ],
+                                                               "Ground":  54.8828,
+                                                               "Clear":  true,
+                                                               "BoundsMin":  [
+                                                                                 -0.066763,
+                                                                                 -0.805946,
+                                                                                 -0.213512
+                                                                             ],
+                                                               "BoundsMax":  [
+                                                                                 0.065198999999999993,
+                                                                                 6.00618,
+                                                                                 0.066927
+                                                                             ],
+                                                               "CorrectedWorld":  [
+                                                                                      6918,
+                                                                                      55.788746,
+                                                                                      4462.5
+                                                                                  ]
+                                                           },
+                         "everon_kermovan":  {
+                                                 "Before":  [
+                                                                6369.98,
+                                                                6.84846,
+                                                                9658.08
+                                                            ],
+                                                 "Ground":  6.74799,
+                                                 "Clear":  true,
+                                                 "BoundsMin":  [
+                                                                   -0.066763,
+                                                                   -0.805946,
+                                                                   -0.213512
+                                                               ],
+                                                 "BoundsMax":  [
+                                                                   0.065198999999999993,
+                                                                   6.00618,
+                                                                   0.066927
+                                                               ],
+                                                 "CorrectedWorld":  [
+                                                                        6369.98,
+                                                                        7.653936,
+                                                                        9658.08
+                                                                    ]
+                                             },
+                         "everon_gravette":  {
+                                                 "Before":  [
+                                                                4138.89,
+                                                                36.6755,
+                                                                7802.97
+                                                            ],
+                                                 "Ground":  36.5753,
+                                                 "Clear":  true,
+                                                 "BoundsMin":  [
+                                                                   -0.066763,
+                                                                   -0.805946,
+                                                                   -0.213512
+                                                               ],
+                                                 "BoundsMax":  [
+                                                                   0.065198999999999993,
+                                                                   6.00618,
+                                                                   0.066927
+                                                               ],
+                                                 "CorrectedWorld":  [
+                                                                        4138.89,
+                                                                        37.481246,
+                                                                        7802.97
+                                                                    ]
+                                             },
+                         "everon_levie":  {
+                                              "Before":  [
+                                                             7445.99,
+                                                             137.373,
+                                                             4726.49
+                                                         ],
+                                              "Ground":  137.273,
+                                              "Clear":  true,
+                                              "BoundsMin":  [
+                                                                -0.066763,
+                                                                -0.805946,
+                                                                -0.213512
+                                                            ],
+                                              "BoundsMax":  [
+                                                                0.065198999999999993,
+                                                                6.00618,
+                                                                0.066927
+                                                            ],
+                                              "CorrectedWorld":  [
+                                                                     7445.99,
+                                                                     138.178946,
+                                                                     4726.49
+                                                                 ]
+                                          },
+                         "everon_outpost_gorey":  {
+                                                      "Before":  [
+                                                                     4844.91,
+                                                                     112.407,
+                                                                     8101.5
+                                                                 ],
+                                                      "Ground":  112.306,
+                                                      "Clear":  true,
+                                                      "BoundsMin":  [
+                                                                        -0.066763,
+                                                                        -0.805946,
+                                                                        -0.213512
+                                                                    ],
+                                                      "BoundsMax":  [
+                                                                        0.065198999999999993,
+                                                                        6.00618,
+                                                                        0.066927
+                                                                    ],
+                                                      "CorrectedWorld":  [
+                                                                             4844.91,
+                                                                             113.211946,
+                                                                             8101.5
+                                                                         ]
+                                                  },
+                         "everon_military_outpost_chotain":  {
+                                                                 "Before":  [
+                                                                                7444.06,
+                                                                                7.975,
+                                                                                6712.6
+                                                                            ],
+                                                                 "Ground":  7.87488,
+                                                                 "Clear":  true,
+                                                                 "BoundsMin":  [
+                                                                                   -0.066763,
+                                                                                   -0.805946,
+                                                                                   -0.213512
+                                                                               ],
+                                                                 "BoundsMax":  [
+                                                                                   0.065198999999999993,
+                                                                                   6.00618,
+                                                                                   0.066927
+                                                                               ],
+                                                                 "CorrectedWorld":  [
+                                                                                        7444.06,
+                                                                                        8.780826,
+                                                                                        6712.6
+                                                                                    ]
+                                                             },
+                         "everon_outpost_meaux_harbour":  {
+                                                              "Before":  [
+                                                                             4313.11,
+                                                                             1.225,
+                                                                             9526.3
+                                                                         ],
+                                                              "Ground":  1.12488,
+                                                              "Clear":  true,
+                                                              "BoundsMin":  [
+                                                                                -0.066763,
+                                                                                -0.805946,
+                                                                                -0.213512
+                                                                            ],
+                                                              "BoundsMax":  [
+                                                                                0.065198999999999993,
+                                                                                6.00618,
+                                                                                0.066927
+                                                                            ],
+                                                              "CorrectedWorld":  [
+                                                                                     4313.11,
+                                                                                     2.030826,
+                                                                                     9526.3
+                                                                                 ]
+                                                          },
+                         "everon_lamentin_town":  {
+                                                      "Before":  [
+                                                                     1319.12,
+                                                                     39.6556,
+                                                                     5996.19
+                                                                 ],
+                                                      "Ground":  39.5558,
+                                                      "Clear":  true,
+                                                      "BoundsMin":  [
+                                                                        -0.066763,
+                                                                        -0.805946,
+                                                                        -0.213512
+                                                                    ],
+                                                      "BoundsMax":  [
+                                                                        0.065198999999999993,
+                                                                        6.00618,
+                                                                        0.066927
+                                                                    ],
+                                                      "CorrectedWorld":  [
+                                                                             1319.12,
+                                                                             40.461746,
+                                                                             5996.19
+                                                                         ]
+                                                  },
+                         "everon_outpost_morton_valley":  {
+                                                              "Before":  [
+                                                                             4526.43,
+                                                                             64.1358,
+                                                                             4975.9
+                                                                         ],
+                                                              "Ground":  64.0359,
+                                                              "Clear":  true,
+                                                              "BoundsMin":  [
+                                                                                -0.066763,
+                                                                                -0.805946,
+                                                                                -0.213512
+                                                                            ],
+                                                              "BoundsMax":  [
+                                                                                0.065198999999999993,
+                                                                                6.00618,
+                                                                                0.066927
+                                                                            ],
+                                                              "CorrectedWorld":  [
+                                                                                     4526.43,
+                                                                                     64.941846,
+                                                                                     4975.9
+                                                                                 ]
+                                                          },
+                         "everon_saint_philippe":  {
+                                                       "Before":  [
+                                                                      4500.87,
+                                                                      12.9353,
+                                                                      10791.1
+                                                                  ],
+                                                       "Ground":  12.8312,
+                                                       "Clear":  true,
+                                                       "BoundsMin":  [
+                                                                         -0.066763,
+                                                                         -0.805946,
+                                                                         -0.213512
+                                                                     ],
+                                                       "BoundsMax":  [
+                                                                         0.065198999999999993,
+                                                                         6.00618,
+                                                                         0.066927
+                                                                     ],
+                                                       "CorrectedWorld":  [
+                                                                              4500.87,
+                                                                              13.737146,
+                                                                              10791.1
+                                                                          ]
+                                                   },
+                         "everon_outpost_chotain_industrial":  {
+                                                                   "Before":  [
+                                                                                  6455.52,
+                                                                                  162.481,
+                                                                                  6499.9
+                                                                              ],
+                                                                   "Ground":  162.381,
+                                                                   "Clear":  true,
+                                                                   "BoundsMin":  [
+                                                                                     -0.066763,
+                                                                                     -0.805946,
+                                                                                     -0.213512
+                                                                                 ],
+                                                                   "BoundsMax":  [
+                                                                                     0.065198999999999993,
+                                                                                     6.00618,
+                                                                                     0.066927
+                                                                                 ],
+                                                                   "CorrectedWorld":  [
+                                                                                          6455.52,
+                                                                                          163.286946,
+                                                                                          6499.9
+                                                                                      ]
+                                                               },
+                         "everon_military_outpost_morton":  {
+                                                                "Before":  [
+                                                                               4967.4,
+                                                                               2.30941,
+                                                                               3886.23
+                                                                           ],
+                                                                "Ground":  2.20935,
+                                                                "Clear":  true,
+                                                                "BoundsMin":  [
+                                                                                  -0.066763,
+                                                                                  -0.805946,
+                                                                                  -0.213512
+                                                                              ],
+                                                                "BoundsMax":  [
+                                                                                  0.065198999999999993,
+                                                                                  6.00618,
+                                                                                  0.066927
+                                                                              ],
+                                                                "CorrectedWorld":  [
+                                                                                       4967.4,
+                                                                                       3.115296,
+                                                                                       3886.23
+                                                                                   ]
+                                                            },
+                         "everon_military_outpost_hospital":  {
+                                                                  "Before":  [
+                                                                                 3904.7,
+                                                                                 15.2087,
+                                                                                 8465.04
+                                                                             ],
+                                                                  "Ground":  15.1086,
+                                                                  "Clear":  true,
+                                                                  "BoundsMin":  [
+                                                                                    -0.066763,
+                                                                                    -0.805946,
+                                                                                    -0.213512
+                                                                                ],
+                                                                  "BoundsMax":  [
+                                                                                    0.065198999999999993,
+                                                                                    6.00618,
+                                                                                    0.066927
+                                                                                ],
+                                                                  "CorrectedWorld":  [
+                                                                                         3904.7,
+                                                                                         16.014546,
+                                                                                         8465.04
+                                                                                     ]
+                                                              },
+                         "everon_durras":  {
+                                               "Before":  [
+                                                              8841.12,
+                                                              95.1682,
+                                                              2746.12
+                                                          ],
+                                               "Ground":  95.0681,
+                                               "Clear":  true,
+                                               "BoundsMin":  [
+                                                                 -0.066763,
+                                                                 -0.805946,
+                                                                 -0.213512
+                                                             ],
+                                               "BoundsMax":  [
+                                                                 0.065198999999999993,
+                                                                 6.00618,
+                                                                 0.066927
+                                                             ],
+                                               "CorrectedWorld":  [
+                                                                      8841.12,
+                                                                      95.974046,
+                                                                      2746.12
+                                                                  ]
+                                           },
+                         "everon_resources_north_ridge_east":  {
+                                                                   "Before":  [
+                                                                                  5579.36,
+                                                                                  207.83,
+                                                                                  7082.14
+                                                                              ],
+                                                                   "Ground":  207.73,
+                                                                   "Clear":  true,
+                                                                   "BoundsMin":  [
+                                                                                     -0.066763,
+                                                                                     -0.805946,
+                                                                                     -0.213512
+                                                                                 ],
+                                                                   "BoundsMax":  [
+                                                                                     0.065198999999999993,
+                                                                                     6.00618,
+                                                                                     0.066927
+                                                                                 ],
+                                                                   "CorrectedWorld":  [
+                                                                                          5579.36,
+                                                                                          208.635946,
+                                                                                          7082.14
+                                                                                      ]
+                                                               },
+                         "everon_tyrone":  {
+                                               "Before":  [
+                                                              4948.84,
+                                                              38.2244,
+                                                              9060.68
+                                                          ],
+                                               "Ground":  38.1243,
+                                               "Clear":  true,
+                                               "BoundsMin":  [
+                                                                 -0.066763,
+                                                                 -0.805946,
+                                                                 -0.213512
+                                                             ],
+                                               "BoundsMax":  [
+                                                                 0.065198999999999993,
+                                                                 6.00618,
+                                                                 0.066927
+                                                             ],
+                                               "CorrectedWorld":  [
+                                                                      4948.84,
+                                                                      39.030246,
+                                                                      9060.68
+                                                                  ]
+                                           },
+                         "everon_provins":  {
+                                                "Before":  [
+                                                               5514.44,
+                                                               95.6105,
+                                                               6092.44
+                                                           ],
+                                                "Ground":  95.5105,
+                                                "Clear":  true,
+                                                "BoundsMin":  [
+                                                                  -0.066763,
+                                                                  -0.805946,
+                                                                  -0.213512
+                                                              ],
+                                                "BoundsMax":  [
+                                                                  0.065198999999999993,
+                                                                  6.00618,
+                                                                  0.066927
+                                                              ],
+                                                "CorrectedWorld":  [
+                                                                       5514.44,
+                                                                       96.416446,
+                                                                       6092.44
+                                                                   ]
+                                            },
+                         "everon_outpost_quarry":  {
+                                                       "Before":  [
+                                                                      8805.86,
+                                                                      198.303,
+                                                                      3913.95
+                                                                  ],
+                                                       "Ground":  198.203,
+                                                       "Clear":  true,
+                                                       "BoundsMin":  [
+                                                                         -0.066763,
+                                                                         -0.805946,
+                                                                         -0.213512
+                                                                     ],
+                                                       "BoundsMax":  [
+                                                                         0.065198999999999993,
+                                                                         6.00618,
+                                                                         0.066927
+                                                                     ],
+                                                       "CorrectedWorld":  [
+                                                                              8805.86,
+                                                                              199.108946,
+                                                                              3913.95
+                                                                          ]
+                                                   },
+                         "everon_outpost_pinewood_lake":  {
+                                                              "Before":  [
+                                                                             4871.93,
+                                                                             52.6011,
+                                                                             5687.69
+                                                                         ],
+                                                              "Ground":  52.501,
+                                                              "Clear":  true,
+                                                              "BoundsMin":  [
+                                                                                -0.066763,
+                                                                                -0.805946,
+                                                                                -0.213512
+                                                                            ],
+                                                              "BoundsMax":  [
+                                                                                0.065198999999999993,
+                                                                                6.00618,
+                                                                                0.066927
+                                                                            ],
+                                                              "CorrectedWorld":  [
+                                                                                     4871.93,
+                                                                                     53.406946,
+                                                                                     5687.69
+                                                                                 ]
+                                                          },
+                         "everon_outpost_regina_south":  {
+                                                             "Before":  [
+                                                                            7089.41,
+                                                                            156.673,
+                                                                            2085.23
+                                                                        ],
+                                                             "Ground":  156.573,
+                                                             "Clear":  true,
+                                                             "BoundsMin":  [
+                                                                               -0.066763,
+                                                                               -0.805946,
+                                                                               -0.213512
+                                                                           ],
+                                                             "BoundsMax":  [
+                                                                               0.065198999999999993,
+                                                                               6.00618,
+                                                                               0.066927
+                                                                           ],
+                                                             "CorrectedWorld":  [
+                                                                                    7089.41,
+                                                                                    157.478946,
+                                                                                    2085.23
+                                                                                ]
+                                                         },
+                         "everon_resources_north_ridge_west":  {
+                                                                   "Before":  [
+                                                                                  5537.57,
+                                                                                  201.868,
+                                                                                  7125.94
+                                                                              ],
+                                                                   "Ground":  201.768,
+                                                                   "Clear":  true,
+                                                                   "BoundsMin":  [
+                                                                                     -0.066763,
+                                                                                     -0.805946,
+                                                                                     -0.213512
+                                                                                 ],
+                                                                   "BoundsMax":  [
+                                                                                     0.065198999999999993,
+                                                                                     6.00618,
+                                                                                     0.066927
+                                                                                 ],
+                                                                   "CorrectedWorld":  [
+                                                                                          5537.57,
+                                                                                          202.673946,
+                                                                                          7125.94
+                                                                                      ]
+                                                               },
+                         "everon_military_outpost_lamentin":  {
+                                                                  "Before":  [
+                                                                                 1073.5,
+                                                                                 2.89539,
+                                                                                 6058.45
+                                                                             ],
+                                                                  "Ground":  2.79517,
+                                                                  "Clear":  true,
+                                                                  "BoundsMin":  [
+                                                                                    -0.066763,
+                                                                                    -0.805946,
+                                                                                    -0.213512
+                                                                                ],
+                                                                  "BoundsMax":  [
+                                                                                    0.065198999999999993,
+                                                                                    6.00618,
+                                                                                    0.066927
+                                                                                ],
+                                                                  "CorrectedWorld":  [
+                                                                                         1073.5,
+                                                                                         3.701116,
+                                                                                         6058.45
+                                                                                     ]
+                                                              },
+                         "everon_villeneuve":  {
+                                                   "Before":  [
+                                                                  2862.01,
+                                                                  86.9441,
+                                                                  6339.85
+                                                              ],
+                                                   "Ground":  86.8441,
+                                                   "Clear":  true,
+                                                   "BoundsMin":  [
+                                                                     -0.066763,
+                                                                     -0.805946,
+                                                                     -0.213512
+                                                                 ],
+                                                   "BoundsMax":  [
+                                                                     0.065198999999999993,
+                                                                     6.00618,
+                                                                     0.066927
+                                                                 ],
+                                                   "CorrectedWorld":  [
+                                                                          2862.01,
+                                                                          87.750046,
+                                                                          6339.85
+                                                                      ]
+                                               },
+                         "everon_chotain":  {
+                                                "Before":  [
+                                                               7098.35,
+                                                               118.967,
+                                                               6022.51
+                                                           ],
+                                                "Ground":  118.866,
+                                                "Clear":  true,
+                                                "BoundsMin":  [
+                                                                  -0.066763,
+                                                                  -0.805946,
+                                                                  -0.213512
+                                                              ],
+                                                "BoundsMax":  [
+                                                                  0.065198999999999993,
+                                                                  6.00618,
+                                                                  0.066927
+                                                              ],
+                                                "CorrectedWorld":  [
+                                                                       7098.35,
+                                                                       119.771946,
+                                                                       6022.51
+                                                                   ]
+                                            },
+                         "everon_outpost_durras_hill":  {
+                                                            "Before":  [
+                                                                           9057.28,
+                                                                           125.363,
+                                                                           2741.72
+                                                                       ],
+                                                            "Ground":  125.263,
+                                                            "Clear":  true,
+                                                            "BoundsMin":  [
+                                                                              -0.066763,
+                                                                              -0.805946,
+                                                                              -0.213512
+                                                                          ],
+                                                            "BoundsMax":  [
+                                                                              0.065198999999999993,
+                                                                              6.00618,
+                                                                              0.066927
+                                                                          ],
+                                                            "CorrectedWorld":  [
+                                                                                   9057.28,
+                                                                                   126.168946,
+                                                                                   2741.72
+                                                                               ]
+                                                        },
+                         "everon_airport":  {
+                                                "Before":  [
+                                                               4913.48,
+                                                               28.6938,
+                                                               11802.4
+                                                           ],
+                                                "Ground":  28.5938,
+                                                "Clear":  true,
+                                                "BoundsMin":  [
+                                                                  -0.066763,
+                                                                  -0.805946,
+                                                                  -0.213512
+                                                              ],
+                                                "BoundsMax":  [
+                                                                  0.065198999999999993,
+                                                                  6.00618,
+                                                                  0.066927
+                                                              ],
+                                                "CorrectedWorld":  [
+                                                                       4913.48,
+                                                                       29.499746,
+                                                                       11802.4
+                                                                   ]
+                                            },
+                         "everon_figari":  {
+                                               "Before":  [
+                                                              5266.97,
+                                                              62.7466,
+                                                              5351.87
+                                                          ],
+                                               "Ground":  62.6464,
+                                               "Clear":  true,
+                                               "BoundsMin":  [
+                                                                 -0.066763,
+                                                                 -0.805946,
+                                                                 -0.213512
+                                                             ],
+                                               "BoundsMax":  [
+                                                                 0.065198999999999993,
+                                                                 6.00618,
+                                                                 0.066927
+                                                             ],
+                                               "CorrectedWorld":  [
+                                                                      5266.97,
+                                                                      63.552346,
+                                                                      5351.87
+                                                                  ]
+                                           },
+                         "everon_saint_pierre":  {
+                                                     "Before":  [
+                                                                    9700.04,
+                                                                    12.6688,
+                                                                    1547.56
+                                                                ],
+                                                     "Ground":  12.5686,
+                                                     "Clear":  true,
+                                                     "BoundsMin":  [
+                                                                       -0.066763,
+                                                                       -0.805946,
+                                                                       -0.213512
+                                                                   ],
+                                                     "BoundsMax":  [
+                                                                       0.065198999999999993,
+                                                                       6.00618,
+                                                                       0.066927
+                                                                   ],
+                                                     "CorrectedWorld":  [
+                                                                            9700.04,
+                                                                            13.474546,
+                                                                            1547.56
+                                                                        ]
+                                                 },
+                         "everon_morton_town":  {
+                                                    "Before":  [
+                                                                   5132.02,
+                                                                   14.5234,
+                                                                   4023.56
+                                                               ],
+                                                    "Ground":  14.4233,
+                                                    "Clear":  true,
+                                                    "BoundsMin":  [
+                                                                      -0.066763,
+                                                                      -0.805946,
+                                                                      -0.213512
+                                                                  ],
+                                                    "BoundsMax":  [
+                                                                      0.065198999999999993,
+                                                                      6.00618,
+                                                                      0.066927
+                                                                  ],
+                                                    "CorrectedWorld":  [
+                                                                           5132.02,
+                                                                           15.329246,
+                                                                           4023.56
+                                                                       ]
+                                                },
+                         "everon_entre_deux":  {
+                                                   "Before":  [
+                                                                  5775.57,
+                                                                  217.382,
+                                                                  7061.82
+                                                              ],
+                                                   "Ground":  217.282,
+                                                   "Clear":  true,
+                                                   "BoundsMin":  [
+                                                                     -0.066763,
+                                                                     -0.805946,
+                                                                     -0.213512
+                                                                 ],
+                                                   "BoundsMax":  [
+                                                                     0.065198999999999993,
+                                                                     6.00618,
+                                                                     0.066927
+                                                                 ],
+                                                   "CorrectedWorld":  [
+                                                                          5775.57,
+                                                                          218.187946,
+                                                                          7061.82
+                                                                      ]
+                                               },
+                         "everon_montignac":  {
+                                                  "Before":  [
+                                                                 4775.64,
+                                                                 164.154,
+                                                                 7101.94
+                                                             ],
+                                                  "Ground":  164.054,
+                                                  "Clear":  true,
+                                                  "BoundsMin":  [
+                                                                    -0.066763,
+                                                                    -0.805946,
+                                                                    -0.213512
+                                                                ],
+                                                  "BoundsMax":  [
+                                                                    0.065198999999999993,
+                                                                    6.00618,
+                                                                    0.066927
+                                                                ],
+                                                  "CorrectedWorld":  [
+                                                                         4775.64,
+                                                                         164.959946,
+                                                                         7101.94
+                                                                     ]
+                                              },
+                         "everon_outpost_andres_beacon":  {
+                                                              "Before":  [
+                                                                             6843.83,
+                                                                             82.6811,
+                                                                             8203.72
+                                                                         ],
+                                                              "Ground":  82.5808,
+                                                              "Clear":  true,
+                                                              "BoundsMin":  [
+                                                                                -0.066763,
+                                                                                -0.805946,
+                                                                                -0.213512
+                                                                            ],
+                                                              "BoundsMax":  [
+                                                                                0.065198999999999993,
+                                                                                6.00618,
+                                                                                0.066927
+                                                                            ],
+                                                              "CorrectedWorld":  [
+                                                                                     6843.83,
+                                                                                     83.486746,
+                                                                                     8203.72
+                                                                                 ]
+                                                          },
+                         "everon_meaux":  {
+                                              "Before":  [
+                                                             4528.13,
+                                                             14.5622,
+                                                             9478.27
+                                                         ],
+                                              "Ground":  14.4622,
+                                              "Clear":  true,
+                                              "BoundsMin":  [
+                                                                -0.066763,
+                                                                -0.805946,
+                                                                -0.213512
+                                                            ],
+                                              "BoundsMax":  [
+                                                                0.065198999999999993,
+                                                                6.00618,
+                                                                0.066927
+                                                            ],
+                                              "CorrectedWorld":  [
+                                                                     4528.13,
+                                                                     15.368146,
+                                                                     9478.27
+                                                                 ]
+                                          },
+                         "everon_camurac":  {
+                                                "Before":  [
+                                                               6604.77,
+                                                               6.21406,
+                                                               3106.08
+                                                           ],
+                                                "Ground":  6.11346,
+                                                "Clear":  true,
+                                                "BoundsMin":  [
+                                                                  -0.066763,
+                                                                  -0.805946,
+                                                                  -0.213512
+                                                              ],
+                                                "BoundsMax":  [
+                                                                  0.065198999999999993,
+                                                                  6.00618,
+                                                                  0.066927
+                                                              ],
+                                                "CorrectedWorld":  [
+                                                                       6604.77,
+                                                                       7.019406,
+                                                                       3106.08
+                                                                   ]
+                                            },
+                         "everon_military_outpost_levie":  {
+                                                               "Before":  [
+                                                                              7476.74,
+                                                                              164.663,
+                                                                              4316.88
+                                                                          ],
+                                                               "Ground":  164.562,
+                                                               "Clear":  true,
+                                                               "BoundsMin":  [
+                                                                                 -0.066763,
+                                                                                 -0.805946,
+                                                                                 -0.213512
+                                                                             ],
+                                                               "BoundsMax":  [
+                                                                                 0.065198999999999993,
+                                                                                 6.00618,
+                                                                                 0.066927
+                                                                             ],
+                                                               "CorrectedWorld":  [
+                                                                                      7476.74,
+                                                                                      165.467946,
+                                                                                      4316.88
+                                                                                  ]
+                                                           },
+                         "everon_factory_north_ridge":  {
+                                                            "Before":  [
+                                                                           5606.08,
+                                                                           208.699,
+                                                                           7235.61
+                                                                       ],
+                                                            "Ground":  208.599,
+                                                            "Clear":  true,
+                                                            "BoundsMin":  [
+                                                                              -0.066763,
+                                                                              -0.805946,
+                                                                              -0.213512
+                                                                          ],
+                                                            "BoundsMax":  [
+                                                                              0.065198999999999993,
+                                                                              6.00618,
+                                                                              0.066927
+                                                                          ],
+                                                            "CorrectedWorld":  [
+                                                                                   5606.08,
+                                                                                   209.504946,
+                                                                                   7235.61
+                                                                               ]
+                                                        },
+                         "everon_outpost_farm":  {
+                                                     "Before":  [
+                                                                    5009.54,
+                                                                    25.8643,
+                                                                    9976.92
+                                                                ],
+                                                     "Ground":  25.7643,
+                                                     "Clear":  true,
+                                                     "BoundsMin":  [
+                                                                       -0.066763,
+                                                                       -0.805946,
+                                                                       -0.213512
+                                                                   ],
+                                                     "BoundsMax":  [
+                                                                       0.065198999999999993,
+                                                                       6.00618,
+                                                                       0.066927
+                                                                   ],
+                                                     "CorrectedWorld":  [
+                                                                            5009.54,
+                                                                            26.670246,
+                                                                            9976.92
+                                                                        ]
+                                                 },
+                         "everon_outpost_old_wood":  {
+                                                         "Before":  [
+                                                                        3302.07,
+                                                                        120.662,
+                                                                        4497.58
+                                                                    ],
+                                                         "Ground":  120.561,
+                                                         "Clear":  true,
+                                                         "BoundsMin":  [
+                                                                           -0.066763,
+                                                                           -0.805946,
+                                                                           -0.213512
+                                                                       ],
+                                                         "BoundsMax":  [
+                                                                           0.065198999999999993,
+                                                                           6.00618,
+                                                                           0.066927
+                                                                       ],
+                                                         "CorrectedWorld":  [
+                                                                                3302.07,
+                                                                                121.466946,
+                                                                                4497.58
+                                                                            ]
+                                                     }
+                     }
+}

@@ -33,6 +33,28 @@ class AROR_ForceProfile
 	int m_iPersonnelBudget;
 	[Attribute("150", desc: "Ground dismount distance from objective centre, metres")]
 	float m_fDismountDistance;
+	[Attribute("25", desc: "Replacement value per confirmed lost soldier/crew member", params: "0 100000 1")]
+	int m_iPersonnelLossValue = 25;
+	[Attribute("-1", desc: "Replacement value of the main vehicle; -1 uses the shared type price", params: "-1 100000 1")]
+	int m_iVehicleLossValue = -1;
+	[Attribute("2000", desc: "Replacement value of each airborne gunship", params: "0 100000 1")]
+	int m_iEscortLossValue = 2000;
+
+	int VehicleLossValue()
+	{
+		if (m_eType == AROR_EForceType.INFANTRY)
+			return 0;
+		if (m_iVehicleLossValue >= 0)
+			return m_iVehicleLossValue;
+		return AROR_QRFStrategicPolicy.VehicleValue(m_eType);
+	}
+	int ReplacementQuote()
+	{
+		int value = m_iPersonnelBudget * m_iPersonnelLossValue + VehicleLossValue();
+		if (m_eType == AROR_EForceType.AIRBORNE)
+			value += m_iEscortCount * m_iEscortLossValue;
+		return value;
+	}
 
 	int GetWeight(AROR_EOperationType type)
 	{
@@ -56,6 +78,10 @@ class AROR_ForceProfile
 
 	bool IsValid()
 	{
+		if (m_iPersonnelLossValue < 0 || m_iPersonnelLossValue > 100000)
+			return false;
+		if (m_iVehicleLossValue < -1 || m_iVehicleLossValue > 100000 || m_iEscortLossValue < 0 || m_iEscortLossValue > 100000)
+			return false;
 		if (m_sId.IsEmpty() || m_sFactionKey.IsEmpty() || m_iPersonnelBudget < 1 || m_iPersonnelBudget > 128 || m_iAttackWeight < 0 || m_iAttackWeight > 1000 || m_iQRFWeight < 0 || m_iQRFWeight > 1000)
 			return false;
 		if (m_eRole != AROR_EFactionRole.OCCUPIERS && m_eRole != AROR_EFactionRole.INVADERS)

@@ -1,0 +1,9 @@
+GameProject {
+ ID "OpenResistanceREAPER"
+ GUID "2DE8626701CA4426"
+ TITLE "Open Resistance - REAPER Flight Prototype"
+ Dependencies {
+  "6AA282336705EED2"
+  "69A4D664A6284E06"
+ }
+}

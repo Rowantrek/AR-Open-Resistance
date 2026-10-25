@@ -1,4 +1,4 @@
-//! Server-owned, bounded mounted search. Uses town bounds and reachable roads, never player positions.
+//! Server-owned, bounded mounted search of reported contact and shared town sectors.
 class AROR_VehicleTownSearch
 {
 	protected SCR_AIGroup m_Group;
@@ -16,11 +16,27 @@ class AROR_VehicleTownSearch
 	protected int m_iMaxStops;
 	protected int m_iIssuedStops;
 	protected int m_iPointOrdinal;
-	protected float m_fAngle;
+	protected ref AROR_QRFSearchPlan m_Plan;
+	protected int m_iPackageIndex;
+	protected int m_iPackages;
+	protected float m_fVicinityMargin;
+	protected float m_fStopSpacing;
+	protected bool m_bContactPhaseFinished;
+
+	void Configure_S(AROR_QRFSearchPlan plan, int packageIndex, int packages, float vicinityMargin, float stopSpacing)
+	{
+		if (!Replication.IsServer() || m_bActive)
+			return;
+		m_Plan = plan;
+		m_iPackageIndex = packageIndex;
+		m_iPackages = packages;
+		m_fVicinityMargin = vicinityMargin;
+		m_fStopSpacing = stopSpacing;
+	}
 
 	bool Start_S(SCR_AIGroup group, IEntity vehicle, AROR_LocationComponent location, AIWaypoint previousWaypoint, ResourceName waypointPrefab, string operationId, int now, int duration, int maxStops, int dwellSeconds, int legSeconds)
 	{
-		if (!Replication.IsServer() || !group || !vehicle || !location || duration < 1 || maxStops < 1 || dwellSeconds < 0 || legSeconds < 1)
+		if (!Replication.IsServer() || !group || !vehicle || !location || !m_Plan || duration < 1 || maxStops < 1 || dwellSeconds < 0 || legSeconds < 1 || m_iPackages < 1 || m_iPackageIndex < 0 || m_iPackageIndex >= m_iPackages || m_fVicinityMargin < 0 || m_fStopSpacing < 1)
 			return false;
 		m_Group = group;
 		m_Vehicle = vehicle;
@@ -31,7 +47,6 @@ class AROR_VehicleTownSearch
 		m_iDwellSeconds = dwellSeconds;
 		m_iLegSeconds = legSeconds;
 		m_iMaxStops = maxStops;
-		m_fAngle = Math.RandomFloat(0, 6.2831853);
 		// Find a usable stop before disturbing the original deployment order.
 		if (!CreateNextStop_S(now))
 			return false;
@@ -39,7 +54,7 @@ class AROR_VehicleTownSearch
 			m_Group.RemoveWaypoint(previousWaypoint);
 		m_Group.AddWaypoint(m_Waypoint);
 		m_bActive = true;
-		Print(string.Format("[AROR] Mounted town search started: %1 location=%2 duration=%3s", m_sOperationId, location.GetId(), duration), LogLevel.NORMAL);
+		Print(string.Format("[AROR] Mounted town search started: %1 location=%2 package=%3/%4 duration=%5s", m_sOperationId, location.GetId(), m_iPackageIndex + 1, m_iPackages, duration), LogLevel.NORMAL);
 		return true;
 	}
 
@@ -90,19 +105,33 @@ class AROR_VehicleTownSearch
 		if (!roads)
 			return false;
 		vector center = m_Location.GetCenter();
-		// Visit different sectors, with varied radii. Bounded retries reject roads outside town.
-		for (int attempt = 0; attempt < 8; attempt++)
+		vector contactCenter;
+		bool hasContact = m_Plan.GetContactCenter(center, m_Location.GetRadius(), m_fVicinityMargin, contactCenter);
+		if (!hasContact || m_iIssuedStops >= 2)
+			m_bContactPhaseFinished = true;
+		// First two issued stops investigate the report. Failed contact queries fall back
+		// to town patrol, with at most sixteen total road queries per stop.
+		for (int attempt = 0; attempt < 16; attempt++)
 		{
-			float angle = m_fAngle + m_iPointOrdinal * 2.3999632;
-			m_iPointOrdinal++;
+			if (attempt == 8)
+				m_bContactPhaseFinished = true;
+			bool investigate = !m_bContactPhaseFinished;
+			vector searchCenter = center;
 			float radius = m_Location.GetRadius() * Math.RandomFloat(0.35, 0.8);
-			vector desired = center;
-			desired[0] = desired[0] + Math.Cos(angle) * radius;
-			desired[2] = desired[2] + Math.Sin(angle) * radius;
+			if (investigate)
+			{
+				searchCenter = contactCenter;
+				radius = Math.RandomFloat(35, 80);
+			}
+			vector desired = m_Plan.GetSectorPoint(searchCenter, radius, m_iPackageIndex, m_iPackages, m_iPointOrdinal);
+			m_iPointOrdinal++;
 			vector reachable;
 			if (!roads.GetReachableWaypointInRoad(m_Vehicle.GetOrigin(), desired, 75, reachable))
 				continue;
-			if (!m_Location.IsPositionInside(reachable) || vector.DistanceXZ(m_Vehicle.GetOrigin(), reachable) < 40)
+			float allowedRadius = m_Location.GetRadius();
+			if (investigate)
+				allowedRadius += m_fVicinityMargin;
+			if (vector.DistanceXZ(center, reachable) > allowedRadius || vector.DistanceXZ(reachable, desired) > 75 || vector.DistanceXZ(m_Vehicle.GetOrigin(), reachable) < 40 || !m_Plan.CanClaimStop(reachable, m_fStopSpacing))
 				continue;
 			Resource resource = Resource.Load(m_sWaypointPrefab);
 			if (!resource || !resource.IsValid())
@@ -120,9 +149,17 @@ class AROR_VehicleTownSearch
 				return false;
 			}
 			m_Waypoint.SetCompletionRadius(20);
+			if (!m_Plan.ClaimStop_S(reachable, m_fStopSpacing))
+			{
+				ClearWaypoint_S();
+				return false;
+			}
 			m_iLegEndTime = now + m_iLegSeconds;
 			m_iIssuedStops++;
-			Print(string.Format("[AROR] Mounted search %1 stop=%2 road point=%3", m_sOperationId, m_iIssuedStops, reachable), LogLevel.NORMAL);
+			string phase = "town patrol";
+			if (investigate)
+				phase = "reported contact";
+			Print(string.Format("[AROR] Mounted search %1 package=%2 stop=%3 phase=%4 road point=%5", m_sOperationId, m_iPackageIndex + 1, m_iIssuedStops, phase, reachable), LogLevel.NORMAL);
 			return true;
 		}
 		return false;
@@ -151,5 +188,6 @@ class AROR_VehicleTownSearch
 			return;
 		ClearWaypoint_S();
 		m_bActive = false;
+		m_Plan = null;
 	}
 }

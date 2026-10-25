@@ -25,7 +25,7 @@ class AROR_RecaptureComponent : SCR_BaseGameModeComponent
 
 		foreach (AROR_LocationComponent location : locations)
 		{
-			if (location && !location.IsControlFixed() && AROR_CaptureLocationAction.IsCapturableType(location.GetLocationType()))
+			if (location && !location.IsControlFixed() && AROR_CaptureLocationAction.IsCapturableLocation(location))
 				CheckLocation(location);
 		}
 	}
@@ -58,7 +58,7 @@ class AROR_RecaptureComponent : SCR_BaseGameModeComponent
 		if (attackerWeight <= defenderWeight || !location.CanBeTakenBy(attacker))
 			return;
 
-		if (location.SetControllingRole_S(attacker))
+		if (AROR_CaptureLocationAction.CaptureLocation_S(location, attacker))
 		{
 			Print(string.Format("[AROR] '%1' recaptured by %2 (attackers %3 vs defenders %4)",
 				location.GetName(), typename.EnumToString(AROR_EFactionRole, attacker), attackerWeight, defenderWeight), LogLevel.NORMAL);

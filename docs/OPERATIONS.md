@@ -32,6 +32,8 @@ string attackId = operations.ScheduleAttack_S(AROR_EFactionRole.OCCUPIERS, "ever
 string qrfId = operations.ReportAttack_S(AROR_EFactionRole.INVADERS, "everon_provins");
 ```
 
+For a real validated hostile attack with an attributed position, `ReportAttackAt_S(role, locationId, reportedPosition)` adds a fixed contact snapshot to the same request. This is a trusted server API, not a client RPC. The defense component calls it only after its existing damage/faction/location checks. Repeated reports reuse the QRF and may update pre-search intel without resetting preparation/cooldown or rerolling force selection. Once search begins the shared plan freezes; missing/stale intel falls back to patrol around the marker. See [coordinated QRF search](QRF_TOWN_SEARCH.md).
+
 These calls accept faction roles, never US/USSR/FIA keys. Empty return values mean rejection: invalid role/target/delay, unavailable campaign, cooldown, capacity or a conflicting operation. Matching outstanding requests return their existing ID. IDs are unique only within this world session; do not store them in campaign saves yet.
 
 The registry confirms only that a location ID exists. It cannot yet verify ownership, hostility, access routes or a launch base. Ownership-changing callers must cancel stale requests through `ResolveOperation_S(id, AROR_EOperationState.CANCELLED, reason)`. Success does not automatically capture the location or silence later combat reports.

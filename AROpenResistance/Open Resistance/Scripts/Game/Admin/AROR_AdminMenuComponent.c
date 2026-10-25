@@ -14,7 +14,18 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 	[Attribute("{5BB4D0ED53225DDC}Configs/UI/AROR_SetupDialogs.conf", UIWidgets.ResourceNamePicker, desc: "Dialog presets (uses the 'aror_admin' preset)", params: "conf")]
 	protected ResourceName m_sDialogPresets;
 
+	// Dialog presets: a dialog fits about four buttons in a row, so tools are split into sub-menus
 	protected static const string PRESET_ADMIN = "aror_admin";
+	protected static const string PRESET_MORE = "aror_admin_more";
+	protected static const string PRESET_SUPPORT = "aror_admin_support";
+	protected static const string PRESET_ECONOMY = "aror_admin_economy";
+	protected static const string PRESET_FUNDS = "aror_admin_funds";
+
+	//! Money added per admin button press
+	protected static const int MONEY_STEP = 1000;
+
+	//! Reopen a dialog after the server has applied a change, so it shows the new values
+	protected static const int REFRESH_DELAY_MS = 300;
 
 	//! Support change per admin button press (percentage points)
 	protected static const float SUPPORT_STEP = 10;
@@ -42,15 +53,109 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 		if (m_bPickingTeleport || SCR_ConfigurableDialogUi.GetCurrentDialog())
 			return;
 
-		OpenDialog();
+		OpenMainDialog();
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void OpenDialog()
+	//! Opens a preset; an empty message keeps the preset's own
+	protected void OpenDialog(string preset, string message = string.Empty)
 	{
 		AROR_AdminDialog dialog = new AROR_AdminDialog(this);
-		SCR_ConfigurableDialogUi.CreateFromPreset(m_sDialogPresets, PRESET_ADMIN, dialog);
-		dialog.SetMessage(GetNearestSupportText());
+		SCR_ConfigurableDialogUi.CreateFromPreset(m_sDialogPresets, preset, dialog);
+		if (!message.IsEmpty())
+			dialog.SetMessage(message);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void OpenMainDialog()
+	{
+		OpenDialog(PRESET_ADMIN);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void OpenMoreDialog()
+	{
+		OpenDialog(PRESET_MORE);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void OpenSupportDialog()
+	{
+		OpenDialog(PRESET_SUPPORT, GetNearestSupportText());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void OpenEconomyDialog()
+	{
+		OpenDialog(PRESET_ECONOMY, GetEconomyText());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void OpenFundsDialog()
+	{
+		OpenDialog(PRESET_FUNDS, GetEconomyText());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Client: faction funds and the local player's money (shown in the economy dialog)
+	protected string GetEconomyText()
+	{
+		AROR_EconomyComponent economy = AROR_EconomyComponent.GetInstance();
+		if (!economy)
+			return "No AROR_EconomyComponent on the game mode.";
+
+		return string.Format("Funds: Resistance %1 | Occupiers %2 | Invaders %3\nResistance manpower: %4\nYour money: %5",
+			economy.GetFactionFunds(AROR_EFactionRole.RESISTANCE),
+			economy.GetFactionFunds(AROR_EFactionRole.OCCUPIERS),
+			economy.GetFactionFunds(AROR_EFactionRole.INVADERS),
+			economy.GetManpower(),
+			economy.GetLocalPlayerMoney());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server: add money to a faction's funds, or (selfMoney) to the requesting player's own money
+	void GiveMoney_S(int playerId, AROR_EFactionRole role, bool selfMoney, int amount)
+	{
+		if (!Replication.IsServer() || !m_bEnabled)
+			return;
+
+		AROR_EconomyComponent economy = AROR_EconomyComponent.GetInstance();
+		if (!economy)
+			return;
+
+		if (selfMoney)
+			economy.AddPlayerMoney_S(playerId, amount);
+		else
+			economy.AddFactionFunds_S(role, amount);
+
+		Print(string.Format("[AROR] Admin: player %1 gave %2 to %3", playerId, amount, GetMoneyTargetName(role, selfMoney)), LogLevel.NORMAL);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server: run an income payment now instead of waiting for the timer
+	void PayIncomeNow_S(int playerId)
+	{
+		if (!Replication.IsServer() || !m_bEnabled)
+			return;
+
+		AROR_IncomeComponent income = AROR_IncomeComponent.GetInstance();
+		if (!income)
+		{
+			Print("[AROR] Admin: no AROR_IncomeComponent on the game mode", LogLevel.WARNING);
+			return;
+		}
+
+		Print(string.Format("[AROR] Admin: player %1 triggered an income payment", playerId), LogLevel.NORMAL);
+		income.PayIncome_S();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static string GetMoneyTargetName(AROR_EFactionRole role, bool selfMoney)
+	{
+		if (selfMoney)
+			return "themselves";
+
+		return typename.EnumToString(AROR_EFactionRole, role);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -208,6 +313,53 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
+		// Navigation between the sub-menus
+		if (tag == "open_main")
+		{
+			OpenMainDialog();
+			return;
+		}
+
+		if (tag == "open_more")
+		{
+			OpenMoreDialog();
+			return;
+		}
+
+		if (tag == "open_support")
+		{
+			OpenSupportDialog();
+			return;
+		}
+
+		if (tag == "open_economy")
+		{
+			OpenEconomyDialog();
+			return;
+		}
+
+		if (tag == "open_funds")
+		{
+			OpenFundsDialog();
+			return;
+		}
+
+		if (tag.IndexOf("money_") == 0)
+		{
+			HandleMoneyAction(tag);
+			return;
+		}
+
+		if (tag == "income_now")
+		{
+			SCR_PlayerController incomeController = SCR_PlayerController.Cast(GetGame().GetPlayerController());
+			if (incomeController)
+				incomeController.AROR_RequestAdminPayIncome();
+
+			GetGame().GetCallqueue().CallLater(OpenEconomyDialog, REFRESH_DELAY_MS);
+			return;
+		}
+
 		AROR_EFactionRole role;
 		if (tag == "support_resistance")
 			role = AROR_EFactionRole.RESISTANCE;
@@ -221,6 +373,35 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 		SCR_PlayerController playerController = SCR_PlayerController.Cast(GetGame().GetPlayerController());
 		if (playerController)
 			playerController.AROR_RequestAdminSupport(role, SUPPORT_STEP);
+
+		GetGame().GetCallqueue().CallLater(OpenSupportDialog, REFRESH_DELAY_MS);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Economy and faction funds buttons; the dialog they came from reopens with the updated balances
+	protected void HandleMoneyAction(string tag)
+	{
+		AROR_EFactionRole role;
+		bool selfMoney;
+		if (tag == "money_resistance")
+			role = AROR_EFactionRole.RESISTANCE;
+		else if (tag == "money_occupiers")
+			role = AROR_EFactionRole.OCCUPIERS;
+		else if (tag == "money_invaders")
+			role = AROR_EFactionRole.INVADERS;
+		else if (tag == "money_self")
+			selfMoney = true;
+		else
+			return;
+
+		SCR_PlayerController playerController = SCR_PlayerController.Cast(GetGame().GetPlayerController());
+		if (playerController)
+			playerController.AROR_RequestAdminMoney(role, selfMoney, MONEY_STEP);
+
+		if (selfMoney)
+			GetGame().GetCallqueue().CallLater(OpenEconomyDialog, REFRESH_DELAY_MS);
+		else
+			GetGame().GetCallqueue().CallLater(OpenFundsDialog, REFRESH_DELAY_MS);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -318,6 +499,9 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 		GetGame().GetCallqueue().Remove(CheckHotkey);
 		GetGame().GetCallqueue().Remove(HandleAction);
 		GetGame().GetCallqueue().Remove(OpenGameMaster);
+		GetGame().GetCallqueue().Remove(OpenEconomyDialog);
+		GetGame().GetCallqueue().Remove(OpenFundsDialog);
+		GetGame().GetCallqueue().Remove(OpenSupportDialog);
 		StopTeleportPicking();
 
 		if (s_Instance == this)

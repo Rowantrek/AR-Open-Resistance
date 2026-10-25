@@ -28,6 +28,196 @@ PerceptionManager AROR_PerceptionManager : "{028DAEAD63E056BE}Prefabs/World/Game
 SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR_GameMode_Base.et" {
  components {
   AROR_OperationExecutorComponent {
+   m_bReaperQRFTest 0
+   m_bQRFTacticalCommander 1
+   m_bQRFTwoWaves 1
+   m_iQRFSplitTier 3
+   m_iQRFReinforcementDelay 60
+   m_iQRFReserveWait 300
+   m_iQRFMaxLiveGround 6
+   m_iQRFMaxLiveAircraft 6
+   m_iQRFTacticalDuration 600
+   m_iQRFTownHoldDuration 900
+   m_iQRFOrderInterval 15
+   m_iQRFApproachAttempts 12
+   m_fQRFVehicleArrivalTolerance 20
+   m_fQRFObjectiveDeliveryRadius 100
+   m_iQRFIngressTimeout 600
+   m_iQRFExitTimeout 30
+   m_iQRFInfantryLegTimeout 180
+   m_fQRFInfantryPlanningSpeed 1.5
+   m_fQRFRecoveryRadius 100
+   m_fQRFVehicleRecoveryRadius 125
+   m_fQRFThreatDismount 200
+   m_fQRFWithdrawFraction 0.4
+   m_fQRFLocalWithdrawFraction 0.5
+   m_iQRFGroundRetention 120
+   m_fQRFGroundCleanupDistance 1200
+   m_sGroundQRFRecipeId "combined_arms_l1"
+   m_sInvadersGroundQRFRecipeId "invader_ground_l1"
+   m_aGroundQRFRecipes {
+    AROR_GroundQRFRecipe {
+     m_sId "combined_arms_l1"
+     m_iLevel 1
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "combined_arms_l1"
+     m_iLevel 1
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_ground_l1"
+     m_iLevel 1
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_ground_l2"
+     m_iLevel 2
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_ground_l3"
+     m_iLevel 3
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_armour"
+     }
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_ground_l4"
+     m_iLevel 4
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_armour"
+      "ussr_armour"
+     }
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_ground_l5"
+     m_iLevel 5
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_armour"
+      "ussr_armour"
+     }
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_ground_l1"
+     m_iLevel 1
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_ground_l2"
+     m_iLevel 2
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_ground_l3"
+     m_iLevel 3
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_armour"
+     }
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_ground_l4"
+     m_iLevel 4
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_motorized"
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_armour"
+      "us_armour"
+     }
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_ground_l5"
+     m_iLevel 5
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_motorized"
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_armour"
+      "us_armour"
+     }
+    }
+   }
+   m_fReaperTransportSpeed 160
+   m_fReaperTransportHeight 60
+   m_fReaperHoldingDistance 700
+   m_iReaperTouchdownTicks 2
+   m_fReaperDepartureSpeed 180
+   m_vReaperLZOffset 0 0 0
+   m_fReaperLZSearchRadius 400
+   m_fReaperLandingSeparation 90
+   m_fReaperFormationSpacing 75
+   m_fReaperCleanupDistance 1500
+   m_iReaperRetainSeconds 600
    m_bEnabled 1
    m_sAttackWaypointPrefab "{1B0E3436C30FA211}Prefabs/AI/Waypoints/AIWaypoint_Attack.et"
    m_sQRFWaypointPrefab "{93291E72AC23930F}Prefabs/AI/Waypoints/AIWaypoint_Defend.et"
@@ -38,14 +228,17 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_iMaxGroups 20
    m_iMaxMembers 128
    m_iMaxVehicles 10
-   m_sWorkbenchForceProfileId "us_mechanized"
-   m_iWorkbenchResponseLevel 3
+   m_sWorkbenchForceProfileId ""
+   m_iWorkbenchResponseLevel 1
    m_fPackageSpacing 35
    m_bQRFVehicleSearch 1
    m_iQRFSearchDuration 180
    m_iQRFSearchStops 6
    m_iQRFSearchDwell 8
    m_iQRFSearchLegTimeout 60
+   m_iQRFContactMaxAge 120
+   m_fQRFSearchMargin 150
+   m_fQRFSearchStopSpacing 50
    m_bLogFriendlyDamage 1
    m_aResponseLevels {
     AROR_ResponseLevel {
@@ -77,6 +270,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_aForceProfiles {
     AROR_ForceProfile {
      m_sId "us_motorized"
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 200
+     m_iEscortLossValue 2000
      m_bEnabled 1
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
@@ -93,6 +289,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
     }
     AROR_ForceProfile {
      m_sId "us_mechanized"
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 800
+     m_iEscortLossValue 2000
      m_bEnabled 1
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
@@ -109,6 +308,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
     }
     AROR_ForceProfile {
      m_sId "us_armour"
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 800
+     m_iEscortLossValue 2000
      m_bEnabled 1
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
@@ -124,6 +326,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
     }
     AROR_ForceProfile {
      m_sId "us_airborne"
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 1600
+     m_iEscortLossValue 2000
      m_bEnabled 0
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
@@ -142,6 +347,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
     }
     AROR_ForceProfile {
      m_sId "ussr_motorized"
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 200
+     m_iEscortLossValue 2000
      m_bEnabled 1
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
@@ -158,6 +366,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
     }
     AROR_ForceProfile {
      m_sId "ussr_mechanized"
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 700
+     m_iEscortLossValue 2000
      m_bEnabled 1
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
@@ -174,6 +385,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
     }
     AROR_ForceProfile {
      m_sId "ussr_armour"
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 450
+     m_iEscortLossValue 2000
      m_bEnabled 1
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
@@ -189,6 +403,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
     }
     AROR_ForceProfile {
      m_sId "ussr_airborne"
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 1800
+     m_iEscortLossValue 2000
      m_bEnabled 0
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
@@ -220,6 +437,21 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_vWorkbenchHQPosition 6500 0 6075
   }
   AROR_OperationManagerComponent "{6AAE5D29CAEAABAA}" {
+   m_bQRFStrategicEconomy 1
+   m_iStartingWarLevel 2
+   m_iQRFBaseOverhead 50
+   m_iQRFTierOverhead 10
+   m_iQRFThreatLifetime 180
+   m_bQRFSpotting 1
+   m_bQRFDebugMarkers 1
+   m_fQRFSpotGroundRange 800
+   m_fQRFSpotAirRange 1500
+   m_fQRFSpotMinimumDot 0.9
+   m_iQRFSpotTraceLimit 8
+   m_iQRFSpotLifetime 90
+   m_bInvaderOperationsEnabled 0
+   m_bTownCaptureQRFs 1
+   m_bOutpostCaptureQRFs 1
    m_sOccupiersAttackTargetId ""
    m_sInvadersAttackTargetId ""
    m_iAttackPreparation 5

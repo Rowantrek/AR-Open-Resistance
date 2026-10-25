@@ -1,0 +1,19 @@
+GenericEntity : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et" {
+ ID "470B94A8326440D5"
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_eType CITY
+   m_fRadius 300
+   m_bSettlementFlagCapture 1
+  }
+  AROR_SettlementComponent "{6AAE72CBC3214551}" {
+   m_iPopulation 100
+  }
+ }
+ {
+  GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+   ID "615E4069714445D5"
+   coords 0 0 0
+  }
+ }
+}

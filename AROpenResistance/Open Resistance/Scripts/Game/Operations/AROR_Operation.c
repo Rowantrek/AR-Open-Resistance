@@ -11,6 +11,42 @@ class AROR_Operation
 	protected string m_sResult;
 	protected string m_sForceProfileId;
 	protected int m_iResponseLevel;
+	protected string m_sRecipeId;
+	protected int m_iRecipePackages;
+	ref AROR_QRFTacticalCommander m_TacticalCommander;
+	ref AROR_QRFFunding m_Funding;
+	int m_iRequestedTier;
+	int m_iThreatPriority;
+	int m_iRecoveredPackages;
+	bool m_bCaptureThreatRecorded;
+
+	string GetRecipeId() { return m_sRecipeId; }
+	int GetPackageCount()
+	{
+		if (!m_sRecipeId.IsEmpty())
+			return m_iRecipePackages;
+		return m_iResponseLevel;
+	}
+
+	bool BindGroundRecipe_S(string recipeId, int level, int packages)
+	{
+		if (!Replication.IsServer() || m_eState != AROR_EOperationState.SPAWNING)
+			return false;
+		if (recipeId.IsEmpty() || !m_sRecipeId.IsEmpty() || !m_sForceProfileId.IsEmpty())
+			return false;
+		if (level < 1 || level > 5 || packages < 1 || packages > 8)
+			return false;
+		m_sRecipeId = recipeId;
+		m_iResponseLevel = level;
+		m_iRecipePackages = packages;
+		return true;
+	}
+	protected ref AROR_QRFSearchPlan m_QRFSearchPlan;
+
+	AROR_QRFSearchPlan GetQRFSearchPlan()
+	{
+		return m_QRFSearchPlan;
+	}
 
 	int GetResponseLevel()
 	{
@@ -25,6 +61,8 @@ class AROR_Operation
 	//! A request selects once; retries must retain its original force profile.
 	bool BindForceProfile_S(string profileId, int responseLevel = 1)
 	{
+		if (!m_sRecipeId.IsEmpty())
+			return false;
 		if (!Replication.IsServer() || m_eState != AROR_EOperationState.SPAWNING || profileId.IsEmpty() || !m_sForceProfileId.IsEmpty() || responseLevel < 1 || responseLevel > 5)
 			return false;
 		m_sForceProfileId = profileId;
@@ -41,6 +79,8 @@ class AROR_Operation
 		m_eState = AROR_EOperationState.PLANNED;
 		m_iDueTime = now + delaySeconds;
 		m_iStateSince = now;
+		if (type == AROR_EOperationType.QRF)
+			m_QRFSearchPlan = new AROR_QRFSearchPlan();
 	}
 
 	string GetId()

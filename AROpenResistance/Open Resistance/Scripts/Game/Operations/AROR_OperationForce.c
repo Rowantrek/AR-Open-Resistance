@@ -2,6 +2,9 @@
 class AROR_OperationForce
 {
 	string m_sOperationId;
+	ref AROR_QRFFunding m_Funding;
+	int m_iPersonnelLossValue;
+	int m_iVehicleLossValue;
 	string m_sFactionKey;
 	SCR_AIGroup m_Group;
 	AIWaypoint m_Waypoint;
@@ -17,6 +20,18 @@ class AROR_OperationForce
 	string m_sLastProgress;
 	bool m_bLogFriendlyDamage;
 	string m_sAssetFactionKey;
+	bool m_bTacticalControlled;
+	bool m_bTacticalWithdrawing;
+	bool m_bTacticalRetained;
+	int m_iTacticalRetainedAt;
+	int m_iTacticalNextOrder;
+	int m_iTacticalLegDeadline;
+	int m_iTacticalInfantryDeadline;
+	int m_iTacticalNextInfantryLog;
+	int m_iTacticalNextSupport;
+	int m_iTacticalContactVersion = -1;
+	int m_iTacticalSearchStep;
+	int m_iTacticalInitialStrength;
 	protected ref array<ref AROR_OperationDamageObserver> m_aDamageObservers = {};
 	int m_iWakeRetryTicks;
 	protected ref array<IEntity> m_aMembers = {};
@@ -77,15 +92,23 @@ class AROR_OperationForce
 
 	void TrackDamage_S(IEntity entity)
 	{
-		if (!Replication.IsServer() || !m_bLogFriendlyDamage || !entity)
+		if (!Replication.IsServer() || !entity)
 			return;
+		if (m_Funding)
+		{
+			bool vehicle = ChimeraCharacter.Cast(entity) == null;
+			int value = m_iPersonnelLossValue;
+			if (vehicle)
+				value = m_iVehicleLossValue;
+			m_Funding.Register_S(entity, value, vehicle, m_sFactionKey, m_sAssetFactionKey);
+		}
 		foreach (AROR_OperationDamageObserver observer : m_aDamageObservers)
 		{
 			if (observer.GetEntity() == entity)
 				return;
 		}
 		AROR_OperationDamageObserver added = new AROR_OperationDamageObserver();
-		if (added.Attach_S(entity, m_sOperationId, m_iPackageIndex))
+		if (added.Attach_S(entity, m_sOperationId, m_iPackageIndex, m_bLogFriendlyDamage))
 			m_aDamageObservers.Insert(added);
 	}
 
@@ -124,11 +147,29 @@ class AROR_OperationForce
 		return true;
 	}
 
+	//! Snapshot for deferred operation cleanup; callers never take ownership of these references.
+	void GetOwnedMembers(array<IEntity> outMembers)
+	{
+		outMembers.Copy(m_aMembers);
+	}
+
 	void Cleanup_S()
 	{
 		if (!Replication.IsServer())
 			return;
 		CountLivingMembers();
+		// Observe before native deletion. Living actors retired by cleanup are not combat losses.
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		if (operations)
+			operations.GetQRFFinance().Observe_S(m_Funding);
+		if (m_Funding)
+		{
+			foreach (IEntity assetMember : m_aMembers)
+			{
+				if (assetMember && GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(assetMember) == 0)
+					m_Funding.Retire_S(assetMember);
+			}
+		}
 		foreach (AROR_OperationDamageObserver observer : m_aDamageObservers)
 			observer.Detach_S();
 		m_aDamageObservers.Clear();

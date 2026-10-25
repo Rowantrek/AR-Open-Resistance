@@ -1,0 +1,12 @@
+GenericEntity ORRA_FlightProbe {
+ components {
+  ORRA_ReaperFlightProbeComponent {
+   m_bEnabled 0
+   m_vDeparture 5100 0 6080
+   m_vApproach 5350 0 5800
+   m_vLanding 5500 0 5800
+   m_iStageTimeout 180
+  }
+ }
+ coords 5100 0 6080
+}

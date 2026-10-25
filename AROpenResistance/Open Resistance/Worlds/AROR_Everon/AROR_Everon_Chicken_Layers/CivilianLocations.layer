@@ -2,36 +2,681 @@ $grp SCR_ChimeraCharacter : "{26A9756790131354}Prefabs/Characters/Factions/BLUFO
  AROR_Provins_QRFDefender {
   components {
    AROR_QRFDefenseComponent "{6AAE74BEB126DDB6}" {
-    m_bInitializeFromDefendingRole 1
     m_bEnabled 1
     m_eDefendingRole OCCUPIERS
     m_sDefendedLocationId "everon_provins"
     m_iReportInterval 5
     m_bDebugReports 1
+    m_bInitializeFromDefendingRole 1
+   }
+   SCR_CharacterFactionAffiliationComponent "{520EC961FB0A2E90}" {
+    "faction affiliation" "AROR_OCCUPIERS"
    }
   }
   coords 5503.833 96.354 6081.837
  }
  AROR_Provins_ManualQRFDefender {
   components {
-   AROR_QRFDefenseComponent {
-    m_bInitializeFromDefendingRole 1
+   AROR_QRFDefenseComponent "{6AAE9C05758454C4}" {
     m_bEnabled 1
     m_eDefendingRole OCCUPIERS
     m_sDefendedLocationId "everon_provins"
     m_iReportInterval 5
     m_bDebugReports 1
+    m_bInitializeFromDefendingRole 1
+   }
+   SCR_CharacterFactionAffiliationComponent "{520EC961FB0A2E90}" {
+    "faction affiliation" "AROR_OCCUPIERS"
    }
   }
   coords 5489.166 95.901 6086.587
  }
 }
-GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
+GenericEntity AROR_Location_everon_saint_philippe : "{DA534E8B5C934410}Prefabs/Locations/AROR_Location_City_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_saint_philippe"
+   m_sName "Saint-Philippe"
+   m_eType CITY
+   m_fRadius 350
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBC3214551}" {
+   m_iPopulation 140
+  }
+ }
+ coords 4500.872 12.8353 10776.053
+ {
+  GenericEntity {
+   ID "615E4069714445D5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords -0.002 0.901846 15.047
+  }
+ }
+}
+GenericEntity AROR_Location_everon_montignac : "{DA534E8B5C934410}Prefabs/Locations/AROR_Location_City_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_montignac"
+   m_sName "Montignac"
+   m_eType CITY
+   m_fRadius 350
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBC3214551}" {
+   m_iPopulation 160
+  }
+ }
+ coords 4775.641 164.054 7086.945
+ {
+  GenericEntity {
+   ID "615E4069714445D5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords -0.001 0.905946 14.995
+  }
+ }
+}
+GenericEntity AROR_Location_everon_entre_deux : "{FE40DD5F63A34B1E}Prefabs/Locations/AROR_Location_Town_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_entre_deux"
+   m_sName "Entre-Deux"
+   m_eType TOWN
+   m_fRadius 200
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+   m_iPopulation 35
+  }
+ }
+ coords 5760.571 217.282 7061.821
+ {
+  GenericEntity {
+   ID "A17514DE7AEA4E5C"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 14.999 0.905946 -0.001
+  }
+ }
+}
+GenericEntity AROR_Location_everon_meaux : "{FE40DD5F63A34B1E}Prefabs/Locations/AROR_Location_Town_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_meaux"
+   m_sName "Meaux"
+   m_eType TOWN
+   m_fRadius 220
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+   m_iPopulation 50
+  }
+ }
+ coords 4517.52 14.4622 9467.668
+ {
+  GenericEntity {
+   ID "A17514DE7AEA4E5C"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.61 0.905946 10.602
+  }
+ }
+}
+GenericEntity AROR_Location_everon_saint_pierre : "{DA534E8B5C934410}Prefabs/Locations/AROR_Location_City_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_saint_pierre"
+   m_sName "Saint-Pierre"
+   m_eType CITY
+   m_fRadius 300
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBC3214551}" {
+   m_iPopulation 100
+  }
+ }
+ coords 9689.432 12.5688 1558.166
+ {
+  GenericEntity {
+   ID "615E4069714445D5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.608 0.905746 -10.606
+  }
+ }
+}
+GenericEntity AROR_Location_everon_morton_town : "{DA534E8B5C934410}Prefabs/Locations/AROR_Location_City_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_morton_town"
+   m_sName "Morton"
+   m_eType CITY
+   m_fRadius 300
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBC3214551}" {
+   m_iPopulation 100
+  }
+ }
+ coords 5132.015 16.575 4008.557
+ {
+  GenericEntity {
+   ID "615E4069714445D5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0.005 -1.245754 15.003
+  }
+ }
+}
+GenericEntity AROR_Location_everon_figari : "{FE40DD5F63A34B1E}Prefabs/Locations/AROR_Location_Town_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_figari"
+   m_sName "Figari"
+   m_eType TOWN
+   m_fRadius 200
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+   m_iPopulation 40
+  }
+ }
+ coords 5256.366 62.6466 5341.263
+ {
+  GenericEntity {
+   ID "A17514DE7AEA4E5C"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.604 0.905746 10.607
+  }
+ }
+}
+GenericEntity AROR_Location_everon_lamentin_town : "{DA534E8B5C934410}Prefabs/Locations/AROR_Location_City_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_lamentin_town"
+   m_sName "Lamentin"
+   m_eType CITY
+   m_fRadius 300
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBC3214551}" {
+   m_iPopulation 100
+  }
+ }
+ coords 1308.509 38.292 5985.583
+ {
+  GenericEntity {
+   ID "615E4069714445D5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.611 2.169746 10.607
+  }
+ }
+}
+GenericEntity AROR_Location_everon_chotain : "{DA534E8B5C934410}Prefabs/Locations/AROR_Location_City_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_chotain"
+   m_sName "Chotain"
+   m_eType CITY
+   m_fRadius 300
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBC3214551}" {
+   m_iPopulation 100
+  }
+ }
+ coords 7087.74 118.867 6011.904
+ {
+  GenericEntity {
+   ID "615E4069714445D5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.61 0.904946 10.606
+  }
+ }
+}
+GenericEntity AROR_Location_everon_levie : "{DA534E8B5C934410}Prefabs/Locations/AROR_Location_City_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_levie"
+   m_sName "Levie"
+   m_eType CITY
+   m_fRadius 300
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBC3214551}" {
+   m_iPopulation 120
+  }
+ }
+ coords 7456.592 137.273 4737.094
+ {
+  GenericEntity {
+   ID "615E4069714445D5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords -10.602 0.905946 -10.604
+  }
+ }
+}
+GenericEntity AROR_Location_everon_durras : "{FE40DD5F63A34B1E}Prefabs/Locations/AROR_Location_Town_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_durras"
+   m_sName "Durras"
+   m_eType TOWN
+   m_fRadius 200
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+   m_iPopulation 40
+  }
+ }
+ coords 8826.12 95.0682 2746.123
+ {
+  GenericEntity {
+   ID "A17514DE7AEA4E5C"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 15 0.905846 -0.003
+  }
+ }
+}
+GenericEntity AROR_Location_everon_camurac : "{FE40DD5F63A34B1E}Prefabs/Locations/AROR_Location_Town_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_camurac"
+   m_sName "Camurac"
+   m_eType TOWN
+   m_fRadius 180
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+   m_iPopulation 25
+  }
+ }
+ coords 6594.162 6.11406 3116.684
+ {
+  GenericEntity {
+   ID "A17514DE7AEA4E5C"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.608 0.905346 -10.604
+  }
+ }
+}
+GenericEntity AROR_Location_everon_provins : "{FE40DD5F63A34B1E}Prefabs/Locations/AROR_Location_Town_Flag.et" {
  components {
   AROR_LocationComponent "{6AA28237301A1CF9}" {
    m_sId "everon_provins"
    m_sName "Provins"
+   m_eType TOWN
+   m_fRadius 250
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+   m_iPopulation 45
   }
  }
  coords 5503.833 96.354 6081.837
+ {
+  GenericEntity {
+   ID "A17514DE7AEA4E5C"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.607 0.062446 10.603
+  }
+ }
+}
+GenericEntity AROR_Location_everon_kermovan : "{FE40DD5F63A34B1E}Prefabs/Locations/AROR_Location_Town_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_kermovan"
+   m_sName "Kermovan"
+   m_eType TOWN
+   m_fRadius 220
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+   m_iPopulation 35
+  }
+ }
+ coords 6359.376 6.74846 9668.684
+ {
+  GenericEntity {
+   ID "A17514DE7AEA4E5C"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.604 0.905476 -10.604
+  }
+ }
+}
+GenericEntity AROR_Location_everon_gravette : "{FE40DD5F63A34B1E}Prefabs/Locations/AROR_Location_Town_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_gravette"
+   m_sName "Gravette"
+   m_eType TOWN
+   m_fRadius 220
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+   m_iPopulation 40
+  }
+ }
+ coords 4128.282 36.5755 7792.364
+ {
+  GenericEntity {
+   ID "A17514DE7AEA4E5C"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 10.608 0.905746 10.606
+  }
+ }
+}
+GenericEntity AROR_Location_everon_regina : "{FE40DD5F63A34B1E}Prefabs/Locations/AROR_Location_Town_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_regina"
+   m_sName "Regina"
+   m_eType TOWN
+   m_fRadius 200
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+   m_iPopulation 40
+  }
+ }
+ coords 7188.38 137.478 2312.382
+ {
+  GenericEntity {
+   ID "A17514DE7AEA4E5C"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0 0.905946 14.998
+  }
+ }
+}
+GenericEntity AROR_Location_everon_villeneuve : "{FE40DD5F63A34B1E}Prefabs/Locations/AROR_Location_Town_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_villeneuve"
+   m_sName "Villeneuve"
+   m_eType TOWN
+   m_fRadius 200
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+   m_iPopulation 35
+  }
+ }
+ coords 2847.008 86.8441 6339.848
+ {
+  GenericEntity {
+   ID "A17514DE7AEA4E5C"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 15.002 0.905946 0.002
+  }
+ }
+}
+GenericEntity AROR_Location_everon_tyrone : "{FE40DD5F63A34B1E}Prefabs/Locations/AROR_Location_Town_Flag.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_tyrone"
+   m_sName "Tyrone"
+   m_eType TOWN
+   m_fRadius 180
+   m_eInitialControllingRole OCCUPIERS
+   m_bGroundOnInit 0
+  }
+  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+   m_iPopulation 25
+  }
+ }
+ coords 4948.837 38.1244 9075.68
+ {
+  GenericEntity {
+   ID "A17514DE7AEA4E5C"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bEnabled 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0.003 0.905846 -15
+  }
+ }
 }
