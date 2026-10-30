@@ -104,6 +104,7 @@ Purpose: how a location's controlling role changes. All changes are made by the 
 - **Settlements are support-only**: towns and cities reject flag capture and AI recapture; they change hands only through support (see Settlements).
 - **Flip cooldown**: after a Resistance capture, the location cannot flip back to the Occupiers or Invaders for **5 minutes**. Replicated, not saved.
 - **AI recapture** (`AROR_RecaptureComponent`, server): every few seconds the forces inside each capturable location are weighed; defenders count ×2 and attacking AI ×1. An attacking AI role that outweighs the defenders takes the location, subject to the cooldown.
+- **Aircraft occupants never count**: characters seated in a helicopter are ignored by both the flag's hostile check and AI recapture, so a passing or landing aircraft cannot block or flip a capture.
 - **Capture flag placement**: optionally, the server moves a capture flag to a clear, walkable spot near the location centre when play starts ("Auto Place"), and replicates the result.
 - Key classes: `AROR_CaptureLocationAction` (user action on `AROR_Prop_CaptureFlag.et`), `AROR_RecaptureComponent`, `AROR_CaptureFlagPlacementComponent`.
 - Server/client: clients check the rules only to show feedback; the server re-checks and decides.
