@@ -2,7 +2,7 @@
 
 Strength and force type are independent choices. Both enemy roles use the same configurable scale, with their own faction-matching force pools. Every level has an equal default weight of 20 for attacks and 20 for QRFs; all five levels are selectable when the complete package fits the available budgets.
 
-| Level | Description | Motorized | Mechanized | Armour | Airborne design, currently disabled |
+| Level | Description | Motorized | Mechanized | Armour | Airborne (REAPER adapter) |
 |---|---|---|---|---|---|
 | 1 | Limited | 1 truck + infantry/crew | 1 APC/IFV + infantry/crew | 1 crewed vehicle | 1 transport + infantry + configured gunship escort |
 | 2 | Reinforced | 2 packages | 2 packages | 2 crewed vehicles | 2 air packages |
@@ -10,9 +10,9 @@ Strength and force type are independent choices. Both enemy roles use the same c
 | 4 | Major | 4 packages | 4 packages | 4 crewed vehicles | 4 air packages |
 | 5 | Maximum | 5 packages | 5 packages | 5 crewed vehicles | 5 air packages |
 
-An air package is the design unit of one transport and its profile's required escort count. With the current one-escort profile, five air packages would mean five transports and five gunships. Aircraft budgets, LZ capacity and the flight adapter must be implemented before enabling this; the ground implementation does not spawn airborne packages. Armour in the current base-game configuration is wheeled armour, not tanks.
+An air package contains one transport, its infantry/pilot and the profile's required zero or one gunship escort. Five light packages mean five transports; five escorted packages mean five transports and five gunships. REAPER owns the airborne execution path and enforces actor, landing and safety limits. Native acceptance remains pending. Current ground armour is wheeled armour rather than a tank.
 
-The number of soldiers per package comes from the selected infantry group plus the configured separate crew. Levels multiply complete packages, not just crew counts or an AI skill value. Each operation uses one selected force profile consistently across its packages; mixed force types within one response are not implemented.
+Soldier counts come from the selected infantry group and separate crew. Homogeneous levels multiply complete packages. Authored ground and joint recipes deploy their element lists once; their tier does not multiply the list. Joint recipes combine one airborne package with ground elements under shared tactical and funding authority.
 
 ## Selection
 

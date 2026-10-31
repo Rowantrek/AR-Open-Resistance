@@ -11,16 +11,19 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	[Attribute("{6E2BA15FAEED49D7}UI/Layouts/Map/AROR_MapIcon.layout", UIWidgets.ResourceNamePicker, desc: "Layout for one icon; must contain an ImageWidget named 'Icon'", params: "layout")]
 	protected ResourceName m_sIconLayout;
 
-	[Attribute("32", UIWidgets.Slider, desc: "Icon size in reference pixels", params: "8 128 1")]
+	[Attribute("40", UIWidgets.Slider, desc: "Icon size in reference pixels", params: "8 128 1")]
 	protected float m_fIconSize;
 
-	[Attribute("{EC2170E3AEEDEC1E}UI/Layouts/Map/AROR_MapInfoPopup.layout", UIWidgets.ResourceNamePicker, desc: "Layout of the info popup shown when an icon is clicked; needs a text widget named 'Text'", params: "layout", category: "Info popup")]
+	[Attribute("1", desc: "Draw locations as military-frame symbols (rectangle ours, diamond enemy) instead of the icon textures")]
+	protected bool m_bFrameIcons;
+
+	[Attribute("{EC2170E3AEEDEC1E}UI/Layouts/Map/AROR_MapInfoPopup.layout", UIWidgets.ResourceNamePicker, desc: "Layout of the info popup shown when an icon is clicked (see AROR_LocationInfoPopup for the widget names)", params: "layout", category: "Info popup")]
 	protected ResourceName m_sPopupLayout;
 
-	[Attribute("230", desc: "Popup width in reference pixels (height fits the text)", category: "Info popup")]
+	[Attribute("360", desc: "Popup width in reference pixels (height fits the text)", category: "Info popup")]
 	protected float m_fPopupWidth;
 
-	[Attribute("0.07 0.08 0.09 0.9", UIWidgets.ColorPicker, desc: "Popup background colour", category: "Info popup")]
+	[Attribute("0.031 0.043 0.035 0.94", UIWidgets.ColorPicker, desc: "Popup background colour (design system strong plate)", category: "Info popup")]
 	protected ref Color m_PopupBackgroundColor;
 
 	[Attribute("{9B65C8ACFFEE4DD6}UI/Layouts/Map/AROR_MapIconSelector.layout", UIWidgets.ResourceNamePicker, desc: "Corner-bracket selector shown on hover (and steady on the selected icon)", params: "layout", category: "Selector")]
@@ -36,17 +39,29 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	protected float m_fSelectorPulseSeconds;
 
 	protected static const string ICON_WIDGET_NAME = "Icon";
+	protected static const string LABEL_WIDGET_NAME = "QRFLabel";	//!< Shared with QRF intel markers, which caption it themselves
+	protected static const string FRAME_WIDGET_NAME = "Frame";
+	protected static const int POPUP_Z_ORDER = 1000;	//!< Above every marker, including QRF and mission markers created later
+	protected static const int SELECTOR_Z_ORDER = 900;
+	protected static const float POPUP_EDGE_MARGIN = 8;	//!< Keeps the popup this far inside the map, in reference pixels
 
 	//! Extra clickable margin around an icon, in reference pixels
 	protected static const float CLICK_MARGIN = 4;
 
 	//! Set while another feature uses map clicks (HQ pick, teleport) so clicks do not open the popup
 	protected static bool s_bInfoPopupSuppressed;
+	protected static bool s_bSuppressed;
+	protected bool m_bHandlingMap;	//!< The open map is one we attached to (so its close is ours to handle)
 
 	protected Widget m_wIconParent;
 	protected ref AROR_QRFMapIntel m_QRFIntel = new AROR_QRFMapIntel();
+	protected ref AROR_MissionMapMarkers m_MissionMarkers = new AROR_MissionMapMarkers();
+	protected ref AROR_OperationMapMarkers m_OperationMarkers = new AROR_OperationMapMarkers();
+	protected ref AROR_PlayerMapMarkers m_PlayerMarkers = new AROR_PlayerMapMarkers();
 	protected ref array<AROR_LocationComponent> m_aIconLocations = {};
 	protected ref array<Widget> m_aIconWidgets = {};
+	//! Draw commands per frame canvas: the canvas does not keep its own copy, so they live as long as the icon
+	protected ref map<Widget, ref array<ref CanvasWidgetCommand>> m_mFrameCommands = new map<Widget, ref array<ref CanvasWidgetCommand>>();
 	protected ref AROR_LocationInfoPopup m_Popup;
 	protected ref AROR_MapIconSelector m_Selector;
 
@@ -57,8 +72,20 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! While set, maps that open are ignored entirely (HICOMM opens the game map inside the phone and draws its
+	//! own location icons there)
+	static void SetSuppressed(bool suppressed)
+	{
+		s_bSuppressed = suppressed;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected void OnMapOpen(MapConfiguration config)
 	{
+		if (s_bSuppressed)
+			return;
+
+		m_bHandlingMap = true;
 		SetQRFObserverMapOpen(true);
 		SCR_MapEntity mapEntity = SCR_MapEntity.GetMapInstance();
 		if (!mapEntity || !mapEntity.GetMapWidget())
@@ -73,12 +100,16 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 		if (!locationManager)
 			return;
 
+		// Positioning starts first, and each icon is built in its own call: a script error while building one
+		// icon then loses only that icon instead of aborting this handler (and with it every icon on the map)
+		GetGame().GetCallqueue().CallLater(UpdateIconPositions, 0, true);
 		array<AROR_LocationComponent> locations = {};
 		locationManager.GetLocations(locations);
 		foreach (AROR_LocationComponent location : locations)
 		{
-			CreateIcon(location);
+			GetGame().GetCallqueue().Call(CreateIcon, location);
 		}
+		GetGame().GetCallqueue().Call(ReportIcons, locations.Count());
 
 		locationManager.GetOnLocationRegistered().Insert(CreateIcon);
 		locationManager.GetOnLocationUnregistered().Insert(RemoveIcon);
@@ -88,20 +119,33 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 		if (!m_sPopupLayout.IsEmpty())
 		{
 			m_Popup = new AROR_LocationInfoPopup(m_sPopupLayout, m_wIconParent, m_fPopupWidth, m_PopupBackgroundColor);
+			m_Popup.SetZOrder(POPUP_Z_ORDER);
 			SCR_MapEntity.GetOnSelection().Insert(OnMapClicked);
 		}
 
 		if (!m_sSelectorLayout.IsEmpty())
+		{
 			m_Selector = new AROR_MapIconSelector(m_sSelectorLayout, m_wIconParent, m_SelectorColor);
+			m_Selector.SetZOrder(SELECTOR_Z_ORDER);
+		}
 
-		// Per frame only while a map is open, so icons follow pan and zoom interpolation
-		UpdateIconPositions();
-		GetGame().GetCallqueue().CallLater(UpdateIconPositions, 0, true);
+		// Per frame only while a map is open (scheduled above), so icons follow pan and zoom interpolation
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! One log line per map opening, so missing icons show up in the console
+	protected void ReportIcons(int locationCount)
+	{
+		Print(string.Format("[AROR] Map icons: %1 of %2 locations drawn", m_aIconLocations.Count(), locationCount), LogLevel.NORMAL);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	protected void OnMapClose(MapConfiguration config)
 	{
+		if (!m_bHandlingMap)
+			return;
+
+		m_bHandlingMap = false;
 		SetQRFObserverMapOpen(false);
 		GetGame().GetCallqueue().Remove(UpdateIconPositions);
 
@@ -214,13 +258,17 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
-		image.LoadImageTexture(0, icon);
-		ApplyControlColor(image, location);
-		FrameSlot.SetSize(root, m_fIconSize, m_fIconSize);
-		FrameSlot.SetAlignment(root, 0.5, 0.5);
-
+		// Registered first, so the icon is always positioned even if its styling fails
 		m_aIconLocations.Insert(location);
 		m_aIconWidgets.Insert(root);
+
+		image.LoadImageTexture(0, icon);
+		FrameSlot.SetSize(root, m_fIconSize, m_fIconSize);
+		FrameSlot.SetAlignment(root, 0.5, 0.5);
+		Widget ownLabel = root.FindAnyWidget(LABEL_WIDGET_NAME);
+		if (ownLabel)
+			ownLabel.SetVisible(false);
+		ApplyControlColor(image, location);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -234,7 +282,10 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 			m_Popup.Hide();
 
 		if (m_aIconWidgets[index])
+		{
+			m_mFrameCommands.Remove(m_aIconWidgets[index].FindAnyWidget(FRAME_WIDGET_NAME));
 			m_aIconWidgets[index].RemoveFromHierarchy();
+		}
 
 		m_aIconLocations.Remove(index);
 		m_aIconWidgets.Remove(index);
@@ -244,6 +295,9 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	protected void ClearIcons()
 	{
 		m_QRFIntel.ClearWidgets();
+		m_MissionMarkers.ClearWidgets();
+		m_OperationMarkers.ClearWidgets();
+		m_PlayerMarkers.ClearWidgets();
 		foreach (Widget widget : m_aIconWidgets)
 		{
 			if (widget)
@@ -252,6 +306,7 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 
 		m_aIconLocations.Clear();
 		m_aIconWidgets.Clear();
+		m_mFrameCommands.Clear();
 		m_wIconParent = null;
 	}
 	protected void SetQRFObserverMapOpen(bool open)
@@ -272,6 +327,53 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 		Faction faction = roles.GetFaction(location.GetControllingRole());
 		if (faction)
 			image.SetColor(faction.GetFactionColor());
+
+		// Military-frame style: the frame canvas replaces the texture icon (see AROR_MapFrameIcon)
+		Widget root = image.GetParent();
+		CanvasWidget frame;
+		if (root)
+			frame = CanvasWidget.Cast(root.FindAnyWidget(FRAME_WIDGET_NAME));
+		bool framed = m_bFrameIcons && frame != null;
+		if (frame)
+			frame.SetVisible(framed);
+		if (!framed)
+		{
+			image.SetVisible(true);
+			return;
+		}
+
+		Color color;
+		if (faction)
+			color = faction.GetFactionColor();
+		WorkspaceWidget workspace = GetGame().GetWorkspace();
+		array<ref CanvasWidgetCommand> commands = m_mFrameCommands.Get(frame);
+		if (!commands)
+		{
+			commands = new array<ref CanvasWidgetCommand>();
+			m_mFrameCommands.Set(frame, commands);
+		}
+		if (location.GetOwner().FindComponent(AROR_StrongholdComponent))
+			DrawStrongholdFlag(frame, commands, location, color);
+		else
+			AROR_MapFrameIcon.Draw(frame, commands, workspace.DPIScale(m_fIconSize), workspace.DPIScale(1), location.GetLocationType(), location.GetControllingRole(), color);
+
+		// Only once the frame has drawn: if drawing fails, the texture icon stays visible
+		image.SetVisible(false);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Strongholds are the campaign's objectives: they show the national flag of the army holding them, centred in
+	//! the icon square, instead of a military frame
+	protected void DrawStrongholdFlag(notnull CanvasWidget canvas, notnull array<ref CanvasWidgetCommand> commands, notnull AROR_LocationComponent location, Color color)
+	{
+		string presetId;
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		if (presets)
+			presetId = presets.GetPresetId(location.GetControllingRole());
+		WorkspaceWidget workspace = GetGame().GetWorkspace();
+		float width = workspace.DPIScale(m_fIconSize);
+		float height = width * 2 / 3;
+		AROR_ArmyFlag.DrawAt(canvas, commands, 0, (width - height) * 0.5, width, height, presetId, color, workspace.DPIScale(AROR_MapFrameIcon.KEYLINE_WIDTH));
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -311,13 +413,44 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 			float y = workspace.DPIUnscale(screenY);
 			FrameSlot.SetPos(widget, x, y);
 
-			// Popup sits to the right of its icon (clear of the selector), top-aligned with it
 			if (m_Popup && m_Popup.GetLocation() == location)
-				m_Popup.SetPosition(x + (m_fIconSize + m_fSelectorPadding) * 0.5 + CLICK_MARGIN, y - m_fIconSize * 0.5);
+				PositionPopup(workspace, x, y);
 		}
 
 		UpdateSelector(mapEntity, workspace);
 		m_QRFIntel.Update(m_wIconParent, m_sIconLayout, mapEntity);
+		m_MissionMarkers.Update(m_wIconParent, m_sIconLayout, mapEntity);
+		m_OperationMarkers.Update(m_wIconParent, m_sIconLayout, mapEntity);
+		m_PlayerMarkers.Update(m_wIconParent, m_sIconLayout, mapEntity);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Popup sits to the right of its icon (clear of the selector), top-aligned with it. Near the right edge of the
+	//! map it flips to the left of the icon; vertically it is kept inside the map.
+	protected void PositionPopup(notnull WorkspaceWidget workspace, float iconX, float iconY)
+	{
+		float mapWidth, mapHeight;
+		if (m_wIconParent)
+			m_wIconParent.GetScreenSize(mapWidth, mapHeight);
+		mapWidth = workspace.DPIUnscale(mapWidth);
+		mapHeight = workspace.DPIUnscale(mapHeight);
+
+		float offset = (m_fIconSize + m_fSelectorPadding) * 0.5 + CLICK_MARGIN;
+		float width = m_Popup.GetWidth();
+		float height = m_Popup.GetHeight();
+
+		float x = iconX + offset;
+		float y = iconY - m_fIconSize * 0.5;
+		if (mapWidth > 0)
+		{
+			if (x + width > mapWidth - POPUP_EDGE_MARGIN)
+				x = iconX - offset - width;
+			x = Math.Clamp(x, POPUP_EDGE_MARGIN, Math.Max(POPUP_EDGE_MARGIN, mapWidth - width - POPUP_EDGE_MARGIN));
+		}
+		if (mapHeight > 0)
+			y = Math.Clamp(y, POPUP_EDGE_MARGIN, Math.Max(POPUP_EDGE_MARGIN, mapHeight - height - POPUP_EDGE_MARGIN));
+
+		m_Popup.SetPosition(x, y);
 	}
 
 	//------------------------------------------------------------------------------------------------

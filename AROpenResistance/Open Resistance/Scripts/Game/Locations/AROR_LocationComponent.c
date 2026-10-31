@@ -109,7 +109,8 @@ class AROR_LocationComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! False while control is fixed, already held by the role, or the flip cooldown blocks the role
+	//! False while control is fixed, already held by the role, the flip cooldown blocks the role, or a stronghold
+	//! belongs to another AI role
 	bool CanBeTakenBy(AROR_EFactionRole role)
 	{
 		if (m_bControlFixed || role == m_eControllingRole)
@@ -118,7 +119,8 @@ class AROR_LocationComponent : ScriptComponent
 		if (m_bFlipLocked && role != AROR_EFactionRole.RESISTANCE)
 			return false;
 
-		return true;
+		AROR_StrongholdComponent stronghold = AROR_StrongholdComponent.Cast(GetOwner().FindComponent(AROR_StrongholdComponent));
+		return !stronghold || stronghold.AllowsCaptureBy(role);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -144,6 +146,24 @@ class AROR_LocationComponent : ScriptComponent
 			GetGame().GetCallqueue().CallLater(UnlockFlip, FLIP_COOLDOWN_SECONDS * 1000);
 		}
 
+		Replication.BumpMe();
+		OnControllingRoleReplicated();
+		SendCapturedNotification_S(role);
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server only. Admin tool: gives the location to a role whatever the fixed-control, flip-cooldown and stronghold
+	//! rules say (the caller checks IsControlFixed for locations that must never move), and announces it.
+	//! Returns false if the role already holds it.
+	bool ForceControllingRole_S(AROR_EFactionRole role)
+	{
+		if (!Replication.IsServer() || role == m_eControllingRole)
+			return false;
+
+		m_eControllingRole = role;
+		m_bFlipLocked = false;
+		GetGame().GetCallqueue().Remove(UnlockFlip);
 		Replication.BumpMe();
 		OnControllingRoleReplicated();
 		SendCapturedNotification_S(role);

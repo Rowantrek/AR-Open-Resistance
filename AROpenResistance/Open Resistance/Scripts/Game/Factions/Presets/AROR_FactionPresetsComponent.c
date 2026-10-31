@@ -15,6 +15,9 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	[Attribute("{2D8E5A71C4B93F06}Configs/FactionPresets/AROR_FactionPresetRegistry.conf", UIWidgets.ResourceNamePicker, desc: "Registry listing the available faction presets", params: "conf class=AROR_FactionPresetRegistry")]
 	protected ResourceName m_sRegistry;
 
+	[Attribute("{B47E2C19D5A6F308}Configs/FactionPresets/AROR_DefaultUnitPrefabs.conf", UIWidgets.ResourceNamePicker, desc: "Default character per role and unit type, for preset units that name none", params: "conf class=AROR_DefaultUnitPrefabs")]
+	protected ResourceName m_sDefaultUnits;
+
 	[Attribute("FIA", desc: "Preset ID the Resistance uses unless the admin picks another", category: "Defaults")]
 	protected string m_sDefaultResistance;
 
@@ -27,10 +30,15 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	[Attribute("EVERON_CIV", desc: "Preset ID the Civilians use unless the admin picks another", category: "Defaults")]
 	protected string m_sDefaultCivilians;
 
+	[Attribute("0", desc: "Workbench only: on Play, read the base-game infantry kits and write them into the FIA, US and Soviet presets as readiness 1 loadouts (units with loadouts are kept). Untick after use.", category: "Workbench")]
+	protected bool m_bImportBaseUnitLoadouts;
+
 	protected static AROR_FactionPresetsComponent s_Instance;
 
 	//! All loaded presets, in registry order
 	protected ref array<ref AROR_FactionPreset> m_aPresets = {};
+
+	protected ref AROR_DefaultUnitPrefabs m_DefaultUnits;
 
 	// The campaign's preset ID per role (server-owned, replicated)
 	[RplProp(onRplName: "OnPresetsReplicated")]
@@ -103,6 +111,18 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Adds every loaded preset, in registry order (e.g. for shops that sell every faction's equipment)
+	int GetAllPresets(notnull array<AROR_FactionPreset> outPresets)
+	{
+		foreach (AROR_FactionPreset preset : m_aPresets)
+		{
+			outPresets.Insert(preset);
+		}
+
+		return m_aPresets.Count();
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Adds the presets that can be chosen for the role, in registry order; returns how many were added
 	int GetPresetsForRole(AROR_EFactionRole role, notnull array<AROR_FactionPreset> outPresets)
 	{
@@ -117,6 +137,81 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 		}
 
 		return added;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The character for a unit type of the role: the role's preset unit prefab if it names one, else the role's default
+	//! for the type (AROR_DefaultUnitPrefabs). Empty when there is neither.
+	ResourceName GetUnitPrefab(AROR_EFactionRole role, AROR_EUnitType type)
+	{
+		AROR_FactionPreset preset = GetPreset(role);
+		if (preset)
+		{
+			AROR_FactionPresetUnit unit = preset.GetUnit(type);
+			if (unit && unit.HasPrefab())
+				return unit.GetPrefab();
+		}
+
+		return GetDefaultUnitPrefab(role, type);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The role's default character for the unit type, or empty
+	ResourceName GetDefaultUnitPrefab(AROR_EFactionRole role, AROR_EUnitType type)
+	{
+		if (!m_DefaultUnits)
+			return string.Empty;
+
+		return m_DefaultUnits.GetPrefab(role, type);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The loadout a unit type of the role gets now: picked from its preset unit's variants by the role's current
+	//! Readiness (1 for roles without one). Null when the unit has no loadouts, so the character keeps its own kit.
+	AROR_UnitLoadout GetUnitLoadout(AROR_EFactionRole role, AROR_EUnitType type)
+	{
+		return GetUnitLoadoutAt(role, type, GetReadiness(role));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! As GetUnitLoadout, at a given readiness (e.g. scripted responses frozen at a level)
+	AROR_UnitLoadout GetUnitLoadoutAt(AROR_EFactionRole role, AROR_EUnitType type, int readiness)
+	{
+		AROR_FactionPreset preset = GetPreset(role);
+		if (!preset)
+			return null;
+
+		AROR_FactionPresetUnit unit = preset.GetUnit(type);
+		if (!unit)
+			return null;
+
+		return unit.PickLoadout(readiness);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The starting kit for players spawning in the role, from its preset. Null when the preset has none, so the player
+	//! character keeps its own kit.
+	AROR_PlayerLoadout GetPlayerLoadout(AROR_EFactionRole role)
+	{
+		AROR_FactionPreset preset = GetPreset(role);
+		if (!preset)
+			return null;
+
+		return preset.GetPlayerLoadout();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The role's current Readiness; 1 for roles without one (Resistance, Civilians) or before Operations exists
+	protected static int GetReadiness(AROR_EFactionRole role)
+	{
+		if (role != AROR_EFactionRole.OCCUPIERS && role != AROR_EFactionRole.INVADERS)
+			return 1;
+
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		if (!operations)
+			return 1;
+
+		return operations.GetReadinessLevel(role);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -277,6 +372,38 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 		}
 
 		Print(string.Format("[AROR] Loaded %1 faction presets", m_aPresets.Count()), LogLevel.NORMAL);
+
+		m_DefaultUnits = AROR_DefaultUnitPrefabs.Cast(LoadConfig(m_sDefaultUnits));
+		if (!m_DefaultUnits)
+			Print(string.Format("[AROR] Default unit prefabs '%1' could not be loaded; preset units without a prefab are unusable", m_sDefaultUnits), LogLevel.ERROR);
+
+		CheckUnitPrefabs();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Warns for preset units that name no character while a role they serve has no default for their type
+	protected void CheckUnitPrefabs()
+	{
+		array<AROR_EFactionRole> roles = {};
+		AROR_FactionRoles.GetAll(roles);
+
+		foreach (AROR_FactionPreset preset : m_aPresets)
+		{
+			array<AROR_FactionPresetEntry> units = {};
+			preset.GetAllEntries(AROR_EFactionPresetCategory.UNITS, units);
+			foreach (AROR_FactionPresetEntry entry : units)
+			{
+				AROR_FactionPresetUnit unit = AROR_FactionPresetUnit.Cast(entry);
+				if (!unit || unit.HasPrefab())
+					continue;
+
+				foreach (AROR_EFactionRole role : roles)
+				{
+					if (preset.IsUsableAs(role) && GetDefaultUnitPrefab(role, unit.GetTypeValue()).IsEmpty())
+						Print(string.Format("[AROR] Faction preset '%1': %2 has no prefab and %3 has no default for it", preset.GetId(), unit.GetTypeName(), typename.EnumToString(AROR_EFactionRole, role)), LogLevel.WARNING);
+				}
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -316,6 +443,45 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 
 			LogPresets();
 		}
+
+#ifdef WORKBENCH
+		// Let the world settle before spawning the characters to read
+		if (m_bImportBaseUnitLoadouts && Replication.IsServer())
+			GetGame().GetCallqueue().CallLater(StartLoadoutImport, 5000);
+#endif
+	}
+
+#ifdef WORKBENCH
+	//------------------------------------------------------------------------------------------------
+	protected void StartLoadoutImport()
+	{
+		AROR_UnitLoadoutImporter.Start();
+	}
+#endif
+
+	//------------------------------------------------------------------------------------------------
+	//! Server: dresses a spawned player from their role's preset player loadout. Only an undressed character is dressed,
+	//! so a kit applied by something else (e.g. a saved arsenal loadout) is never doubled.
+	override void OnPlayerSpawnFinalize_S(SCR_SpawnRequestComponent requestComponent, SCR_SpawnHandlerComponent handlerComponent, SCR_SpawnData data, IEntity entity)
+	{
+		super.OnPlayerSpawnFinalize_S(requestComponent, handlerComponent, data, entity);
+
+		SCR_ChimeraCharacter character = SCR_ChimeraCharacter.Cast(entity);
+		if (!character || !AROR_LoadoutOutfitter.IsUndressed(character))
+			return;
+
+		AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
+		AROR_EFactionRole role;
+		if (!roles || !roles.GetRoleOfFaction(character.GetFaction(), role))
+			return;
+
+		AROR_PlayerLoadout loadout = GetPlayerLoadout(role);
+		if (!loadout)
+			return;
+
+		int failed = AROR_LoadoutOutfitter.Apply_S(character, loadout);
+		if (failed > 0)
+			Print(string.Format("[AROR] Player loadout of %1 applied with %2 pieces missing", GetPresetId(role), failed), LogLevel.WARNING);
 	}
 
 	//------------------------------------------------------------------------------------------------

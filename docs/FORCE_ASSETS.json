@@ -26,6 +26,8 @@
                       "Prefabs/Vehicles/Wheeled/BRDM2/BRDM2.et":  "{254289B9C09904AB}Prefabs/Vehicles/Wheeled/BRDM2/BRDM2.et",
                       "Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_HeliPilot.et":  "{A62FA97C4EC64F14}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_HeliPilot.et",
                       "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et":  "{DF5CCB7C0FF049F4}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et",
-                      "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_gunship_HE.et":  "{3C6B3ED0C3AC30D5}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_gunship_HE.et"
+                      "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_gunship_HE.et":  "{3C6B3ED0C3AC30D5}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_gunship_HE.et",
+                      "Prefabs/Vehicles/Wheeled/M998/M1025_armed_M2HB.et":  "{3EA6F47D95867114}Prefabs/Vehicles/Wheeled/M998/M1025_armed_M2HB.et",
+                      "Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_PKM.et":  "{0B4DEA8078B78A9B}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_PKM.et"
                   }
 }

@@ -1,0 +1,2116 @@
+GenericEntity : "{118F89378FB3D213}Prefabs/Locations/AROR_Location_MilitaryBase.et" {
+ ID "47AC4EBF723A2359"
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sName "Fortress"
+   m_fRadius 200
+   m_bGroundOnInit 0
+  }
+  AROR_GarrisonComponent "{66D30571F98F4BE3}" {
+   m_iDefenceLevel 4
+   m_iStaticWeaponCountOverride 6
+   m_aExtraParkedVehicles {
+    "{DF5CCB7C0FF049F4}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et"
+    "{DF5CCB7C0FF049F4}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et"
+   }
+   m_fDefenceHalfExtent 40
+   m_fDefenceHalfDepth 23
+   m_fMaxDefenceRelief 4
+   m_fEditorSearchRadius 1600
+   m_fDefenceHoldRadius 6
+  }
+  AROR_StrongholdComponent {
+  }
+ }
+ coords 0 0 0
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bAutoPlace 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0 0.905946 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_1 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "B3C68CB9F3EB71A1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -36.470588 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_2 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "89468DA0B3529B99"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -34.117647 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_3 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "E9AF0CE9BC42F64E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -31.764706 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_4 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "C1D4B0F8FB8EC0FA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -29.411765 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_5 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0E3868B27AAD8119"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -27.058824 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_6 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "8FB86C01ABEC266A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -24.705882 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_7 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "E0FD1E3E264CFEA5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -22.352941 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_10 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "E10A6EFD47C3626A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -15.294118 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_11 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "46259055ECD7879A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -12.941176 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_12 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "50E7D3953BAF73E9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -10.588235 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_13 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "D497A3C9B7D30984"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8.235294 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_20 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "F02B0A882E88CD5A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 8.235294 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_21 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "3B06FCD3EA50FC88"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 10.588235 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_22 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "BCBCDE07B960E3ED"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 12.941176 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_23 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "EB3BA8916001027B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 15.294118 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_26 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "6930F2011C6A237C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 22.352941 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_27 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "F719F11D5587DEB1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 24.705882 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_28 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "AC4A71C8B617FAB0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 27.058824 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_29 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "4BCD74F182A6E17A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 29.411765 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_30 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "EF8A4D038869AAEA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 31.764706 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_31 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "4307D490C7557857"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 34.117647 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_0_32 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "D408C232E4EB35FD"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 36.470588 0 23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_0 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "AFCBE1957496090D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 -21.85
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_1 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "059C03EB22F48A42"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 -19.55
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_2 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "34CA6346AE89ECBD"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 -17.25
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_3 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "3EA4BDABC1940F9C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 -14.95
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_4 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "558AAC80E18F9789"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 -12.65
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_5 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "2AF740DFE976BA93"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 -10.35
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_6 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5AF359B182A43273"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 -8.05
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_7 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "D85F43779A7978AC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 -5.75
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_8 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "BF4F966766618B0F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 -3.45
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_11 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "41ADA9864BEF2B7A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 3.45
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_12 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "4683820B98338E52"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 5.75
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_13 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A8933343CAE3116A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 8.05
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_14 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "AF56B07995274E5D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 10.35
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_15 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "336627099AC25733"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 12.65
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_16 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "0014AFB7C67B1F48"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 14.95
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_17 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "9532B51120294E9F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 17.25
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_1_18 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "C1BCA6554F6CBFA2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 19.55
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_0 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "BE29A13CA4E0D2E5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -38.823529 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_1 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "7CE5C960B5614F2F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -36.470588 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_2 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "13843D35C5E2C5B0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -34.117647 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_3 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5997DF22A23AF514"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -31.764706 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_4 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "96CBDFBDAC5D0338"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -29.411765 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_5 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "09DA8AD1F327FDAD"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -27.058824 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_6 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "4C8EF2A7D16C4CC4"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -24.705882 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_7 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "BBF3D223C8742027"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -22.352941 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_8 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "34AF1CC003C73E91"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -20 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_9 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "F9A10621A7B7C74A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -17.647059 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_10 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "4DE6F80418E0FDF3"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -15.294118 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_11 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "2EF579A6E76C9B66"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -12.941176 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_12 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "36C02D6DDCD26314"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -10.588235 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_13 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "D0BA35C3A4A07FD8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8.235294 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_14 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "C3C8FA4D7625577B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -5.882353 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_15 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "B3EC9A7FA4DBD5FC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -3.529412 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_16 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "275ABCE6DCF93DFD"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -1.176471 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_17 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A59679C113292D9C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 1.176471 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_18 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "243D4801AD3F434F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 3.529412 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_19 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "4BEBCEEF309A39C4"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 5.882353 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_20 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "65531DD8BE96505F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 8.235294 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_21 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "D8691CB841731709"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 10.588235 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_22 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "4085162DDBB0D632"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 12.941176 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_23 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "4D14FDCB3A8D4A2A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 15.294118 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_24 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0604B9BEB245E728"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 17.647059 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_25 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "59BDFAB8B1B5013F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 20 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_26 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "885B39330CF09203"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 22.352941 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_27 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "B77D6A2821889713"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 24.705882 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_28 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "F13D507CBAA6BF34"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 27.058824 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_29 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "256642094B33C415"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 29.411765 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_30 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "40CD52FCA54316CE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 31.764706 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_31 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "D94162F4A78241C1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 34.117647 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_32 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "08D493837BA03F9A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 36.470588 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_2_33 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "C61B15610A1CB7A9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 38.823529 0 -23
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_0 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "7287D4ACD13965C4"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 -21.85
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_1 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "2A1A89551DA508FC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 -19.55
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_2 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "261C22368890D20C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 -17.25
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_3 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "ACE6F0CBD97E7FC2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 -14.95
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_4 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "7326F69BAC064532"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 -12.65
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_5 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "3B954C0772E291DD"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 -10.35
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_6 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "178C877C507D64D4"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 -8.05
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_7 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "AF2B6A233998B5CF"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 -5.75
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_8 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "7F55349E3F9F1B85"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 -3.45
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_11 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "721F465A2B5CA74C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 3.45
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_12 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "C9C59D002392E73C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 5.75
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_13 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "62C1979C1AF770BE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 8.05
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_14 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A6268529D819C053"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 10.35
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_15 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "0E5B003A482E546A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 12.65
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_16 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "5E07938B1B8CEFE5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 14.95
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_17 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "0A8439287097EC30"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 17.25
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Perimeter_3_18 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "18B5A486DCC6F930"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 19.55
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Tower_SouthWest : "{DFBF655559915333}Prefabs/Compositions/Slotted/SlotFlatSmall/GuardTower_S_USSR_01.et" {
+   ID "A640A1CACAC1BB1F"
+   components {
+    AROR_DefenceWallComponent {
+    }
+    AROR_SentryPostComponent {
+     m_fFloorHeight 3.5
+    }
+   }
+   coords -36 0 -19
+   angles 0 225 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Tower_SouthEast : "{DFBF655559915333}Prefabs/Compositions/Slotted/SlotFlatSmall/GuardTower_S_USSR_01.et" {
+   ID "75CFEB9608FBEC66"
+   components {
+    AROR_DefenceWallComponent {
+    }
+    AROR_SentryPostComponent {
+     m_fFloorHeight 3.5
+    }
+   }
+   coords 36 0 -19
+   angles 0 135 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Helipad_1 : "{525C793E1943EA06}Prefabs/Compositions/Slotted/SlotFlatLarge/Helipad_L_Conflict_USSR_01.et" {
+   ID "B88EDF6E439DA391"
+   components {
+    AROR_DefenceWallComponent {
+    }
+    AROR_LandingPadComponent {
+     m_fRotorRadius 10.7
+     m_fLength 25.3
+    }
+   }
+   coords -25 0 8
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Helipad_2 : "{525C793E1943EA06}Prefabs/Compositions/Slotted/SlotFlatLarge/Helipad_L_Conflict_USSR_01.et" {
+   ID "FC0A35835EFBB1C2"
+   components {
+    AROR_DefenceWallComponent {
+    }
+    AROR_LandingPadComponent {
+     m_fRotorRadius 10.7
+     m_fLength 25.3
+    }
+   }
+   coords 25 0 8
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gun_0_Traverse_L : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "B74949F2C834DDF2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -38.474874 0 16.525126
+   angles 0 405 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gun_0_Traverse_R : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "C11CF2CBAB0D42D9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -33.525126 0 21.474874
+   angles 0 405 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gun_1_Traverse_L : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "78FB99C64E03279C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 33.525126 0 21.474874
+   angles 0 135 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gun_1_Traverse_R : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "C1BC5955241D789F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 38.474874 0 16.525126
+   angles 0 135 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gun_2_Traverse_L : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "6AE6FC3F4F828127"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -21.5 0 19
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gun_2_Traverse_R : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "DBE83F7A2E9B74AD"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14.5 0 19
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gun_3_Traverse_L : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "038F7BAD21320CA1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.5 0 19
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gun_3_Traverse_R : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "FF082F79A5EFEC47"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.5 0 19
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gun_4_Traverse_L : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "A7A29AFE1C471C1D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -37 0 -3.5
+   angles 0 360 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gun_4_Traverse_R : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "84679C35B72A7F00"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -37 0 3.5
+   angles 0 360 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gun_5_Traverse_L : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "A5DC35E31244F66D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 37 0 3.5
+   angles 0 180 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gun_5_Traverse_R : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "1A78A6E65FBDBEEC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 37 0 -3.5
+   angles 0 180 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Command_Bunker : "{5821AF9613353C80}Prefabs/Props/Military/Sandbags/Sandbag_01_bunker_burlap_camonet.et" {
+   ID "5C405607B9685FC1"
+   components {
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 0 0 -18
+  }
+  GenericEntity AROR_Fortress_Vostok_Barracks_Bunker : "{5821AF9613353C80}Prefabs/Props/Military/Sandbags/Sandbag_01_bunker_burlap_camonet.et" {
+   ID "4DFE7316F2B0540F"
+   components {
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -16 0 -18
+  }
+  GenericEntity AROR_Fortress_Vostok_Barracks_Bunker_East : "{5821AF9613353C80}Prefabs/Props/Military/Sandbags/Sandbag_01_bunker_burlap_camonet.et" {
+   ID "0F3E90286682B73B"
+   components {
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 16 0 -18
+  }
+  GenericEntity AROR_Fortress_Vostok_Keep_Screen_West : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "2BCB106C9085BCA5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -4 0 -14
+  }
+  GenericEntity AROR_Fortress_Vostok_Keep_Screen_East : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "C9206C3941478B00"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 4 0 -14
+  }
+  GenericEntity AROR_Fortress_Vostok_Gate_Guard_Left : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "FCC7EEDFEE053333"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8 0 20
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gate_Guard_Right : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "90AC98503D2D5221"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 8 0 20
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gate_Obstacle_Left : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "94E09BA8322E71E3"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8 0 29
+   angles 0 15 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Gate_Obstacle_Right : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "87A57FC3B3C3E05C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 8 0 29
+   angles 0 -15 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_0_0 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "17663A305E9568BA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -44 0 30
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_0_0 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "72E981FB8DEC2753"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -40 0 27
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_0_1 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "FBE48660462910AB"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -36 0 30
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_0_1 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "3A85D72657F73F1A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -32 0 27
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_0_2 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "0E09103CDBB7FEF9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -28 0 30
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_0_2 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "18C1536CC6E1FEB7"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -24 0 27
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_0_3 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "FD6602E22161CA97"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -20 0 30
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_0_3 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "A4E489B52C455998"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -16 0 27
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_0_4 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "761021875A47F5CF"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -12 0 30
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_0_7 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "6A0191D91517224F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 12 0 30
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_0_7 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "C5AFE78CE2E5350A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 16 0 27
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_0_8 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "0F96C74DC0C13525"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 20 0 30
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_0_8 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "B308686814330B70"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 24 0 27
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_0_9 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "E0658F7F2F060A5E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 28 0 30
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_0_9 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "CE8F63BC8825D6E6"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 32 0 27
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_0_10 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "ADC7260754600577"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 36 0 30
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_0_10 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "9C4B527F03B525B1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 40 0 27
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_0_11 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "E73D2165BC35E6D4"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 44 0 30
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_1_1 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "545F389A4B8C7944"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 47 0 -19
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_1_1 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "40D283DDD924ECC0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 44 0 -15
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_1_2 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "D7A8629F8F00A763"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 47 0 -11
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_1_2 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "83F7CA76DB931F38"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 44 0 -7
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_1_3 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "04D5E454B2A9F2F8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 47 0 -3
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_1_3 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "2F43F6F6D7D39608"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 44 0 1
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_1_4 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "52318F70AA2BCED6"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 47 0 5
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_1_4 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "13AA0AE1BDC9651E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 44 0 9
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_1_5 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "80EB8399E17DA28C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 47 0 13
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_1_5 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "905BDED6C2915DED"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 44 0 17
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_1_6 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "E0DF9B56DE165249"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 47 0 21
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_1_6 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "139D79F6B53F8F1C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 44 0 25
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_3_1 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "C96F7CA91971B53D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -47 0 -19
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_3_1 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "AB0A3EF16D05EA56"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -44 0 -15
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_3_2 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "7785B51E240FA177"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -47 0 -11
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_3_2 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "558E4BE8352127EB"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -44 0 -7
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_3_3 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "F2BFBFCD230B60F2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -47 0 -3
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_3_3 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "E4C224BF5707FB98"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -44 0 1
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_3_4 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "ABC4DABAEEA19DB1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -47 0 5
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_3_4 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "AF35811FD63DAEEE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -44 0 9
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_3_5 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "9F5E65276F3FF955"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -47 0 13
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_3_5 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "2D7D929F8F467A17"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -44 0 17
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Hedgehog_3_6 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "89176934CBD72625"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -47 0 21
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Wire_3_6 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "BD52EAEF151465D4"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -44 0 25
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Loot_Weapons : "{8C7C140EEB0ECF36}Prefabs/Props/Military/AmmoBoxes/USSR/EquipmentBoxWooden_Weapon_01_USSR.et" {
+   ID "0B31C9A94E90FE89"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+    AROR_OutpostSupplyComponent {
+     m_sCategory "Weapons"
+    }
+   }
+   coords -31 0 -20
+  }
+  GenericEntity AROR_Fortress_Vostok_Loot_Ammunition : "{A48EDE9CBA71B5A3}Prefabs/Props/Military/AmmoBoxes/USSR/EquipmentBoxWooden_Ammunition_01_USSR.et" {
+   ID "02E4335591E69D75"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+    AROR_OutpostSupplyComponent {
+     m_sCategory "Ammunition"
+    }
+   }
+   coords -28 0 -20
+  }
+  GenericEntity AROR_Fortress_Vostok_Loot_Equipment : "{CD62E36CFDCB8FD8}Prefabs/Props/Military/AmmoBoxes/USSR/EquipmentBoxWooden_Equipment_01_USSR.et" {
+   ID "B1560AA2B90CC391"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+    AROR_OutpostSupplyComponent {
+     m_sCategory "Equipment"
+    }
+   }
+   coords -25 0 -20
+  }
+  GenericEntity AROR_Fortress_Vostok_Loot_Medical : "{70837F44CD03FD05}Prefabs/Props/Military/AmmoBoxes/USSR/EquipmentBoxWooden_Medical_01_USSR.et" {
+   ID "FBF62359384E34D9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+    AROR_OutpostSupplyComponent {
+     m_sCategory "Medical"
+    }
+   }
+   coords -22 0 -20
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_0_0 {
+   ID "22DCF41612241070"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 0
+    }
+   }
+   coords 0 0 14
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_0_1 {
+   ID "D791101AF909637B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 1
+    }
+   }
+   coords -8 0 14
+   angles 0 315 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_0_2 {
+   ID "0093EF315AFFBD63"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 2
+    }
+   }
+   coords 8 0 14
+   angles 0 45 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_0_3 {
+   ID "DA1A173E959BFAC1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 3
+    }
+   }
+   coords 0 0 -4
+   angles 0 180 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_0_4 {
+   ID "879D0948470A4D71"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 4
+    }
+   }
+   coords -12 0 0
+   angles 0 270 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_0_5 {
+   ID "2200F51AC185EDB7"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 5
+    }
+   }
+   coords 12 0 0
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_0_6 {
+   ID "B970B3376619B037"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 6
+    }
+   }
+   coords -31 0 -4
+   angles 0 270 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_0_7 {
+   ID "354D4E5A320CDED4"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 7
+    }
+   }
+   coords 31 0 -4
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_1_0 {
+   ID "E3DA84631884083B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 1
+     m_iOrdinal 0
+    }
+   }
+   coords -36 0 19
+   angles 0 315 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_1_1 {
+   ID "29C6623C90D39F46"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 1
+     m_iOrdinal 1
+    }
+   }
+   coords 36 0 19
+   angles 0 45 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_1_2 {
+   ID "70E91CB199C37638"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 1
+     m_iOrdinal 2
+    }
+   }
+   coords -18 0 19
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_1_3 {
+   ID "674623EF95EB1430"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 1
+     m_iOrdinal 3
+    }
+   }
+   coords 18 0 19
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_1_4 {
+   ID "9980D3653B0D680F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 1
+     m_iOrdinal 4
+    }
+   }
+   coords -37 0 0
+   angles 0 270 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_1_5 {
+   ID "06B5A76AF7723D4C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 1
+     m_iOrdinal 5
+    }
+   }
+   coords 37 0 0
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_2_0 {
+   ID "9D5067EAD30DD159"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 2
+     m_iOrdinal 0
+    }
+   }
+   coords 24 0 -10
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_2_1 {
+   ID "4F7FF5ADD4C49B35"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 2
+     m_iOrdinal 1
+    }
+   }
+   coords -25 0 8
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_2_2 {
+   ID "67C7190E0B67B7AD"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 2
+     m_iOrdinal 2
+    }
+   }
+   coords 25 0 8
+   angles 0 90 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_3_0 {
+   ID "888F58369E0C6736"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 3
+     m_iOrdinal 0
+    }
+   }
+   coords -24 0 -10
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_3_1 {
+   ID "23316D1C51BE3104"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 3
+     m_iOrdinal 1
+    }
+   }
+   coords -8 0 -10
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_3_2 {
+   ID "6344163FC0C3C716"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 3
+     m_iOrdinal 2
+    }
+   }
+   coords 8 0 -10
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_4_8 {
+   ID "FEF5A47A61C4431B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 4
+     m_iOrdinal 8
+    }
+   }
+   coords -8 0 8
+   angles 0 180 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_4_9 {
+   ID "517E797A0849B3FE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 4
+     m_iOrdinal 9
+    }
+   }
+   coords -4 0 8
+   angles 0 180 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_4_10 {
+   ID "38DD2B5965971373"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 4
+     m_iOrdinal 10
+    }
+   }
+   coords 0 0 8
+   angles 0 180 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_4_11 {
+   ID "E6962EBDB6A72147"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 4
+     m_iOrdinal 11
+    }
+   }
+   coords 4 0 8
+   angles 0 180 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_4_12 {
+   ID "2E63B19CE8AD92DE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 4
+     m_iOrdinal 12
+    }
+   }
+   coords 8 0 8
+   angles 0 180 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_4_13 {
+   ID "AD09B42B99DD1743"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 4
+     m_iOrdinal 13
+    }
+   }
+   coords -6 0 1
+   angles 0 180 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_4_14 {
+   ID "DB207E0791087DA6"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 4
+     m_iOrdinal 14
+    }
+   }
+   coords -2 0 1
+   angles 0 180 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_4_15 {
+   ID "6FB5BC98C8140956"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 4
+     m_iOrdinal 15
+    }
+   }
+   coords 2 0 1
+   angles 0 180 0
+  }
+  GenericEntity AROR_Fortress_Vostok_Defence_4_16 {
+   ID "81DFA3EF7BCB542D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 4
+     m_iOrdinal 16
+    }
+   }
+   coords 6 0 1
+   angles 0 180 0
+  }
+ }
+}

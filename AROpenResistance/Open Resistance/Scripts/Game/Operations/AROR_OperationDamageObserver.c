@@ -57,7 +57,7 @@ class AROR_OperationDamageObserver
 			{
 				AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
 				if (roles && victimFaction.GetAffiliatedFactionKey() == roles.GetFactionKey(operation.GetRole()))
-					manager.ReportCombatContact_S(operation.GetRole(), operation.GetTargetLocationId(), attacker.GetOrigin());
+					manager.ReportCombatContact_S(operation.GetRole(), operation.GetTargetLocationId(), attacker.GetOrigin(), !operation.m_bDebugRequest);
 			}
 		}
 		if (!m_bLogFriendlyDamage || m_bReported)

@@ -1,0 +1,17 @@
+GenericEntity : "{D1387921EE9626CA}Prefabs/Locations/AROR_Location_Base.et" {
+ ID "6AACA42C315E8A41"
+ components {
+  AROR_GarrisonComponent "{66D30571F98F4BE3}" {
+  }
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_eType HELIPORT
+   m_sMapIcon "{084766790B4EDB7C}UI/Textures/Map/airport.edds"
+  }
+ }
+ {
+  GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+   ID "6AACA42C304AE0A3"
+   coords 0 0 0
+  }
+ }
+}

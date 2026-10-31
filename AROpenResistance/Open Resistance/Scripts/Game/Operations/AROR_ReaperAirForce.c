@@ -2,6 +2,8 @@
 class AROR_ReaperAirForce : AROR_GroundOperationForce
 {
 	ref AROR_GroundOperationForce m_Escort;
+	int m_iPreparationDeadline;
+	bool m_bUnescorted;
 	int m_iPackageCount = 1;
 	vector m_vLaunch;
 	vector m_vEscortLaunch;
@@ -14,6 +16,8 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 	int m_iEscortStage;
 	int m_iEscortDeadline;
 	int m_iPassOrdinal;
+	bool m_bGunshipRunIn;
+	vector m_vGunshipRunDirection;
 	vector m_vPassPoint;
 	bool m_bEscortLost;
 	bool m_bTransportLost;
@@ -25,6 +29,7 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 	bool m_bConstructionPending;
 	ResourceName m_sPilotPrefab;
 	bool m_bWaitingForLanding;
+	bool m_bWaitingForAssault;
 	ref AROR_ReaperLandingSearch m_AlternateLandingSearch;
 	int m_iNextFormationUpdate;
 	int m_iSupportEndTime;
@@ -176,9 +181,27 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 		m_iReservedVehicles--;
 	}
 
+	//! Occupancy, rather than group membership, protects a player who took an aircraft directly.
+	static bool HasPlayerOccupant(IEntity vehicle)
+	{
+		if (!vehicle)
+			return false;
+		BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(vehicle.FindComponent(BaseCompartmentManagerComponent));
+		if (!compartments)
+			return false;
+		array<BaseCompartmentSlot> slots = {};
+		compartments.GetCompartments(slots);
+		foreach (BaseCompartmentSlot slot : slots)
+		{
+			if (slot && slot.GetOccupant() && GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(slot.GetOccupant()) > 0)
+				return true;
+		}
+		return false;
+	}
+
 	static bool BoardPilot_S(SCR_AIGroup group, IEntity vehicle)
 	{
-		if (!Replication.IsServer() || !group || !vehicle)
+		if (!Replication.IsServer() || !group || !vehicle || group.GetPlayerCount() > 0)
 			return false;
 		array<AIAgent> agents = {};
 		group.GetAgents(agents);
@@ -186,48 +209,79 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 			return false;
 		IEntity pilot = agents[0].GetControlledEntity();
 		BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(vehicle.FindComponent(BaseCompartmentManagerComponent));
-		if (!pilot || !compartments)
+		if (!pilot || !compartments || GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(pilot) > 0)
 			return false;
 		CompartmentAccessComponent access = CompartmentAccessComponent.Cast(pilot.FindComponent(CompartmentAccessComponent));
 		if (!access)
+			return false;
+		BaseCompartmentSlot occupied = access.GetCompartment();
+		if (access.IsInCompartment() && !access.IsGettingIn() && !access.IsGettingOut())
+			return occupied && PilotCompartmentSlot.Cast(occupied) && occupied.GetVehicle() == vehicle && occupied.GetOccupant() == pilot;
+		if (access.IsGettingIn() || access.IsGettingOut())
 			return false;
 		array<BaseCompartmentSlot> slots = {};
 		compartments.GetCompartments(slots);
 		foreach (BaseCompartmentSlot slot : slots)
 		{
-			if (PilotCompartmentSlot.Cast(slot) && slot.IsCompartmentAccessible() && !slot.IsOccupied())
-				return access.GetInVehicle(vehicle, slot, true, -1, ECloseDoorAfterActions.CLOSE_DOOR, false);
+			if (slot && PilotCompartmentSlot.Cast(slot) && slot.IsCompartmentAccessible() && !slot.IsOccupied() && !slot.GetOccupant() && (!slot.IsReserved() || slot.IsReservedBy(pilot)))
+			{
+				// Final argument is performWhenPaused (installed CompartmentAccessComponent API).
+				// Initial aircraft stay in collision-only simulation while boarding; allow this teleport then.
+				// The return value acknowledges a request, so readiness still checks actual seat occupancy.
+				access.GetInVehicle(vehicle, slot, true, -1, ECloseDoorAfterActions.CLOSE_DOOR, true);
+				break;
+			}
 		}
+		// An accepted request is not proof of occupancy; confirm on a later executor tick.
 		return false;
 	}
 
 	bool BoardPackage_S()
 	{
-		if (!m_Escort || !BoardPilot_S(m_CrewGroup, m_Vehicle) || !BoardPilot_S(m_Escort.m_CrewGroup, m_Escort.m_Vehicle))
+		if (!Replication.IsServer() || (!m_bUnescorted && !m_Escort) || !m_Group || !m_Vehicle || m_Group.GetPlayerCount() > 0)
 			return false;
+		bool transportReady = BoardPilot_S(m_CrewGroup, m_Vehicle);
+		bool escortReady = m_bUnescorted;
+		if (m_Escort)
+			escortReady = BoardPilot_S(m_Escort.m_CrewGroup, m_Escort.m_Vehicle);
 		BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(m_Vehicle.FindComponent(BaseCompartmentManagerComponent));
 		if (!compartments)
 			return false;
 		array<BaseCompartmentSlot> slots = {};
-		array<BaseCompartmentSlot> cargo = {};
 		compartments.GetCompartments(slots);
-		foreach (BaseCompartmentSlot slot : slots)
-		{
-			if (CargoCompartmentSlot.Cast(slot) && slot.IsCompartmentAccessible() && !slot.IsOccupied())
-				cargo.Insert(slot);
-		}
 		array<AIAgent> agents = {};
 		m_Group.GetAgents(agents);
-		if (agents.Count() < 1 || cargo.Count() < agents.Count())
+		if (agents.Count() < 1)
 			return false;
-		for (int index = 0; index < agents.Count(); index++)
+		array<BaseCompartmentSlot> passengerSeats = {};
+		foreach (BaseCompartmentSlot candidate : slots)
 		{
-			if (!agents[index] || !Seat(agents[index].GetControlledEntity(), cargo[index]))
-				return false;
-			m_aPassengers.Insert(agents[index].GetControlledEntity());
+			if (candidate && CargoCompartmentSlot.Cast(candidate) && candidate.IsCompartmentAccessible() && !candidate.GetAttachedTurret())
+				passengerSeats.Insert(candidate);
 		}
-		m_bMounted = true;
-		return true;
+		if (agents.Count() > passengerSeats.Count())
+			return false;
+		bool passengersReady = true;
+		for (int passengerIndex = 0; passengerIndex < agents.Count(); passengerIndex++)
+		{
+			AIAgent agent = agents[passengerIndex];
+			if (!agent || !agent.GetControlledEntity())
+				return false;
+			IEntity passenger = agent.GetControlledEntity();
+			if (!m_aPassengers.Contains(passenger))
+				m_aPassengers.Insert(passenger);
+			if (IsSeatedInOwnVehicle(passenger))
+				continue;
+			passengersReady = false;
+			CompartmentAccessComponent access = CompartmentAccessComponent.Cast(passenger.FindComponent(CompartmentAccessComponent));
+			if (!access || access.IsGettingIn() || access.IsGettingOut() || access.IsInCompartment())
+				continue;
+			// Each asynchronous request has a distinct destination even when native
+			// occupancy/reservation updates are delayed until a later engine tick.
+			Seat(passenger, passengerSeats[passengerIndex]);
+		}
+		m_bMounted = transportReady && escortReady && passengersReady;
+		return m_bMounted;
 	}
 
 	//! Recovery after pilot loss still requires surviving passengers physically on the ground.
@@ -276,10 +330,12 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 	{
 		if (!Replication.IsServer())
 			return;
-		// Also unfreeze preserved/player-occupied aircraft on abort and world unload.
-		ReleaseAircraft_S();
-		if (m_bOrdersIssued && !m_bImmediateCleanup)
+		bool materialized = m_Vehicle || m_Group || m_CrewGroup || m_Escort;
+		if (materialized && !m_bImmediateCleanup)
 		{
+			// An aborted, uncrewed package stays held until safe removal; never create an artificial crash.
+			if (m_bOrdersIssued || HasPlayerOccupant(m_Vehicle) || (m_Escort && HasPlayerOccupant(m_Escort.m_Vehicle)))
+				ReleaseAircraft_S();
 			if (!m_bCleanupQueued)
 			{
 				m_bCleanupQueued = true;
@@ -287,8 +343,14 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 			}
 			return;
 		}
+		// Actual removal and world unload must also unfreeze any player-preserved hull.
+		ReleaseAircraft_S();
 		if (m_Escort)
+		{
 			m_Escort.Cleanup_S();
+			if (m_Escort.m_bPackageQueuesPreserved)
+				m_bPackageQueuesPreserved = true;
+		}
 		m_Escort = null;
 		super.Cleanup_S();
 	}

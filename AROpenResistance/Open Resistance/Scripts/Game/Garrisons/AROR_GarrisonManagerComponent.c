@@ -18,8 +18,14 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 	protected float m_fRetirementRadius;
 	[Attribute("120", desc: "Seconds continuously outside the retirement radius before virtualisation", params: "30 900 5")]
 	protected int m_iRetirementDelay;
+	[Attribute("1200", desc: "Under personnel pressure, allow safe retirement beyond this all-player distance from both site and actors. Always exceeds activation distance.", params: "1100 6000 50")]
+	protected float m_fPressureRetirementRadius;
+	[Attribute("15", desc: "Continuous safe distance required before retiring a distant garrison to admit a waiting site. Recent combat prevents pressure retirement.", params: "10 120 5")]
+	protected int m_iPressureRetirementDelay;
 	[Attribute("96", desc: "Maximum live/reserved garrison personnel, separate from Operations' QRF budget", params: "48 512 1")]
 	protected int m_iMaxPersonnel;
+	[Attribute("0", desc: "Allow a locally validated infantry-only defence when the full compound terrain check fails. Omit unspawned heavy assets for that activation; never bypass individual navigation, collision or capture-area checks.")]
+	protected bool m_bInfantryFallback;
 	[Attribute("", desc: "Role/faction/native-asset bindings. Missing or mismatched bindings disable spawning for that role.")]
 	protected ref array<ref AROR_GarrisonFaction> m_aFactions;
 	protected AROR_GameFlowComponent m_Flow;
@@ -104,6 +110,21 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 		}
 		return false;
 	}
+	protected float NearestPlayerDistance(AROR_LocationComponent location, array<vector> players)
+	{
+		float nearest = float.MAX;
+		foreach (vector position : players)
+			nearest = Math.Min(nearest, vector.DistanceXZ(position, location.GetCenter()));
+		return nearest;
+	}
+	protected bool HasRecentCombat(AROR_GarrisonComponent garrison)
+	{
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		if (!operations)
+			return false;
+		AROR_LocationComponent location = garrison.GetLocation();
+		return operations.GetRecentCombatContact(garrison.GetRosterRole(), location.GetCenter(), Math.Max(location.GetRadius(), m_fRetirementRadius), 60) != null;
+	}
 
 	protected void ScanProximity_S(int now)
 	{
@@ -123,6 +144,12 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 			if (player && player.GetCharacterController() && !player.GetCharacterController().IsDead())
 				living.Insert(player.GetOrigin());
 		}
+		bool pressure;
+		foreach (AROR_GarrisonComponent waiting : m_aGarrisons)
+		{
+			if (waiting && waiting.IsCapacityWaiting())
+				pressure = true;
+		}
 		foreach (AROR_GarrisonComponent garrison : m_aGarrisons)
 		{
 			if (!garrison || !garrison.IsEligible())
@@ -132,9 +159,20 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 				garrison.Observe_S();
 			if (garrison.IsGarrisonActive() || garrison.HasDeploymentStarted())
 			{
-				bool outside = garrison.CanRetire(Math.Max(m_fActivationRadius + 100, m_fRetirementRadius), allPlayers);
-				if (garrison.OutsideLongEnough(outside, now, m_iRetirementDelay * 1000))
+				float retirementRadius = Math.Max(m_fActivationRadius + 100, m_fRetirementRadius);
+				int retirementDelay = m_iRetirementDelay;
+				bool reclaim = pressure && !HasRecentCombat(garrison);
+				if (reclaim)
+				{
+					retirementRadius = Math.Min(retirementRadius, Math.Max(m_fActivationRadius + 100, m_fPressureRetirementRadius));
+					retirementDelay = Math.Max(10, m_iPressureRetirementDelay);
+				}
+				bool outside = garrison.CanRetire(retirementRadius, allPlayers);
+				if (garrison.OutsideLongEnough(outside, now, retirementDelay * 1000))
+				{
+					Print(string.Format("[AROR GARRISON] %1 retiring safely; capacityPressure=%2 committed=%3", location.GetId(), reclaim, garrison.CommittedPersonnel()), LogLevel.NORMAL);
 					garrison.Retire_S();
+				}
 			}
 			if (garrison.HasRoster() && garrison.GetRosterRole() != location.GetControllingRole())
 			{
@@ -152,6 +190,20 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 			}
 			garrison.RefreshPending_S();
 		}
+		// Stable insertion sort over nearby sites; construction still rotates through
+		// all of them so a large base cannot monopolise the native spawn queue.
+		for (int current = 1; current < m_aNearby.Count(); current++)
+		{
+			AROR_GarrisonComponent candidate = m_aNearby[current];
+			float distance = NearestPlayerDistance(candidate.GetLocation(), living);
+			int previous = current - 1;
+			while (previous >= 0 && NearestPlayerDistance(m_aNearby[previous].GetLocation(), living) > distance)
+			{
+				m_aNearby[previous + 1] = m_aNearby[previous];
+				previous--;
+			}
+			m_aNearby[previous + 1] = candidate;
+		}
 	}
 
 	protected void Tick()
@@ -166,8 +218,8 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 		int reserved;
 		foreach (AROR_GarrisonComponent garrison : m_aGarrisons)
 		{
-			if (garrison && garrison.IsGarrisonActive())
-				reserved += garrison.ReservedPersonnel();
+			if (garrison)
+				reserved += garrison.CommittedPersonnel();
 		}
 		m_iCursor = Math.Mod(m_iCursor, m_aNearby.Count());
 		AROR_GarrisonComponent next = m_aNearby[m_iCursor++];
@@ -181,10 +233,20 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 			return;
 		if (!next.BindAssets_S(binding))
 			return;
-		if (!next.IsGarrisonActive() && (!next.HasSuitableDefenceTerrain_S() || reserved + next.ReservedPersonnel() > m_iMaxPersonnel))
+		if (!next.HasSuitableDefenceTerrain_S())
+		{
+			if (!m_bInfantryFallback || !next.PrepareInfantryFallback_S())
+				return;
+		}
+		int available = Math.Max(0, m_iMaxPersonnel - reserved);
+		bool waiting = next.NextPersonnelCost() > available;
+		next.SetCapacityWait_S(now, waiting, reserved, m_iMaxPersonnel);
+		if (waiting)
 			return;
-		if (!next.SpawnNextAsset_S(binding, m_fPlayerSpawnClearance))
-			next.SpawnNextGroup_S(now, m_fPlayerSpawnClearance);
+		// Establish infantry before optional heavy assets. Admission is per complete
+		// team/hull, rather than reserving an entire virtual roster at first proximity.
+		if (!next.SpawnNextGroup_S(now, m_fPlayerSpawnClearance, available))
+			next.SpawnNextAsset_S(binding, m_fPlayerSpawnClearance, available);
 	}
 
 	override void OnPostInit(IEntity owner)

@@ -6,6 +6,7 @@ $addonRoot = Join-Path $repoRoot 'AROpenResistance/Open Resistance'
 $definition = Get-Content -Encoding utf8 -Raw (Join-Path $repoRoot 'docs/MILITARY_DEFENCE_PRESETS.json') | ConvertFrom-Json
 $culture = [Globalization.CultureInfo]::InvariantCulture
 $utf8 = New-Object Text.UTF8Encoding($false)
+. (Join-Path $PSScriptRoot 'GunEmbrasures.ps1')
 function Number($value) { ([double]$value).ToString('0.######',$culture) }
 function EntityId([string]$name) {
  $digest = [Security.Cryptography.SHA256]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes($name))
@@ -53,7 +54,15 @@ foreach ($preset in $definition.Presets) {
  $lines.Add('   }')
  $lines.Add('   coords 0 0.905946 0')
  $lines.Add('  }')
- # Low sandbag walls on all sides, with a ten-metre south entrance.
+ # Gun lanes, computed as for the markers below: walls in a gun's firing lane are left out (see GunEmbrasures.ps1)
+ $laneCount = 4
+ if ($preset.SourceName -eq 'Outpost') { $laneCount = 1 }
+ if ($preset.SourceName -in @('MilitaryBase','Resources','Factory','Port')) { $laneCount = 3 }
+ $lanePositions = @(@(0,($half-4),0),@(-($half-4),0,270),@(($half-4),0,90),@(0,-($half-4),180))
+ if ($preset.CompactTeams) { $lanePositions=@(@(0,20,0),@(-20,6,270),@(20,6,90)) }
+ if ($preset.MGPositions) { $lanePositions=$preset.MGPositions }
+ $lanes = @($lanePositions | Select-Object -First $laneCount)
+ # Low sandbag walls on all sides, with a ten-metre south entrance and open gun embrasures.
  $segments = [int][Math]::Ceiling((2 * $half) / [double]$definition.WallPitch)
  for ($side = 0; $side -lt 4; $side++) {
   for ($segment = 0; $segment -lt $segments; $segment++) {
@@ -63,6 +72,7 @@ foreach ($preset in $definition.Presets) {
    if ($side -eq 1) { $wallX = $half; $wallZ = $along; $wallYaw = 90 }
    if ($side -eq 2) { $wallZ = -$half }
    if ($side -eq 3) { $wallX = -$half; $wallZ = $along; $wallYaw = 90 }
+   if (Test-InEmbrasure $wallX $wallZ $lanes) { continue }
    $lines.Add(('  GenericEntity AROR_{0}_Wall_{1}_{2} : "{3}" {{' -f $name,$side,$segment,$definition.WallResource))
    $lines.Add(('   ID "{0}"' -f (EntityId "$name/wall/$side/$segment")))
    $lines.Add('   components {')

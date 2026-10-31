@@ -1,6 +1,9 @@
 SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" {
  ID "56B2B479C6B96951"
  components {
+  AROR_InvaderCampaignComponent "{9AB2CB63D7214001}" {
+   m_bInvaderCampaign 0
+  }
   AROR_RegionalSupportComponent "{3E3586CD181A4E9A}" {
    m_bRegionalSupport 0
   }
@@ -10,6 +13,15 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
      m_eRole OCCUPIERS
      m_sFactionKey "AROR_OCCUPIERS"
      m_sAssetFactionKey "US"
+     m_aStaticVariants {
+      "{887DB60486A18575}Prefabs/Weapons/Tripods/Tripod_M122_MG_M60.et"
+      "{917E25C4E19000D0}Prefabs/Weapons/Tripods/Tripod_M3_M2HB_APIT.et"
+     }
+     m_aInfantryVariants {
+      "{5B1996C05B1E51A4}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_AR.et"
+      "{84029128FA6F6BB9}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_GL.et"
+      "{E398E44759DA1A43}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_TL.et"
+     }
      m_aMannedVehicles {
       "{0FBF8F010F81A4E5}Prefabs/Vehicles/Wheeled/LAV25/LAV25.et"
       "{3EA6F47D95867114}Prefabs/Vehicles/Wheeled/M998/M1025_armed_M2HB.et"
@@ -20,8 +32,18 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
      m_sFactionKey "AROR_INVADERS"
      m_sAssetFactionKey "USSR"
      m_sInfantry "{DCB41B3746FDD1BE}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Rifleman.et"
+     m_aInfantryVariants {
+      "{23ADBBC31B6A3DC6}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_AR.et"
+      "{8E0FE664CE7D1CA9}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_GL.et"
+      "{5436629450D8387A}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_SL.et"
+     }
+     m_sMarksman "{976AC400219898FA}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Sharpshooter.et"
      m_sCrew "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Crew.et"
      m_sStaticMG "{29F0CC704A582154}Prefabs/Weapons/Tripods/6T7/Tripod_6T7_NSV.et"
+     m_aStaticVariants {
+      "{723870DBB19D30B0}Prefabs/Weapons/Tripods/Tripod_6T5_PKM.et"
+      "{3EA26CFD7A202636}Prefabs/Weapons/Tripods/6T7/Tripod_6T7_NSV_SPP.et"
+     }
      m_sParkedArmour "{C012BB3488BEA0C2}Prefabs/Vehicles/Wheeled/BTR70/BTR70.et"
      m_aMannedVehicles {
       "{C012BB3488BEA0C2}Prefabs/Vehicles/Wheeled/BTR70/BTR70.et"
@@ -38,20 +60,75 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
   }
   AROR_EconomyComponent "{F317694D57DF9B7A}" {
   }
+  AROR_ResistanceStorageComponent "{B8E41C72A05F3D19}" {
+  }
+  AROR_ResistanceGarageComponent "{6AB5C0D1E2F30402}" {
+   m_iHqSlots 10
+   m_iObjectiveSlots 2
+   m_fPlaceRadius 50
+   m_fStoreLookDistance 5
+   m_fStoreSiteRadius 50
+  }
+  AROR_PlayerLoadoutsComponent "{6AB4F1B2C3D4E501}" {
+  }
+  SCR_ArsenalManagerComponent "{6AB4F0A1C2D3E401}" {
+   m_eArsenalTypesEnabled 7
+  }
   AROR_IncomeComponent "{3C7E9B2A51D84F06}" {
   }
   AROR_FactionPresetsComponent "{5C71FA2147F19FB3}" {
   }
+  AROR_ContentPacksComponent "{6B1D3E7A92C45F18}" {
+  }
+  AROR_CampaignSettingsComponent "{6B2E4F8AA3D56029}" {
+  }
   AROR_FactionRolesComponent "{6AAE5E8BB415C942}" {
+  }
+  AROR_HighCommandComponent "{6AB4E0F1A2B8C001}" {
+   m_aSquadTypes {
+    AROR_HighCommandSquadType {
+     m_sCallsign "RFL"
+     m_sName "Rifle Squad"
+     m_aMembers {
+      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
+      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
+      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
+      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
+      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
+      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
+     }
+     m_iFundsCost 2000
+     m_iManpowerCost 6
+    }
+    AROR_HighCommandSquadType {
+     m_sCallsign "FTM"
+     m_sName "Fire Team"
+     m_aMembers {
+      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
+      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
+      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
+      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
+     }
+     m_iFundsCost 1200
+     m_iManpowerCost 4
+    }
+   }
+  }
+  AROR_MissionBoardComponent "{6AC0A0F1A5000001}" {
   }
   AROR_GameFlowComponent "{6AAA8D6D8EB1E454}" {
    m_sHQPrefab "{3EC420BD9621F356}Prefabs/Locations/AROR_Location_HQ.et"
+   m_sArsenalPrefab "{274839CB791B6A7B}Prefabs/Props/Locations/AROR_Prop_Arsenal.et"
+   m_sGaragePrefab "{BC5B93CA37752CF6}Prefabs/Props/Locations/AROR_Prop_Garage.et"
+   m_vArsenalOffsetFromHQ 0.5 0 0
    m_bWorkbenchAutoNewPlaythrough 1
   }
   AROR_LocationManagerComponent "{6AA2823B57AE5CD7}" {
   }
   AROR_LocationMapIconsComponent "{6AAC8BBFBA047D89}" {
    m_sSelectorLayout "{9B65C8ACFFEE4DD6}UI/Layouts/Map/AROR_MapIconSelector.layout"
+  }
+  AROR_PlayerMarkersComponent "{6AB1C3D40E5F7A21}" {
   }
   AROR_NotificationManagerComponent "{EEF432965439E1C5}" {
   }

@@ -1,0 +1,1321 @@
+FrameWidgetClass {
+ Name "MarsResource"
+ Slot FrameWidgetSlot {
+  Anchor 0 0 1 1
+ }
+ {
+  FrameWidgetClass {
+   Name "MarsApp"
+   Slot FrameWidgetSlot {
+    Anchor 0 0 0 0
+   }
+   {
+    ImageWidgetClass {
+     Name "MarsBackground"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    CanvasWidgetClass {
+     Name "MarsBackdrop"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsPanel0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsPanel1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsPanel2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsPanel3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsPanel4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsPanel5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsPanel6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsPanel7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsPanel8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsPanel9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsPanel10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsPanel11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg32"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel32"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn32"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg33"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel33"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn33"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg34"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel34"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn34"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg35"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel35"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn35"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg36"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel36"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn36"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg37"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel37"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn37"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg38"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel38"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn38"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "MarsBtnBg39"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsBtnLabel39"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "MarsBtn39"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText32"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText33"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText34"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText35"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText36"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText37"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText38"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "MarsText39"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    SliderWidgetClass {
+     Name "MarsReadinessSlider"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    SliderWidgetClass {
+     Name "MarsCrackdownSlider"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    EditBoxWidgetClass {
+     Name "MarsCredential"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+   }
+  }
+ }
+}

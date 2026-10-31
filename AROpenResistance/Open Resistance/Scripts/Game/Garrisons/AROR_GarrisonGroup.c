@@ -9,4 +9,10 @@ class AROR_GarrisonGroup
 	int m_iNextWake;
 	bool m_bOrdered;
 	bool m_bQueueClosed;
+	bool m_bMountedDefence;
+	int m_iNextSeatAttempt;
+	int m_iSeatAttempts;
+	int m_iNextFootOrder;
+	int m_iPatrolLeg;
+	int m_iContactSequence;
 }

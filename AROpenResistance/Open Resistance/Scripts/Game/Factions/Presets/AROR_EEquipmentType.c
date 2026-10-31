@@ -10,5 +10,6 @@ enum AROR_EEquipmentType
 	WATCH,
 	FLASHLIGHT,
 	TOOL,
-	EXPLOSIVE
+	EXPLOSIVE,
+	OTHER
 }

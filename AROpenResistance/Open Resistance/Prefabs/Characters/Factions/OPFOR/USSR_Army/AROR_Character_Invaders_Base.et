@@ -1,0 +1,66 @@
+SCR_ChimeraCharacter : "{DCB41B3746FDD1BE}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Rifleman.et" {
+ ID "200D264F0EEA1A28"
+ components {
+  SCR_CharacterInventoryStorageComponent "{520EA1D2DB118DAC}" {
+   components {
+    SCR_EquipmentStorageComponent "{56B49DA9722B635D}" {
+     InitialStorageSlots {
+      SCR_EquipmentStorageSlot BinocularSlot {
+       Prefab ""
+      }
+      SCR_EquipmentStorageSlot WristwatchSlot {
+       Prefab ""
+      }
+     }
+    }
+   }
+  }
+  SCR_CharacterFactionAffiliationComponent "{520EC9618276DF23}" {
+   "faction affiliation" "AROR_INVADERS"
+  }
+  CharacterGrenadeSlotComponent "{520EA1D2F659CE6E}" {
+   WeaponTemplate ""
+  }
+  CharacterWeaponSlotComponent "{520EA1D2F659CFAB}" {
+   WeaponTemplate ""
+  }
+  BaseLoadoutManagerComponent "{520EA1D2DB11821E}" {
+   Slots {
+    LoadoutSlotInfo Hat {
+     Prefab ""
+    }
+    LoadoutSlotInfo Jacket {
+     Prefab ""
+    }
+    LoadoutSlotInfo ArmoredVest {
+     Prefab ""
+    }
+    LoadoutSlotInfo Pants {
+     Prefab ""
+    }
+    SCR_FeetLoadoutSlotInfo Boots {
+     Prefab ""
+    }
+    LoadoutSlotInfo Vest {
+     Prefab ""
+    }
+   }
+  }
+  SCR_InventoryStorageManagerComponent "{520EA1D2DB118DE5}" {
+   InitialInventoryItems {
+    ItemsInitConfigurationItem "{5D7CC173E6675BF7}" {
+     PrefabsToSpawn {
+     }
+    }
+    ItemsInitConfigurationItem "{5D7CC173E6675BF5}" {
+     PrefabsToSpawn {
+     }
+    }
+    ItemsInitConfigurationItem "{54A68D64D7F9124F}" {
+     PrefabsToSpawn {
+     }
+    }
+   }
+  }
+ }
+}

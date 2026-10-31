@@ -5,6 +5,7 @@ class AROR_LocationForces : Managed
 {
 	protected ref array<int> m_aPlayers = {};
 	protected ref array<int> m_aAI = {};
+	protected ref array<vector> m_aPositionSums = {};	//!< Sum of member positions per role, for GetCentroid
 
 	//------------------------------------------------------------------------------------------------
 	void AROR_LocationForces()
@@ -14,6 +15,7 @@ class AROR_LocationForces : Managed
 		{
 			m_aPlayers.Insert(0);
 			m_aAI.Insert(0);
+			m_aPositionSums.Insert(vector.Zero);
 		}
 	}
 
@@ -48,6 +50,18 @@ class AROR_LocationForces : Managed
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Average position of a role's living people inside the radius; false if there are none. A snapshot, as a
+	//! sentry or recon element would report it: never a live reference to anyone.
+	bool GetCentroid(AROR_EFactionRole role, out vector centroid)
+	{
+		int total = GetTotal(role);
+		if (total < 1)
+			return false;
+		centroid = m_aPositionSums[role] * (1.0 / total);
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	int GetTotal(AROR_EFactionRole role)
 	{
 		return m_aPlayers[role] + m_aAI[role];
@@ -71,6 +85,7 @@ class AROR_LocationForces : Managed
 		if (!m_Roles.GetRoleOfFaction(SCR_Faction.GetEntityFaction(character), role))
 			return true;
 
+		m_aPositionSums[role] = m_aPositionSums[role] + character.GetOrigin();
 		if (GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(character) > 0)
 			m_aPlayers[role] = m_aPlayers[role] + 1;
 		else

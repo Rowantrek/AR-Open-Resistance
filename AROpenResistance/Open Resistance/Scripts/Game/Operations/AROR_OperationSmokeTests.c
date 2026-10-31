@@ -34,15 +34,18 @@ class AROR_OperationSmokeTests
 		bool passed = true;
 		string occupierAttack = manager.ScheduleAttack_S(AROR_EFactionRole.OCCUPIERS, attackTargetId, 86400);
 		string invaderAttack = manager.ScheduleAttack_S(AROR_EFactionRole.INVADERS, attackTargetId, 86400);
-		passed = Check(!occupierAttack.IsEmpty() && !invaderAttack.IsEmpty() && occupierAttack != invaderAttack, "Independent role attacks") && passed;
+		passed = Check(!occupierAttack.IsEmpty() && invaderAttack.IsEmpty(), "Only one attack can be outstanding globally") && passed;
 		passed = Check(manager.ScheduleAttack_S(AROR_EFactionRole.OCCUPIERS, attackTargetId, 86400) == occupierAttack, "Attack deduplication") && passed;
+		passed = Check(manager.ResolveOperation_S(occupierAttack, AROR_EOperationState.CANCELLED, "Release global attack slot"), "Cancel first role attack") && passed;
+		invaderAttack = manager.ScheduleAttack_S(AROR_EFactionRole.INVADERS, attackTargetId, 86400);
+		passed = Check(!invaderAttack.IsEmpty() && invaderAttack != occupierAttack, "Other army can use the released attack slot") && passed;
 
 		string occupierQRF = manager.ReportAttack_S(AROR_EFactionRole.OCCUPIERS, defendedLocationId);
 		string invaderQRF = manager.ReportAttack_S(AROR_EFactionRole.INVADERS, defendedLocationId);
 		passed = Check(!occupierQRF.IsEmpty() && !invaderQRF.IsEmpty() && occupierQRF != invaderQRF, "Reserved QRF capacity while attacks are planned") && passed;
 		passed = Check(manager.ReportAttack_S(AROR_EFactionRole.OCCUPIERS, defendedLocationId) == occupierQRF, "Repeated combat report deduplication") && passed;
 		passed = Check(manager.ReportAttackAt_S(AROR_EFactionRole.OCCUPIERS, defendedLocationId, "0 0 0") == occupierQRF, "Contact report reuses existing QRF") && passed;
-		passed = Check(manager.GetOperation(occupierQRF).GetQRFSearchPlan() && !manager.GetOperation(occupierAttack).GetQRFSearchPlan(), "Only QRFs own a search plan") && passed;
+		passed = Check(manager.GetOperation(occupierQRF).GetQRFSearchPlan() && manager.GetOperation(invaderAttack).GetQRFSearchPlan(), "Attacks and QRFs share tactical search plans") && passed;
 		passed = Check(manager.ScheduleAttack_S(AROR_EFactionRole.RESISTANCE, attackTargetId).IsEmpty(), "Resistance cannot schedule autonomous attacks") && passed;
 		passed = Check(manager.ReportAttack_S(AROR_EFactionRole.RESISTANCE, defendedLocationId).IsEmpty(), "Resistance cannot request enemy QRFs") && passed;
 		passed = Check(manager.ScheduleAttack_S(AROR_EFactionRole.OCCUPIERS, "").IsEmpty(), "Empty target rejected") && passed;
@@ -53,8 +56,8 @@ class AROR_OperationSmokeTests
 		// Cancel test records before returning; none can reach dispatch in this synchronous test.
 		AROR_OperationReentryProbe probe = new AROR_OperationReentryProbe();
 		probe.m_Manager = manager;
-		probe.m_sTriggerId = occupierAttack;
-		probe.m_sFollowupId = invaderAttack;
+		probe.m_sTriggerId = invaderAttack;
+		probe.m_sFollowupId = invaderQRF;
 		manager.GetOnOperationChanged().Insert(probe.OnChanged);
 		array<string> ids = {occupierAttack, invaderAttack, occupierQRF, invaderQRF};
 		foreach (string id : ids)
@@ -63,7 +66,7 @@ class AROR_OperationSmokeTests
 				passed = Check(manager.ResolveOperation_S(id, AROR_EOperationState.CANCELLED, "Workbench smoke test cleanup"), "Test operation cancelled") && passed;
 		}
 		manager.GetOnOperationChanged().Remove(probe.OnChanged);
-		passed = Check(!probe.m_bReentered && probe.m_iFollowupNotifications == 1 && manager.GetOperation(invaderAttack) && manager.GetOperation(invaderAttack).IsTerminal(), "Nested resolution notifies once without recursive Invoke") && passed;
+		passed = Check(!probe.m_bReentered && probe.m_iFollowupNotifications == 1 && manager.GetOperation(invaderQRF) && manager.GetOperation(invaderQRF).IsTerminal(), "Nested resolution notifies once without recursive Invoke") && passed;
 		passed = Check(!manager.MarkActive_S(occupierAttack), "Late acknowledgement rejected") && passed;
 		passed = Check(manager.ReportAttack_S(AROR_EFactionRole.OCCUPIERS, defendedLocationId).IsEmpty(), "QRF cooldown survives cancellation") && passed;
 		passed = Check(manager.ScheduleAttack_S(AROR_EFactionRole.INVADERS, attackTargetId).IsEmpty(), "Attack cooldown survives cancellation") && passed;

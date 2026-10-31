@@ -1,0 +1,3693 @@
+GenericEntity : "{37786477B1914A61}Prefabs/Compositions/Locations/AROR_Defence_Airbase.et" {
+ ID "7EABB288DC6CC0FB"
+ components {
+  AROR_GarrisonComponent "{66D30571F98F4BE3}" {
+   m_iStaticWeaponCountOverride 6
+   m_iExtraInfantryTeams 4
+   m_aExtraParkedVehicles {
+    "{70BAEEFC2D3FEE64}Prefabs/Vehicles/Helicopters/UH1H/UH1H.et"
+    "{70BAEEFC2D3FEE64}Prefabs/Vehicles/Helicopters/UH1H/UH1H.et"
+    "{70BAEEFC2D3FEE64}Prefabs/Vehicles/Helicopters/UH1H/UH1H.et"
+   }
+   m_fDefenceHalfExtent 64
+   m_fMaxDefenceRelief 3
+  }
+  AROR_StrongholdComponent {
+   m_eHomeRole OCCUPIERS
+   m_sRetaliationRecipeId "occupier_ground_l5"
+   m_sFinalDefenceRecipeId "occupier_ground_l5"
+   m_bLaunchFromFriendlyBase 1
+   m_fLandingArc 360
+   m_fLandingMinDistance 800
+  }
+ }
+ coords 0 0 0
+ {
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_2 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "ABB59A89F36C3355"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -108.070074 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_3 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "82B69D5FA9C304D3"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -105.699704 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_4 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "370F8476183887B0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -103.329333 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_5 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0AE84FA19A026AA5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -100.958963 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_6 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A64E61F67AE433DE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -98.588593 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_7 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "E4944EF7B48AE05C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -96.218222 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_8 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "13D2F6B9287314EE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -93.847852 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_9 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "4478DE19A3F15DDA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -91.477481 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_10 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "F4EC6A4486623A48"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -89.107111 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_11 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "B597B0891958B08D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -86.736741 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_12 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "D81A3FD2CB2FA15E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -84.36637 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_13 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "FBEFDB57A4DD0E9F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -81.996 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_14 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "6F4AE5A419B839BA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -79.62563 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_15 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "B2FE5B89E16BAFA4"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -77.255259 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_16 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "218D2EBB6D9A6EAE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -74.884889 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_17 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5EA593B75A6B8454"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -72.514519 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_18 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "B0F34B9766C4E4B5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -70.144148 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_19 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "415457EF1FD4D6A1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -67.773778 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_20 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "337AB61D46C8378E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -65.403407 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_21 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "D301D504FE7F810C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -63.033037 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_22 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "6BAC1AEE3F56B939"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -60.662667 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_23 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "DAA44680831E2C98"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -58.292296 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_30 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "87C2A7B4CF635432"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -41.699704 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_31 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "F9B99FD17961CB71"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -39.329333 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_32 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "37872E86F4C3A4DB"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -36.958963 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_33 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "8E8CF6526496D413"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -34.588593 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_34 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "C25AFD4D665C6FE7"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -32.218222 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_35 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A3E7142939FD01E2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -29.847852 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_36 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "3BEF01C3DC1D3F38"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -27.477481 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_37 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "8AA027FF76969C00"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -25.107111 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_38 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "02E48C2EC566CD70"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -22.736741 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_39 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "93EEE9718E28E1E1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -20.36637 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_40 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "4483F7FDCE3B6918"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -17.996 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_41 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "D1CE2898614BB780"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -15.62563 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_42 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "9384FA472370D8A8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -13.255259 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_43 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0AA6CBDF112A3614"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -10.884889 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_44 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "C1C4A0278850E338"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8.514519 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_45 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "552A2EE2153BF708"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -6.144148 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_46 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5F5364540747135A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -3.773778 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_47 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "62F62058616026C5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -1.403407 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_48 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "3A73880E09CE0ED8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 0.966963 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_49 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5845D2EF76B97A0E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 3.337333 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_50 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5BA1DFDB88776382"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 5.707704 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_0_51 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "BD9E261DE4446012"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 8.078074 0 129.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_0 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "29B54F4BC0202053"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 2.190185
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_1 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "B7B3F3B05E888DC0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 4.560556
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_2 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "99508CE7F7B9A05B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 6.930926
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_3 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5FB6153D721D8D3E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 9.301296
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_4 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5293F7E28764E881"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 11.671667
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_5 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "2086B00F14B3E4A3"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 14.042037
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_6 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "646B015561BB67D3"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 16.412407
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_7 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "FE34F8A3FFF68C03"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 18.782778
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_8 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "6414F41CD880E645"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 21.153148
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_9 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "540883671F8304ED"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 23.523519
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_10 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "37BA26B92C5D8ED2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 25.893889
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_11 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "52A14ACC140ED1A5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 28.264259
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_12 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "9F9C220400ED10D3"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 30.63463
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_13 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "2E6E1003EDC1EBE5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 33.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_14 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "203BBBA206610438"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 35.37537
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_15 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "23DB2A0E7D72BDFA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 37.745741
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_16 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A57A864A280CAB7C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 40.116111
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_17 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "50EEB98DD9702D64"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 42.486481
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_18 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A3ABE8FB22CEEFA6"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 44.856852
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_19 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "AD52967E8DCFEDD5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 47.227222
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_20 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "897AFC5057B59999"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 49.597593
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_21 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "FB1FB69D7B0D93B2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 51.967963
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_22 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "254663A0CBF66330"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 54.338333
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_23 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "E52B96351ACFA22B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 56.708704
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_30 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "7B593FD8F36C9D91"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 73.301296
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_31 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "D03FC57E5881F75E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 75.671667
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_32 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "7F0321E86B31C388"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 78.042037
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_33 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A0279635F944EEC1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 80.412407
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_34 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "9E42571410CC2468"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 82.782778
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_35 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "C26DC104AC6CC1EB"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 85.153148
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_36 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A4EBF306AD17055E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 87.523519
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_37 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "094073B3EA81CE5F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 89.893889
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_38 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "1547AF690471FE51"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 92.264259
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_39 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "54436506883457C1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 94.63463
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_40 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0255B63C1A287BC6"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 97.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_41 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "B6D5CB2D35876218"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 99.37537
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_42 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "23DBA00A3335B0EF"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 101.745741
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_43 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "3D5ECD825EA51EAF"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 104.116111
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_44 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "6A73EFE0BB9D9F63"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 106.486481
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_45 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "108D9D96F5EE9070"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 108.856852
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_46 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "1BBF21E8E8187EAA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 111.227222
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_47 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "22B885A710851B45"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 113.597593
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_48 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "948B7FF86170E234"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 115.967963
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_49 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "58E94234CAB806E2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 118.338333
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_50 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0E0F010227CF317E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 120.708704
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_1_51 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "3EF525993E426E83"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14.004 0 123.079074
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_0 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "1BDAE8F6986F6A82"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -112.810815 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_1 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0E751F7027490ACC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -110.440444 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_2 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "7F7D8F07C1A488E8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -108.070074 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_3 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "8CF167705AF50C2E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -105.699704 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_4 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "983BDC36A3ADF053"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -103.329333 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_5 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "44A0345A4B7175BA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -100.958963 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_6 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A8B6192D35401D2E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -98.588593 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_7 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "6BB94AEF8AD8957D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -96.218222 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_8 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0DCC117D9917FE48"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -93.847852 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_9 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "C7788617575386CE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -91.477481 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_10 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "9F7EB03F610B24CA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -89.107111 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_11 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "DA74E32A264A263C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -86.736741 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_12 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "C11F1C6E1527BCEE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -84.36637 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_13 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "C63C33542EB17AD5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -81.996 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_14 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "1E77C9B401594407"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -79.62563 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_15 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "72D0AFCA48EA03D7"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -77.255259 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_16 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "27D405E479BB8D7A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -74.884889 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_17 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "866D8ADCDD7F784E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -72.514519 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_18 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "B0E474E45F89A6A8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -70.144148 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_19 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "DD6136E9C1A6C71E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -67.773778 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_20 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "2B2A8D6910E3EB84"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -65.403407 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_21 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "197E30D131F498E5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -63.033037 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_22 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "2A786FB023AB8CCA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -60.662667 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_23 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "098D68B1C382F829"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -58.292296 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_30 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "C96C65F9ABC04E76"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -41.699704 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_31 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "86F92453DE8C4AB2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -39.329333 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_32 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "F61BA42796E6AFD6"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -36.958963 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_33 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "BC77D120086ABEB0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -34.588593 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_34 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "DD7D258DEB6B9D0B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -32.218222 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_35 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "C8A21490CEACABF0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -29.847852 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_36 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "497070FE3E20F9BF"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -27.477481 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_37 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A4DBF2CACB8B6DDF"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -25.107111 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_38 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0EA7C8CF0412A604"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -22.736741 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_39 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "6F5AAD94311E5E83"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -20.36637 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_40 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "18F71B942D866B4B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -17.996 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_41 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "02C06C222E003D88"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -15.62563 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_42 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "E8744B965064DD36"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -13.255259 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_43 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "54534C8AE976C5B0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -10.884889 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_44 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "109EE5B10370873F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8.514519 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_45 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "88D12B7D78F464CE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -6.144148 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_46 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "3B9B98ABE734B96E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -3.773778 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_47 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "8FED03AEFB303214"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -1.403407 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_48 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "873055D4B3885B94"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 0.966963 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_49 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "81DC501C1CA52070"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 3.337333 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_50 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "6CC47BA469CF0432"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 5.707704 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_51 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "FB1F76BFC6401EF7"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 8.078074 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_52 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "DC6387A65316A1F0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 10.448444 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_2_53 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "4C64CD1398A26A15"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 12.818815 0 1.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_0 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "F20362A440EE4AA9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 2.190185
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_1 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A65AB59788018D65"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 4.560556
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_2 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "8C9CBB986F2DBD4C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 6.930926
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_3 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "76CA08394CF8C775"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 9.301296
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_4 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "6716EF94A2B92292"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 11.671667
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_5 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "128CE020D7EE0FB8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 14.042037
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_6 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "657DF0D1F25227E9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 16.412407
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_7 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "E361E763DA732D65"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 18.782778
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_8 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "21D329E8E50378AB"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 21.153148
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_9 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "8F37BC6FDF3B8141"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 23.523519
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_10 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "B9FDEC9C266DA445"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 25.893889
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_11 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "06C79EB9EFC111DC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 28.264259
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_12 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0A8D45BC6994D99A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 30.63463
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_13 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "B51085F66E810E00"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 33.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_14 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "16318AF11FDC9953"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 35.37537
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_15 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "34CAD3A0CD699AB1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 37.745741
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_16 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "168D82AF8109CC9B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 40.116111
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_17 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5C11AF2FE49E560A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 42.486481
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_18 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A7F8A6A4F4EC94AA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 44.856852
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_19 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "67B0497A7A78B9F9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 47.227222
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_20 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "93C26B11B89060BB"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 49.597593
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_21 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0DF20DDB7FE9B43F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 51.967963
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_22 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "2EBA612D24EED923"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 54.338333
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_23 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "08C8BD64DF6F6848"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 56.708704
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_30 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "CF60F000770BCE0E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 73.301296
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_31 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "48FDEF6B2586BDB1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 75.671667
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_32 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A80D35DA6379DECD"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 78.042037
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_33 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0B146A7513BDC5F3"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 80.412407
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_34 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A62027C226EFDE66"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 82.782778
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_35 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "29E9F7EA5AC5BE59"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 85.153148
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_36 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "0E2E6E9297B662AC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 87.523519
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_37 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5FCE553E0CFBFBB9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 89.893889
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_38 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "A9BC17FAC596ED5A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 92.264259
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_39 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "4C1A2E51089C238E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 94.63463
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_40 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "63492D882DBED833"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 97.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_41 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "7E8FF6C90F18FFF6"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 99.37537
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_42 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "C80E0CA0F7933D87"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 101.745741
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_43 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "F0569F36097CF4EF"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 104.116111
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_44 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "B30DCB2A74FC5251"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 106.486481
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_45 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "406A7773D35E5CB5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 108.856852
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_46 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "4376788F3D60524D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 111.227222
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_47 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "622EFACD9FBC1A2B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 113.597593
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_48 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "64DE761FFBD7ABF5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 115.967963
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_49 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "CC8FEA0B094011D2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 118.338333
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_50 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "CCEF44EFDB0DF294"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 120.708704
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_OuterWall_3_51 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "2E80A4F547A010DF"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -113.996 0 123.079074
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Gun_4_Traverse_L : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "19FA0D0D7BCEFA48"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -108.470874 0 118.530126
+   angles 0 405 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Gun_4_Traverse_R : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "6F5BB23A90D5CC32"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -103.521126 0 123.479874
+   angles 0 405 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Gun_5_Traverse_L : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "56F6F739FD8A2F62"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 3.529126 0 123.479874
+   angles 0 135 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Gun_5_Traverse_R : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "6677CA201AA61E7C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 8.478874 0 118.530126
+   angles 0 135 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Helipad_1 : "{A13F6A7F82DF031C}Prefabs/Compositions/Slotted/SlotFlatLarge/Helipad_L_Conflict_US_01.et" {
+   ID "94AB0E53D0901176"
+   components {
+    AROR_DefenceWallComponent {
+    }
+    AROR_LandingPadComponent {
+     m_fRotorRadius 7.4
+     m_fLength 17.6
+    }
+   }
+   coords -91.996 0 11.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Helipad_2 : "{A13F6A7F82DF031C}Prefabs/Compositions/Slotted/SlotFlatLarge/Helipad_L_Conflict_US_01.et" {
+   ID "42181C2658B06DCE"
+   components {
+    AROR_DefenceWallComponent {
+    }
+    AROR_LandingPadComponent {
+     m_fRotorRadius 7.4
+     m_fLength 17.6
+    }
+   }
+   coords -69.996 0 11.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Helipad_3 : "{A13F6A7F82DF031C}Prefabs/Compositions/Slotted/SlotFlatLarge/Helipad_L_Conflict_US_01.et" {
+   ID "795461C3C4AD3AC6"
+   components {
+    AROR_DefenceWallComponent {
+    }
+    AROR_LandingPadComponent {
+     m_fRotorRadius 7.4
+     m_fLength 17.6
+    }
+   }
+   coords -17.996 0 11.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_1_Revetment_W_0 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "FD3702904C77555B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -100.996 0 6.205
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_1_Revetment_W_1 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "74C542CFA3351929"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -100.996 0 8.605
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_1_Revetment_W_2 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "FD83EB84CE0D7884"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -100.996 0 11.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_1_Revetment_W_3 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "917B87B96E232D1D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -100.996 0 13.405
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_1_Revetment_W_4 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "6D23A6938B54F7EC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -100.996 0 15.805
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_1_Revetment_E_0 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "2CF0596BD900FA31"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -82.996 0 6.205
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_1_Revetment_E_1 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "23C8C0F091ADB067"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -82.996 0 8.605
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_1_Revetment_E_2 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "4256ACBD1062CDEC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -82.996 0 11.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_1_Revetment_E_3 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "3E4395255C661672"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -82.996 0 13.405
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_1_Revetment_E_4 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "A08EBE4A0F977396"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -82.996 0 15.805
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_2_Revetment_W_0 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "39EFCA80B05FDE4D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -78.996 0 6.205
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_2_Revetment_W_1 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "E169C651ECA8F83B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -78.996 0 8.605
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_2_Revetment_W_2 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "0E15AAC75C447205"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -78.996 0 11.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_2_Revetment_W_3 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "5439069FDEDF8606"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -78.996 0 13.405
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_2_Revetment_W_4 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "148B321D256FBE5C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -78.996 0 15.805
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_2_Revetment_E_0 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "16CA18D9A188F2AC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -60.996 0 6.205
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_2_Revetment_E_1 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "30E1868289111BEE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -60.996 0 8.605
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_2_Revetment_E_2 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "7BBBC2216068A7A9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -60.996 0 11.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_2_Revetment_E_3 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "E49D342A9898900A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -60.996 0 13.405
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_2_Revetment_E_4 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "AC053F2B454A0D14"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -60.996 0 15.805
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_3_Revetment_W_0 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "B6DD583A7AD66636"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -26.996 0 6.205
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_3_Revetment_W_1 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "88FB43B5FB0BB16F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -26.996 0 8.605
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_3_Revetment_W_2 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "7A369BA78BA94834"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -26.996 0 11.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_3_Revetment_W_3 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "299B24661B04E1D3"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -26.996 0 13.405
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_3_Revetment_W_4 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "B020B512F06C87A1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -26.996 0 15.805
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_3_Revetment_E_0 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "AE910772856E65B9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8.996 0 6.205
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_3_Revetment_E_1 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "0F8A034738D14D64"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8.996 0 8.605
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_3_Revetment_E_2 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "1A644E5326149A1A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8.996 0 11.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_3_Revetment_E_3 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "228CC083992A7532"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8.996 0 13.405
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Pad_3_Revetment_E_4 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "572E5AF04F916ECF"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8.996 0 15.805
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Gate_Guard_Left : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "A4A3BA2310CA85D2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -59.996 0 4.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Gate_Guard_Right : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "ADCEEFDA3B3428B5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -39.996 0 4.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Gate_Obstacle_Left : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "C1A7B9F219EDAC28"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -59.996 0 -4.995
+   angles 0 15 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Gate_Obstacle_Right : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "E79DD8C93DFB81E6"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -39.996 0 -4.995
+   angles 0 -15 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_0 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "F38E65BF0676F18D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -119.996 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_0 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "80A6DE5C16A0C15C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -114.996 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_1 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "7D86D5E245E92088"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -109.996 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_1 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "33A3FF3CDBFC5E27"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -104.996 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_2 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "A2A3946EDCC1E1D7"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -99.996 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_2 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "BC3E53B80C17E194"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -94.996 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_3 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "24E1885086506305"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -89.996 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_3 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "C7E5DFF2F7AF6739"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -84.996 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_4 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "7E1590B850818CE7"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -79.996 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_4 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "818CB22EDB5372E9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -74.996 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_5 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "051C6CD910796D57"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -69.996 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_5 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "C93FB6518829F06F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -64.996 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_6 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "6DEC6082D9CBC480"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -59.996 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_6 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "BF3AEC4A03131C91"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -54.996 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_7 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "2401462F333BC06E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -49.996 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_7 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "896A538DB4D64152"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -44.996 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_8 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "7D2340C81DD929BC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -39.996 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_8 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "32FA5B7DB66ECC8A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -34.996 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_9 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "F24931AD4CD548BB"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -29.996 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_9 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "1DC586D9FF2E381B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -24.996 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_10 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "06BB7864904196F0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -19.996 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_10 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "203AB58CF1827F71"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14.996 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_11 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "AA9B9094EE03C12A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -9.996 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_11 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "A1827420AF5A5747"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -4.996 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_12 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "76908E129CB23D0E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 0.004 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_12 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "665FFD8197C43B7A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 5.004 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_13 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "419D021CD01D0D14"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 10.004 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_0_13 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "E78E53B3E6D35F77"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 15.004 0 133.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_0_14 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "76E4F5F7A43C51EC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 20.004 0 136.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_0 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "CE060D0310F536EE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 -4.995
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_0 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "C431231F72BFD035"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 0.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_1 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "B927EA2A7865FE3E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 5.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_1 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "10F22B64A03DF3B8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 10.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_2 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "775A6B0CE31C688A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 15.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_2 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "B57E3407279D5BB7"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 20.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_3 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "DFF85113302BFDA5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 25.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_3 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "A69019FA235DC2AE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 30.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_4 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "252613CC37E317ED"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 35.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_4 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "54B225E45A6F3A23"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 40.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_5 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "6A2EC595405A4D31"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 45.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_5 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "0FAB85C0449A9C37"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 50.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_6 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "DD3823D83EE60FDF"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 55.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_6 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "7681D8AED3EAF401"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 60.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_7 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "EBE6539062E02EEC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 65.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_7 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "F4553F52BFBF17B2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 70.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_8 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "25B2E1E99433C254"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 75.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_8 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "F88DDCA435BDD2F6"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 80.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_9 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "B3CDB26EAA99606F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 85.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_9 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "4559010E36EB89C7"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 90.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_10 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "5B259ED49F88E2AB"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 95.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_10 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "061BE5C9276CD9B1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 100.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_11 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "B63396C2E10F8BD5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 105.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_11 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "3111B5F5E96F6A15"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 110.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_12 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "B77BF9D1DBF40D1A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 115.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_12 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "6B9934E9ABF1CD0E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 120.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_13 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "8094F073675A0A74"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 125.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_1_13 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "977876AD559A9019"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 18.004 0 130.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_1_14 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "572D89F691680A78"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 21.004 0 135.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_2_0 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "33E2956F969BED0D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -119.996 0 -5.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_2_0 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "087972ABD185E506"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -114.996 0 -2.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_2_1 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "128B0A5917DA416B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -109.996 0 -5.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_2_1 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "0452878DFBEBD9B6"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -104.996 0 -2.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_2_2 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "46B7B0F1124A5AA5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -99.996 0 -5.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_2_2 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "0F17093E9E90A74F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -94.996 0 -2.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_2_3 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "398DC9181DBA7919"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -89.996 0 -5.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_2_3 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "26385467D5247E82"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -84.996 0 -2.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_2_4 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "4EE82FA109085CD4"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -79.996 0 -5.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_2_4 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "7815D1D89155E719"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -74.996 0 -2.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_2_5 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "A81DBAC79B597CA8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -69.996 0 -5.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_2_5 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "E00FD4A6594DADD1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -64.996 0 -2.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_2_8 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "EBB986B5594E6F13"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -34.996 0 -2.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_2_9 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "83E9D27F02C1E41C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -29.996 0 -5.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_2_9 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "0C993245F94937A8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -24.996 0 -2.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_2_10 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "243BCFB2552800DC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -19.996 0 -5.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_2_10 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "5A401EAB29442D9D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14.996 0 -2.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_2_11 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "021CA7EBCF9E3B89"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -9.996 0 -5.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_2_11 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "C322F0A80596B8E8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -4.996 0 -2.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_2_12 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "437BB47FC37B3C5D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 0.004 0 -5.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_2_12 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "997E4A747D65E12D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 5.004 0 -2.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_2_13 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "094260903DAC254E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 10.004 0 -5.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_2_13 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "420EF0D956EA868E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 15.004 0 -2.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_2_14 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "7C63A962D2D30108"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 20.004 0 -5.995
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_0 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "D854A1CEE503BA62"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 -4.995
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_0 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "2E0A56D134E79E36"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 0.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_1 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "9C9714042CDBFD78"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 5.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_1 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "1B8832AA5A2F217A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 10.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_2 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "AA62D00C7C5C2A42"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 15.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_2 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "5D13C8D80694A3DD"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 20.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_3 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "8D1CBE190E43BDFE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 25.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_3 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "85ACD2883A6A2879"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 30.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_4 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "FF3ED93FB88A7E64"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 35.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_4 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "C93BFA02405F08F2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 40.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_5 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "87FDD4E797B6EA3B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 45.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_5 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "075F86B3810D62E2"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 50.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_6 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "5C612E8C713C3F76"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 55.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_6 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "BFE33DAFA43E0A88"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 60.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_7 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "A6AD8E866236C3FE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 65.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_7 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "5432C060EEB6F34B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 70.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_8 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "450901D6FDB7321F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 75.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_8 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "F37C1F6C6733CB8B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 80.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_9 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "53FAD4C87B81DD1D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 85.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_9 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "30C33E0CA2C77296"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 90.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_10 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "62DAAC4ABF304337"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 95.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_10 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "10A0F155B093C7F1"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 100.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_11 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "8E1F9E3EB0EAA0A5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 105.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_11 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "75A47526573EC3CB"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 110.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_12 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "DA558369A11B9DCE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 115.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_12 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "2AF23557CB65A1BE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 120.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_13 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "FDEC007FA25B4E95"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 125.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Wire_3_13 : "{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et" {
+   ID "C604C62B3248736F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -117.996 0 130.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Hedgehog_3_14 : "{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et" {
+   ID "30292BCC3170EB43"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -120.996 0 135.005
+   angles 0 90 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Defence_0_8 {
+   ID "C2B8C0B7F002E61F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 8
+    }
+   }
+   coords -73.996 0 119.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Defence_0_9 {
+   ID "2DD848B039128ED3"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 9
+    }
+   }
+   coords -25.996 0 119.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Defence_0_10 {
+   ID "4B4B756C2E790AA4"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 10
+    }
+   }
+   coords -103.996 0 35.005
+   angles 0 270 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Defence_0_11 {
+   ID "1A58CD8B75DEE6DF"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 11
+    }
+   }
+   coords 4.004 0 11.005
+   angles 0 135 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Defence_1_4 {
+   ID "41D72495679B4687"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 1
+     m_iOrdinal 4
+    }
+   }
+   coords -105.996 0 121.005
+   angles 0 315 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Defence_1_5 {
+   ID "0BB06DBBC868B06C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 1
+     m_iOrdinal 5
+    }
+   }
+   coords 6.004 0 121.005
+   angles 0 45 0
+  }
+  GenericEntity AROR_Stronghold_Delaware_Defence_2_1 {
+   ID "E75582A9494C03BF"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 2
+     m_iOrdinal 1
+    }
+   }
+   coords -91.996 0 11.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Defence_2_2 {
+   ID "5CA5D17E7EF3058C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 2
+     m_iOrdinal 2
+    }
+   }
+   coords -69.996 0 11.005
+  }
+  GenericEntity AROR_Stronghold_Delaware_Defence_2_3 {
+   ID "1E34C94CDE0928B8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 2
+     m_iOrdinal 3
+    }
+   }
+   coords -17.996 0 11.005
+  }
+ }
+}

@@ -1,5 +1,7 @@
 # Military defence presets
 
+Two separate fortified prototypes add detailed ordinary/military outposts with stronger garrison recipes, sheltered bays and protected gun positions. Chicken now trials them at all 14 ordinary outposts and four military outposts, preserving Chotain castle. The eleven original prefab resources remain available; see [Fortified outpost prototypes](FORTIFIED_OUTPOSTS.md) for the current bindings and native test steps. Historical audit totals below do not accept the replacements.
+
 Eleven reusable location compositions live in `Prefabs/Compositions/Locations/`. They inherit the existing military location templates and keep their control, flag, persistence and proximity garrison components. Town/City/HQ use their existing templates; settlements do not gain walls, flags or generated defenders.
 
 | Preset | Nominal footprint | Contents at the maximum default defence tier |
@@ -27,9 +29,9 @@ Levie Military Outpost is an explicit exception to the default 2m whole-footprin
 
 The subsequent native Play run deployed Levie infantry and assets, but some MG pads remained blocked. The corrected capture gate no longer treats unused recipe positions as defenders once real personnel deploy and native queues resolve. Individual pad failures have bounded retries and can omit unqueued positions for the current activation without recording losses. This keeps sites capturable after their physical defenders are cleared; it does not validate those failed positions or replace the need for a tailored compound.
 
-## Current Chicken placement
+## Historical Chicken placement
 
-All 23 military sites bind to measured perimeter placements and pass the latest native footprint audit, including East Resources at its final clearing. No relocation suggestions remain. Native navigation and complete gameplay acceptance remain separate checks.
+The baseline described below predates the current fortified trials. Chicken now uses smaller equipped variants at 17 outposts and a larger equipped Hospital layout; their native grounding, current-placement audit and Play checks are pending. See [FORTIFIED_OUTPOSTS.md](FORTIFIED_OUTPOSTS.md). The older 23-site pass does not approve these replacements.
 
 Compact templates support these drafts: `OutpostCompact` (28 x 28m), `MilitaryOutpostCompact`, `FactoryCompact` and `ResourcesCompact` (48 x 48m). They retain the original recipe roles. Custom military team/MG positions preserve vehicle clearance; standard cardinal team positions are moved inward to avoid the former 4m conflict with MGs. All pad spacing is checked offline against the runtime clearance rules. Crew staging uses 3m player clearance so standing on the flag does not block the 4m staging ring; infantry and vehicle pads retain the normal 6m clearance and native collision checks remain active.
 

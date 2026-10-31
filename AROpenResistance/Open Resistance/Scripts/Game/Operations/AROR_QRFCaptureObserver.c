@@ -55,7 +55,7 @@ class AROR_QRFCaptureObserver
 				continue;
 			AROR_EFactionRole previous = observed.m_eRole;
 			observed.m_eRole = location.GetControllingRole();
-			if (previous != observed.m_eRole)
+			if (previous != observed.m_eRole && !AROR_InvaderCampaignComponent.SuppressAICaptureQRF_S(previous, observed.m_eRole))
 				m_Operations.ReportLocationCapture_S(previous, location.GetId());
 			return;
 		}

@@ -1,0 +1,31 @@
+# Invader territorial campaign
+
+Chicken opts into a server-owned distant US/USSR campaign. The shared prefab and script default off. Chicken also enables physical Invader ground QRFs after eligible Resistance captures. Combat responses, automatic physical attacks and flight dispatch remain disabled; proximity garrisons support both roles.
+
+`USSR SUPPORT CORRIDOR` is a fixed offshore logistics marker at X/Z 11600/800 in the southeast. It inherits the existing replicated/persistent location base, with the appended `SUPPORT_CORRIDOR` type. It has no flag, troops, income or physical dispatch pads. The initial land base is the Invader stronghold, Fortress Vostok (`everon_fortress_vostok`) at Saint-Pierre harbour, which only the Invaders or the Resistance can take (see [Fortress Vostok](STRONGHOLDS.md)). Crow Hill Outpost at Durras, the previous foothold, now starts with the Occupiers. The 41 catalogue sites, three placed seaports, the stronghold and this marker produce 46 registered scenario locations, before a player HQ is added.
+
+The first campaign-ready Invader evaluation grants 20,000 into the existing Invader bank once. With the default Economy starting funds, this gives 30,000 before spending. Saving records the grant receipt; restoring does not repeat it. Existing saves with explicit location-control records retain those records; use a fresh campaign for the intended initial front.
+
+After 120 seconds of preparation, evaluate an engagement every 300 seconds, quantized to commander evaluations. Invaders select the closest eligible military target to the corridor that is within 3,500m of a friendly installation. A lost land base must be recovered first. US counterattacks favour the exposed outer Invader front. Resistance-held and fixed locations are excluded, and canonical cooldowns remain authoritative. Settlements change through their existing support authority rather than direct simulated captures.
+
+Engagements require every controlled player entity, including dead/spectator-controlled entities, beyond the target radius plus 3,000m. Active/queued garrisons, live operation targets/tactical origins and pending QRF threats defer simulation. Approaching players therefore encounter their normal physical garrisons. No simulation deletes or spawns actors. Ownership changes use the existing location setter. The capture observer still records AI ownership changes but suppresses their physical counter-QRFs while this campaign is active, including regional support flips. Resistance captures retain normal capture-response admission.
+
+Both armies pay battle costs from existing available funds, preserving QRF collateral and debt priority. Starting costs range from 700 for ordinary outposts to 2,500 for the airport. The attacker needs the complete cost; the defender commits up to that cost from available funds. Equal commitments and industry give 50/50 odds. Depleted reserves and held resources/factories modify odds within 15–85%. Spent engagement resources are consumed on either outcome, with no refunds. No additional bank or physical stock system is introduced.
+
+The baseline soft target is 40% of military installations, excluding the corridor. Advance/counterattack probabilities compensate for industrial battle odds and bias toward this target; they never assign a fixed share or prevent expansion beyond it. Player interference, availability, geography and economic depletion can alter the outcome. This represents strategic installation share, not measured land area. Higher readiness and crackdown also increase the desired share.
+
+The existing Income system pays additional Invader support through `GetExternalSupport`, on its normal payment cadence:
+
+| Invader state | Additional support | Including default 500 external support |
+|---|---:|---:|
+| Readiness 1, crackdown 0% | 1,500 | 2,000 |
+| Readiness 2, crackdown 10% | 1,800 | 2,300 |
+| Readiness 5, crackdown 100% | 6,750 | 7,250 |
+
+These are per-income-payment amounts, before ordinary location income. Crackdown now has independent saved state, while readiness follows slower capture progress. The existing funding/share formulas read those separate values. New Chicken starts at readiness 1/crackdown 20%, quoting 2,100 additional support (2,600 including the default external support) per Income payment before location income. Resistance capture of a USSR site records capture pressure and can queue its physical ground QRF when the scenario admission gate is on. The disabled-gate path still records territorial pressure without dispatch. Territorial AI-versus-AI simulation does not escalate its own readiness progress or crackdown. RebIntel reports `Territorial advance active` for the USSR once its replicated grant/enable state is ready.
+
+`AROR_InvaderCampaignComponentSerializer` version 1 saves grant receipt, quarantine and remaining engagement delay. Economy saves money; Locations save territory; Garrisons save their own rosters. Engagements resolve synchronously, so there is no unpaid pending battle to restore or reroll. Unreadable campaign records quarantine grant, bonus funding and simulation. Inherited prefabs expose cadence, clearance, frontier reach, grant, cost, target share and funding rates.
+
+Actual-source mocked tests cover spending, collateral, capture protection, lifecycle, save/load, QRF suppression and connected target selection. A funded offscreen model on the real 23-site geometry averaged 39.7% Invader control at the baseline and 63.7% at maximum escalation. This isolates territorial policy; it does not establish live income balance, multiplayer safety or native performance.
+
+Native acceptance: compile and reload Chicken, then start a fresh campaign. Check the southeast marker and the Fortress Vostok garrison; observe `[AROR INVADER]` grant/battle logs and map control changes. Stand near a target to verify deferral; capture a site as Resistance and confirm its control is protected. Compare funding after changing Invader readiness and crackdown independently and triggering the existing admin income action. Save/load to check no repeated opening grant, retained cooldown and canonical ownership. Verify dedicated-server/client map and RebIntel agreement, and run a sustained balancing session with ordinary income and QRF spending enabled.

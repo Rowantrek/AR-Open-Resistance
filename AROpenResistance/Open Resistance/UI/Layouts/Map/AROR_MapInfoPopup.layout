@@ -1,6 +1,12 @@
 FrameWidgetClass {
  Name "AROR_MapInfoPopup"
  {
+  ImageWidgetClass "{6AB2C0D1E2F31008}" {
+   Name "Border"
+   Slot FrameWidgetSlot "{6AB2C0D1E2F31108}" {
+    Anchor 0 0 0 0
+   }
+  }
   ImageWidgetClass "{6AB2C0D1E2F31001}" {
    Name "Background"
    Slot FrameWidgetSlot "{6AB2C0D1E2F31101}" {
@@ -18,17 +24,26 @@ FrameWidgetClass {
    Slot FrameWidgetSlot "{6AB2C0D1E2F31103}" {
     Anchor 0 0 0 0
    }
+   FontProperties FontProperties "{6AB5C0E000000025}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
   }
   RichTextWidgetClass "{6AB2C0D1E2F31004}" {
    Name "Subtitle"
    Slot FrameWidgetSlot "{6AB2C0D1E2F31104}" {
     Anchor 0 0 0 0
    }
+   FontProperties FontProperties "{6AB5C0E000000026}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
   }
   RichTextWidgetClass "{6AB2C0D1E2F31005}" {
    Name "Control"
    Slot FrameWidgetSlot "{6AB2C0D1E2F31105}" {
     Anchor 0 0 0 0
+   }
+   FontProperties FontProperties "{6AB5C0E000000027}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
    }
   }
   ImageWidgetClass "{6AB2C0D1E2F31006}" {
@@ -42,11 +57,17 @@ FrameWidgetClass {
    Slot FrameWidgetSlot "{6AB2C0D1E2F31107}" {
     Anchor 0 0 0 0
    }
+   FontProperties FontProperties "{6AB5C0E000000028}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
   }
   RichTextWidgetClass "{6AB2C0D1E2F31010}" {
    Name "SupportLabel0"
    Slot FrameWidgetSlot "{6AB2C0D1E2F31110}" {
     Anchor 0 0 0 0
+   }
+   FontProperties FontProperties "{6AB5C0E000000029}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
    }
   }
   ImageWidgetClass "{6AB2C0D1E2F31011}" {
@@ -66,11 +87,17 @@ FrameWidgetClass {
    Slot FrameWidgetSlot "{6AB2C0D1E2F31113}" {
     Anchor 0 0 0 0
    }
+   FontProperties FontProperties "{6AB5C0E00000002A}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
   }
   RichTextWidgetClass "{6AB2C0D1E2F31020}" {
    Name "SupportLabel1"
    Slot FrameWidgetSlot "{6AB2C0D1E2F31120}" {
     Anchor 0 0 0 0
+   }
+   FontProperties FontProperties "{6AB5C0E00000002B}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
    }
   }
   ImageWidgetClass "{6AB2C0D1E2F31021}" {
@@ -90,11 +117,17 @@ FrameWidgetClass {
    Slot FrameWidgetSlot "{6AB2C0D1E2F31123}" {
     Anchor 0 0 0 0
    }
+   FontProperties FontProperties "{6AB5C0E00000002C}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
   }
   RichTextWidgetClass "{6AB2C0D1E2F31030}" {
    Name "SupportLabel2"
    Slot FrameWidgetSlot "{6AB2C0D1E2F31130}" {
     Anchor 0 0 0 0
+   }
+   FontProperties FontProperties "{6AB5C0E00000002D}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
    }
   }
   ImageWidgetClass "{6AB2C0D1E2F31031}" {
@@ -113,6 +146,42 @@ FrameWidgetClass {
    Name "SupportValue2"
    Slot FrameWidgetSlot "{6AB2C0D1E2F31133}" {
     Anchor 0 0 0 0
+   }
+   FontProperties FontProperties "{6AB5C0E00000002E}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
+  }
+  ImageWidgetClass "{6AB2C0D1E2F31009}" {
+   Name "HeaderDivider"
+   Slot FrameWidgetSlot "{6AB2C0D1E2F31109}" {
+    Anchor 0 0 0 0
+   }
+  }
+  RichTextWidgetClass "{6AB2C0D1E2F3100A}" {
+   Name "ControlLabel"
+   Slot FrameWidgetSlot "{6AB2C0D1E2F3110A}" {
+    Anchor 0 0 0 0
+   }
+   FontProperties FontProperties "{6AB5C0E0000001A1}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
+  }
+  RichTextWidgetClass "{6AB2C0D1E2F3100B}" {
+   Name "PopulationLabel"
+   Slot FrameWidgetSlot "{6AB2C0D1E2F3110B}" {
+    Anchor 0 0 0 0
+   }
+   FontProperties FontProperties "{6AB5C0E0000001A2}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
+  }
+  RichTextWidgetClass "{6AB2C0D1E2F3100C}" {
+   Name "SupportHeading"
+   Slot FrameWidgetSlot "{6AB2C0D1E2F3110C}" {
+    Anchor 0 0 0 0
+   }
+   FontProperties FontProperties "{6AB5C0E0000001A3}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
    }
   }
  }

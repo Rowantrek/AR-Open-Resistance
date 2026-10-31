@@ -1,6 +1,12 @@
 [WorkbenchPluginAttribute(name: "Ground military preset walls", description: "Undoable grounding of the actual sandbag wall children on Chicken's adopted defence presets. Save afterward; reconcile source edits before regenerating layers.", wbModules: {"WorldEditor"}, category: "Open Resistance")]
 class AROR_GroundDefenceWallsPlugin : AROR_GroundCampaignFlagsPlugin
 {
+	//! Targeted commands can select locations without changing the shared grounding workflow.
+	protected bool ShouldGroundLocation(AROR_LocationComponent location)
+	{
+		return true;
+	}
+
 	override void Run()
 	{
 		WorldEditor editor = Workbench.GetModule(WorldEditor);
@@ -36,6 +42,7 @@ class AROR_GroundDefenceWallsPlugin : AROR_GroundCampaignFlagsPlugin
 			if (!root) continue;
 			AROR_LocationComponent location = AROR_LocationComponent.Cast(root.FindComponent(AROR_LocationComponent));
 			if (!location || !AROR_CaptureLocationAction.IsCapturableType(location.GetLocationType())) continue;
+			if (!ShouldGroundLocation(location)) continue;
 			IEntity child = root.GetChildren();
 			while (child)
 			{

@@ -23,4 +23,21 @@ class AROR_TextUtils
 
 		return result;
 	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Visible characters in UTF-8 text: Length() counts bytes, so Cyrillic would count double.
+	//! UTF-8 continuation bytes (0x80-0xBF) are skipped, whether the engine reports bytes signed or not.
+	static int CharCount(string text)
+	{
+		int count;
+		int length = text.Length();
+		for (int i = 0; i < length; i++)
+		{
+			int code = text.Get(i).ToAscii();
+			if ((code >= 0x80 && code < 0xC0) || (code >= -128 && code < -64))
+				continue;
+			count++;
+		}
+		return count;
+	}
 }

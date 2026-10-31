@@ -1,0 +1,58 @@
+GenericEntity : "{4D54E604D9605B85}Prefabs/Compositions/Locations/AROR_Defence_Outpost_CheckpointFortified.et" {
+ ID "9222F97FE6AB30AD"
+ coords 0 0 0
+ {
+  GenericEntity AROR_Outpost_CheckpointFortified_Equipped_USSR_Loot_Weapons : "{8C7C140EEB0ECF36}Prefabs/Props/Military/AmmoBoxes/USSR/EquipmentBoxWooden_Weapon_01_USSR.et" {
+   ID "1C5702775E2F7F86"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+    AROR_OutpostSupplyComponent {
+     m_sCategory "Weapons"
+    }
+   }
+   coords -11 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Equipped_USSR_Loot_Ammunition : "{A48EDE9CBA71B5A3}Prefabs/Props/Military/AmmoBoxes/USSR/EquipmentBoxWooden_Ammunition_01_USSR.et" {
+   ID "9B8C36EE5AD9159A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+    AROR_OutpostSupplyComponent {
+     m_sCategory "Ammunition"
+    }
+   }
+   coords -2 0 3
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Equipped_USSR_Loot_Equipment : "{CD62E36CFDCB8FD8}Prefabs/Props/Military/AmmoBoxes/USSR/EquipmentBoxWooden_Equipment_01_USSR.et" {
+   ID "1084F5C2CFD12547"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+    AROR_OutpostSupplyComponent {
+     m_sCategory "Equipment"
+    }
+   }
+   coords 2 0 3
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Equipped_USSR_Loot_Medical : "{70837F44CD03FD05}Prefabs/Props/Military/AmmoBoxes/USSR/EquipmentBoxWooden_Medical_01_USSR.et" {
+   ID "CB94A793DC1189CC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+    AROR_OutpostSupplyComponent {
+     m_sCategory "Medical"
+    }
+   }
+   coords -2 0 -3
+  }
+ }
+}

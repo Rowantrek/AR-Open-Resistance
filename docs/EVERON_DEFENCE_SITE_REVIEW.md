@@ -1,5 +1,7 @@
 # Everon military defence site review
 
+**Historical baseline:** Chicken now trials equipped fortified replacements at 14 ordinary outposts and four military outposts, excluding Chotain castle. Seventeen footprints have since been reduced after the first larger-layout audit failed; current compact revisions are not natively accepted. Their bindings are in [FORTIFIED_OUTPOST_TRIALS.json](FORTIFIED_OUTPOST_TRIALS.json); grounding and native acceptance are pending. The measurements and table below describe the earlier layouts and do not certify the new footprints. See [the current trial steps](FORTIFIED_OUTPOSTS.md).
+
 All 23 military sites select a perimeter preset: 23 measured placements and 0 unmeasured drafts. The latest native audit passed all 23 current footprints, including relocated East Resources, with no further relocation suggestions. Full model/navigation/lifecycle acceptance remains outstanding.
 
 The airport anchor stays fixed. Authorised Factory/resource moves affect Chicken only; Rowan scene files remain untouched. East Resources now uses the measured clearing at 6179.36,166.438,6457.14, yaw 45, about 866m from its former flag, with 1.18671m relief. Native terrain and pad gates remain active.
@@ -13,7 +15,7 @@ After the final East Resources move, native grounding completed all 1526 walls w
 | Gorey Outpost (`everon_outpost_gorey`) | AROR_Defence_Outpost.et; 36 x 36m | Native footprint passed - Play pending | Measured Dense clearing: 1.98m relief; model grounding, access and full Play pending |
 | Pinewood Lake Outpost (`everon_outpost_pinewood_lake`) | AROR_Defence_Outpost.et; 36 x 36m | Native footprint passed - Play pending | Measured Original clearing: 1.80m relief; model grounding, access and full Play pending |
 | Levie Hillside Outpost (`everon_outpost_levie_hillside`) | AROR_Defence_Outpost.et; 36 x 36m | Native footprint passed - Play pending | Measured Dense clearing: 1.05m relief; model grounding, access and full Play pending |
-| Durras Hill Outpost (`everon_outpost_durras_hill`) | AROR_Defence_Outpost.et; 36 x 36m | Native footprint passed - Play pending | Measured Dense clearing: 1.93m relief; model grounding, access and full Play pending |
+| USSR Forward Base - Durras Hill (`everon_outpost_durras_hill`) | AROR_Defence_Outpost.et; 36 x 36m | Native footprint passed - Play pending | Initial Invader land base; existing measured Dense clearing: 1.93m relief; ownership/garrison gameplay pending |
 | Sawmill Outpost (`everon_outpost_sawmill`) | AROR_Defence_Outpost.et; 36 x 36m | Native footprint passed - Play pending | Measured Dense clearing: 1.58m relief; model grounding, access and full Play pending |
 | Regina South Outpost (`everon_outpost_regina_south`) | AROR_Defence_Outpost.et; 36 x 36m | Native footprint passed - Play pending | Measured Dense clearing: 1.86m relief; model grounding, access and full Play pending |
 | Chotain Industrial Outpost (`everon_outpost_chotain_industrial`) | AROR_Defence_Outpost.et; 36 x 36m | Native footprint passed - Play pending | Measured Dense clearing: 1.87m relief; model grounding, access and full Play pending |

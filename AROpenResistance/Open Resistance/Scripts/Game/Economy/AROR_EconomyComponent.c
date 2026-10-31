@@ -18,10 +18,12 @@ typedef func AROR_OnManpowerChanged;
 //! by the player's identity so it survives reconnects and restarts.
 class AROR_EconomyComponent : SCR_BaseGameModeComponent
 {
-	[Attribute("0", desc: "Resistance manpower when a new campaign starts", params: "0 inf", category: "Starting values")]
+	// DEBUG: raised for HICOMM squad testing (squads cost funds and manpower); rebalance later
+	[Attribute("40", desc: "Resistance manpower when a new campaign starts", params: "0 inf", category: "Starting values")]
 	protected int m_iStartingManpower;
 
-	[Attribute("1000", desc: "Resistance funds when a new campaign starts", params: "0 inf", category: "Starting values")]
+	// DEBUG: raised for HICOMM squad testing; rebalance later
+	[Attribute("20000", desc: "Resistance funds when a new campaign starts", params: "0 inf", category: "Starting values")]
 	protected int m_iStartingResistanceFunds;
 
 	[Attribute("10000", desc: "Occupiers funds when a new campaign starts", params: "0 inf", category: "Starting values")]
@@ -308,6 +310,56 @@ class AROR_EconomyComponent : SCR_BaseGameModeComponent
 
 		SetPlayerMoney(playerId, GetPlayerMoney_S(playerId) - amount);
 		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server only. Moves personal money from one online player to another. Rejects non-positive amounts,
+	//! self-transfers, and offline or unknown targets.
+	bool TransferPlayerMoney_S(int fromPlayerId, int toPlayerId, int amount)
+	{
+		if (!Replication.IsServer() || amount <= 0 || fromPlayerId == toPlayerId)
+			return false;
+
+		if (GetPlayerKey(fromPlayerId).IsEmpty() || GetPlayerKey(toPlayerId).IsEmpty())
+			return false;
+
+		if (!IsPlayerOnline(toPlayerId))
+			return false;
+
+		if (!SpendPlayerMoney_S(fromPlayerId, amount))
+			return false;
+
+		AddPlayerMoney_S(toPlayerId, amount);
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server only. Moves personal money into Resistance faction funds.
+	bool DonatePlayerMoneyToResistance_S(int fromPlayerId, int amount)
+	{
+		if (!Replication.IsServer() || amount <= 0)
+			return false;
+
+		if (GetPlayerKey(fromPlayerId).IsEmpty())
+			return false;
+
+		if (!SpendPlayerMoney_S(fromPlayerId, amount))
+			return false;
+
+		AddFactionFunds_S(AROR_EFactionRole.RESISTANCE, amount);
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server: true if the session player ID is currently connected
+	protected static bool IsPlayerOnline(int playerId)
+	{
+		if (playerId <= 0)
+			return false;
+
+		array<int> playerIds = {};
+		GetGame().GetPlayerManager().GetPlayers(playerIds);
+		return playerIds.Contains(playerId);
 	}
 
 	//------------------------------------------------------------------------------------------------

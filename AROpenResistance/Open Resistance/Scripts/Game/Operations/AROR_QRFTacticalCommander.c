@@ -21,6 +21,11 @@ class AROR_QRFTacticalCommander
 	bool m_bRosterDirty;
 	bool m_bKnowsTargetControl;
 	AROR_EFactionRole m_eTargetControl;
+	AROR_EFactionRole m_eRole;	//!< The army this response belongs to
+	bool m_bAssault;	//!< An attack: stage at rally points, then assault on two axes
+	bool m_bJointResponse;	//!< One authored response sharing ground and airborne packages
+	bool m_bAssaultReleased;
+	int m_iStagingDeadline = -1;	//!< Executor clock when the assault goes even if not every package has staged
 	vector m_vContact;
 	vector m_vLastTaskContact;
 	vector m_vTown;
@@ -52,6 +57,10 @@ class AROR_QRFTacticalCommander
 		m_bSafeWithdrawalOrigin = true;
 		m_bRosterDirty = false;
 		m_bKnowsTargetControl = false;
+		m_bAssault = false;
+		m_bAssaultReleased = false;
+		m_bJointResponse = false;
+		m_iStagingDeadline = -1;
 		m_iContactSequence = 0;
 		m_iContactVersion = 0;
 		m_iNextContactCheck = 0;
@@ -75,6 +84,21 @@ class AROR_QRFTacticalCommander
 				m_aWave.Insert(0);
 			else
 				m_aWave.Insert(1);
+		}
+	}
+
+	//! Scripted responses that must arrive in two waves regardless of tier and scenario wave settings.
+	void ForceTwoWaves()
+	{
+		if (m_iPackages < 2 || m_iFirstWaveCount < m_iPackages)
+			return;
+		m_iFirstWaveCount = (m_iPackages + 1) / 2;
+		for (int index = 0; index < m_iPackages; index++)
+		{
+			if (index < m_iFirstWaveCount)
+				m_aWave[index] = 0;
+			else
+				m_aWave[index] = 1;
 		}
 	}
 
@@ -224,15 +248,25 @@ class AROR_QRFTacticalCommander
 			return true;
 		if (m_iFirstDispatch < 0)
 			return false;
-		// Temporary fixed security task: travel does not consume town occupation time.
+		// Temporary fixed security task: travel does not consume town occupation time, but heavy losses still end it
 		if (m_iTownHoldSeconds > 0)
 		{
 			if (m_iTownHoldStarted >= 0 && now - m_iTownHoldStarted >= m_iTownHoldSeconds)
+				m_bWithdraw = true;
+			if (IsBroken(reserveAvailable))
 				m_bWithdraw = true;
 			return m_bWithdraw;
 		}
 		if (now - m_iFirstDispatch >= m_iMissionSeconds)
 			m_bWithdraw = true;
+		if (IsBroken(reserveAvailable))
+			m_bWithdraw = true;
+		return m_bWithdraw;
+	}
+
+	//! Too few survivors to fight on, with no reserve left to come
+	protected bool IsBroken(bool reserveAvailable)
+	{
 		int initial = 0;
 		int living = 0;
 		for (int index = 0; index < m_iPackages; index++)
@@ -240,9 +274,13 @@ class AROR_QRFTacticalCommander
 			initial += m_aInitial[index];
 			living += m_aLiving[index];
 		}
-		if (!reserveAvailable && initial > 0 && living <= initial * m_fWithdrawFraction)
-			m_bWithdraw = true;
-		return m_bWithdraw;
+		return !reserveAvailable && initial > 0 && living <= initial * m_fWithdrawFraction;
+	}
+
+	//! The objective is held by someone else: this response must retake it, not just secure it
+	bool IsTargetLost()
+	{
+		return m_bKnowsTargetControl && m_eTargetControl != m_eRole;
 	}
 
 	//! Only fresh evidence inside the defended vicinity can change ground orders.
@@ -290,6 +328,9 @@ class AROR_QRFTacticalCommander
 		float angle = Math.Atan2(heading[0], heading[2]);
 		int side = index - (index / 2) * 2;
 		float spread = 0.35 + (index / 2) * 0.18;
+		// Attacks come in on two axes, well apart, instead of one lane from the origin
+		if (m_bAssault)
+			spread = 0.9 + (index / 2) * 0.2;
 		if (side == 0)
 			spread = -spread;
 		angle += spread;
@@ -332,6 +373,12 @@ class AROR_QRFTacticalCommander
 	}
 	vector InfantryPoint(int index, int step)
 	{
+		// Retaking: every fireteam converges on the objective (the flag area), spread a little per package
+		if (IsTargetLost())
+		{
+			float angle = index * 1.2566;
+			return m_vTown + Vector(Math.Sin(angle), 0, Math.Cos(angle)) * 12;
+		}
 		vector center = m_vTown;
 		if (step == 0 && m_bHasContact)
 			center = m_vContact;

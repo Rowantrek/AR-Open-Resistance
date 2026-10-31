@@ -29,7 +29,9 @@ $preserved = @{
 	everon_resources_north_ridge_east = @(5568.75,205.11,7071.537)
 }
 foreach ($row in $rows) {
-	if ($row.Role -ne 'OCCUPIERS') { throw "Initial map should remain Occupier controlled: $($row.Id)" }
+	$expectedRole = 'OCCUPIERS'
+	if ($row.Id -eq 'everon_outpost_durras_hill') { $expectedRole = 'INVADERS' }
+	if ($row.Role -ne $expectedRole) { throw "Unexpected initial role for $($row.Id): expected $expectedRole" }
 	$relocatedStrategic=($row.Type -in @('FACTORY','RESOURCES') -and $row.DefenceAnchored -eq '0' -and $row.DefenceAudit -in @('Original','Dense','Placed','Grounded','Followup'))
 	if ($preserved.ContainsKey($row.Id) -and !$relocatedStrategic) {
 		foreach ($axis in 0..2) { if ([double]$row.(@('X','Y','Z')[$axis]) -ne [double]$preserved[$row.Id][$axis]) { throw "Established anchor moved: $($row.Id)" } }

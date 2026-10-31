@@ -74,6 +74,14 @@ class AROR_MapIconSelector : Managed
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Higher values draw above lower ones among the root's siblings
+	void SetZOrder(int zOrder)
+	{
+		if (m_wRoot)
+			m_wRoot.SetZOrder(zOrder);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	void Hide()
 	{
 		if (m_wRoot)

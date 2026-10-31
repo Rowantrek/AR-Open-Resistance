@@ -1,0 +1,3253 @@
+FrameWidgetClass {
+ Name "BMResource"
+ Slot FrameWidgetSlot {
+  Anchor 0 0 1 1
+ }
+ {
+  RichTextWidgetClass {
+   Name "BlackMarketTileGlyph"
+   Slot FrameWidgetSlot {
+    Anchor 0 0 0 0
+   }
+   FontProperties FontProperties {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
+  }
+  RichTextWidgetClass {
+   Name "BlackMarketTileLabel"
+   Slot FrameWidgetSlot {
+    Anchor 0 0 0 0
+   }
+   FontProperties FontProperties {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
+  }
+  ButtonWidgetClass {
+   Name "BlackMarketTileButton"
+   Slot FrameWidgetSlot {
+    Anchor 0 0 0 0
+   }
+  }
+  FrameWidgetClass {
+   Name "BMApp"
+   Slot FrameWidgetSlot {
+    Anchor 0 0 0 0
+   }
+   {
+    ImageWidgetClass {
+     Name "BMBackground"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMWheel"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel32"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel33"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel34"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel35"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel36"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel37"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel38"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel39"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel40"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel41"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel42"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel43"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel44"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel45"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel46"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel47"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel48"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel49"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel50"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel51"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel52"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel53"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel54"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel55"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel56"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel57"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel58"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel59"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel60"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel61"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel62"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel63"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel64"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel65"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel66"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel67"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel68"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel69"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel70"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel71"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel72"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel73"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel74"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel75"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel76"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel77"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel78"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel79"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel80"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel81"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel82"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel83"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel84"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel85"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel86"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel87"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel88"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel89"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel90"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel91"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel92"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel93"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel94"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPanel95"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMPic15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ItemPreviewWidgetClass {
+     Name "BMPrev15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText32"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText33"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText34"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText35"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText36"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText37"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText38"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText39"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText40"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText41"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText42"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText43"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText44"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText45"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText46"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText47"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText48"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText49"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText50"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText51"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText52"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText53"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText54"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText55"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText56"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText57"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText58"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText59"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText60"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText61"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText62"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText63"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText64"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText65"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText66"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText67"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText68"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText69"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText70"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText71"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText72"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText73"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText74"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText75"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText76"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText77"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText78"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText79"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText80"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText81"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText82"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText83"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText84"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText85"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText86"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText87"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText88"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText89"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText90"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText91"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText92"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText93"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText94"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText95"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText96"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText97"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText98"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText99"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText100"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText101"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText102"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText103"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText104"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText105"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText106"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText107"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText108"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText109"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText110"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText111"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText112"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText113"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText114"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText115"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText116"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText117"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText118"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMText119"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg32"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel32"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn32"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg33"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel33"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn33"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg34"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel34"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn34"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg35"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel35"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn35"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg36"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel36"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn36"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg37"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel37"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn37"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg38"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel38"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn38"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg39"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel39"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn39"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg40"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel40"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn40"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg41"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel41"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn41"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg42"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel42"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn42"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg43"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel43"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn43"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg44"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel44"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn44"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg45"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel45"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn45"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg46"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel46"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn46"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg47"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel47"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn47"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg48"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel48"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn48"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg49"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel49"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn49"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg50"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel50"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn50"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg51"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel51"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn51"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg52"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel52"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn52"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg53"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel53"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn53"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg54"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel54"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn54"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg55"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel55"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn55"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg56"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel56"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn56"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg57"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel57"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn57"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg58"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel58"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn58"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg59"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel59"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn59"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg60"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel60"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn60"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg61"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel61"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn61"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg62"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel62"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn62"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "BMBtnBg63"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "BMBtnLabel63"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "BMBtn63"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    EditBoxWidgetClass {
+     Name "BMSearch"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+   }
+  }
+ }
+}

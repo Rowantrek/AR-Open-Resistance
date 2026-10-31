@@ -51,29 +51,29 @@ The [CSV catalogue](EVERON_CAMPAIGN_LOCATIONS.csv) is the editable scenario data
 | Regina | TOWN | everon_regina | 200 m | 40 |
 | Villeneuve | TOWN | everon_villeneuve | 200 m | 35 |
 | Tyrone | TOWN | everon_tyrone | 180 m | 25 |
-| Farm Outpost | OUTPOST | everon_outpost_farm | 100 m | 0 |
-| Meaux Harbour Outpost | OUTPOST | everon_outpost_meaux_harbour | 100 m | 0 |
-| Gorey Outpost | OUTPOST | everon_outpost_gorey | 100 m | 0 |
+| Barley Field Outpost | OUTPOST | everon_outpost_farm | 100 m | 0 |
+| Gull Point Outpost | OUTPOST | everon_outpost_meaux_harbour | 100 m | 0 |
+| Raven Ridge Outpost | OUTPOST | everon_outpost_gorey | 100 m | 0 |
 | Pinewood Lake Outpost | OUTPOST | everon_outpost_pinewood_lake | 100 m | 0 |
-| Levie Hillside Outpost | OUTPOST | everon_outpost_levie_hillside | 100 m | 0 |
-| Durras Hill Outpost | OUTPOST | everon_outpost_durras_hill | 100 m | 0 |
-| Sawmill Outpost | OUTPOST | everon_outpost_sawmill | 100 m | 0 |
-| Regina South Outpost | OUTPOST | everon_outpost_regina_south | 100 m | 0 |
-| Chotain Industrial Outpost | OUTPOST | everon_outpost_chotain_industrial | 100 m | 0 |
-| Old Wood Outpost | OUTPOST | everon_outpost_old_wood | 100 m | 0 |
-| Morton Valley Outpost | OUTPOST | everon_outpost_morton_valley | 100 m | 0 |
-| Laruns Outpost | OUTPOST | everon_outpost_laruns | 100 m | 0 |
-| Quarry Outpost | OUTPOST | everon_outpost_quarry | 100 m | 0 |
-| Andres Beacon Outpost | OUTPOST | everon_outpost_andres_beacon | 100 m | 0 |
-| Chotain Military Outpost | MILITARY_BASE | everon_military_outpost_chotain | 150 m | 0 |
-| Levie Military Outpost | MILITARY_BASE | everon_military_outpost_levie | 150 m | 0 |
-| Military Hospital Outpost | MILITARY_BASE | everon_military_outpost_hospital | 150 m | 0 |
-| Lamentin Military Outpost | MILITARY_BASE | everon_military_outpost_lamentin | 150 m | 0 |
-| Morton Military Outpost | MILITARY_BASE | everon_military_outpost_morton | 150 m | 0 |
-| Everon International Airport | AIRPORT | everon_airport | 500 m | 0 |
-| North Ridge Factory | FACTORY | everon_factory_north_ridge | 250 m | 0 |
-| North Ridge Resources West | RESOURCES | everon_resources_north_ridge_west | 250 m | 0 |
-| North Ridge Resources East | RESOURCES | everon_resources_north_ridge_east | 250 m | 0 |
+| Stag Hill Outpost | OUTPOST | everon_outpost_levie_hillside | 100 m | 0 |
+| Crow Hill Outpost | OUTPOST | everon_outpost_durras_hill | 100 m | 0 |
+| Old Sawmill Outpost | OUTPOST | everon_outpost_sawmill | 100 m | 0 |
+| Regina Heights Outpost | OUTPOST | everon_outpost_regina_south | 100 m | 0 |
+| Ironworks Outpost | OUTPOST | everon_outpost_chotain_industrial | 100 m | 0 |
+| Wolf Wood Outpost | OUTPOST | everon_outpost_old_wood | 100 m | 0 |
+| Fox Valley Outpost | OUTPOST | everon_outpost_morton_valley | 100 m | 0 |
+| Hawk Ridge Outpost | OUTPOST | everon_outpost_laruns | 100 m | 0 |
+| Grey Quarry Outpost | OUTPOST | everon_outpost_quarry | 100 m | 0 |
+| Beacon Point Outpost | OUTPOST | everon_outpost_andres_beacon | 100 m | 0 |
+| Stone Ridge Base | MILITARY_BASE | everon_military_outpost_chotain | 150 m | 0 |
+| Eagle Hill Base | MILITARY_BASE | everon_military_outpost_levie | 150 m | 0 |
+| Mercy Hill Field Hospital | MILITARY_BASE | everon_military_outpost_hospital | 150 m | 0 |
+| Seawatch Base | MILITARY_BASE | everon_military_outpost_lamentin | 150 m | 0 |
+| Morton Bluff Base | MILITARY_BASE | everon_military_outpost_morton | 150 m | 0 |
+| Stronghold Delaware (Everon International Airport) | AIRPORT | everon_airport | 500 m | 0 |
+| North Ridge Works | FACTORY | everon_factory_north_ridge | 250 m | 0 |
+| Montignac Ridge Depot | RESOURCES | everon_resources_north_ridge_west | 250 m | 0 |
+| Entre-Deux Ridge Depot | RESOURCES | everon_resources_north_ridge_east | 250 m | 0 |
 
 ## QRF connections
 
@@ -107,3 +107,19 @@ After a grounding pass and world save, reconcile changed child coordinates back 
 Primary plugin reference: https://github.com/BohemiaInteractive/Arma-Reforger-Samples/blob/main/SampleMod_WorkbenchPlugin/Scripts/WorkbenchGame/SamplePlugins/SampleWorldEditorPlugin.c
 
 The native read-only editor audit has now run: 41 inspected, 0 clearance warnings. It showed the model bottom extends 0.805946 m below its pivot. All 41 corrected heights and capture-context offsets are already baked into the layers/CSV. **Reload Chicken from disk; do not run Ground to apply this correction.** A previously loaded origin-based Ground command would undo the model-base correction. Reload Workbench scripts before any future use of the updated model-aware editor commands. Inspect the resulting poles and test a capture action; neither visual acceptance nor a gameplay capture is inferred from the offline math checks.
+
+## Seaports (hand-placed, outside the catalogue)
+
+Three PORT locations are placed directly in Chicken's `MilitaryInstallations.layer` from `AROR_Location_Port.et`. They are the planned basis of the Black Market. They are not CSV rows: the catalogue requires measured, baked flag heights, and the generator check already fails on the authored fortified trials.
+
+| Name | Stable ID | X, Z | Radius |
+|---|---|---|---:|
+| Lamentin Port | everon_lamentin_port | 1100, 6065 | 150 m |
+| Saint-Philippe Port (Charlet Bay) | everon_saint_philippe_port | 4350, 11030 | 150 m |
+| Morton Port | everon_saint_pierre_port (retained legacy ID) | 4957, 3876 | 150 m |
+
+Lamentin and Saint-Philippe positions were read from in-game map grid references (010 061 and 043 110) on the quays. Morton Port uses the source `coastalBaseMorton` coordinate on the Morton harbour quay. Saint-Pierre Port (`everon_saint_pierre_port`) was removed: its harbour is now the Invader stronghold, Fortress Vostok (`everon_fortress_vostok`, see [Fortress Vostok](STRONGHOLDS.md)). Saves that hold the old port ID simply have no location to apply it to. Roots use `GroundOnInit 1` and the capture flag keeps the prefab's runtime auto-placement (clear flat ground within 60 m), so no height is baked. Lamentin Port reuses the base AROR_Everon world's stable ID. Each overlaps its town's support radius. Check the placement in Workbench, then bake the heights and add catalogue rows once the generator is reconciled.
+
+## Site names
+
+Military, industrial and resource sites carry names from their surroundings, shown beside their map icon (e.g. "Wolf Wood Outpost", "Seawatch Base"). The feature word comes from what is known about the site: high ground above the nearest town gives Hill, Ridge or Heights; low coastal sites give Point; existing hints are kept (Pinewood Lake, Old Sawmill, Grey Quarry, Beacon Point, Field Hospital). The first word is flavour. Stable IDs are unchanged, so saves and missions are unaffected; only `m_sName` and the CSV `Name` changed.

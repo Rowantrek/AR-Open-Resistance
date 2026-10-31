@@ -3,7 +3,7 @@ class AROR_ForcePoolSmokeTests
 {
 	protected static AROR_ForceProfile MakeProfile(string id, AROR_EForceType type, int weight)
 	{
-		AROR_ForceProfile profile = new AROR_ForceProfile();
+		AROR_ForceProfile profile = AROR_ForceProfile.CreateForScript();
 		profile.m_sId = id;
 		profile.m_bEnabled = true;
 		profile.m_eRole = AROR_EFactionRole.OCCUPIERS;

@@ -6,6 +6,7 @@ class AROR_QRFFinance
 	int m_iInvaderDebt;
 	int m_iOccupierLossValue;
 	int m_iInvaderLossValue;
+	protected bool m_bReconciling;
 	//! Read-only save snapshot: preserve deaths confirmed since the last periodic reconciliation.
 	int PendingLossValue(AROR_EFactionRole role)
 	{
@@ -81,6 +82,31 @@ class AROR_QRFFinance
 		Print(string.Format("[AROR FINANCE] %1 reserved role=%2 assets=%3 overhead=%4", operation.GetId(), operation.GetRole(), assets, overhead), LogLevel.NORMAL);
 		return account;
 	}
+	//! Explicit, capture-only tier-1 exception. Higher responses always need collateral.
+	//! The caller still owns capacity/recipe policy; actual bills use the same debt authority.
+	AROR_QRFFunding ReserveMinimumCapture_S(AROR_Operation operation, int assets, int overhead, int tier)
+	{
+		if (!Replication.IsServer() || !operation || tier != 1 || assets < 0 || overhead < 0)
+			return null;
+		if (operation.GetType() != AROR_EOperationType.QRF || !operation.m_bCaptureThreatRecorded || !AROR_EconomyComponent.GetInstance())
+			return null;
+		if (operation.GetRole() != AROR_EFactionRole.OCCUPIERS && operation.GetRole() != AROR_EFactionRole.INVADERS)
+			return null;
+		foreach (AROR_QRFFunding existing : m_aDeployments)
+		{
+			if (existing.m_sOperationId == operation.GetId())
+				return existing;
+		}
+		AROR_QRFFunding account = new AROR_QRFFunding();
+		account.m_sOperationId = operation.GetId();
+		account.m_eRole = operation.GetRole();
+		account.m_iQuote = assets;
+		account.m_iOverhead = overhead;
+		account.m_bUnsecured = true;
+		m_aDeployments.Insert(account);
+		Print(string.Format("[AROR FINANCE] %1 minimum capture response role=%2; unsecured assets=%3 overhead=%4, confirmed bills remain payable", operation.GetId(), operation.GetRole(), assets, overhead), LogLevel.NORMAL);
+		return account;
+	}
 	//! External systems can spend collateral. Any resulting shortfall becomes saved debt, never a negative bank.
 	void Charge_S(AROR_EFactionRole role, int amount)
 	{
@@ -120,8 +146,11 @@ class AROR_QRFFinance
 	}
 	void Tick_S()
 	{
-		if (!Replication.IsServer())
+		if (!Replication.IsServer() || m_bReconciling)
 			return;
+		// Economy subscribers can synchronously request another reconciliation.
+		// Do not remove the same closed account from two nested array traversals.
+		m_bReconciling = true;
 		array<AROR_EFactionRole> roles = {};
 		AROR_FactionRoles.GetAIMilitary(roles);
 		foreach (AROR_EFactionRole role : roles)
@@ -139,8 +168,9 @@ class AROR_QRFFinance
 		{
 			AROR_QRFFunding account = m_aDeployments[index];
 			Observe_S(account);
-			if (account.m_bClosed && account.Reserved() == 0)
+			if (account.m_bClosed && account.Reserved() == 0 && !account.HasUnsettledAssets())
 				m_aDeployments.Remove(index);
 		}
+		m_bReconciling = false;
 	}
 }

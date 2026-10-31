@@ -27,7 +27,7 @@ class AROR_NotificationManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("Campaign update", desc: "Label above the text when the sender gives none", category: "Notification")]
 	protected string m_sDefaultKicker;
 
-	[Attribute("0.55 0.7 0.35 1", UIWidgets.ColorPicker, desc: "Accent colour when the sender gives none", category: "Notification")]
+	[Attribute("0.498 0.89 0.604 1", UIWidgets.ColorPicker, desc: "Accent colour when the sender gives none (design system rebel)", category: "Notification")]
 	protected ref Color m_DefaultColor;
 
 	[Attribute("3", desc: "Seconds a hint stays on screen", category: "Hint")]
@@ -36,7 +36,7 @@ class AROR_NotificationManagerComponent : SCR_BaseGameModeComponent
 	[Attribute(SCR_SoundEvent.HINT, desc: "Default UI sound event for hints (see SCR_SoundEvent); empty for none", category: "Hint")]
 	protected string m_sHintSound;
 
-	[Attribute("0.94 0.76 0.29 1", UIWidgets.ColorPicker, desc: "Hint colour when the sender gives none (amber)", category: "Hint")]
+	[Attribute("0.949 0.722 0.294 1", UIWidgets.ColorPicker, desc: "Hint colour when the sender gives none (design system warn)", category: "Hint")]
 	protected ref Color m_HintColor;
 
 	[Attribute("", UIWidgets.ResourcePickerThumbnail, desc: "Icon shown on every hint, white on transparent so it can be tinted; empty for the built-in \"i\" badge", params: "edds imageset", category: "Hint")]
@@ -45,6 +45,9 @@ class AROR_NotificationManagerComponent : SCR_BaseGameModeComponent
 	protected static AROR_NotificationManagerComponent s_Instance;
 
 	protected ref AROR_NotificationDisplay m_Display;
+
+	protected static const int HUD_UPDATE_MS = 250;
+	protected ref AROR_RebIntelHud m_RebIntelHud;
 
 	//------------------------------------------------------------------------------------------------
 	static AROR_NotificationManagerComponent GetInstance()
@@ -169,6 +172,25 @@ class AROR_NotificationManagerComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Client: queue a notification raised on this machine (e.g. REBINTEL level changes); empty sound uses the type's default
+	void ShowLocal(notnull AROR_Notification notification)
+	{
+		AROR_NotificationDisplay display = GetDisplay();
+		if (!display)
+			return;
+
+		if (notification.GetSound().IsEmpty())
+		{
+			if (notification.GetNotificationType() == AROR_ENotificationType.HEADLINE)
+				notification.SetSound(m_sHeadlineSound);
+			else
+				notification.SetSound(m_sNotificationSound);
+		}
+
+		display.Enqueue(notification);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Client: show a hint locally (also the end point of SendHint_S)
 	void DisplayHint(string text, Color color, string sound)
 	{
@@ -218,13 +240,34 @@ class AROR_NotificationManagerComponent : SCR_BaseGameModeComponent
 	{
 		super.OnPostInit(owner);
 
-		if (GetGame().InPlayMode())
-			s_Instance = this;
+		if (!GetGame().InPlayMode())
+			return;
+
+		s_Instance = this;
+		if (RplSession.Mode() != RplMode.Dedicated)
+			GetGame().GetCallqueue().CallLater(UpdateRebIntelHud, HUD_UPDATE_MS, true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Client: the REBINTEL status widget and its level-change alerts, a few times per second
+	protected void UpdateRebIntelHud()
+	{
+		if (!m_RebIntelHud)
+		{
+			AROR_NotificationDisplay display = GetDisplay();
+			if (!display || !display.GetRoot())
+				return;
+			m_RebIntelHud = new AROR_RebIntelHud(display.GetRoot());
+		}
+
+		m_RebIntelHud.Update();
 	}
 
 	//------------------------------------------------------------------------------------------------
 	override void OnDelete(IEntity owner)
 	{
+		GetGame().GetCallqueue().Remove(UpdateRebIntelHud);
+		m_RebIntelHud = null;
 		m_Display = null;
 
 		if (s_Instance == this)

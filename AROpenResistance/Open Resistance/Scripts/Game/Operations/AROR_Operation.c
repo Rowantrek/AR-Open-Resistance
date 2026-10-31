@@ -16,9 +16,50 @@ class AROR_Operation
 	ref AROR_QRFTacticalCommander m_TacticalCommander;
 	ref AROR_QRFFunding m_Funding;
 	int m_iRequestedTier;
+	//! Ordinary campaign selection only; debug/scripted requests retain their explicit family.
+	int m_iResponseMixBucket = -1;
+	bool m_bResponseMixTracked;
+	bool m_bResponseMixAirborne;
+	bool m_bResponseMixCounted;
+	//! Equipment availability is frozen alongside requested intensity before recipe selection.
+	int m_iPoolReadinessLevel;
 	int m_iThreatPriority;
 	int m_iRecoveredPackages;
 	bool m_bCaptureThreatRecorded;
+	int m_iCaptureReportedAt;
+	int m_iPlanningRetries;
+	string m_sRejectedOrigins;
+	//! Explicit debug selections never mutate campaign Readiness/Crackdown or fixture settings.
+	bool m_bDebugRequest;
+	bool m_bUseResponseMetrics;
+	string m_sRequestedProfileId;
+	string m_sRequestedRecipeId;
+	//! Bounded preparation allowance for incremental air landing-site planning plus boarding.
+	int m_iSpawnPreparationTimeout;
+	//! Scripted scenario responses (e.g. a stronghold's defence) are paid by the scenario, not the faction bank.
+	bool m_bFundingWaived;
+	//! Fixed launch point used instead of a friendly military origin (e.g. a beach landing).
+	bool m_bHasOriginOverride;
+	vector m_vOriginOverride;
+	//! Always hold half the packages back as a second wave, whatever the scenario's wave settings.
+	bool m_bForceTwoWaves;
+	//! Estimated seconds from dispatch until the first package reaches the objective (-1 unknown), and the
+	//! scheduler clock when it was estimated. Drives the dispatch headline and map marker.
+	int m_iEtaSeconds = -1;
+	int m_iEtaSetAt;
+
+	//! Seconds of the arrival estimate still to run at the given scheduler clock, or -1 when there is none
+	int GetEtaRemaining(int now)
+	{
+		if (m_iEtaSeconds < 0)
+			return -1;
+		return Math.Max(0, m_iEtaSeconds - (now - m_iEtaSetAt));
+	}
+
+	bool UsesTacticalResponse()
+	{
+		return m_eType == AROR_EOperationType.QRF || m_eType == AROR_EOperationType.ATTACK;
+	}
 
 	string GetRecipeId() { return m_sRecipeId; }
 	int GetPackageCount()
@@ -79,7 +120,7 @@ class AROR_Operation
 		m_eState = AROR_EOperationState.PLANNED;
 		m_iDueTime = now + delaySeconds;
 		m_iStateSince = now;
-		if (type == AROR_EOperationType.QRF)
+		if (UsesTacticalResponse())
 			m_QRFSearchPlan = new AROR_QRFSearchPlan();
 	}
 

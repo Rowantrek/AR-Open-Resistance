@@ -3,7 +3,7 @@ class AROR_ResponseScaleSmokeTests
 {
 	static bool Run()
 	{
-		AROR_ForceProfile profile = new AROR_ForceProfile();
+		AROR_ForceProfile profile = AROR_ForceProfile.CreateForScript();
 		profile.m_sId = "scale_test";
 		profile.m_bEnabled = true;
 		profile.m_eRole = AROR_EFactionRole.OCCUPIERS;

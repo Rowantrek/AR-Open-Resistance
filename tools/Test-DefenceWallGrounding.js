@@ -1,10 +1,10 @@
 /* Actual grounding Run() with a mock that invalidates every live entity/source
  * after each write, reproducing the native prefab rebuild that broke traversal.
  */
-function runDefenceWallGroundingTests(source){
+function runDefenceWallGroundingTests(source,trialSource=null){
  let assertions=0,generation=0,edit=true,prefab=false,worldPath='AROR_Everon_Chicken.ent',allowBegin=true,missingId=-1;
  const check=(ok,message)=>{assertions++;if(!ok)throw Error(message);};
- let writes=[],logs=[],begin=0,end=0,sites=[];
+ let writes=[],logs=[],begin=0,end=0,sites=[],targetId='';
  function alive(version){if(version!==generation)throw Error('Stale live editor reference used after prefab rebuild');}
  function freshSource(id,name=''){const version=generation;return {GetID:()=>{alive(version);return id;},GetName:()=>{alive(version);return name;}};}
  const registry=new Map();
@@ -35,6 +35,7 @@ function runDefenceWallGroundingTests(source){
  const env={Workbench:{GetModule:()=>({GetApi:()=>api})},WorldEditor:{},AROR_LocationComponent:{Cast:x=>x},
   AROR_CaptureLocationAction:{IsCapturableType:()=>true},AROR_DefenceWallComponent:{},
   Print:message=>logs.push(message),LogLevel:{NORMAL:0,WARNING:1},
+  ShouldGroundLocation:location=>!targetId||location.GetId()===targetId,
   string:{Format:(s,...values)=>s.replace(/%(\d+)/g,(_,i)=>String(values[i-1]))}};
  const match=source.match(/^\toverride void Run\(\)\r?\n\t\{([\s\S]*?)^\t\}/m);
  if(!match)throw Error('Missing actual grounding Run');
@@ -64,9 +65,21 @@ function runDefenceWallGroundingTests(source){
  setup();worldPath='Rowan.ent';run();check(!writes.length&&!begin,'other worlds remain untouched');worldPath='AROR_Everon_Chicken.ent';
  setup();allowBegin=false;run();check(!writes.length&&!end,'failed undo-action admission leaves measurements unapplied');allowBegin=true;
  setup();sites=[];run();check(!writes.length&&!begin&&logs.some(l=>l.includes('No attached tagged wall')),'zero walls cannot appear as a successful grounding pass');
+ setup();targetId='everon_fixture_0';run();
+ check(writes.length===3&&writes.every(w=>w.id<10),'targeted grounding does not write excluded sites after hierarchy rebuilds');targetId='';
+ if(trialSource){
+  const filter=trialSource.match(/^\toverride protected bool ShouldGroundLocation\([^\r\n]*\)\r?\n\t\{([\s\S]*?)^\t\}/m);
+  if(!filter)throw Error('Missing fortified trial grounding filter');
+  const types={OUTPOST:8,MILITARY_BASE:5,AIRPORT:2,FACTORY:4,RESOURCES:7,PORT:6,TOWN:0};
+  const filterBody=filter[1].replace('AROR_ELocationType type =','let type =');
+  const accepts=new Function('AROR_ELocationType','return function(location){'+filterBody+'}')(types);
+  check(!accepts({GetId:()=> 'everon_military_outpost_chotain',GetLocationType:()=>5}),'manual Chotain castle is excluded from trial grounding');
+  for(const type of Object.values(types))check(accepts({GetId:()=> 'everon_fixture',GetLocationType:()=>type})===[8,5].includes(type),'only ordinary/military outposts are grounded: '+type);
+ }
  return {assertions,note:'Editor invalidation reproduced with mocks; native compile/grounding still required.'};
 }
 if(typeof require==='function'&&typeof module!=='undefined'&&require.main===module){
  const fs=require('fs'),path=require('path');
- console.log(runDefenceWallGroundingTests(fs.readFileSync(path.join(__dirname,'../AROpenResistance/Open Resistance/Scripts/WorkbenchGame/Plugins/AROR_GroundDefenceWallsPlugin.c'),'utf8')));
+ const plugins=path.join(__dirname,'../AROpenResistance/Open Resistance/Scripts/WorkbenchGame/Plugins');
+ console.log(runDefenceWallGroundingTests(fs.readFileSync(path.join(plugins,'AROR_GroundDefenceWallsPlugin.c'),'utf8'),fs.readFileSync(path.join(plugins,'AROR_GroundFortifiedOutpostsPlugin.c'),'utf8')));
 }

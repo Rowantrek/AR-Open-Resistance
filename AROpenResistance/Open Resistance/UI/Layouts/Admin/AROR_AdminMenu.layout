@@ -1,0 +1,11 @@
+FrameWidgetClass {
+ Name "AROR_AdminMenu"
+ {
+  ImageWidgetClass {
+   Name "AdminDim"
+   Slot FrameWidgetSlot {
+    Anchor 0 0 0 0
+   }
+  }
+ }
+}

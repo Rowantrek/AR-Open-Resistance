@@ -6,8 +6,8 @@ function runEveronQRFIntegrationTests(sources) {
   const check=(ok,msg)=>{assertions++;if(!ok)throw Error(msg);};
   const types={TOWN:0,HQ:1,AIRPORT:2,CITY:3,FACTORY:4,MILITARY_BASE:5,PORT:6,RESOURCES:7,OUTPOST:8};
   let target={GetId:()=>'site',type:types.OUTPOST,owner:0,GetLocationType(){return this.type;},GetControllingRole(){return this.owner;}};
-  const env={AROR_ELocationType:types,AROR_EOperationType:{QRF:1},string:{Empty:'',Format:()=>''},Print:()=>{},LogLevel:{NORMAL:0},
-    AROR_LocationManagerComponent:{GetInstance:()=>({GetLocationById:()=>target})},
+  const env={AROR_ELocationType:types,AROR_EFactionRole:{RESISTANCE:0,OCCUPIERS:1,INVADERS:2},AROR_EOperationType:{QRF:1},string:{Empty:'',Format:()=>''},Print:()=>{},LogLevel:{NORMAL:0},
+    AROR_LocationManagerComponent:{GetInstance:()=>({GetLocationById:()=>target})},AROR_InvaderCampaignComponent:{GetInstance:()=>null},
     AROR_FactionRolesComponent:{GetInstance:()=>({GetFaction:role=>({role,IsFactionEnemy:other=>role!==other.role})})},
     Replication:{IsServer:()=>true},AROR_QRFOriginPolicy:{},AROR_CaptureLocationAction:{},AROR_SettlementComponent:{Cast:x=>x}};
   function compile(source,name){
@@ -16,7 +16,7 @@ function runEveronQRFIntegrationTests(sources) {
     const args=m[1].replace(/\b(?:int|bool|string|vector|AROR_\w+)\s+/g,'');
     let body=m[2].replace(/\b(?:bool|int|string|Faction|AROR_\w+)\s+(\w+)/g,'let $1').replace(/let (\w+);/g,'let $1=0;')
       .replace(/(?<![.\w])m_\w+/g,x=>'this.'+x);
-    for(const method of ['IsReady','IsEnemyRole','QueueQRFThreat_S','RequestOperation_S','HasPendingQRFThreat','ReportLocationCapture_S','IsCapturableType','IsCapturableLocation','ReportAttack_S','ReportCombatContact_S','GetOperation'])
+    for(const method of ['IsReady','IsEnemyRole','QueueQRFThreat_S','RequestOperation_S','HasPendingQRFThreat','ReportLocationCapture_S','IsCapturableType','IsCapturableLocation','ReportAttack_S','ReportCombatContact_S','GetOperation','RecordStrategicEvidence','RecordCaptureEscalation_S','SetReadinessPressure_S','GetReadinessPressure'])
       body=body.replace(new RegExp('(?<![.\\w])'+method+'\\(', 'g'),'this.'+method+'(');
     return new Function(...Object.keys(env),'return function('+args+'){'+body+'}')( ...Object.values(env));
   }
@@ -27,7 +27,7 @@ function runEveronQRFIntegrationTests(sources) {
   let requested=0,queued=0;
   const manager={m_bTownCaptureQRFs:true,m_bOutpostCaptureQRFs:true,m_bQRFStrategicEconomy:false,m_iQRFReaction:10,
     IsReady:()=>true,IsEnemyRole:r=>r===1||r===2,RequestOperation_S(){requested++;return 'operation';},
-    QueueQRFThreat_S(){queued++;return 'queued';},HasPendingQRFThreat:()=>false};
+    QueueQRFThreat_S(){queued++;return 'queued';},HasPendingQRFThreat:()=>false,GetOperation:()=>null};
   for(const type of [types.TOWN,types.CITY,types.OUTPOST,types.MILITARY_BASE,types.AIRPORT,types.FACTORY,types.PORT,types.RESOURCES]){
     target.type=type;check(capture.call(manager,1,'site')==='operation','capture admission: '+type);
   }
@@ -52,12 +52,22 @@ function runEveronQRFIntegrationTests(sources) {
   manager.GetOperation=()=>null;
   const damageAt=compile(sources.manager,'ReportAttackAt_S'),beforeDamageQueue=queued,beforeDamageRequests=requested;
   check(manager.ReportAttack_S(1,'site')===''&&queued===beforeDamageQueue&&requested===beforeDamageRequests,'combat disabled blocks plain damage request');
-  check(damageAt.call(manager,1,'site',[0,0,0])===''&&queued===beforeDamageQueue&&combatContacts===0,'combat disabled blocks positioned damage, pressure and contact side effects');
+  check(damageAt.call(manager,1,'site',[0,0,0])===''&&queued===beforeDamageQueue&&combatContacts===1,'combat dispatch disabled still permits a trusted contact snapshot for local defence, without requesting a QRF');
   check(capture.call(manager,1,'site')==='queued'&&queued===beforeDamageQueue+1,'capture still queues a paid response with combat reports disabled');
   manager.m_bCombatQRFs=true;
-  check(damageAt.call(manager,1,'site',[0,0,0])==='queued'&&queued===beforeDamageQueue+2&&combatContacts===1,'explicit combat opt-in retains strategic response path');
+  check(damageAt.call(manager,1,'site',[0,0,0])==='queued'&&queued===beforeDamageQueue+2&&combatContacts===2,'explicit combat opt-in retains strategic response path');
   manager.m_bQRFStrategicEconomy=false;
   check(manager.ReportAttack_S(1,'site')==='operation'&&requested===beforeDamageRequests+1,'explicit combat opt-in retains non-strategic response path');
+  let invaderPressure=100,evidence=0;
+  manager.m_bInvaderOperationsEnabled=false;manager.RecordStrategicEvidence=()=>evidence++;manager.RecordCaptureEscalation_S=()=>invaderPressure+=25;manager.GetReadinessPressure=()=>invaderPressure;manager.SetReadinessPressure_S=(r,n)=>invaderPressure=n;
+  env.AROR_InvaderCampaignComponent.GetInstance=()=>({IsAdvanceActive:()=>true});const requestsBefore=requested,queuesBefore=queued;
+  check(capture.call(manager,2,'site')===''&&invaderPressure===125&&evidence===1&&requested===requestsBefore&&queued===queuesBefore,'Resistance capture raises territorial Invader progress without physical dispatch');
+  target.owner=1;capture.call(manager,2,'site');check(invaderPressure===125,'AI-versus-AI capture cannot escalate the territorial war by itself');target.owner=0;
+  env.AROR_InvaderCampaignComponent.GetInstance=()=>null;capture.call(manager,2,'site');check(invaderPressure===125,'disabled territorial campaign retains Invader admission opt-out');
+  manager.m_bInvaderOperationsEnabled=true;manager.m_bQRFStrategicEconomy=true;const invaderQueued=queued;
+  check(capture.call(manager,2,'site')==='queued'&&queued===invaderQueued+1&&invaderPressure===125,'enabled Invader capture uses strategic dispatch without duplicate fallback progress');
+  const invaderDamageQueued=queued;manager.m_bCombatQRFs=false;
+  check(manager.ReportAttack_S(2,'site')===''&&queued===invaderDamageQueued,'enabled Invader admission still rejects combat-driven QRFs');
   check(!sources.observer.includes('SetControllingRole_S'),'observer does not change territory authority');
   const actions={IsCapturableType:compile(sources.capture,'IsCapturableType'),IsCapturableLocation:compile(sources.capture,'IsCapturableLocation')};
   const captureFlag=compile(sources.capture,'CaptureLocation_S');

@@ -14,8 +14,8 @@ function runGarrisonsAndSupportTests(sources) {
     vector:{DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])},
     Print:()=>{},LogLevel:{NORMAL:0,WARNING:1,ERROR:2},string:{Empty:'',Format:(text,...args)=>text.replace(/%(\d+)/g,(_,i)=>String(args[i-1]))},
     AROR_GarrisonSlot:class{constructor(){Object.assign(this,{m_bLost:false,m_fHealth:1,m_bSpawned:false,m_Entity:null,m_iGroup:-1,m_iVehicle:-1,m_iSeat:-1,m_bPlacementUnavailable:false,m_iPlacementFailureSince:-1,m_iVariant:0,m_bCrewRecorded:false});}},
-    AROR_GarrisonPolicy:{},AROR_GarrisonManagerComponent:{GetInstance:()=>({CanDefendRole:()=>true})}};
-  const methods=['SetValues','UpdateControl_S','IsEligible','AddSlot','ReservedPersonnel','ReportFailure','AssignMembers','CrewAndOrder','IsPlayerOrForeignAsset','Observe_S','ClearAssignments_S','HasDormantReserve','IsDefencePending','GetDefenceCaptureBlockReason','GetLocation','GetOwner','PlayerNear','FactionFor'];
+    AROR_GarrisonPolicy:{},SENTRY_VARIANT:1000,AROR_DefencePositionComponent:{Cast:x=>x},AROR_SentryPostComponent:{Cast:x=>x},AROR_GarrisonManagerComponent:{GetInstance:()=>({CanDefendRole:()=>true})}};
+  const methods=['SentryPosts','SetValues','UpdateControl_S','IsEligible','AddSlot','ReservedPersonnel','ReportFailure','AssignMembers','CrewAndOrder','IsPlayerOrForeignAsset','Observe_S','ClearAssignments_S','HasDormantReserve','IsDefencePending','GetDefenceCaptureBlockReason','GetLocation','GetOwner','PlayerNear','FactionFor'];
   for(const source of Object.values(sources))for(const m of source.matchAll(/^\t(?:override )?(?:protected )?(?:static )?\w+ (\w+)\(/gm))if(!methods.includes(m[1]))methods.push(m[1]);
   for(const [name,fn]of Object.entries({Clear(){this.length=0;},Copy(a){this.length=0;this.push(...a);},Contains(x){return this.includes(x);},Find(x){return this.indexOf(x);},RemoveItem(x){const i=this.indexOf(x);if(i<0)return false;this.splice(i,1);return true;},Remove(i){this.splice(i,1);}}))Object.defineProperty(Array.prototype,name,{value:fn,configurable:true});
   function compile(source,name){
@@ -37,6 +37,7 @@ function runGarrisonsAndSupportTests(sources) {
       .replace(/\.Insert\(/g,'.push(').replace(/\.Compare\(/g,'.localeCompare(');
     for(const method of methods)body=body.replace(new RegExp('(?<![.\\w])'+method+'\\(', 'g'),'this.'+method+'(');
     body=body.replace(/(?<![.\w])(OnRegistered|OnUnregistered|OnControlChanged|OnRegistryChanged)(?=\s*\))/g,'this.$1');
+    body=body.replace('seed + AROR_DefenceLayout.RepairOffset(attempt)','seed.map((v,i)=>v+AROR_DefenceLayout.RepairOffset(attempt)[i])');
     return new Function(...Object.keys(env),'return function('+args+'){'+body+'}')( ...Object.values(env));
   }
   // Use actual manager methods to exercise arrival inside the site, rather than
@@ -72,6 +73,7 @@ function runGarrisonsAndSupportTests(sources) {
   let starts=0,scans=0,retired=0;
   const defence={IsEligible:()=>true,IsGarrisonActive:()=>active,Observe_S:()=>{},CanRetire:()=>false,
     HasDeploymentStarted:()=>starts>0,BeginDeployment_S:()=>starts++,IsDeploymentClosed:()=>false,UpdateDeployment_S:()=>{},BindAssets_S:()=>true,
+    IsCapacityWaiting:()=>false,CommittedPersonnel:()=>reserved,NextPersonnelCost:()=>4,SetCapacityWait_S:()=>{},
     Retire_S:()=>retired++,OutsideLongEnough:(outside,now)=>{retirementTime=now;return false;},RefreshPending_S:()=>{},ClearAssignments_S:()=>{},
     HasRoster:()=>true,GetRosterRole:()=>1,GetLocation:()=>teleportSite,ReservedPersonnel:()=>reserved,
     HasSuitableDefenceTerrain_S:()=>terrainFits,
@@ -83,10 +85,10 @@ function runGarrisonsAndSupportTests(sources) {
   const managerState={m_bGarrisonsActive:true,m_iNextProximityAt:0,m_iCursor:0,m_fActivationRadius:1000,m_fProximityInterval:1,m_aGarrisons:[defence],m_aNearby:[],
     m_Flow:{IsPlaythroughReady:()=>ready},EnsureRegistry_S:()=>true,CanDefendRole:()=>true,
     m_fPlayerSpawnClearance:6,m_fRetirementRadius:2500,m_iRetirementDelay:120,m_iMaxPersonnel:96,
-    PlayerNear:playerNear,FactionFor:()=>({}),ScanProximity_S(...args){scans++;return scan.call(this,...args);}};
+    PlayerNear:playerNear,FactionFor:()=>({}),HasRecentCombat:()=>false,NearestPlayerDistance:compile(sources.manager,'NearestPlayerDistance'),ScanProximity_S(...args){scans++;return scan.call(this,...args);}};
   for(const name of ['DefenceLevel','InfantryTeams','StaticCount','MannedCount','IsEnemyRole'])env.AROR_GarrisonPolicy[name]=compile(sources.policy,name);
   playerPosition=[0,0,0];managerTick.call(managerState);
-  check(assets===1&&groups===1&&lastClearance===6,'teleport onto flag admits defenders within the proximity scan interval');
+  check(assets===0&&groups===1&&lastClearance===6,'teleport onto flag admits infantry before optional hulls within the proximity scan interval');
   for(let i=0;i<3;i++){clock+=250;managerTick.call(managerState);}
   check(scans===1&&groups===4,'four spawn ticks reuse one proximity scan');
   clock=17500;active=true;managerTick.call(managerState);
@@ -104,23 +106,59 @@ function runGarrisonsAndSupportTests(sources) {
     check(env.AROR_GarrisonPolicy.DefenceLevel(types.TOWN,roll)===0,'no town garrison recipe');
   }
   check([0,1,2].map(r=>env.AROR_GarrisonPolicy.DefenceLevel(types.RESOURCES,r)).join(',')==='1,2,3','resources roll three stored defence levels');
-  const faction={m_eRole:1,m_sFactionKey:'AROR_OCCUPIERS',m_sAssetFactionKey:'US',m_sInfantry:'rifle',m_sStaticMG:'mg',m_sCrew:'crew',m_sParkedArmour:'lav',m_aMannedVehicles:['lav','humvee']};
+  const faction={m_eRole:1,m_sFactionKey:'AROR_OCCUPIERS',m_sAssetFactionKey:'US',m_sInfantry:'rifle',m_sMarksman:'',m_sStaticMG:'mg',m_sCrew:'crew',m_sParkedArmour:'lav',m_aMannedVehicles:['lav','humvee']};
   const add=compile(sources.garrison,'AddSlot'),reserve=compile(sources.garrison,'ReservedPersonnel'),generate=compile(sources.garrison,'Generate_S');
-  function roster(type,override=0){
-    const state={m_aSlots:[],m_bGenerated:false,m_iDefenceLevel:override,IsEligible:()=>true,
-      m_Location:{GetControllingRole:()=>1,GetLocationType:()=>type,GetId:()=>'site'},AddSlot:add,ReservedPersonnel:reserve};
+  function roster(type,override=0,staticOverride=0,omitParked=false,extraTeams=0,parked=[],posts=0){
+    const state={m_aSlots:[],m_bGenerated:false,m_iDefenceLevel:override,m_iStaticWeaponCountOverride:staticOverride,m_bOmitParkedArmour:omitParked,IsEligible:()=>true,
+      m_aExtraParkedVehicles:parked,GetExtraInfantryTeams:()=>extraTeams,SentryPosts:()=>Array.from({length:posts},()=>({})),GetOwner:()=>({}),stocked:0,StockStores_S(entity,depth){this.stocked++;},GetExtraParkedCount:()=>parked.length,
+      m_Location:{GetControllingRole:()=>1,GetLocationType:()=>type,GetId:()=>'site'},AddSlot:add,ReservedPersonnel:reserve,InfantryPrefab:compile(sources.garrison,'InfantryPrefab'),StaticPrefab:compile(sources.garrison,'StaticPrefab'),GetStaticWeaponCount:compile(sources.garrison,'GetStaticWeaponCount')};
     generate.call(state,faction);return state;
   }
+  const towered=roster(types.OUTPOST,1,0,false,0,[],2),plain=roster(types.OUTPOST,1);
+  check(towered.stocked===1&&plain.stocked===1,'stores are stocked once, when the roster is generated');
+  generate.call(plain,faction);check(plain.stocked===1,'an existing roster never restocks its stores');
+  const sentries=towered.m_aSlots.filter(s=>s.m_iKind===0&&s.m_iVariant>=1000);
+  check(sentries.length===2&&sentries.map(s=>s.m_iVariant).join(',')==='1000,1001','one marksman per guard tower, recording its post');
+  check(new Set(sentries.map(s=>s.m_iGroup)).size===2&&sentries.every(s=>s.m_iGroup>Math.max(...plain.m_aSlots.map(p=>p.m_iGroup))),'each sentry is its own group after every authored group');
+  check(sentries.every(s=>s.m_sPrefab==='rifle'),'sentry falls back to the infantry character without a marksman');
+  check(JSON.stringify(towered.m_aSlots.slice(0,plain.m_aSlots.length).map(s=>[s.m_iKind,s.m_iGroup]))===JSON.stringify(plain.m_aSlots.map(s=>[s.m_iKind,s.m_iGroup])),'towers leave the team, gun and crew ordinals unchanged');
   const outpost=roster(types.OUTPOST,4);
   check(outpost.m_aSlots.filter(s=>s.m_iKind===2||s.m_iKind===3).length===0,'even strong outpost overrides never add vehicles');
   const military=roster(types.MILITARY_BASE);
   check(military.m_aSlots.filter(s=>s.m_iKind===2).length===1,'military outpost includes parked unmanned armour');
   check(military.m_aSlots.filter(s=>s.m_iKind===3).length===1,'military outpost includes one random manned hull');
+    const compact=roster(types.MILITARY_BASE,3,4,true);
+    check(compact.m_aSlots.filter(s=>s.m_iKind===2).length===0&&compact.m_aSlots.filter(s=>s.m_iKind===3).length===1,'compact military compound omits only the spare uncrewed hull');
+    check(compact.m_aSlots.filter(s=>s.m_iKind===0).length===24&&compact.m_aSlots.filter(s=>s.m_iKind===1).length===4,'compact layout retains its infantry and four statics');
+    check(reserve.call(compact)===32,'compact military reserves infantry and all static and vehicle crews');
   const airport=roster(types.AIRPORT,1);
   check(airport.m_iLevel===4&&airport.m_aSlots.filter(s=>s.m_iKind===3).length===3,'airbase stays large under low override');
   check(reserve.call(airport)===48,'airbase reserves all infantry, static and possible hull crew before spawning');
+  const stronghold=roster(types.AIRPORT,4,6,false,4,['heli','heli','heli']);
+  check(stronghold.m_aSlots.filter(s=>s.m_iKind===0).length===48,'stronghold adds four infantry teams to the airport roster');
+  const extraHulls=stronghold.m_aSlots.filter(s=>s.m_iKind===2&&s.m_iVariant>0);
+  check(extraHulls.length===3&&extraHulls.map(s=>s.m_iVariant).join(',')==='1,2,3','extra parked hulls retain distinct saved variants');
+  const parkedPrefab=compile(sources.garrison,'ParkedPrefab');
+  for(const hull of extraHulls)check(parkedPrefab.call(stronghold,faction,hull.m_iVariant)==='heli','saved helicopter variant restores as helicopter');
   const before=airport.m_aSlots.length;check(!generate.call(airport,faction)&&airport.m_aSlots.length===before,'active recipe cannot reroll');
   server=false;check(!generate.call({...military,m_bGenerated:false},faction),'client cannot generate roster');server=true;
+
+  faction.m_aStaticVariants=['medium-mg','heavy-specialist'];
+  const equippedOutpost=roster(types.OUTPOST,2);
+  check(equippedOutpost.m_aSlots.filter(s=>s.m_iKind===1).map(s=>s.m_sPrefab).join(',')==='mg,medium-mg','ordinary equipped outpost uses heavy and medium statics');
+  const equippedMilitary=roster(types.MILITARY_BASE,3,4),guns=equippedMilitary.m_aSlots.filter(s=>s.m_iKind===1);
+  check(guns.map(s=>s.m_sPrefab).join(',')==='mg,medium-mg,heavy-specialist,mg','military uses four crewed positions with bounded variant rotation');
+  check(guns.map(s=>s.m_iVariant).join(',')==='0,1,2,0','logical static choices are recorded for serialization');
+  check(equippedMilitary.m_aSlots.filter(s=>s.m_iKind===0).length===24,'extra static does not increase the infantry recipe');
+  check(equippedMilitary.ReservedPersonnel()===32,'extra gun reserves its crew before physical spawning');
+  const staticPrefab=compile(sources.garrison,'StaticPrefab');
+  check(staticPrefab(faction,99)==='mg','removed static variants safely use the current default gun');
+  check(staticPrefab({...faction,m_aStaticVariants:['']},1)==='mg','empty static variant retains a usable default');
+  const bindStatic=compile(sources.garrison,'BindAssets_S');
+  const staticRestore={m_aSlots:guns.map(s=>({...s,m_bLost:s.m_iVariant===1})),m_eRosterRole:1,m_bAssetsBound:false,StaticPrefab:staticPrefab};
+  check(bindStatic.call(staticRestore,{...faction,m_aStaticVariants:['new-medium','new-heavy']})&&staticRestore.m_aSlots[2].m_sPrefab==='new-heavy','restored static slots bind their recorded variant to current role assets');
+  check(staticRestore.m_aSlots[1].m_bLost,'static asset rebinding never replenishes a destroyed gun');
+  delete faction.m_aStaticVariants;
 
   const advance=compile(sources.support,'ApplyRegionalSupport_S');
   function support(r,o,i){return {m_fResistance:r,m_fOccupiers:o,m_fInvaders:i,m_Location:{IsControlFixed:()=>false},
@@ -232,6 +270,16 @@ function runGarrisonsAndSupportTests(sources) {
 	let quarantine='';const loaded={QuarantineRoster_S:reason=>quarantine=reason,RestoreRoster_S:(...args)=>restored=args},context={ReadValue:(key,set)=>{if(!(key in saved))return false;set(saved[key]);return true;}};
 	check(read(null,loaded,context)&&restored[4].length===snapshot.length,'saved recipe restores all slots');
 	check(restored[4][0].m_bLost&&restored[4][0].m_fHealth===0&&!restored[4][0].m_bPlaced,'casualty and damage survive while positions are replanned');
+	const equippedSave={};let equippedRestore;
+	const equippedSlots=equippedMilitary.m_aSlots.map(slot=>({...slot}));
+	const destroyedStatic=equippedSlots.find(slot=>slot.m_iKind===1&&slot.m_iVariant===1);
+	destroyedStatic.m_bLost=true;destroyedStatic.m_fHealth=0;
+	write(null,{...original,GetSlots:out=>out.push(...equippedSlots)},{WriteValue:(key,value)=>equippedSave[key]=value});
+	const equippedLoaded={QuarantineRoster_S:()=>{throw Error('Unexpected equipped roster quarantine');},RestoreRoster_S:(...args)=>equippedRestore=args};
+	check(read(null,equippedLoaded,{ReadValue:(key,set)=>{if(!(key in equippedSave))return false;set(equippedSave[key]);return true;}}),'equipped roster round-trips through the actual serializer');
+	check(equippedRestore[4].filter(slot=>slot.m_iKind===1).map(slot=>slot.m_iVariant).join(',')==='0,1,2,0','all four static variants survive save/load');
+	check(equippedRestore[4].some(slot=>slot.m_iKind===1&&slot.m_iVariant===1&&slot.m_bLost&&slot.m_fHealth===0),'destroyed medium gun stays lost on restore');
+	check(equippedRestore[4].filter(slot=>slot.m_iKind===0).length===24,'equipped save preserves the original infantry count');
 	saved.version=99;restored=null;check(read(null,loaded,context)&&!restored&&quarantine,'unsupported headers quarantine without generating replacements');saved.version=1;
 	check(read(null,loaded,context)&&!restored[4][0].m_bPlaced&&restored[4][0].m_bLost&&restored[4][0].m_fHealth===0,'v1 migration keeps losses/damage while invalidating scattered placement');
 	saved.slot0_kind=4;saved.slot0_vehicle=999;check(read(null,loaded,context)&&restored[4][0].m_iVehicle===-1,'orphaned crew restore on foot instead of rejecting the whole roster');
@@ -241,10 +289,11 @@ function runGarrisonsAndSupportTests(sources) {
   const playerIds=new Map();
   env.GetGame=()=>({GetWorld:()=>({GetWorldTime:()=>worldTime}),GetPlayerManager:()=>({GetPlayerIdFromControlledEntity:e=>playerIds.get(e)||0})});
   env.AROR_QRFDefenseComponent={Cast:x=>x};env.SCR_EntityHelper={};
-  const lifecycleNames=['BeginDeployment_S','UpdateDeployment_S','CloseDeployment_S','HasUnresolvedQueue','CancelQueuedGroup_S','DetachOrphanedCrew_S','QuarantineRoster_S','BindAssets_S'];
+  const lifecycleNames=['BeginDeployment_S','UpdateDeployment_S','CloseDeployment_S','HasUnresolvedQueue','CancelQueuedGroup_S','DetachOrphanedCrew_S','QuarantineRoster_S','BindAssets_S','InfantryPrefab','StaticPrefab','ParkedPrefab','GetStaticWeaponCount'];
   const lifecycle=Object.fromEntries(lifecycleNames.map(n=>[n,compile(sources.garrison,n)]));
   function newDeployment(slots=[]){
-    return {...lifecycle,m_aSlots:slots,m_aGroups:[],m_iDeploymentStartedAt:-1,m_iDeploymentGraceSeconds:60,m_iSpawnQueueTimeoutSeconds:30,
+    return {...lifecycle,m_aSlots:slots,m_aGroups:[],GetExtraParkedCount:()=>0,m_iDeploymentStartedAt:-1,m_iDeploymentGraceSeconds:60,m_iSpawnQueueTimeoutSeconds:30,
+      m_iCapacityWaitSeconds:180,m_iCapacityWaitSince:-1,m_iCapacityWaited:0,m_iNextCapacityLog:0,m_bCapacityLimited:false,m_bHadDeployedPersonnel:false,
       m_bDeploymentClosed:false,m_bRestoreQuarantined:false,m_eRosterRole:1,m_bGenerated:true,
       m_Location:{GetControllingRole:()=>1,GetId:()=>'failure-site'},IsEligible:()=>true,AssignMembers:()=>{},IsPlayerOrForeignAsset:e=>!!e.foreign};
   }
@@ -264,7 +313,7 @@ function runGarrisonsAndSupportTests(sources) {
   let terrainSamples=0,terrainGood=false;
   env.AROR_DefenceLayout={TerrainFits:()=>{terrainSamples++;return terrainGood;}};
   const terrainState={m_bDefenceTerrainChecked:false,m_bDefenceTerrainFits:false,m_iTerrainRetryAt:0,
-    IsDefenceCenterAllowed:()=>true,GetDefenceCenter:()=>[0,0,0],GetDefenceHalfExtent:()=>18,
+    IsDefenceCenterAllowed:()=>true,GetDefenceCenter:()=>[0,0,0],GetDefenceHalfExtent:()=>18,GetDefenceHalfDepth:()=>18,
     GetOwner:()=>({GetYawPitchRoll:()=>[0,0,0]}),ReportFailure:()=>{},m_fMaxDefenceRelief:2};
   const terrainCheck=compile(sources.garrison,'HasSuitableDefenceTerrain_S');
   worldTime=0;check(!terrainCheck.call(terrainState),'failed terrain measurement rejects construction');
@@ -377,6 +426,131 @@ function runGarrisonsAndSupportTests(sources) {
   check(badAsset.m_bPlacementUnavailable&&!badAsset.m_bLost,'repeated resource failure resolves without a fabricated casualty');
 
 
+  // Shared capacity follows actual submitted work, not an entire virtual roster.
+  const committed=compile(sources.garrison,'CommittedPersonnel'),nextCost=compile(sources.garrison,'NextPersonnelCost');
+  const requestKnown=compile(sources.garrison,'IsGroupRequested');
+  const virtualTeam=Array.from({length:4},()=>Object.assign(new env.AROR_GarrisonSlot(),{m_iKind:0,m_iGroup:0}));
+  const allocation={m_aSlots:virtualTeam,m_aGroups:[],IsGroupRequested:requestKnown};
+  check(committed.call(allocation)===0&&nextCost.call(allocation)===4,'unspawned recipes consume no actor capacity but require complete fireteams');
+  allocation.m_aGroups=[{m_iId:0}];
+  check(committed.call(allocation)===4,'submitted native team reserves capacity before its members become physical');
+  virtualTeam[0].m_bSpawned=true;
+  check(committed.call(allocation)===4,'physical observation cannot double-count a queued member');
+  virtualTeam[0].m_bLost=true;check(committed.call(allocation)===3,'confirmed personnel losses release only their own actor allocation');
+  const budgetHull=Object.assign(new env.AROR_GarrisonSlot(),{m_iKind:3,m_iGroup:1,m_bSpawned:true});
+  const budgetCrew=Object.assign(new env.AROR_GarrisonSlot(),{m_iKind:4,m_iGroup:1,m_iVehicle:0,m_bSpawned:true});
+  const hullAllocation={m_aSlots:[budgetHull,budgetCrew],m_aGroups:[{m_iId:1}],IsGroupRequested:requestKnown};
+  check(committed.call(hullAllocation)===4,'crewed hull allowance already includes its native crew slots');
+  budgetHull.m_bLost=true;check(committed.call(hullAllocation)===1,'surviving lost-hull crew retain their own allocation');
+  budgetHull.m_bLost=false;budgetCrew.m_bSpawned=false;
+  const mixedOrphan=Object.assign(new env.AROR_GarrisonSlot(),{m_iKind:4,m_iGroup:1,m_iVehicle:-1});
+  hullAllocation.m_aSlots.push(mixedOrphan);hullAllocation.m_aGroups=[];
+  check(nextCost.call(hullAllocation)===1,'a migrated mixed crew group must reserve an orphaned survivor beyond the hull allowance');
+  const capacityWait=compile(sources.garrison,'SetCapacityWait_S');
+  const capacitySite=newDeployment([Object.assign(new env.AROR_GarrisonSlot(),{m_iKind:0,m_iGroup:0})]);
+  Object.assign(capacitySite,{NextPersonnelCost:()=>4,SetCapacityWait_S:capacityWait});
+  capacitySite.BeginDeployment_S(0);capacitySite.SetCapacityWait_S(1000,true,96,96);
+  capacitySite.UpdateDeployment_S(61000);
+  check(!capacitySite.m_bDeploymentClosed,'a new empty site does not exhaust its ordinary deployment window while capacity is occupied elsewhere');
+  capacitySite.SetCapacityWait_S(91000,false,88,96);capacitySite.UpdateDeployment_S(149999);
+  check(!capacitySite.m_bDeploymentClosed,'capacity wait is deducted from deployment elapsed time');
+  capacitySite.UpdateDeployment_S(150000);check(capacitySite.m_bDeploymentClosed,'capacity extensions retain a finite overall deadline');
+  const saturated=newDeployment([Object.assign(new env.AROR_GarrisonSlot(),{m_iKind:0,m_iGroup:0})]);
+  Object.assign(saturated,{NextPersonnelCost:()=>4,SetCapacityWait_S:capacityWait});saturated.BeginDeployment_S(0);saturated.SetCapacityWait_S(0,true,96,96);
+  saturated.UpdateDeployment_S(239999);check(!saturated.m_bDeploymentClosed,'maximum capacity grace remains available before its boundary');
+  saturated.UpdateDeployment_S(240000);check(saturated.m_bDeploymentClosed&&!saturated.m_aSlots[0].m_bLost,'persistent saturation resolves without fabricated casualties or an infinite capture lock');
+  const established=newDeployment([Object.assign(new env.AROR_GarrisonSlot(),{m_iKind:0,m_iGroup:0,m_bSpawned:true})]);
+  established.BeginDeployment_S(0);established.m_bCapacityLimited=true;established.m_bHadDeployedPersonnel=true;established.UpdateDeployment_S(1000);
+  check(established.m_bDeploymentClosed,'an established partial defence stops optional additions before clearance can create late pop-ins');
+  let partialCommitted=0,waited=false;
+  const partialSite={...defence,IsCapacityWaiting:()=>waited,CommittedPersonnel:()=>partialCommitted,ReservedPersonnel:()=>31,NextPersonnelCost:()=>4,
+    SetCapacityWait_S(now,value){waited=value;},SpawnNextGroup_S(now,clearance,free){if(free<4)return false;partialCommitted+=4;return true;}};
+  const occupied={CommittedPersonnel:()=>88};
+  const partialManager={...managerState,m_aGarrisons:[occupied,partialSite],m_aNearby:[partialSite],m_iNextProximityAt:Infinity,m_iCursor:0};
+  managerTick.call(partialManager);managerTick.call(partialManager);managerTick.call(partialManager);
+  check(partialCommitted===8&&waited,'a 31-person virtual recipe can establish eight defenders in the remaining eight slots instead of staying empty');
+  check(partialCommitted+occupied.CommittedPersonnel()===96,'incremental admission cannot exceed the hard global cap');
+  const enriched={...faction,m_aInfantryVariants:['automatic','grenadier','leader']};
+  const infantryPrefab=compile(sources.garrison,'InfantryPrefab');
+  check([0,1,2,3].map(v=>infantryPrefab(enriched,v)).join(',')==='rifle,automatic,grenadier,leader','configured teams combine rifleman, automatic rifleman, grenadier and leader');
+  check(infantryPrefab(faction,3)==='rifle','extenders without specialist configuration retain their existing rifleman');
+  // Moving from Chotain to Levie must release safely distant actors before the
+  // new site's extended deployment window expires, without deleting combatants nearby.
+  env.GetGame=()=>game;playerPosition=[0,0,0];playerDead=false;
+  let released=0,recentCombat=false,pressureActive=true;
+  const oldLocation={GetCenter:()=>[2000,0,0],GetControllingRole:()=>1,GetId:()=>'old-site'};
+  const oldGarrison={...defence,m_iOutsideSince:-1,m_Location:oldLocation,m_aSlots:[{m_Entity:{GetOrigin:()=>[2000,0,0]}}],
+    GetLocation:()=>oldLocation,IsGarrisonActive:()=>pressureActive,HasDeploymentStarted:()=>pressureActive,IsCapacityWaiting:()=>false,
+    CommittedPersonnel:()=>pressureActive?88:0,CanRetire:compile(sources.garrison,'CanRetire'),OutsideLongEnough:compile(sources.garrison,'OutsideLongEnough'),
+    Retire_S(){released++;pressureActive=false;}};
+  const awaiting={...defence,IsGarrisonActive:()=>false,IsCapacityWaiting:()=>true,CommittedPersonnel:()=>0};
+  const pressureManager={...managerState,m_aGarrisons:[oldGarrison,awaiting],m_aNearby:[],m_fPressureRetirementRadius:1200,m_iPressureRetirementDelay:15,
+    HasRecentCombat:()=>recentCombat};
+  scan.call(pressureManager,0);scan.call(pressureManager,14999);
+  check(released===0,'capacity pressure still requires continuous safe distance');
+  scan.call(pressureManager,15000);check(released===1&&oldGarrison.CommittedPersonnel()===0,'distant retained garrison releases its actor allocation before the new deployment deadline');
+  pressureActive=true;oldGarrison.m_iOutsideSince=-1;recentCombat=true;
+  scan.call(pressureManager,20000);scan.call(pressureManager,50000);
+  check(released===1,'recent validated combat prevents accelerated retirement');
+  recentCombat=false;oldGarrison.m_aSlots[0].m_Entity.GetOrigin=()=>[500,0,0];
+  scan.call(pressureManager,60000);scan.call(pressureManager,90000);
+  check(released===1,'a tracked actor near any player prevents retirement even when its parent site is distant');
+  const fallback=compile(sources.garrison,'PrepareInfantryFallback_S');
+  const localInfantry=Object.assign(new env.AROR_GarrisonSlot(),{m_iKind:0,m_iGroup:0});
+  const omittedHull=Object.assign(new env.AROR_GarrisonSlot(),{m_iKind:3,m_iGroup:1});
+  const omittedCrew=Object.assign(new env.AROR_GarrisonSlot(),{m_iKind:4,m_iGroup:1,m_iVehicle:1});
+  const orphaned=Object.assign(new env.AROR_GarrisonSlot(),{m_iKind:4,m_iGroup:2,m_iVehicle:-1});
+  const liveHull=Object.assign(new env.AROR_GarrisonSlot(),{m_iKind:1,m_iGroup:3,m_bSpawned:true});
+  const localFallback=newDeployment([localInfantry,omittedHull,omittedCrew,orphaned,liveHull]);
+  check(fallback.call(localFallback)&&localFallback.m_bInfantryTerrainFallback,'scenario may select an explicit infantry-only fallback after a failed full-footprint check');
+  check(omittedHull.m_bPlacementUnavailable&&omittedCrew.m_bPlacementUnavailable&&!localInfantry.m_bPlacementUnavailable&&!orphaned.m_bPlacementUnavailable,'fallback omits unspawned heavy assets and attached crew while retaining infantry and orphaned survivors');
+  check(!liveHull.m_bPlacementUnavailable&&localFallback.m_aSlots.every(s=>!s.m_bLost),'terrain fallback never deletes existing actors or invents casualties');
+  localFallback.m_bDefenceTerrainChecked=true;localFallback.m_bDefenceTerrainFits=false;localFallback.IsDefencePending=()=>true;
+  check(deploymentReason.call(localFallback)!=='Defence site unsuitable - relocation required','accepted infantry fallback does not falsely report a complete terrain block to players');
+  env.AROR_DefenceLayout={Facing:()=>0,RepairOffset:()=>[0,0,0]};
+  env.Vector=(...values)=>values;
+  env.GetGame=()=>({...game,GetWorld:()=>({...game.GetWorld(),GetSurfaceY:()=>0})});
+  const existingPlace=compile(sources.garrison,'PlaceSlot');let localChecks=0;
+  const unsafe={...localFallback,HasSuitableDefenceTerrain_S:()=>false,GetOwner:()=>({GetYawPitchRoll:()=>[0,0,0],VectorToParent:v=>v}),
+    PositionOrdinal:()=>0,IsSentry:()=>false,DefenceMarker:()=>({GetOrigin:()=>[0,0,0],GetYawPitchRoll:()=>[0,0,0],FindComponent:type=>type===env.AROR_SentryPostComponent?null:({GetElevation:()=>0})}),GetDefenceCenter:()=>[0,0,0],GetDefenceHalfExtent:()=>18,GetDefenceHalfDepth:()=>18,IsClear:()=>{localChecks++;return false;}};
+  // The same individual pad gate remains in production; non-infantry exits before native terrain access.
+  check(!existingPlace.call(unsafe,1,6),'full-footprint failure cannot admit a heavy hull through the infantry exception');
+  check(!existingPlace.call(unsafe,0,6)&&localChecks===25,'infantry fallback still rejects every obstructed or unwalkable local pad within its search bound');
+  unsafe.IsClear=()=>true;
+  check(existingPlace.call(unsafe,0,6)&&localInfantry.m_bPlaced,'infantry fallback can admit a locally validated pad despite an unsuitable compound corner');
+  // Exercise the actual manager and team-submission methods under a crowded
+  // arrival. Native member creation is delayed; every submitted member must
+  // already count against the same cap while the next site takes its turn.
+  const submitTeam=compile(sources.garrison,'SpawnNextGroup_S');let nativeRequests=0,maximumCommitted=0;
+  const crowdedSites=Array.from({length:13},(_,siteIndex)=>{
+    const position=[siteIndex*100,0,0],logical=roster(types.OUTPOST).m_aSlots.filter(s=>s.m_iKind===0);
+    logical.forEach(s=>s.m_vPosition=position);
+    const site=newDeployment(logical);
+    Object.assign(site,{m_bActive:false,m_iNextGroup:0,m_bAssetsBound:false,m_iOutsideSince:-1,
+      m_Location:{GetCenter:()=>position,GetControllingRole:()=>1,GetId:()=>'crowded-'+siteIndex},
+      IsGarrisonActive:()=>site.m_bActive,HasRoster:()=>site.m_bGenerated,GetRosterRole:()=>site.m_eRosterRole,
+      HasDeploymentStarted:()=>site.m_iDeploymentStartedAt>=0,IsDeploymentClosed:()=>site.m_bDeploymentClosed,
+      IsCapacityWaiting:()=>site.m_iCapacityWaitSince>=0&&!site.m_bDeploymentClosed,GetLocation:()=>site.m_Location,
+      CommittedPersonnel:committed,NextPersonnelCost:nextCost,IsGroupRequested:requestKnown,SetCapacityWait_S:capacityWait,
+      Observe_S(){},RefreshPending_S(){site.UpdateDeployment_S(clock);},ClearAssignments_S(){},HasSuitableDefenceTerrain_S:()=>true,
+      CanRetire:compile(sources.garrison,'CanRetire'),OutsideLongEnough:compile(sources.garrison,'OutsideLongEnough'),Retire_S(){throw Error('Nearby defence retired under pressure');},
+      SpawnNextGroup_S:submitTeam,SpawnNextAsset_S:()=>false,PlaceSlot:()=>true,
+      CreateGroup_S(){return {m_aUnitPrefabSlots:[],FindComponent:()=>null,m_iReadyAt:clock+500,RequestSpawn(){nativeRequests++;}};},
+      AssignMembers(pending){if(clock<pending.m_Group.m_iReadyAt)return;for(const i of pending.m_aSlots){const slot=site.m_aSlots[i];if(slot.m_bLost||slot.m_bPlacementUnavailable)continue;slot.m_bSpawned=true;slot.m_Entity={GetOrigin:()=>position};site.m_bHadDeployedPersonnel=true;}}});
+    return site;
+  });
+  playerPosition=[650,0,0];clock=0;env.GetGame=()=>game;
+  const crowdedManager={...managerState,FactionFor:()=>faction,m_aGarrisons:crowdedSites,m_aNearby:[],m_iNextProximityAt:0,m_iCursor:0,m_fPressureRetirementRadius:1200,m_iPressureRetirementDelay:15};
+  for(let tick=0;tick<120;tick++){
+    clock=tick*250;managerTick.call(crowdedManager);
+    maximumCommitted=Math.max(maximumCommitted,crowdedSites.reduce((sum,s)=>sum+s.CommittedPersonnel(),0));
+  }
+  check(maximumCommitted<=96&&maximumCommitted>0,'crowded incremental/native-queue admission never exceeds 96 committed personnel: observed='+maximumCommitted+', requests='+nativeRequests);
+  check(crowdedSites.every(s=>s.m_aSlots.some(slot=>slot.m_bSpawned)),'every nearby outpost receives physical defenders before optional second teams fill the cap');
+  const submissionsBeforeClear=nativeRequests;
+  crowdedSites.forEach(s=>s.m_aSlots.forEach(slot=>{if(slot.m_bSpawned){slot.m_bLost=true;slot.m_Entity=null;}}));
+  for(let tick=120;tick<180;tick++){clock=tick*250;managerTick.call(crowdedManager);}
+  check(nativeRequests===submissionsBeforeClear,'free capacity after clearance cannot manufacture reinforcements or refill casualties');
   const reset=compile(sources.garrison,'ResetRoster_S');
   const retaken={...newDeployment([new env.AROR_GarrisonSlot()]),m_bActive:false,m_bDeploymentClosed:true,m_iDeploymentStartedAt:1000,m_iOutsideSince:2000};
   reset.call(retaken);

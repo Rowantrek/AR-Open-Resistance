@@ -62,7 +62,14 @@ function runQRFUnloadingTests(source) {
     f=fixture();a=f.add([0],false);change(f,a);check(!recover.call(f.force,a,a.access),'reject '+name);check(a.access.recoveries===0,'no forced exit: '+name);
   }
   f=fixture();a=f.add();server=false;check(!mount.call(f.force,true),'client cannot unload');check(!recover.call(f.force,a,a.access),'client cannot recover');
-  server=true;check(source.includes('GetInVehicle(m_Vehicle, slot, true,'),'initial seating remains instant');
+  server=true;check(source.includes('GetInVehicle(seatEntity, slot, true,'),'initial seating remains instant');
+  // A full infantry load exits in paced requests; neither retained crew member is an exit target.
+  f=fixture();const fullInfantry=Array.from({length:13},()=>f.add());
+  const driver={access:{requests:[]}},gunner={access:{requests:[]}};
+  f.force.m_aMembers=[driver,gunner,...fullInfantry];f.force.m_CrewGroup={members:[driver,gunner]};
+  for(let i=0;i<fullInfantry.length;i++)mount.call(f.force,false);
+  check(fullInfantry.every(p=>p.access.requests.length===1),'every soldier in a full load receives one animated exit');
+  check(driver.access.requests.length===0&&gunner.access.requests.length===0,'unloading infantry leaves driver and gunner untouched');
   const restore=compile('RestoreNearbyDriver_S');
   let seated=0,occupied=false,playerGroup=0,crewDistance=3;
   f=fixture();a=f.add();a.access.inside=false;a.GetOrigin=()=>[crewDistance,0,0];a.access.IsGettingIn=()=>false;
