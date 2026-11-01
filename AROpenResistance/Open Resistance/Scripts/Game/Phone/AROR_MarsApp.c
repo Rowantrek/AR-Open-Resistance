@@ -13,6 +13,7 @@ class AROR_MarsApp : AROR_PhonePooledApp
 	protected ref array<int> m_aTypes = {};
 	protected string m_sCredential;
 	protected string m_sMessage;
+	protected static string s_sServerReply;
 	protected bool m_bUnlocked;
 	protected bool m_bPreviewDirty = true;
 	protected AROR_EFactionRole m_eRole = AROR_EFactionRole.OCCUPIERS;
@@ -113,8 +114,20 @@ class AROR_MarsApp : AROR_PhonePooledApp
 		m_bPreviewDirty = true;
 	}
 
+	//! Client: the server's answer to this player's last request; shown the next time the app draws
+	static void ReceiveServerReply(string message)
+	{
+		s_sServerReply = message;
+	}
+
 	void Layout(float left, float top, float scale)
 	{
+		if (!s_sServerReply.IsEmpty())
+		{
+			m_sMessage = "Server: " + s_sServerReply;
+			s_sServerReply = string.Empty;
+		}
+
 		BeginFrame(left, top, scale, 1);
 		Color text = AROR_UIColors.Get(AROR_UIColors.TEXT);
 		Color muted = AROR_UIColors.Get(AROR_UIColors.TEXT_MUTED);
