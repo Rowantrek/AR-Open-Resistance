@@ -1,0 +1,24 @@
+SizeLayoutWidgetClass "{6ABE96D149203DBB}" {
+ Name "Tab"
+ WidthOverride 160
+ HeightOverride 32
+ {
+  OverlayWidgetClass "{6ABE96D149203D07}" {
+   Name "Content"
+   {
+    ImageWidgetClass "{6ABE96D149203D01}" {
+     Name "Bg"
+    }
+    RichTextWidgetClass "{6ABE96D149203D03}" {
+     Name "Label"
+     FontProperties FontProperties "{6ABE96D149203D06}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass "{6ABE96D149203D05}" {
+     Name "Button"
+    }
+   }
+  }
+ }
+}

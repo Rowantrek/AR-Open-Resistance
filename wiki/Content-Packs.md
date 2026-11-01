@@ -7,7 +7,8 @@ The core ships one pack, `BASE_GAME` (`Configs/ContentPacks/BaseGame/AROR_Conten
 ## How it works
 
 - A pack is one `.conf` file of class `AROR_ContentPack`, listed in the content pack registry.
-- It uses the same categories and types as [faction presets](Faction-Presets), **except Units**: Vehicles (empty, no crew), Gear, Equipment, Weapons, Weapon accessories and Ammunition.
+- It holds one or more **groups**. Each group names the addons it needs and lists its entries, so a pack can cover a whole mod family with one group per sub-mod.
+- Entries are Vehicles (empty, no crew), Gear, Equipment, Weapons, Weapon accessories and Ammunition. Units are not in packs: they belong to [faction presets](Faction-Presets). A group's list mixes them freely; each entry picks its own type.
 - **Availability:** a pack can name the addons it needs. It only exists in a game while all of them are loaded, so the core can ship packs for popular mods without depending on them.
 - **On or off per campaign:** each available pack has a default (Enabled By Default). The admin can turn packs on or off when creating a campaign; the choice is saved with it. Packs whose addons are not loaded are not shown.
 - **One catalogue:** the enabled packs are merged in **registry order**. If two enabled packs list the same prefab, or replace the same prefab, the earlier pack wins.
@@ -32,12 +33,20 @@ Every entry has a **type** (e.g. a Weapon of type MARKSMAN_RIFLE) and:
 | **Minimum Readiness** | Enemy Readiness (1–5) at which an enemy army may field it. Default 1. |
 | **Import Point Requirement** | `NONE`, `PORT` (the buyer must hold a seaport) or `AIR` (a heliport or airport) |
 | **Required Import Points** | How many import facilities (seaports, heliports and airports together) the buyer must hold. Default 0. |
+| **Resistance Can Purchase** | Whether the Resistance can buy it in the Black Market or Imports. Default on. Turn it off for items only enemy armies should field; they stay available to enemy armies and missions. |
 | **Replaces** | Prefabs this entry replaces while the pack is enabled (see below) |
-| **Required Addons** | Addon GUIDs this entry needs. The entry is ignored (and replaces nothing) unless all are loaded on the server. Empty: always available. |
 
-### One pack for many mods
+### Groups and addons
 
-A pack's own **Required Addons** is all-or-nothing: if any addon is missing, the whole pack is unavailable. To cover a mod family with many optional parts (e.g. WCS and its sub-mods), leave the pack's list empty and put each sub-mod's GUID on the entries from that sub-mod. The pack is always available, and only the entries whose mods the server loads are offered. The server's mod list decides, and clients load the same mods. The `[AROR] Content packs enabled` log line reports how many entries were skipped for missing addons.
+Entries live in **groups**. A group has:
+
+| Field | Meaning |
+|---|---|
+| **Label** | A name for the editor, e.g. the mod |
+| **Required Addons** | Addon GUIDs the group needs. Its entries are ignored (and replace nothing) unless all are loaded on the server. Empty: always available (the base game pack has one such group). |
+| **Entries** | The group's vehicles, gear, equipment, weapons, accessories and ammunition |
+
+A pack's own **Required Addons** is all-or-nothing: if any addon is missing, the whole pack is unavailable. To cover a mod family with many optional parts (e.g. WCS and its sub-mods), leave the pack's list empty and make one group per sub-mod, with that sub-mod's GUID as the group's Required Addons. The pack is always available, and only the groups whose mods the server loads are offered. The server's mod list decides, and clients load the same mods. The `[AROR] Content packs enabled` log line reports how many entries were skipped for missing addons.
 
 The types per category:
 
@@ -70,11 +79,24 @@ If the replacement takes different magazines or attachments, replace those as we
 2. **Fill in the header:**
    - **ID**: unique and permanent, e.g. `MYMOD`. It is saved with campaigns, so never change it after release.
    - **Name**: shown to the admin, e.g. `My Weapons Mod`.
-   - **Required Addons**: the GUID of each addon the pack needs, as in its `addon.gproj` (usually your own). Leave empty for an always-available pack.
+   - **Required Addons**: the GUID of each addon the whole pack needs, as in its `addon.gproj` (usually your own). Leave empty for an always-available pack, and put the requirement on groups instead.
    - **Enabled By Default**: whether new campaigns start with it on.
-3. **Add entries** in each category: type, prefab, cost, and any readiness, import or replacement settings.
-4. **Register the pack.** Override `Configs/ContentPacks/AROR_ContentPackRegistry.conf` in your addon and add your pack to its list (see [Modding](Modding#override-in-addon)). Its position sets its priority against other packs.
-5. **Test.** Press Play and check the console: it lists the enabled packs and their entry and replacement counts, and warns about entries without a prefab or with an unknown type. Your items should then show in the Black Market or Imports.
+3. **Add a group** for each set of addons your entries need (a pack for one mod usually has one group), and set its Required Addons.
+4. **Add entries** to the group: pick the entry class (Vehicle, Gear, Equipment, Weapon, Weapon accessory or Ammunition), its type, prefab, cost, and any readiness, import or replacement settings.
+5. **Register the pack.** Add a script to your addon (e.g. `Scripts/Game/MyMod_ContentPackRegistry.c`) that adds your pack's path. An addon can register several packs, and several addons can register packs without clashing:
+   ```
+   modded class AROR_ContentPackRegistry
+   {
+   	override void GetExtraPackPaths(notnull array<ResourceName> outPacks)
+   	{
+   		super.GetExtraPackPaths(outPacks);
+
+   		outPacks.Insert("{GUID}Configs/ContentPacks/MyMod_ContentPack.conf");
+   	}
+   }
+   ```
+   Copy the pack's path with its GUID from the Resource Browser (right-click the pack → Copy Resource Name). The core's packs come first, then extender packs in script load order; that order sets priority between packs.
+6. **Test.** Press Play and check the console: it lists the enabled packs and their entry and replacement counts, and warns about entries without a prefab or with an unknown type. Your items should then show in the Black Market or Imports.
 
 A minimal pack, as text:
 
@@ -82,24 +104,36 @@ A minimal pack, as text:
 AROR_ContentPack {
  m_sId "MYMOD"
  m_sName "My Weapons Mod"
- m_aRequiredAddons {
-  "1234567890ABCDEF"
- }
- m_aWeapons {
-  AROR_ContentPackWeapon {
-   m_sPrefab "{GUID}Prefabs/Weapons/MyMod/Rifle_M16A2_MyMod.et"
-   m_eType ASSAULT_RIFLE
-   m_iCost 900
-   m_aReplaces {
-    "{3E413771E1834D2F}Prefabs/Weapons/Rifles/M16/Rifle_M16A2.et"
+ m_aGroups {
+  AROR_ContentPackGroup {
+   m_sLabel "My Weapons Mod"
+   m_aRequiredAddons {
+    "1234567890ABCDEF"
+   }
+   m_aEntries {
+    AROR_ContentPackWeapon {
+     m_sPrefab "{GUID}Prefabs/Weapons/MyMod/Rifle_M16A2_MyMod.et"
+     m_eType ASSAULT_RIFLE
+     m_iCost 900
+     m_aReplaces {
+      "{3E413771E1834D2F}Prefabs/Weapons/Rifles/M16/Rifle_M16A2.et"
+     }
+    }
+    AROR_ContentPackAmmunition {
+     m_sPrefab "{GUID}Prefabs/Weapons/MyMod/Magazine_M16A2_MyMod.et"
+     m_eType MAGAZINE
+     m_iCost 40
+    }
    }
   }
  }
 }
 ```
 
+Packs written for the earlier layout, with a separate list per category (`m_aWeapons`, `m_aVehicles` and so on) and **Required Addons** on each entry, no longer load: move each pack's entries into a group's `m_aEntries` list and put the addons on the group.
+
 ## Tips
 
 - **Presets need packs.** If your [faction preset](Faction-Presets) uses your mod's items, your pack must offer them, or the preset skips them (the log says which).
 - **Pricing:** use the `BASE_GAME` pack's costs as a scale.
-- **Readiness** only limits enemy armies. Resistance players can buy anything the Black Market offers.
+- **Readiness** only limits enemy armies. Resistance players can buy anything the Black Market offers, except entries with **Resistance Can Purchase** turned off.
