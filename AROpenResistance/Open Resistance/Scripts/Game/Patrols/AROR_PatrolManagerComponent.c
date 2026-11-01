@@ -49,8 +49,11 @@ class AROR_PatrolManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("3000", desc: "A patrol belongs to the army holding the nearest military site within this distance; with none, no patrol spawns there. Half this distance is kept from the other army's sites (m)", params: "500 8000 100")]
 	protected float m_fTerritoryRadius;
 
-	[Attribute("250", desc: "Spawn points and routes stay this far outside Resistance sites, and spawn points this far outside every military site (m beyond the site radius)", params: "0 1000 10")]
+	[Attribute("250", desc: "Spawn points stay this far outside Resistance sites and every military site (m beyond the site radius)", params: "0 1000 10")]
 	protected float m_fSiteClearance;
+
+	[Attribute("75", desc: "Patrol routes stay this far outside Resistance military sites and the HQ, so they never enter one to capture it (m beyond the site radius). Kept small so patrols can still pass players who are at their own sites", params: "0 500 5")]
+	protected float m_fRouteClearance;
 
 	[Attribute("2500", desc: "A patrol despawns once no player has been within this distance for the despawn delay (m)", params: "1000 6000 50")]
 	protected float m_fDespawnDistance;
@@ -95,6 +98,16 @@ class AROR_PatrolManagerComponent : SCR_BaseGameModeComponent
 	protected static const float PROGRESS_MIN = 15;		//!< Metres a patrol must cover between checks, unless fighting
 	protected static const int STALL_LIMIT = 3;			//!< Failed progress checks before a leg is skipped
 	protected static const int PLAN_ATTEMPTS = 8;		//!< Spawn points tried per spawn attempt
+	protected static const int MIDDLE_ATTEMPTS = 4;		//!< Route points near the area's centre tried per spawn point
+	protected static const int PLAN_REPORT_EVERY = 4;	//!< Failed spawn attempts between route-planning reports
+
+	//! Route-planning failure reasons, counted for the periodic report
+	protected static const int PLAN_NO_START_ROAD = 0;
+	protected static const int PLAN_START_BLOCKED = 1;
+	protected static const int PLAN_NO_ARMY = 2;
+	protected static const int PLAN_NO_MIDDLE = 3;
+	protected static const int PLAN_NO_EXIT = 4;
+	protected static const int PLAN_COUNT = 5;
 	protected static const float FOOT_ARRIVAL = 40;
 	protected static const float VEHICLE_ARRIVAL = 60;
 	protected static const int APC_CHANCE = 40;			//!< Chance (%) of an APC once the readiness allows one
@@ -103,6 +116,8 @@ class AROR_PatrolManagerComponent : SCR_BaseGameModeComponent
 	protected ref array<vector> m_aPlayerPositions = {};
 	protected int m_iSpawnTimer;
 	protected int m_iNextId = 1;
+	protected ref array<int> m_aPlanFailures = {0, 0, 0, 0, 0};
+	protected int m_iFailedSpawnAttempts;
 
 	//------------------------------------------------------------------------------------------------
 	// Update
@@ -421,11 +436,19 @@ class AROR_PatrolManagerComponent : SCR_BaseGameModeComponent
 		bool planned;
 		for (int attempt = 0; attempt < PLAN_ATTEMPTS && !planned; attempt++)
 		{
-			planned = PlanRoute_S(anchor, role, start, route);
+			int failure = PlanRoute_S(anchor, role, start, route);
+			planned = failure < 0;
+			if (!planned)
+				m_aPlanFailures[failure] = m_aPlanFailures[failure] + 1;
 		}
 
 		if (!planned)
+		{
+			ReportPlanFailures_S(anchor);
 			return;
+		}
+
+		m_iFailedSpawnAttempts = 0;
 
 		int readiness = 2;
 		int crackdown = 2;
@@ -452,40 +475,86 @@ class AROR_PatrolManagerComponent : SCR_BaseGameModeComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! A road start out of every player's sight in one army's ground, then a road point near the area's centre and a
-	//! road exit on the far side, with every leg clear of Resistance sites and of the other army
-	protected bool PlanRoute_S(vector anchor, out AROR_EFactionRole role, out vector start, notnull array<vector> route)
+	//! road exit on the far side outside the other army's ground, with every leg clear of Resistance sites and of the
+	//! other army. Returns -1 when planned, else a PLAN_ failure reason.
+	protected int PlanRoute_S(vector anchor, out AROR_EFactionRole role, out vector start, notnull array<vector> route)
 	{
 		float bearing = Math.RandomFloat(0, Math.PI * 2);
 		float distance = Math.RandomFloat(m_fSpawnMinDistance, m_fSpawnMaxDistance);
 		vector probe = anchor + Vector(Math.Sin(bearing) * distance, 0, Math.Cos(bearing) * distance);
 		if (!AROR_ForceSpawner.FindRoadPosition(probe, anchor, start))
-			return false;
+			return PLAN_NO_START_ROAD;
 
-		if (!IsSpawnPointClear_S(start) || !FindArmy_S(start, role))
-			return false;
+		if (!IsSpawnPointClear_S(start))
+			return PLAN_START_BLOCKED;
 
-		vector across = anchor + Vector(Math.RandomFloat(-m_fPassRadius, m_fPassRadius), 0, Math.RandomFloat(-m_fPassRadius, m_fPassRadius));
+		if (!FindArmy_S(start, role))
+			return PLAN_NO_ARMY;
+
+		// Several tries for the pass point: players often stand at their own sites, which the legs must skirt
 		vector middle;
-		if (!AROR_ForceSpawner.FindRoadPosition(across, across, middle))
-			return false;
+		bool middleFound;
+		for (int attempt = 0; attempt < MIDDLE_ATTEMPTS && !middleFound; attempt++)
+		{
+			vector across = anchor + Vector(Math.RandomFloat(-m_fPassRadius, m_fPassRadius), 0, Math.RandomFloat(-m_fPassRadius, m_fPassRadius));
+			middleFound = AROR_ForceSpawner.FindRoadPosition(across, across, middle) && IsLegClear_S(start, middle, role);
+		}
 
-		float exitBearing = bearing + Math.PI + Math.RandomFloat(-0.8, 0.8);
-		vector far = anchor + Vector(Math.Sin(exitBearing) * distance, 0, Math.Cos(exitBearing) * distance);
+		if (!middleFound)
+			return PLAN_NO_MIDDLE;
+
+		// The exit only has to stay out of the other army's ground; it need not lie in this army's own
+		bool exitFound;
 		vector exit;
-		if (!AROR_ForceSpawner.FindRoadPosition(far, far, exit))
-			return false;
+		for (int exitAttempt = 0; exitAttempt < MIDDLE_ATTEMPTS && !exitFound; exitAttempt++)
+		{
+			float exitBearing = bearing + Math.PI + Math.RandomFloat(-1.2, 1.2);
+			vector far = anchor + Vector(Math.Sin(exitBearing) * distance, 0, Math.Cos(exitBearing) * distance);
+			exitFound = AROR_ForceSpawner.FindRoadPosition(far, far, exit) && !IsOtherArmyGround_S(exit, role) && IsLegClear_S(middle, exit, role);
+		}
 
-		AROR_EFactionRole exitRole;
-		if (!FindArmy_S(exit, exitRole) || exitRole != role)
-			return false;
-
-		if (!IsLegClear_S(start, middle, role) || !IsLegClear_S(middle, exit, role))
-			return false;
+		if (!exitFound)
+			return PLAN_NO_EXIT;
 
 		route.Clear();
 		route.Insert(middle);
 		route.Insert(exit);
-		return true;
+		return -1;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True if a military site of the army other than role lies within half the territory radius
+	protected bool IsOtherArmyGround_S(vector position, AROR_EFactionRole role)
+	{
+		array<AROR_LocationComponent> locations = {};
+		GetLocations(locations);
+		float separation = m_fTerritoryRadius * 0.5;
+		foreach (AROR_LocationComponent location : locations)
+		{
+			AROR_EFactionRole holder = location.GetControllingRole();
+			if (IsMilitarySite(location) && IsArmy(holder) && holder != role && vector.DistanceXZ(position, location.GetCenter()) <= separation)
+				return true;
+		}
+
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every few failed spawn attempts, logs why no route could be planned, so an empty map can be explained
+	protected void ReportPlanFailures_S(vector anchor)
+	{
+		m_iFailedSpawnAttempts++;
+		if (m_iFailedSpawnAttempts % PLAN_REPORT_EVERY != 0)
+			return;
+
+		Print(string.Format("[AROR PATROL] no patrol route around %1 after %2 attempts: no start road %3, start too close to a player/site %4, no army ground %5, no clear pass point %6, no clear exit %7",
+			anchor, m_iFailedSpawnAttempts * PLAN_ATTEMPTS, m_aPlanFailures[PLAN_NO_START_ROAD], m_aPlanFailures[PLAN_START_BLOCKED],
+			m_aPlanFailures[PLAN_NO_ARMY], m_aPlanFailures[PLAN_NO_MIDDLE], m_aPlanFailures[PLAN_NO_EXIT]), LogLevel.WARNING);
+
+		for (int i = 0; i < PLAN_COUNT; i++)
+		{
+			m_aPlanFailures[i] = 0;
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -682,7 +751,7 @@ class AROR_PatrolManagerComponent : SCR_BaseGameModeComponent
 			AROR_EFactionRole holder = location.GetControllingRole();
 			float clearance;
 			if (holder == AROR_EFactionRole.RESISTANCE)
-				clearance = location.GetRadius() + m_fSiteClearance;
+				clearance = location.GetRadius() + m_fRouteClearance;
 			else if (IsArmy(holder) && holder != role)
 				clearance = Math.Max(location.GetRadius() + m_fSiteClearance, separation);
 			else

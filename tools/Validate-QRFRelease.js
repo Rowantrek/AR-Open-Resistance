@@ -4,7 +4,7 @@ const root=path.resolve(__dirname,'..');
 const suites=[
  'Test-MarsAndAttacks.js','Test-OperationAlerts.js','Test-QRFReleaseLifecycle.js','Test-QRFInterruptions.js','Test-StrongholdIntegration.js','Test-QRFManagerSoak.js','Test-QRFMutations.js','Test-QRFRouteAudit.js',
  'Test-QRFStrategy.js','Test-QRFProgression.js','Test-QRFResponseMix.js','Test-ReaperLandingSearch.js',
- 'Test-QRFBoarding.js','Test-QRFIngress.js','Test-QRFUnloading.js','Test-QRFRetention.js',
+ 'Test-QRFBoarding.js','Test-SessionFixes.js','Test-QRFIngress.js','Test-QRFUnloading.js','Test-QRFRetention.js',
  'Test-QRFSupportAndHeadlines.js','Test-QRFVehicleFaction.js','Test-QRFTownHold.js',
  'Test-EveronQRFIntegration.js','Test-InvaderCampaign.js','Test-RebIntel.js','Test-MissionLifecycle.js',
  'Test-CapturePlacement.js','Test-GarrisonsAndSupport.js','Test-GarrisonCrew.js',

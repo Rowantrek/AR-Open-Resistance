@@ -39,13 +39,15 @@ modded class SCR_PlayerController
 	//------------------------------------------------------------------------------------------------
 	// Client -> server
 	//------------------------------------------------------------------------------------------------
-	//! presetIds: faction preset ID per role, indexed by AROR_EFactionRole
-	void AROR_RequestNewPlaythrough(vector hqPosition, string playthroughName, array<string> presetIds)
+	//! resistanceName: also the playthrough (save) name. presetIds: faction preset ID per role, indexed by
+	//! AROR_EFactionRole. disabledPackIds / enabledPackIds: content packs turned off / on against their defaults.
+	//! settingIds / settingValues: campaign setting values, paired by index.
+	void AROR_RequestNewPlaythrough(vector hqPosition, string resistanceName, array<string> presetIds, array<string> disabledPackIds, array<string> enabledPackIds, array<string> settingIds, array<string> settingValues)
 	{
 		if (Replication.IsServer())
-			AROR_RpcAsk_NewPlaythrough(hqPosition, playthroughName, presetIds);
+			AROR_RpcAsk_NewPlaythrough(hqPosition, resistanceName, presetIds, disabledPackIds, enabledPackIds, settingIds, settingValues);
 		else
-			Rpc(AROR_RpcAsk_NewPlaythrough, hqPosition, playthroughName, presetIds);
+			Rpc(AROR_RpcAsk_NewPlaythrough, hqPosition, resistanceName, presetIds, disabledPackIds, enabledPackIds, settingIds, settingValues);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -64,6 +66,25 @@ modded class SCR_PlayerController
 			AROR_RpcAsk_Load(saveIndex);
 		else
 			Rpc(AROR_RpcAsk_Load, saveIndex);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Phone quick dock: save the running campaign (admins only; the server checks)
+	void AROR_RequestManualSave()
+	{
+		if (Replication.IsServer())
+			AROR_RpcAsk_ManualSave();
+		else
+			Rpc(AROR_RpcAsk_ManualSave);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void AROR_RpcAsk_ManualSave()
+	{
+		AROR_GameFlowComponent gameFlow = AROR_GameFlowComponent.GetInstance();
+		if (gameFlow)
+			gameFlow.RequestManualSave_S(GetPlayerId());
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -201,11 +222,11 @@ modded class SCR_PlayerController
 
 	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
-	protected void AROR_RpcAsk_NewPlaythrough(vector hqPosition, string playthroughName, array<string> presetIds)
+	protected void AROR_RpcAsk_NewPlaythrough(vector hqPosition, string resistanceName, array<string> presetIds, array<string> disabledPackIds, array<string> enabledPackIds, array<string> settingIds, array<string> settingValues)
 	{
 		AROR_GameFlowComponent gameFlow = AROR_GameFlowComponent.GetInstance();
 		if (gameFlow)
-			gameFlow.RequestNewPlaythrough_S(GetPlayerId(), hqPosition, playthroughName, presetIds);
+			gameFlow.RequestNewPlaythrough_S(GetPlayerId(), hqPosition, resistanceName, presetIds, disabledPackIds, enabledPackIds, settingIds, settingValues);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -528,15 +549,6 @@ modded class SCR_PlayerController
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void AROR_RequestHiCommRename(string name)
-	{
-		if (Replication.IsServer())
-			AROR_RpcAsk_HiCommRename(name);
-		else
-			Rpc(AROR_RpcAsk_HiCommRename, name);
-	}
-
-	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
 	protected void AROR_RpcAsk_HiCommRaise(int typeIndex)
 	{
@@ -561,15 +573,6 @@ modded class SCR_PlayerController
 		AROR_HighCommandComponent highCommand = AROR_HighCommandComponent.GetInstance();
 		if (highCommand)
 			highCommand.RequestSetLeader_S(GetPlayerId(), targetPlayerId, leader);
-	}
-
-	//------------------------------------------------------------------------------------------------
-	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
-	protected void AROR_RpcAsk_HiCommRename(string name)
-	{
-		AROR_HighCommandComponent highCommand = AROR_HighCommandComponent.GetInstance();
-		if (highCommand)
-			highCommand.RequestRename_S(GetPlayerId(), name);
 	}
 
 	//------------------------------------------------------------------------------------------------

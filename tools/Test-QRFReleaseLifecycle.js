@@ -19,7 +19,7 @@ const env={Replication:{IsServer:()=>server},AROR_EOperationState:states,AROR_EF
  AROR_EResponseType:{AIR_GROUND:7},Math:{Max:Math.max,Min:Math.min},Print(){},LogLevel:{NORMAL:0},
  string:{Empty:'',Format:()=>''},PilotCompartmentSlot:{Cast:x=>x?.pilot?x:null},
  CargoCompartmentSlot:{Cast:x=>x?.cargo?x:null},BaseCompartmentManagerComponent:{Cast:x=>x},
- CompartmentAccessComponent:{Cast:x=>x},ECloseDoorAfterActions:{CLOSE_DOOR:1},
+ CompartmentAccessComponent:{Cast:x=>x},ECloseDoorAfterActions:{CLOSE_DOOR:1,INVALID:-1},AROR_ForceSpawner:{IsAlive:x=>!!x&&!x.dead},
  AROR_GroundOperationForce:{Cast:x=>x?.ground?x:null},AROR_ReaperAirForce:{Cast:x=>x?.air?x:null},
  GetGame:()=>({GetPlayerManager:()=>({GetPlayerIdFromControlledEntity:()=>playerId})})};
 const names=new Set(Object.values(src).flatMap(s=>[...s.matchAll(/^\t[^\r\n]*?\b(\w+)\([^\r\n]*\)\r?\n\t\{/gm)].map(m=>m[1])));

@@ -5,41 +5,35 @@ class AROR_SetupUIComponentClass : SCR_BaseGameModeComponentClass
 
 //! Client-side setup UI for the server admin (see ARCHITECTURE.md -> Game Flow -> Setup UI).
 //! Reacts to AROR_GameFlowComponent client events and sends requests through the AROR_ methods on SCR_PlayerController.
-//! New: opens the base-game map menu, the admin clicks the HQ position, a dialog confirms it.
-//! Start and Load: the setup menu (AROR_SetupMenu) shows the options and the save list sent by the server.
-//! Dialog button actions arrive through QueueDialogAction once the dialog has closed (see AROR_SetupDialogs.c).
+//! The setup menu (AROR_SetupMenu / AROR_SetupApp) shows the start screen, the save list and the new campaign steps
+//! (armies and content packs, settings, name); the choices are kept here in an AROR_SetupDraft. Placing the HQ closes
+//! the menu and opens the base-game map: the admin clicks the position, a dialog confirms it and the whole draft is
+//! sent to the server. Backing out of the map, or the server refusing, reopens the menu on the name step.
+//! Menu and dialog actions arrive through QueueDialogAction once they have closed (see AROR_SetupDialogs.c).
 class AROR_SetupUIComponent : SCR_BaseGameModeComponent
 {
 	[Attribute("{5BB4D0ED53225DDC}Configs/UI/AROR_SetupDialogs.conf", UIWidgets.ResourceNamePicker, desc: "Setup dialog presets", params: "conf")]
 	protected ResourceName m_sDialogPresets;
 
-	[Attribute("Open Resistance", desc: "Name given to new playthroughs (until a name field exists)")]
-	protected string m_sDefaultPlaythroughName;
-
 	static const string DIALOG_MAIN = "main";
-	static const string DIALOG_FACTIONS = "factions";
 	static const string DIALOG_HQ_CONFIRM = "hq_confirm";
 	static const string DIALOG_LOAD = "load";
 
-	protected static const string PRESET_FACTIONS = "aror_setup_factions";
 	protected static const string PRESET_HQ_CONFIRM = "aror_setup_hq_confirm";
 
 	protected AROR_GameFlowComponent m_GameFlow;
 	protected bool m_bPickingHQ;
 
-	//! New campaign: faction preset ID chosen per role, indexed by AROR_EFactionRole
-	protected ref array<string> m_aChosenPresetIds = {};
+	//! The new campaign being set up
+	protected ref AROR_SetupDraft m_Draft = new AROR_SetupDraft();
 
-	// Base-game presets used by the "Quick start" testing button
-	protected static const string BASE_PRESET_RESISTANCE = "FIA";
-	protected static const string BASE_PRESET_OCCUPIERS = "US_ARMY";
-	protected static const string BASE_PRESET_INVADERS = "USSR_ARMY";
-	protected static const string BASE_PRESET_CIVILIANS = "EVERON_CIV";
+	//! True from sending a new campaign request until the server answers, so a refusal returns to the name step
+	protected bool m_bAwaitingNewResult;
 
 	protected static AROR_SetupUIComponent s_Instance;
 
 	// State the setup menu shows (it reads it when it opens): screen, save list and any message from the server
-	protected int m_iMenuScreen = AROR_SetupMenu.SCREEN_START;
+	protected int m_iMenuScreen = AROR_SetupApp.SCREEN_START;
 	protected ref array<string> m_aSaveLabels = {};
 	protected string m_sMenuMessage;
 	protected vector m_vPickedPosition;
@@ -51,10 +45,20 @@ class AROR_SetupUIComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Which setup menu screen to show (AROR_SetupMenu.SCREEN_*)
+	//! Which setup menu screen to show (AROR_SetupApp.SCREEN_*)
 	int GetMenuScreen()
 	{
 		return m_iMenuScreen;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The menu moved to another screen; a message from the server only shows on the screen it arrived for
+	void SetMenuScreen(int screen)
+	{
+		if (screen != m_iMenuScreen)
+			m_sMenuMessage = string.Empty;
+
+		m_iMenuScreen = screen;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -64,10 +68,24 @@ class AROR_SetupUIComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The last message from the server for the start screen (e.g. why a request was rejected)
+	//! The last message from the server (e.g. why a request was refused)
 	string GetMenuMessage()
 	{
 		return m_sMenuMessage;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	AROR_SetupDraft GetDraft()
+	{
+		return m_Draft;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! New campaign chosen on the start screen: start over from the defaults on the first step
+	void StartNewCampaign()
+	{
+		m_Draft.Reset();
+		SetMenuScreen(AROR_SetupApp.SCREEN_FACTIONS);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -79,20 +97,26 @@ class AROR_SetupUIComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	void OpenMainDialogWithMessage(string message)
 	{
-		// The setup menu replaces the base-game main dialog; one instance, updated in place when open
-		m_iMenuScreen = AROR_SetupMenu.SCREEN_START;
+		OpenMenuAt(AROR_SetupApp.SCREEN_START, message);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Shows the setup menu on a screen; one instance, updated in place when open
+	protected void OpenMenuAt(int screen, string message)
+	{
+		m_iMenuScreen = screen;
 		m_sMenuMessage = message;
 		AROR_SetupMenu menu = AROR_SetupMenu.GetOpen();
 		if (menu)
-			menu.ShowStart(message);
+			menu.SyncFromSetup();
 		else
 			GetGame().GetMenuManager().OpenMenu(ChimeraMenuPreset.AROR_SetupMenu);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	// Dialog actions
+	// Menu and dialog actions
 	//------------------------------------------------------------------------------------------------
-	//! Called by a dialog once it has closed; handled next frame, outside the menu manager's close sequence
+	//! Called by the menu or a dialog once it has closed; handled next frame, outside the menu manager's close sequence
 	void QueueDialogAction(string dialogId, string tag, int value)
 	{
 		GetGame().GetCallqueue().CallLater(HandleDialogAction, 0, false, dialogId, tag, value);
@@ -103,19 +127,8 @@ class AROR_SetupUIComponent : SCR_BaseGameModeComponent
 	{
 		if (dialogId == DIALOG_MAIN)
 		{
-			if (tag == "new")
-				OpenFactionsDialog();
-			else if (tag == "quick")
-				QuickStart();
-			else if (tag == "load")
-				RequestSaveList();
-		}
-		else if (dialogId == DIALOG_FACTIONS)
-		{
-			if (tag == "confirm")
+			if (tag == "hq")
 				StartHQPicking();
-			else if (tag == "back")
-				OpenMainDialog();
 		}
 		else if (dialogId == DIALOG_HQ_CONFIRM)
 		{
@@ -129,55 +142,11 @@ class AROR_SetupUIComponent : SCR_BaseGameModeComponent
 		{
 			if (tag == "load")
 				RequestLoad(value);
-			else if (tag == "back")
-				OpenMainDialog();
 		}
 	}
 
 	//------------------------------------------------------------------------------------------------
-	// New campaign: choose faction presets, then pick the HQ on the map
-	//------------------------------------------------------------------------------------------------
-	protected void OpenFactionsDialog()
-	{
-		m_aChosenPresetIds.Clear();
-
-		AROR_SetupFactionsDialog dialog = new AROR_SetupFactionsDialog(this);
-		SCR_ConfigurableDialogUi.CreateFromPreset(m_sDialogPresets, PRESET_FACTIONS, dialog);
-		dialog.ShowRole();
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Testing shortcut: skip the Factions step with the base-game presets selected, then pick the HQ
-	protected void QuickStart()
-	{
-		m_aChosenPresetIds.Clear();
-		SetChosenPresetId(AROR_EFactionRole.RESISTANCE, BASE_PRESET_RESISTANCE);
-		SetChosenPresetId(AROR_EFactionRole.OCCUPIERS, BASE_PRESET_OCCUPIERS);
-		SetChosenPresetId(AROR_EFactionRole.INVADERS, BASE_PRESET_INVADERS);
-		SetChosenPresetId(AROR_EFactionRole.CIVILIANS, BASE_PRESET_CIVILIANS);
-		StartHQPicking();
-	}
-
-	//------------------------------------------------------------------------------------------------
-	string GetChosenPresetId(AROR_EFactionRole role)
-	{
-		if (role < m_aChosenPresetIds.Count())
-			return m_aChosenPresetIds[role];
-
-		return string.Empty;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	void SetChosenPresetId(AROR_EFactionRole role, string presetId)
-	{
-		while (m_aChosenPresetIds.Count() <= role)
-		{
-			m_aChosenPresetIds.Insert(string.Empty);
-		}
-
-		m_aChosenPresetIds[role] = presetId;
-	}
-
+	// New campaign: after the setup steps, pick the HQ on the map
 	//------------------------------------------------------------------------------------------------
 	protected void StartHQPicking()
 	{
@@ -203,20 +172,33 @@ class AROR_SetupUIComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Back from the map: the name step again, with every choice kept
 	protected void CancelHQPicking()
 	{
 		StopHQPicking();
-		OpenMainDialog();
+		OpenMenuAt(AROR_SetupApp.SCREEN_NAME, string.Empty);
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Sends the whole draft with the HQ position; the server checks everything again
 	protected void ConfirmHQ()
 	{
 		StopHQPicking();
 
 		SCR_PlayerController playerController = SCR_PlayerController.Cast(GetGame().GetPlayerController());
-		if (playerController)
-			playerController.AROR_RequestNewPlaythrough(m_vPickedPosition, m_sDefaultPlaythroughName, m_aChosenPresetIds);
+		if (!playerController)
+			return;
+
+		array<string> disabledPackIds = {};
+		array<string> enabledPackIds = {};
+		m_Draft.GetPackOverrides(disabledPackIds, enabledPackIds);
+
+		array<string> settingIds = {};
+		array<string> settingValues = {};
+		m_Draft.GetSettingValues(settingIds, settingValues);
+
+		m_bAwaitingNewResult = true;
+		playerController.AROR_RequestNewPlaythrough(m_vPickedPosition, m_Draft.GetName(), m_Draft.GetPresetIds(), disabledPackIds, enabledPackIds, settingIds, settingValues);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -283,19 +265,22 @@ class AROR_SetupUIComponent : SCR_BaseGameModeComponent
 	protected void OnSaveListReceived(array<string> saveLabels)
 	{
 		m_aSaveLabels.Copy(saveLabels);
-		m_iMenuScreen = AROR_SetupMenu.SCREEN_LOAD;
-		AROR_SetupMenu menu = AROR_SetupMenu.GetOpen();
-		if (menu)
-			menu.ShowLoad(m_aSaveLabels);
-		else
-			GetGame().GetMenuManager().OpenMenu(ChimeraMenuPreset.AROR_SetupMenu);
+		OpenMenuAt(AROR_SetupApp.SCREEN_LOAD, string.Empty);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Server rejected a request (e.g. invalid HQ position): back to the main dialog with the reason
+	//! Server refused a request with the reason: a new campaign returns to the name step with its choices kept (e.g.
+	//! the HQ position or name was refused), anything else to the start screen
 	protected void OnSetupResult(bool success, string message)
 	{
-		if (!success)
+		bool wasNew = m_bAwaitingNewResult;
+		m_bAwaitingNewResult = false;
+		if (success)
+			return;
+
+		if (wasNew)
+			OpenMenuAt(AROR_SetupApp.SCREEN_NAME, message);
+		else
 			OpenMainDialogWithMessage(message);
 	}
 

@@ -4,7 +4,7 @@ function runOutpostEquipmentTests(source) {
  const check=(value,message)=>{assertions++;if(!value)throw Error(message);};
  for(const [name,fn]of Object.entries({IsEmpty(){return this.length===0;},Count(){return this.length;},Insert(x){this.push(x);}}))Object.defineProperty(Array.prototype,name,{value:fn,configurable:true});
  Object.defineProperty(String.prototype,'IsEmpty',{value:function(){return this.length===0;},configurable:true});
- const categories={UNITS:0,VEHICLES:1,GEAR:2,EQUIPMENT:3,WEAPONS:4,WEAPON_ACCESSORIES:5,AMMUNITION:6,VEHICLE_AMMUNITION:7};
+ const categories={UNITS:0,VEHICLES:1,GEAR:2,EQUIPMENT:3,WEAPONS:4,WEAPON_ACCESSORIES:5,AMMUNITION:6};
  const env={Replication:{IsServer:()=>server},AROR_LocationComponent:{Cast:x=>x},BaseInventoryStorageComponent:{Cast:x=>x},InventoryStorageManagerComponent:{Cast:x=>x},
   AROR_FactionPresetsComponent:{GetInstance:()=>({GetPreset:role=>preset&&preset.role===role?preset:null})},
   AROR_EFactionPresetCategory:categories,AROR_EEquipmentType:{MEDICAL:0,BINOCULARS:1,RADIO:2},

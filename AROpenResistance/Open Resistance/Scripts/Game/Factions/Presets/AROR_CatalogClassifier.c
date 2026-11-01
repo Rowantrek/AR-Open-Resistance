@@ -1,7 +1,8 @@
 //! Sorts faction entity catalog entries (characters, vehicles, static weapons, inventory items) into faction preset
 //! categories and types, using the base game's own tags (Game Master labels for characters and vehicles, arsenal item
-//! type/mode for items) plus a few file-name hints. Shared by the runtime catalog augmentation (AROR_FactionPreset)
-//! and the Workbench import of the base presets, so both sort the same way.
+//! type/mode for items) plus a few file-name hints. Shared by the runtime catalog augmentation (AROR_FactionPreset), the
+//! catalog generation of content packs (AROR_ContentPack) and the Workbench import of the base presets, so all sort the
+//! same way. Its default readiness and import terms price generated content pack entries whose type no other pack lists.
 class AROR_CatalogClassifier
 {
 	//------------------------------------------------------------------------------------------------
@@ -33,10 +34,11 @@ class AROR_CatalogClassifier
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Readiness at which an army gets an asset it was not given explicitly: heavier equipment later
-	static int DefaultReadiness(AROR_EFactionPresetCategory category, int type)
+	//! Readiness from which a generated content pack entry may be fielded: heavier equipment later. vehicleMunition: an
+	//! item loaded onto aircraft and vehicles (see IsVehicleMunition).
+	static int DefaultReadiness(AROR_EFactionPresetCategory category, int type, bool vehicleMunition = false)
 	{
-		if (category == AROR_EFactionPresetCategory.VEHICLE_AMMUNITION)
+		if (vehicleMunition)
 			return 4;
 
 		if (category != AROR_EFactionPresetCategory.VEHICLES)
@@ -45,12 +47,16 @@ class AROR_CatalogClassifier
 		switch (type)
 		{
 			case AROR_EVehicleType.ARMED_CAR:
+			case AROR_EVehicleType.ARMED_TRUCK:
 			case AROR_EVehicleType.HELI_TRANSPORT:
 			case AROR_EVehicleType.STATIC_AT:
+			case AROR_EVehicleType.STATIC_MORTAR:
 				return 2;
 
 			case AROR_EVehicleType.APC:
 			case AROR_EVehicleType.IFV:
+			case AROR_EVehicleType.AA_VEHICLE:
+			case AROR_EVehicleType.RADAR_AA_VEHICLE:
 			case AROR_EVehicleType.STATIC_AA:
 				return 3;
 
@@ -65,13 +71,21 @@ class AROR_CatalogClassifier
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Base cost and import facility requirements for an added entry whose type the preset does not list yet
-	//! (added entries otherwise copy a listed entry of the same type). Same scale as the base presets.
-	static void DefaultImportTerms(AROR_EFactionPresetCategory category, int type, out int cost, out int importPoints, out AROR_EImportPointRequirement importRequirement)
+	//! Base cost and import facility requirements for a generated content pack entry whose type no other pack lists
+	//! (generated entries otherwise copy a listed entry of the same type). Same scale as the base game pack.
+	static void DefaultImportTerms(AROR_EFactionPresetCategory category, int type, out int cost, out int importPoints, out AROR_EImportPointRequirement importRequirement, bool vehicleMunition = false)
 	{
 		cost = 0;
 		importPoints = 0;
 		importRequirement = AROR_EImportPointRequirement.NONE;
+		if (vehicleMunition)
+		{
+			cost = 3800;
+			importPoints = 5;
+			importRequirement = AROR_EImportPointRequirement.AIR;
+			return;
+		}
+
 		switch (category)
 		{
 			case AROR_EFactionPresetCategory.VEHICLES:
@@ -89,12 +103,6 @@ class AROR_CatalogClassifier
 
 			case AROR_EFactionPresetCategory.AMMUNITION:
 				DefaultAmmunitionTerms(type, cost, importPoints, importRequirement);
-				return;
-
-			case AROR_EFactionPresetCategory.VEHICLE_AMMUNITION:
-				cost = 3800;
-				importPoints = 5;
-				importRequirement = AROR_EImportPointRequirement.AIR;
 				return;
 
 			case AROR_EFactionPresetCategory.GEAR:
@@ -121,6 +129,9 @@ class AROR_CatalogClassifier
 			case AROR_EVehicleType.SUPPLY_TRUCK: cost = 3400; importPoints = 2; return;
 			case AROR_EVehicleType.FUEL_TRUCK: cost = 4200; importPoints = 2; return;
 			case AROR_EVehicleType.ARMED_CAR: cost = 4800; importPoints = 2; return;
+			case AROR_EVehicleType.ARMED_TRUCK: cost = 6200; importPoints = 3; return;
+			case AROR_EVehicleType.AA_VEHICLE: cost = 18000; importPoints = 4; return;
+			case AROR_EVehicleType.RADAR_AA_VEHICLE: cost = 26000; importPoints = 5; return;
 			case AROR_EVehicleType.APC: cost = 14500; importPoints = 4; return;
 			case AROR_EVehicleType.IFV: cost = 22000; importPoints = 5; return;
 			case AROR_EVehicleType.TANK: cost = 40000; importPoints = 6; return;
@@ -144,11 +155,13 @@ class AROR_CatalogClassifier
 			case AROR_EWeaponType.PISTOL: cost = 150; return;
 			case AROR_EWeaponType.SHOTGUN: cost = 400; return;
 			case AROR_EWeaponType.SMG: cost = 500; return;
-			case AROR_EWeaponType.GRENADE: cost = 60; return;
+			case AROR_EWeaponType.EXPLOSIVE_GRENADE: cost = 60; return;
+			case AROR_EWeaponType.SMOKE_GRENADE: cost = 40; return;
+			case AROR_EWeaponType.MARKSMAN_RIFLE: cost = 1200; importPoints = 2; return;
 			case AROR_EWeaponType.MACHINEGUN: cost = 2200; importPoints = 3; return;
 			case AROR_EWeaponType.SNIPER_RIFLE: cost = 1800; importPoints = 3; return;
-			case AROR_EWeaponType.LAUNCHER_AT: cost = 1800; importPoints = 3; importRequirement = AROR_EImportPointRequirement.PORT; return;
-			case AROR_EWeaponType.LAUNCHER_AA: cost = 2400; importPoints = 4; importRequirement = AROR_EImportPointRequirement.PORT; return;
+			case AROR_EWeaponType.LAUNCHER_AT: cost = 1800; importPoints = 1; importRequirement = AROR_EImportPointRequirement.PORT; return;
+			case AROR_EWeaponType.LAUNCHER_AA: cost = 2400; importPoints = 1; importRequirement = AROR_EImportPointRequirement.PORT; return;
 		}
 
 		// Rifles and carbines
@@ -165,11 +178,57 @@ class AROR_CatalogClassifier
 			case AROR_EAmmunitionType.MAGAZINE: cost = 25; importPoints = 0; return;
 			case AROR_EAmmunitionType.GRENADE_ROUND: cost = 60; return;
 			case AROR_EAmmunitionType.SHELL: cost = 150; importPoints = 3; return;
-			case AROR_EAmmunitionType.ROCKET: cost = 350; importPoints = 3; importRequirement = AROR_EImportPointRequirement.PORT; return;
+			case AROR_EAmmunitionType.ROCKET: cost = 350; importPoints = 1; importRequirement = AROR_EImportPointRequirement.PORT; return;
+			case AROR_EAmmunitionType.MISSILE: cost = 900; importPoints = 1; importRequirement = AROR_EImportPointRequirement.PORT; return;
 		}
 
 		// Belts
 		cost = 90;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True when the prefab exists in one of the addon filesystems (e.g. ArmaReforger, RHS_Core)
+	static bool IsFromSource(ResourceName prefab, array<string> sources)
+	{
+		if (!sources)
+			return false;
+
+		string path = prefab.GetPath();
+		foreach (string source : sources)
+		{
+			if (!source.IsEmpty() && FileIO.FileExists("$" + source + ":" + path))
+				return true;
+		}
+
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True when the prefab's lower-case file name contains one of the fragments
+	static bool HasNameFragment(ResourceName prefab, array<string> fragments)
+	{
+		if (!fragments)
+			return false;
+
+		string name = LowerName(prefab);
+		foreach (string fragment : fragments)
+		{
+			if (!fragment.IsEmpty() && name.Contains(fragment))
+				return true;
+		}
+
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A hand-held weapon, accessory or ammunition from no excluded source and with no excluded name fragment
+	static bool IsHandHeldFromAllowedSource(AROR_EFactionPresetCategory category, ResourceName prefab, array<string> excludedSources, array<string> excludedNames)
+	{
+		if (category != AROR_EFactionPresetCategory.WEAPONS && category != AROR_EFactionPresetCategory.WEAPON_ACCESSORIES
+			&& category != AROR_EFactionPresetCategory.AMMUNITION)
+			return false;
+
+		return !HasNameFragment(prefab, excludedNames) && !IsFromSource(prefab, excludedSources);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -256,6 +315,15 @@ class AROR_CatalogClassifier
 		if (IsTankName(name))
 			return AROR_EVehicleType.TANK;
 
+		// Self-propelled anti-air (Shilka, Tunguska, ...) before the broad APC label they often carry
+		if (IsAntiAirName(name) && !entry.HasEditableEntityLabel(EEditableEntityLabel.VEHICLE_CAR) && !entry.HasEditableEntityLabel(EEditableEntityLabel.VEHICLE_TRUCK))
+		{
+			if (name.Contains("tunguska") || name.Contains("2s6") || name.Contains("pantsir"))
+				return AROR_EVehicleType.RADAR_AA_VEHICLE;
+
+			return AROR_EVehicleType.AA_VEHICLE;
+		}
+
 		if (entry.HasEditableEntityLabel(EEditableEntityLabel.VEHICLE_APC))
 		{
 			// Tracked/armoured fighting vehicles carrying an autocannon are treated as IFVs by name
@@ -267,9 +335,14 @@ class AROR_CatalogClassifier
 
 		if (entry.HasEditableEntityLabel(EEditableEntityLabel.VEHICLE_TRUCK))
 		{
-			// Armed trucks, e.g. the WCS ZU-23 carriers, are support vehicles, not troop/supply transports.
+			// Armed trucks, e.g. the WCS ZU-23 carriers, are support vehicles, not troop/supply transports
 			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_ARMED))
-				return AROR_EVehicleType.ARMED_CAR;
+			{
+				if (IsAntiAirName(name))
+					return AROR_EVehicleType.AA_VEHICLE;
+
+				return AROR_EVehicleType.ARMED_TRUCK;
+			}
 			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_REFUELING))
 				return AROR_EVehicleType.FUEL_TRUCK;
 			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_MEDICAL))
@@ -305,6 +378,14 @@ class AROR_CatalogClassifier
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Anti-air vehicles by name: ZU-23 carriers, Shilka, Tunguska and similar
+	static bool IsAntiAirName(string name)
+	{
+		return name.Contains("zu23") || name.Contains("zu-23") || name.Contains("zu_23") || name.Contains("shilka") || name.Contains("zsu")
+			|| name.Contains("tunguska") || name.Contains("2s6") || name.Contains("pantsir") || name.Contains("avenger");
+	}
+
+	//------------------------------------------------------------------------------------------------
 	static int StaticWeaponType(SCR_EntityCatalogEntry entry)
 	{
 		string name = LowerName(entry.GetPrefab());
@@ -314,11 +395,29 @@ class AROR_CatalogClassifier
 		if (name.Contains("9m113") || name.Contains("9k111") || name.Contains("tow")
 			|| name.Contains("spg9") || name.Contains("spg_9") || name.Contains("atgm") || name.Contains("metis"))
 			return AROR_EVehicleType.STATIC_AT;
-		return AROR_EVehicleType.STATIC_MG;
+		if (name.Contains("mortar") || name.Contains("m252") || name.Contains("2b14"))
+			return AROR_EVehicleType.STATIC_MORTAR;
+		// As the base presets: the tall 6T7 tripods are high, other tripods low
+		if (name.Contains("6t7"))
+			return AROR_EVehicleType.STATIC_MG_HIGH;
+		return AROR_EVehicleType.STATIC_MG_LOW;
 	}
 
 	//------------------------------------------------------------------------------------------------
 	// Items: weapons, ammunition, accessories, gear and equipment, from the arsenal data
+	//------------------------------------------------------------------------------------------------
+	//! True for munitions loaded onto aircraft and vehicles as items (rocket pods, missiles, bombs). They share the
+	//! ammunition types with hand-held rockets, so generated pack entries price them apart (see DefaultImportTerms).
+	static bool IsVehicleMunition(SCR_EntityCatalogEntry entry)
+	{
+		SCR_ArsenalItem arsenal = SCR_ArsenalItem.Cast(entry.GetEntityDataOfType(SCR_ArsenalItem));
+		if (!arsenal)
+			return false;
+
+		SCR_EArsenalItemType itemType = arsenal.GetItemType();
+		return arsenal.GetItemMode() == SCR_EArsenalItemMode.PYLON || itemType == SCR_EArsenalItemType.HELICOPTER || itemType == SCR_EArsenalItemType.VEHICLE;
+	}
+
 	//------------------------------------------------------------------------------------------------
 	static bool ItemType(SCR_EntityCatalogEntry entry, out AROR_EFactionPresetCategory category, out int type)
 	{
@@ -330,15 +429,15 @@ class AROR_CatalogClassifier
 		SCR_EArsenalItemType itemType = arsenal.GetItemType();
 		SCR_EArsenalItemMode itemMode = arsenal.GetItemMode();
 
-		// Munitions loaded onto aircraft and vehicles as items (e.g. helicopter rocket pods)
-		if (itemMode == SCR_EArsenalItemMode.PYLON || itemType == SCR_EArsenalItemType.HELICOPTER || itemType == SCR_EArsenalItemType.VEHICLE)
+		// Munitions loaded onto aircraft and vehicles as items (e.g. helicopter rocket pods): ammunition, priced apart
+		if (IsVehicleMunition(entry))
 		{
-			category = AROR_EFactionPresetCategory.VEHICLE_AMMUNITION;
-			type = AROR_EVehicleAmmunitionType.ROCKET;
+			category = AROR_EFactionPresetCategory.AMMUNITION;
+			type = AROR_EAmmunitionType.ROCKET;
 			if (name.Contains("missile") || name.Contains("atgm"))
-				type = AROR_EVehicleAmmunitionType.MISSILE;
+				type = AROR_EAmmunitionType.MISSILE;
 			else if (name.Contains("bomb"))
-				type = AROR_EVehicleAmmunitionType.BOMB;
+				type = AROR_EAmmunitionType.BOMB;
 
 			return true;
 		}
@@ -389,7 +488,7 @@ class AROR_CatalogClassifier
 			case SCR_EArsenalItemType.PISTOL:
 				return AROR_EWeaponType.PISTOL;
 			case SCR_EArsenalItemType.RIFLE:
-				return AROR_EWeaponType.RIFLE;
+				return AROR_EWeaponType.ASSAULT_RIFLE;
 			case SCR_EArsenalItemType.MACHINE_GUN:
 				return AROR_EWeaponType.MACHINEGUN;
 			case SCR_EArsenalItemType.SNIPER_RIFLE:
@@ -399,8 +498,9 @@ class AROR_CatalogClassifier
 					return AROR_EWeaponType.LAUNCHER_AA;
 				return AROR_EWeaponType.LAUNCHER_AT;
 			case SCR_EArsenalItemType.LETHAL_THROWABLE:
+				return AROR_EWeaponType.EXPLOSIVE_GRENADE;
 			case SCR_EArsenalItemType.NON_LETHAL_THROWABLE:
-				return AROR_EWeaponType.GRENADE;
+				return AROR_EWeaponType.SMOKE_GRENADE;
 		}
 
 		return -1;

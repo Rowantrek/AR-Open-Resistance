@@ -1,4 +1,4 @@
-//! One thing the Black Market or Imports sells: a Resistance preset entry plus its price.
+//! One thing the Black Market or Imports sells: an enabled content pack entry plus its price.
 class AROR_ShopOffer : Managed
 {
 	ResourceName m_sPrefab;
@@ -6,7 +6,7 @@ class AROR_ShopOffer : Managed
 	int m_iPrice;
 	int m_iFacilities;		//!< Import facilities the Resistance must hold
 	AROR_EImportPointRequirement m_eSpecial;
-	string m_sType;			//!< Preset type, e.g. "Rifle" or "Motor Truck"
+	string m_sType;			//!< Entry type, e.g. "Rifle" or "Motor Truck"
 	bool m_bVehicle;
 	protected string m_sName;
 
@@ -184,8 +184,8 @@ class AROR_ImportShop
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Offer for one preset entry
-	static AROR_ShopOffer CreateOffer(notnull AROR_FactionPresetEntry entry, int category, bool vehicle)
+	//! Offer for one content pack entry
+	static AROR_ShopOffer CreateOffer(notnull AROR_ContentPackEntry entry, int category, bool vehicle)
 	{
 		AROR_ShopOffer offer = new AROR_ShopOffer();
 		offer.m_sPrefab = entry.GetPrefab();
@@ -199,37 +199,13 @@ class AROR_ImportShop
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Every preset the shops sell from: the Resistance's own first (its prices and requirements win when a prefab is
-	//! listed twice), then every other faction's in registry order. Returns a key that changes when the list does.
-	static string GetShopPresets(notnull array<AROR_FactionPreset> outPresets)
+	//! Cache key for the shop catalogues: changes whenever the enabled content packs do (-1 before they exist)
+	static int GetCatalogueRevision()
 	{
-		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
-		if (!presets)
-			return string.Empty;
+		AROR_ContentPacksComponent packs = AROR_ContentPacksComponent.GetInstance();
+		if (!packs)
+			return -1;
 
-		AROR_FactionPreset resistance = presets.GetPreset(AROR_EFactionRole.RESISTANCE);
-		string key;
-		if (resistance)
-		{
-			outPresets.Insert(resistance);
-			key = resistance.GetId();
-		}
-
-		array<AROR_FactionPreset> all = {};
-		presets.GetAllPresets(all);
-		foreach (AROR_FactionPreset preset : all)
-		{
-			if (preset == resistance)
-				continue;
-
-			outPresets.Insert(preset);
-			key += "|" + preset.GetId();
-		}
-
-		// Catalog augmentation (e.g. WCS) adds entries a frame after loading: rebuild a catalogue built before it
-		if (presets.AreCatalogsAugmented())
-			key += "|augmented";
-
-		return key;
+		return packs.GetRevision();
 	}
 }

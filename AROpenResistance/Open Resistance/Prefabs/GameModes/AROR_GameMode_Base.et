@@ -80,6 +80,10 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
   }
   AROR_FactionPresetsComponent "{5C71FA2147F19FB3}" {
   }
+  AROR_ContentPacksComponent "{6B1D3E7A92C45F18}" {
+  }
+  AROR_CampaignSettingsComponent "{6B2E4F8AA3D56029}" {
+  }
   AROR_FactionRolesComponent "{6AAE5E8BB415C942}" {
   }
   AROR_HighCommandComponent "{6AB4E0F1A2B8C001}" {

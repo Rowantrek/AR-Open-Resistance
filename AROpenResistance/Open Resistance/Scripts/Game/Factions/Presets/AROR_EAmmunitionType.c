@@ -6,5 +6,7 @@ enum AROR_EAmmunitionType
 	BELT,
 	ROCKET,
 	SHELL,
-	GRENADE_ROUND
+	GRENADE_ROUND,
+	MISSILE,
+	BOMB
 }

@@ -138,6 +138,8 @@ class AROR_PhonePooledApp
 			if (!text)
 				return false;
 
+			// The cache starts empty, so clear the layout's placeholder ("Text widget") or a first empty text keeps it
+			text.SetText(string.Empty);
 			m_aTexts.Insert(text);
 			m_aTextCache.Insert(string.Empty);
 			m_aTextCaches.Insert(new AROR_HiCommWidgetCache());
@@ -151,6 +153,7 @@ class AROR_PhonePooledApp
 			if (!background || !label || !button)
 				return false;
 
+			label.SetText(string.Empty);
 			button.AddHandler(m_ClickHandler);
 			button.SetColor(Color.FromRGBA(0, 0, 0, 0));
 			m_aButtonBackgrounds.Insert(background);

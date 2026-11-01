@@ -46,7 +46,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_bAllowJointResponses 1
    m_bQRFTacticalCommander 1
    m_bQRFTwoWaves 1
-   m_iQRFSplitTier 3
+   m_iQRFSplitTier 5
    m_iQRFReinforcementDelay 60
    m_iQRFReserveWait 450
    m_iQRFMaxLiveGround 6
@@ -104,8 +104,8 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
-      "ussr_motorized"
       "ussr_mechanized"
+      "ussr_armour"
      }
     }
     AROR_GroundQRFRecipe {
@@ -118,7 +118,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_aProfileIds {
       "ussr_motorized"
       "ussr_mechanized"
-      "ussr_mechanized"
+      "ussr_armour"
      }
     }
     AROR_GroundQRFRecipe {
@@ -144,9 +144,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
       "ussr_motorized"
-      "ussr_motorized"
       "ussr_mechanized"
       "ussr_mechanized"
+      "ussr_armour"
       "ussr_armour"
      }
     }
@@ -174,8 +174,8 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
-      "us_motorized"
       "us_mechanized"
+      "us_armour"
      }
     }
     AROR_GroundQRFRecipe {
@@ -188,7 +188,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_aProfileIds {
       "us_motorized"
       "us_mechanized"
-      "us_mechanized"
+      "us_armour"
      }
     }
     AROR_GroundQRFRecipe {
@@ -214,9 +214,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
       "us_motorized"
-      "us_motorized"
       "us_mechanized"
       "us_mechanized"
+      "us_armour"
       "us_armour"
      }
     }
@@ -245,6 +245,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
       "us_motorized"
+      "us_light_support"
      }
     }
     AROR_GroundQRFRecipe {
@@ -255,6 +256,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
+      "us_motorized"
       "us_motorized"
       "us_light_support"
      }
@@ -270,6 +272,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "us_motorized"
       "us_motorized"
       "us_light_support"
+      "us_light_support"
      }
     }
     AROR_GroundQRFRecipe {
@@ -280,6 +283,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
+      "us_motorized"
       "us_motorized"
       "us_motorized"
       "us_light_support"
@@ -299,6 +303,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "us_motorized"
       "us_light_support"
       "us_light_support"
+      "us_light_support"
      }
     }
     AROR_GroundQRFRecipe {
@@ -309,6 +314,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
+      "us_motorized"
       "us_mechanized"
      }
     }
@@ -322,6 +328,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_aProfileIds {
       "us_motorized"
       "us_mechanized"
+      "us_mechanized"
      }
     }
     AROR_GroundQRFRecipe {
@@ -334,6 +341,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_aProfileIds {
       "us_motorized"
       "us_mechanized"
+      "us_mechanized"
       "us_light_support"
      }
     }
@@ -345,6 +353,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
+      "us_motorized"
       "us_motorized"
       "us_mechanized"
       "us_mechanized"
@@ -363,6 +372,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "us_motorized"
       "us_mechanized"
       "us_mechanized"
+      "us_mechanized"
       "us_light_support"
      }
     }
@@ -375,6 +385,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
       "ussr_motorized"
+      "ussr_light_support"
      }
     }
     AROR_GroundQRFRecipe {
@@ -385,6 +396,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
+      "ussr_motorized"
       "ussr_motorized"
       "ussr_light_support"
      }
@@ -400,6 +412,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "ussr_motorized"
       "ussr_motorized"
       "ussr_light_support"
+      "ussr_light_support"
      }
     }
     AROR_GroundQRFRecipe {
@@ -410,6 +423,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
+      "ussr_motorized"
       "ussr_motorized"
       "ussr_motorized"
       "ussr_light_support"
@@ -429,6 +443,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "ussr_motorized"
       "ussr_light_support"
       "ussr_light_support"
+      "ussr_light_support"
      }
     }
     AROR_GroundQRFRecipe {
@@ -439,6 +454,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
+      "ussr_motorized"
       "ussr_mechanized"
      }
     }
@@ -452,6 +468,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_aProfileIds {
       "ussr_motorized"
       "ussr_mechanized"
+      "ussr_mechanized"
      }
     }
     AROR_GroundQRFRecipe {
@@ -464,6 +481,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_aProfileIds {
       "ussr_motorized"
       "ussr_mechanized"
+      "ussr_mechanized"
       "ussr_light_support"
      }
     }
@@ -475,6 +493,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
+      "ussr_motorized"
       "ussr_motorized"
       "ussr_mechanized"
       "ussr_mechanized"
@@ -493,6 +512,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "ussr_motorized"
       "ussr_mechanized"
       "ussr_mechanized"
+      "ussr_mechanized"
       "ussr_light_support"
      }
     }
@@ -506,7 +526,8 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
       "us_airborne"
-      "us_motorized"
+      "us_mechanized"
+      "us_armour"
      }
     }
     AROR_GroundQRFRecipe {
@@ -521,6 +542,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "us_airborne"
       "us_motorized"
       "us_mechanized"
+      "us_armour"
      }
     }
     AROR_GroundQRFRecipe {
@@ -534,6 +556,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_aProfileIds {
       "us_airborne"
       "us_motorized"
+      "us_mechanized"
       "us_mechanized"
       "us_armour"
      }
@@ -552,6 +575,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "us_mechanized"
       "us_mechanized"
       "us_armour"
+      "us_armour"
      }
     }
     AROR_GroundQRFRecipe {
@@ -568,6 +592,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "us_mechanized"
       "us_mechanized"
       "us_armour"
+      "us_armour"
       "us_light_support"
      }
     }
@@ -581,7 +606,8 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
       "ussr_airborne"
-      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_armour"
      }
     }
     AROR_GroundQRFRecipe {
@@ -596,6 +622,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "ussr_airborne"
       "ussr_motorized"
       "ussr_mechanized"
+      "ussr_armour"
      }
     }
     AROR_GroundQRFRecipe {
@@ -609,6 +636,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_aProfileIds {
       "ussr_airborne"
       "ussr_motorized"
+      "ussr_mechanized"
       "ussr_mechanized"
       "ussr_armour"
      }
@@ -627,6 +655,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "ussr_mechanized"
       "ussr_mechanized"
       "ussr_armour"
+      "ussr_armour"
      }
     }
     AROR_GroundQRFRecipe {
@@ -643,6 +672,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "ussr_mechanized"
       "ussr_mechanized"
       "ussr_armour"
+      "ussr_armour"
       "ussr_light_support"
      }
     }
@@ -650,25 +680,27 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sId "occupier_joint_r2_l1"
      m_eResponseType 7
      m_iLevel 1
-     m_iMinimumReadinessLevel 2
+     m_iMinimumReadinessLevel 1
      m_iMaximumReadinessLevel 2
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
-      "us_airborne_light"
+      "us_airborne"
       "us_motorized"
+      "us_light_support"
      }
     }
     AROR_GroundQRFRecipe {
      m_sId "occupier_joint_r2_l2"
      m_eResponseType 7
      m_iLevel 2
-     m_iMinimumReadinessLevel 2
+     m_iMinimumReadinessLevel 1
      m_iMaximumReadinessLevel 2
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
-      "us_airborne_light"
+      "us_airborne"
+      "us_motorized"
       "us_motorized"
       "us_light_support"
      }
@@ -677,14 +709,15 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sId "occupier_joint_r2_l3"
      m_eResponseType 7
      m_iLevel 3
-     m_iMinimumReadinessLevel 2
+     m_iMinimumReadinessLevel 1
      m_iMaximumReadinessLevel 2
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
-      "us_airborne_light"
+      "us_airborne"
       "us_motorized"
       "us_motorized"
+      "us_light_support"
       "us_light_support"
      }
     }
@@ -692,15 +725,16 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sId "occupier_joint_r2_l4"
      m_eResponseType 7
      m_iLevel 4
-     m_iMinimumReadinessLevel 2
+     m_iMinimumReadinessLevel 1
      m_iMaximumReadinessLevel 2
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
-      "us_airborne_light"
+      "us_airborne"
       "us_motorized"
       "us_motorized"
       "us_motorized"
+      "us_light_support"
       "us_light_support"
      }
     }
@@ -708,15 +742,16 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sId "occupier_joint_r2_l5"
      m_eResponseType 7
      m_iLevel 5
-     m_iMinimumReadinessLevel 2
+     m_iMinimumReadinessLevel 1
      m_iMaximumReadinessLevel 2
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
-      "us_airborne_light"
+      "us_airborne"
       "us_motorized"
       "us_motorized"
       "us_motorized"
+      "us_light_support"
       "us_light_support"
       "us_light_support"
      }
@@ -730,8 +765,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
-      "us_airborne_light"
+      "us_airborne"
       "us_motorized"
+      "us_mechanized"
      }
     }
     AROR_GroundQRFRecipe {
@@ -743,8 +779,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
-      "us_airborne_light"
+      "us_airborne"
       "us_motorized"
+      "us_mechanized"
       "us_mechanized"
      }
     }
@@ -757,8 +794,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
-      "us_airborne_light"
+      "us_airborne"
       "us_motorized"
+      "us_mechanized"
       "us_mechanized"
       "us_light_support"
      }
@@ -772,7 +810,8 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
-      "us_airborne_light"
+      "us_airborne"
+      "us_motorized"
       "us_motorized"
       "us_mechanized"
       "us_mechanized"
@@ -788,9 +827,10 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
-      "us_airborne_light"
+      "us_airborne"
       "us_motorized"
       "us_motorized"
+      "us_mechanized"
       "us_mechanized"
       "us_mechanized"
       "us_light_support"
@@ -800,25 +840,27 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sId "invader_joint_r2_l1"
      m_eResponseType 7
      m_iLevel 1
-     m_iMinimumReadinessLevel 2
+     m_iMinimumReadinessLevel 1
      m_iMaximumReadinessLevel 2
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
-      "ussr_airborne_light"
+      "ussr_airborne"
       "ussr_motorized"
+      "ussr_light_support"
      }
     }
     AROR_GroundQRFRecipe {
      m_sId "invader_joint_r2_l2"
      m_eResponseType 7
      m_iLevel 2
-     m_iMinimumReadinessLevel 2
+     m_iMinimumReadinessLevel 1
      m_iMaximumReadinessLevel 2
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
-      "ussr_airborne_light"
+      "ussr_airborne"
+      "ussr_motorized"
       "ussr_motorized"
       "ussr_light_support"
      }
@@ -827,14 +869,15 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sId "invader_joint_r2_l3"
      m_eResponseType 7
      m_iLevel 3
-     m_iMinimumReadinessLevel 2
+     m_iMinimumReadinessLevel 1
      m_iMaximumReadinessLevel 2
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
-      "ussr_airborne_light"
+      "ussr_airborne"
       "ussr_motorized"
       "ussr_motorized"
+      "ussr_light_support"
       "ussr_light_support"
      }
     }
@@ -842,15 +885,16 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sId "invader_joint_r2_l4"
      m_eResponseType 7
      m_iLevel 4
-     m_iMinimumReadinessLevel 2
+     m_iMinimumReadinessLevel 1
      m_iMaximumReadinessLevel 2
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
-      "ussr_airborne_light"
+      "ussr_airborne"
       "ussr_motorized"
       "ussr_motorized"
       "ussr_motorized"
+      "ussr_light_support"
       "ussr_light_support"
      }
     }
@@ -858,15 +902,16 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sId "invader_joint_r2_l5"
      m_eResponseType 7
      m_iLevel 5
-     m_iMinimumReadinessLevel 2
+     m_iMinimumReadinessLevel 1
      m_iMaximumReadinessLevel 2
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
-      "ussr_airborne_light"
+      "ussr_airborne"
       "ussr_motorized"
       "ussr_motorized"
       "ussr_motorized"
+      "ussr_light_support"
       "ussr_light_support"
       "ussr_light_support"
      }
@@ -880,8 +925,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
-      "ussr_airborne_light"
+      "ussr_airborne"
       "ussr_motorized"
+      "ussr_mechanized"
      }
     }
     AROR_GroundQRFRecipe {
@@ -893,8 +939,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
-      "ussr_airborne_light"
+      "ussr_airborne"
       "ussr_motorized"
+      "ussr_mechanized"
       "ussr_mechanized"
      }
     }
@@ -907,8 +954,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
-      "ussr_airborne_light"
+      "ussr_airborne"
       "ussr_motorized"
+      "ussr_mechanized"
       "ussr_mechanized"
       "ussr_light_support"
      }
@@ -922,7 +970,8 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
-      "ussr_airborne_light"
+      "ussr_airborne"
+      "ussr_motorized"
       "ussr_motorized"
       "ussr_mechanized"
       "ussr_mechanized"
@@ -938,9 +987,10 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
-      "ussr_airborne_light"
+      "ussr_airborne"
       "ussr_motorized"
       "ussr_motorized"
+      "ussr_mechanized"
       "ussr_mechanized"
       "ussr_mechanized"
       "ussr_light_support"
@@ -1057,7 +1107,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iPersonnelBudget 12
      m_fDismountDistance 150
      m_bVehicleFromPreset 1
-     m_eVehicleType 3
+     m_eVehicleType 4
     }
     AROR_ForceProfile {
      m_sId "us_armour"
@@ -1080,12 +1130,12 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iPersonnelBudget 12
      m_fDismountDistance 150
      m_bVehicleFromPreset 1
-     m_eVehicleType 4
+     m_eVehicleType 5
     }
     AROR_ForceProfile {
      m_sId "us_airborne"
      m_bFillPassengerSeats 1
-     m_iMinimumReadinessLevel 5
+     m_iMinimumReadinessLevel 1
      m_iPersonnelLossValue 25
      m_iVehicleLossValue 1600
      m_iEscortLossValue 2000
@@ -1105,9 +1155,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iPersonnelBudget 32
      m_fDismountDistance 150
      m_bVehicleFromPreset 1
-     m_eVehicleType 9
+     m_eVehicleType 12
      m_bEscortFromPreset 1
-     m_eEscortVehicleType 10
+     m_eEscortVehicleType 13
     }
     AROR_ForceProfile {
      m_sId "ussr_motorized"
@@ -1153,7 +1203,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iPersonnelBudget 12
      m_fDismountDistance 150
      m_bVehicleFromPreset 1
-     m_eVehicleType 3
+     m_eVehicleType 4
     }
     AROR_ForceProfile {
      m_sId "ussr_armour"
@@ -1176,12 +1226,12 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iPersonnelBudget 8
      m_fDismountDistance 150
      m_bVehicleFromPreset 1
-     m_eVehicleType 4
+     m_eVehicleType 5
     }
     AROR_ForceProfile {
      m_sId "ussr_airborne"
      m_bFillPassengerSeats 1
-     m_iMinimumReadinessLevel 5
+     m_iMinimumReadinessLevel 1
      m_iPersonnelLossValue 25
      m_iVehicleLossValue 1800
      m_iEscortLossValue 2000
@@ -1201,9 +1251,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iPersonnelBudget 32
      m_fDismountDistance 150
      m_bVehicleFromPreset 1
-     m_eVehicleType 9
+     m_eVehicleType 12
      m_bEscortFromPreset 1
-     m_eEscortVehicleType 10
+     m_eEscortVehicleType 13
     }
     AROR_ForceProfile {
      m_sId "us_light_support"
@@ -1275,7 +1325,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iPersonnelBudget 32
      m_fDismountDistance 150
      m_bVehicleFromPreset 1
-     m_eVehicleType 9
+     m_eVehicleType 12
     }
     AROR_ForceProfile {
      m_sId "ussr_airborne_light"
@@ -1299,7 +1349,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iPersonnelBudget 32
      m_fDismountDistance 150
      m_bVehicleFromPreset 1
-     m_eVehicleType 9
+     m_eVehicleType 12
     }
    }
   }
@@ -1324,7 +1374,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_bMinimumCaptureQRF 1
    m_bQRFStrategicEconomy 1
    m_iStartingReadinessLevel 2
-   m_iAirborneQRFShare 30
+   m_iAirborneQRFShare 100
    m_iStartingCrackdown 20
    m_iCaptureReadinessPressure 50
    m_iCaptureCrackdown 100

@@ -28,8 +28,15 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 	protected static const int PICK_TELEPORT = 1;
 	protected static const int PICK_CAPTURE = 2;
 
+	protected static const string INPUT_CONTEXT = "AROR_Context";
+	protected static const string INPUT_ACTION = "AROR_OpenAdminMenu";
+	protected static const int TOGGLE_COOLDOWN_MS = 250;
+
 	protected static AROR_AdminMenuComponent s_Instance;
 
+	protected int m_iLastToggleMs = -TOGGLE_COOLDOWN_MS;
+	protected bool m_bActionDown;
+	protected bool m_bAltDown;
 	protected int m_iPickMode;
 	protected AROR_EFactionRole m_eCaptureRole;
 
@@ -53,6 +60,30 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 	//! Polled every frame on the client while enabled.
 	protected void CheckHotkey()
 	{
+		// Shares the phone's input context, which the phone component activates every frame
+		InputManager inputManager = GetGame().GetInputManager();
+		inputManager.ActivateContext(INPUT_CONTEXT);
+
+		// Third route: poll the action's value in case the listener is never called
+		bool actionDown = inputManager.GetActionValue(INPUT_ACTION) > 0;
+		if (actionDown != m_bActionDown)
+		{
+			m_bActionDown = actionDown;
+			Print(string.Format("[AROR] Admin menu key action %1", actionDown), LogLevel.NORMAL);
+			if (actionDown)
+				ToggleAdminMenu();
+		}
+
+		// F10: same toggle without Ctrl, on a key the base game leaves free
+		bool altDown = inputManager.GetActionValue("AROR_OpenAdminMenuAlt") > 0;
+		if (altDown != m_bAltDown)
+		{
+			m_bAltDown = altDown;
+			Print(string.Format("[AROR] Admin menu F10 action %1", altDown), LogLevel.NORMAL);
+			if (altDown)
+				ToggleAdminMenu();
+		}
+
 		if (!Debug.KeyState(KeyCode.KC_T))
 			return;
 
@@ -60,6 +91,25 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 			return;
 
 		Debug.ClearKey(KeyCode.KC_T);
+		ToggleAdminMenu();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void OnAdminAction(float value = 0.0, EActionTrigger reason = 0)
+	{
+		Print("[AROR] Admin menu listener fired", LogLevel.NORMAL);
+		ToggleAdminMenu();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void ToggleAdminMenu()
+	{
+		// The input action and the keyboard check can both fire for one press
+		int now = System.GetTickCount();
+		if (now - m_iLastToggleMs < TOGGLE_COOLDOWN_MS)
+			return;
+
+		m_iLastToggleMs = now;
 
 		// Ctrl+T again closes the menu
 		AROR_AdminMenu open = AROR_AdminMenu.GetInstance();
@@ -160,7 +210,6 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 		CollectCategoryPrefabs(preset, AROR_EFactionPresetCategory.WEAPONS, outPrefabs);
 		CollectCategoryPrefabs(preset, AROR_EFactionPresetCategory.WEAPON_ACCESSORIES, outPrefabs);
 		CollectCategoryPrefabs(preset, AROR_EFactionPresetCategory.AMMUNITION, outPrefabs);
-		CollectCategoryPrefabs(preset, AROR_EFactionPresetCategory.VEHICLE_AMMUNITION, outPrefabs);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -518,6 +567,8 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 		if (!m_bMenuAvailable || RplSession.Mode() == RplMode.Dedicated)
 			return;
 
+		Print("[AROR] Admin menu hotkey ready (input action + polling)", LogLevel.NORMAL);
+		GetGame().GetInputManager().AddActionListener(INPUT_ACTION, EActionTrigger.DOWN, OnAdminAction);
 		GetGame().GetCallqueue().CallLater(CheckHotkey, 0, true);
 	}
 
@@ -525,6 +576,11 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 	override void OnDelete(IEntity owner)
 	{
 		GetGame().GetCallqueue().Remove(CheckHotkey);
+
+		InputManager inputManager = GetGame().GetInputManager();
+		if (inputManager)
+			inputManager.RemoveActionListener(INPUT_ACTION, EActionTrigger.DOWN, OnAdminAction);
+
 		GetGame().GetCallqueue().Remove(HandleAction);
 		GetGame().GetCallqueue().Remove(OpenGameMaster);
 		GetGame().GetCallqueue().Remove(OpenAdminMenu);

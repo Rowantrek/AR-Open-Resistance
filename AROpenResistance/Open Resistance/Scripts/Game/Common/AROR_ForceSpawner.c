@@ -13,7 +13,8 @@ class AROR_ForceSpawner
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! A unit of the type from the role's faction preset, falling back to its rifleman
+	//! A unit of the type from the role's faction preset, falling back to its rifleman. A unit that names no character
+	//! uses the role's default for its type (dressed from the unit's loadouts as it spawns, see AROR_AIOutfitter).
 	static ResourceName UnitPrefab(AROR_EFactionRole role, AROR_EUnitType type)
 	{
 		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
@@ -24,14 +25,13 @@ class AROR_ForceSpawner
 		if (!preset)
 			return string.Empty;
 
-		AROR_FactionPresetUnit unit = preset.GetUnit(type);
-		if (!unit)
-			unit = preset.GetUnit(AROR_EUnitType.RIFLEMAN);
+		if (!preset.GetUnit(type))
+			type = AROR_EUnitType.RIFLEMAN;
 
-		if (!unit)
+		if (!preset.GetUnit(type))
 			return string.Empty;
 
-		return unit.GetPrefab();
+		return presets.GetUnitPrefab(role, type);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ class AROR_ForceSpawner
 		preset.GetEntries(AROR_EFactionPresetCategory.VEHICLES, type, entries);
 		for (int i = entries.Count() - 1; i >= 0; i--)
 		{
-			if (!entries[i] || entries[i].GetPrefab().IsEmpty() || entries[i].GetMinimumReadinessLevel() > readiness)
+			if (!entries[i] || entries[i].GetPrefab().IsEmpty() || AROR_ContentPacksComponent.GetMinimumReadinessOf(entries[i].GetPrefab()) > readiness)
 				entries.Remove(i);
 		}
 
@@ -61,7 +61,8 @@ class AROR_ForceSpawner
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! A team for the role: a leader and riflemen with an automatic rifleman and a machine gunner mixed in
+	//! A team for the role: a leader and riflemen with an automatic rifleman and a machine gunner mixed in, plus AT or AA
+	//! specialists for the enemy roles (AROR_InfantryRoster)
 	static void BuildTeam(AROR_EFactionRole role, int count, notnull array<ResourceName> outMembers)
 	{
 		outMembers.Clear();
@@ -79,6 +80,8 @@ class AROR_ForceSpawner
 			if (!prefab.IsEmpty())
 				outMembers.Insert(prefab);
 		}
+
+		AROR_InfantryRoster.AddSpecialists_S(role, outMembers);
 	}
 
 	//------------------------------------------------------------------------------------------------

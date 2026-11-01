@@ -50,7 +50,7 @@ modded class SCR_ArsenalComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Gear → Equipment → Weapons → Accessories → Ammo → Vehicle ammo → other; then by prefab path.
+	//! Gear → Equipment → Weapons → Accessories → Ammo → other; then by prefab path.
 	protected void SortResistancePrefabs(notnull array<ResourceName> prefabs)
 	{
 		int n = prefabs.Count();
@@ -111,7 +111,6 @@ modded class SCR_ArsenalComponent
 		InsertCategoryRanks(preset, AROR_EFactionPresetCategory.WEAPONS, 2, outRanks);
 		InsertCategoryRanks(preset, AROR_EFactionPresetCategory.WEAPON_ACCESSORIES, 3, outRanks);
 		InsertCategoryRanks(preset, AROR_EFactionPresetCategory.AMMUNITION, 4, outRanks);
-		InsertCategoryRanks(preset, AROR_EFactionPresetCategory.VEHICLE_AMMUNITION, 5, outRanks);
 	}
 
 	//------------------------------------------------------------------------------------------------

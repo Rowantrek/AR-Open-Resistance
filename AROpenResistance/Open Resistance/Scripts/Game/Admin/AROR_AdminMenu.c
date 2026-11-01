@@ -9,6 +9,9 @@ class AROR_AdminMenu : ChimeraMenuBase
 	protected ImageWidget m_wDim;
 	protected string m_sPendingTag;
 
+	//! True while the open hotkey is held; starts true so the press that opened the menu does not close it
+	protected bool m_bHotkeyDown = true;
+
 	//------------------------------------------------------------------------------------------------
 	static AROR_AdminMenu GetInstance()
 	{
@@ -55,6 +58,23 @@ class AROR_AdminMenu : ChimeraMenuBase
 	override void OnMenuUpdate(float tDelta)
 	{
 		super.OnMenuUpdate(tDelta);
+
+		// The hotkey closes the menu. Read here as well as in AROR_AdminMenuComponent: while a menu is open the game
+		// may leave our input context out, so keep it active and watch for the press from inside the menu.
+		InputManager inputManager = GetGame().GetInputManager();
+		inputManager.ActivateContext("AROR_Context");
+		bool hotkeyDown = inputManager.GetActionValue("AROR_OpenAdminMenu") > 0 || inputManager.GetActionValue("AROR_OpenAdminMenuAlt") > 0;
+		if (hotkeyDown != m_bHotkeyDown)
+		{
+			m_bHotkeyDown = hotkeyDown;
+			Print(string.Format("[AROR] Admin menu sees hotkey %1", hotkeyDown), LogLevel.NORMAL);
+			if (hotkeyDown)
+			{
+				Close();
+				return;
+			}
+		}
+
 		UpdateLayout();
 	}
 

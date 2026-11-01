@@ -9,6 +9,8 @@ class AROR_SoldierArmory
 	protected static const int REARM_DELAY_MS = 1500;	//!< After the agent is added, so the unit's own loadout has spawned
 
 	protected static ref AROR_SoldierArmory s_Instance;
+	protected ref array<ref AROR_SoldierArmorySwapCallback> m_aPendingSwaps = {};
+	protected ref array<IEntity> m_aRearmed = {};
 
 	//------------------------------------------------------------------------------------------------
 	protected static AROR_SoldierArmory Get()
@@ -62,7 +64,7 @@ class AROR_SoldierArmory
 	{
 		switch (weaponType)
 		{
-			case EWeaponType.WT_RIFLE: return AROR_EWeaponType.RIFLE;
+			case EWeaponType.WT_RIFLE: return AROR_EWeaponType.ASSAULT_RIFLE;
 			case EWeaponType.WT_MACHINEGUN: return AROR_EWeaponType.MACHINEGUN;
 			case EWeaponType.WT_SNIPERRIFLE: return AROR_EWeaponType.SNIPER_RIFLE;
 		}
@@ -89,13 +91,13 @@ class AROR_SoldierArmory
 
 		array<AROR_FactionPresetEntry> entries = {};
 		preset.GetEntries(AROR_EFactionPresetCategory.WEAPONS, presetType, entries);
-		if (presetType == AROR_EWeaponType.RIFLE)
+		if (presetType == AROR_EWeaponType.ASSAULT_RIFLE)
 			preset.GetEntries(AROR_EFactionPresetCategory.WEAPONS, AROR_EWeaponType.CARBINE, entries);
 
 		array<ResourceName> candidates = {};
 		foreach (AROR_FactionPresetEntry entry : entries)
 		{
-			if (entry.GetMinimumReadinessLevel() <= readiness && !entry.GetPrefab().IsEmpty())
+			if (!entry.GetPrefab().IsEmpty() && AROR_ContentPacksComponent.GetMinimumReadinessOf(entry.GetPrefab()) <= readiness)
 				candidates.Insert(entry.GetPrefab());
 		}
 
@@ -112,7 +114,19 @@ class AROR_SoldierArmory
 			return;
 
 		IEntity character = agent.GetControlledEntity();
-		if (!character || !AROR_ForceSpawner.IsAlive(character))
+		if (!Replication.IsServer() || !character || !AROR_ForceSpawner.IsAlive(character))
+			return;
+		if (GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(character) > 0)
+			return;
+		// Soldiers dressed from a preset loadout carry exactly its weapons
+		if (AROR_AIOutfitter.WasDressed(character))
+			return;
+		for (int i = m_aRearmed.Count() - 1; i >= 0; i--)
+		{
+			if (!m_aRearmed[i])
+				m_aRearmed.Remove(i);
+		}
+		if (m_aRearmed.Contains(character))
 			return;
 
 		AROR_EFactionRole role;
@@ -123,6 +137,7 @@ class AROR_SoldierArmory
 		BaseWeaponManagerComponent weaponManager = BaseWeaponManagerComponent.Cast(character.FindComponent(BaseWeaponManagerComponent));
 		if (!inventory || !weaponManager)
 			return;
+		m_aRearmed.Insert(character);
 
 		array<WeaponSlotComponent> slots = {};
 		weaponManager.GetWeaponsSlots(slots);
@@ -186,28 +201,63 @@ class AROR_SoldierArmory
 		BaseMagazineWell newWell = newMuzzle.GetMagazineWell();
 		bool sameMagazines = oldWell && newWell && oldWell.Type() == newWell.Type();
 
-		ResourceName oldPrefab = oldWeapon.GetPrefabData().GetPrefabName();
-		if (!inventory.TryDeleteItem(oldWeapon))
+		// Replace through the native inventory transaction. Never delete the equipped
+		// gun first while AI/WCS may still be running its weapon behaviour.
+		if (!inventory.CanReplaceItem(newWeapon, storage, slotId))
 		{
 			SCR_EntityHelper.DeleteEntityAndChildren(newWeapon);
 			return;
 		}
+		AROR_SoldierArmorySwapCallback callback = new AROR_SoldierArmorySwapCallback();
+		callback.m_Armory = this;
+		callback.m_Character = character;
+		callback.m_Inventory = inventory;
+		callback.m_OldWeapon = oldWeapon;
+		callback.m_NewWeapon = newWeapon;
+		callback.m_OldWell = oldWell;
+		callback.m_sNewMagazine = newMagazine;
+		callback.m_bSameMagazines = sameMagazines;
+		m_aPendingSwaps.Insert(callback);
+		if (!inventory.TryReplaceItem(newWeapon, storage, slotId, callback))
+			FinishSwap_S(callback, false);
+	}
 
-		if (!inventory.TryInsertItemInStorage(newWeapon, storage, slotId) && !inventory.TryInsertItem(newWeapon, EStoragePurpose.PURPOSE_WEAPON_PROXY))
-		{
-			// Could not equip the new weapon: give the unit its own weapon back
-			SCR_EntityHelper.DeleteEntityAndChildren(newWeapon);
-			inventory.TrySpawnPrefabToStorage(oldPrefab, storage, slotId);
-			Print(string.Format("[AROR ARMORY] Could not equip %1; kept %2", picked, oldPrefab), LogLevel.WARNING);
+	//! Only the native completion callback may change magazines or select the new weapon.
+	void FinishSwap_S(AROR_SoldierArmorySwapCallback callback, bool success)
+	{
+		if (!Replication.IsServer() || !callback || !m_aPendingSwaps.Contains(callback))
 			return;
+		SCR_InventoryStorageManagerComponent inventory = callback.m_Inventory;
+		IEntity newWeapon = callback.m_NewWeapon;
+		if (success && inventory && newWeapon && inventory.Contains(newWeapon))
+		{
+			IEntity oldWeapon = callback.m_OldWeapon;
+			if (oldWeapon && !inventory.Contains(oldWeapon))
+			{
+				InventoryItemComponent oldItem = InventoryItemComponent.Cast(oldWeapon.FindComponent(InventoryItemComponent));
+				if (oldItem && !oldItem.GetParentSlot())
+					SCR_EntityHelper.DeleteEntityAndChildren(oldWeapon);
+			}
+			IEntity character = callback.m_Character;
+			if (AROR_ForceSpawner.IsAlive(character) && GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(character) == 0)
+			{
+				if (!callback.m_bSameMagazines && callback.m_OldWell)
+					ReplaceMagazines_S(inventory, callback.m_OldWell, callback.m_sNewMagazine);
+				ChimeraCharacter chimera = ChimeraCharacter.Cast(character);
+				BaseWeaponComponent weapon = BaseWeaponComponent.Cast(newWeapon.FindComponent(BaseWeaponComponent));
+				if (chimera && chimera.GetCharacterController() && weapon)
+					chimera.GetCharacterController().SelectWeapon(weapon);
+			}
 		}
-
-		if (!sameMagazines && oldWell)
-			ReplaceMagazines_S(inventory, oldWell, newMagazine);
-
-		ChimeraCharacter chimera = ChimeraCharacter.Cast(character);
-		if (chimera && chimera.GetCharacterController())
-			chimera.GetCharacterController().SelectWeapon(newComponent);
+		else if (newWeapon)
+		{
+			InventoryItemComponent item = InventoryItemComponent.Cast(newWeapon.FindComponent(InventoryItemComponent));
+			// Never delete an item that another inventory has acquired in the meantime.
+			if (item && !item.GetParentSlot())
+				SCR_EntityHelper.DeleteEntityAndChildren(newWeapon);
+			Print("[AROR ARMORY] Native weapon replacement failed; original weapon was not pre-deleted", LogLevel.WARNING);
+		}
+		m_aPendingSwaps.RemoveItem(callback);
 	}
 
 	//------------------------------------------------------------------------------------------------

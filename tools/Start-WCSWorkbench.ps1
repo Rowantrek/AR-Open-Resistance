@@ -13,7 +13,7 @@ $repoPath = Split-Path -Parent $PSScriptRoot
 $projectPath = Join-Path $repoPath 'OptionalAddons/OpenResistanceWCS/addon.gproj'
 $corePath = Join-Path $repoPath 'AROpenResistance/Open Resistance/addon.gproj'
 $coreAddonsPath = Join-Path $repoPath 'AROpenResistance'
-$coreGuid = '6AA282336705EED2'
+$coreGuid = '6C68A5E5654D7210'
 
 if (!$BaseGameAddonsPath) {
 	$toolsInstallPath = Split-Path -Parent (Split-Path -Parent $WorkbenchPath)

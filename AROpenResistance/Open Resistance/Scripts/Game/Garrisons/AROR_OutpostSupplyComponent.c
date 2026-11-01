@@ -25,7 +25,7 @@ class AROR_OutpostSupplyComponent : ScriptComponent
 		AROR_FactionPreset preset = presets.GetPreset(role);
 		array<ResourceName> pool = {};
 		if (preset)
-			StockPool(preset, pool);
+			StockPool(preset, role, pool);
 		if (pool.IsEmpty())
 		{
 			Print(string.Format("[AROR OUTPOST STORE] site=%1 category=%2 not stocked: no matching items in the army's faction preset", LocationId(), m_sCategory), LogLevel.WARNING);
@@ -59,8 +59,8 @@ class AROR_OutpostSupplyComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The preset items this store's category draws from
-	protected void StockPool(notnull AROR_FactionPreset preset, notnull array<ResourceName> pool)
+	//! The preset items this store's category draws from that the army's readiness allows
+	protected void StockPool(notnull AROR_FactionPreset preset, AROR_EFactionRole role, notnull array<ResourceName> pool)
 	{
 		array<AROR_FactionPresetEntry> entries = {};
 		if (m_sCategory == "Weapons")
@@ -81,8 +81,9 @@ class AROR_OutpostSupplyComponent : ScriptComponent
 		}
 		foreach (AROR_FactionPresetEntry entry : entries)
 		{
-			if (!entry.GetPrefab().IsEmpty())
-				pool.Insert(entry.GetPrefab());
+			ResourceName prefab = entry.GetPrefab();
+			if (!prefab.IsEmpty() && AROR_ContentPacksComponent.IsAvailableAtReadiness(prefab, role))
+				pool.Insert(prefab);
 		}
 	}
 

@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{A7ECC17D4CA9D681}Prefabs/Characters/Factions/OPFOR/USSR_Army/AROR_Character_Invaders_Engineer.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass XBOX_ONE : PC {
+  }
+  EntityTemplateResourceClass XBOX_SERIES : PC {
+  }
+  EntityTemplateResourceClass PS4 : PC {
+  }
+  EntityTemplateResourceClass PS5 : PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

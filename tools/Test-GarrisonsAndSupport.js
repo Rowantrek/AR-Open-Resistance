@@ -14,7 +14,8 @@ function runGarrisonsAndSupportTests(sources) {
     vector:{DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])},
     Print:()=>{},LogLevel:{NORMAL:0,WARNING:1,ERROR:2},string:{Empty:'',Format:(text,...args)=>text.replace(/%(\d+)/g,(_,i)=>String(args[i-1]))},
     AROR_GarrisonSlot:class{constructor(){Object.assign(this,{m_bLost:false,m_fHealth:1,m_bSpawned:false,m_Entity:null,m_iGroup:-1,m_iVehicle:-1,m_iSeat:-1,m_bPlacementUnavailable:false,m_iPlacementFailureSince:-1,m_iVariant:0,m_bCrewRecorded:false});}},
-    AROR_GarrisonPolicy:{},SENTRY_VARIANT:1000,AROR_DefencePositionComponent:{Cast:x=>x},AROR_SentryPostComponent:{Cast:x=>x},AROR_GarrisonManagerComponent:{GetInstance:()=>({CanDefendRole:()=>true})}};
+    AROR_GarrisonPolicy:{},SENTRY_VARIANT:1000,AROR_DefencePositionComponent:{Cast:x=>x},AROR_SentryPostComponent:{Cast:x=>x},AROR_GarrisonManagerComponent:{GetInstance:()=>({CanDefendRole:()=>true})},
+    AROR_FactionPresetsComponent:{GetInstance:()=>null},SPECIALIST_VARIANT:4};
   const methods=['SentryPosts','SetValues','UpdateControl_S','IsEligible','AddSlot','ReservedPersonnel','ReportFailure','AssignMembers','CrewAndOrder','IsPlayerOrForeignAsset','Observe_S','ClearAssignments_S','HasDormantReserve','IsDefencePending','GetDefenceCaptureBlockReason','GetLocation','GetOwner','PlayerNear','FactionFor'];
   for(const source of Object.values(sources))for(const m of source.matchAll(/^\t(?:override )?(?:protected )?(?:static )?\w+ (\w+)\(/gm))if(!methods.includes(m[1]))methods.push(m[1]);
   for(const [name,fn]of Object.entries({Clear(){this.length=0;},Copy(a){this.length=0;this.push(...a);},Contains(x){return this.includes(x);},Find(x){return this.indexOf(x);},RemoveItem(x){const i=this.indexOf(x);if(i<0)return false;this.splice(i,1);return true;},Remove(i){this.splice(i,1);}}))Object.defineProperty(Array.prototype,name,{value:fn,configurable:true});
@@ -107,12 +108,22 @@ function runGarrisonsAndSupportTests(sources) {
   }
   check([0,1,2].map(r=>env.AROR_GarrisonPolicy.DefenceLevel(types.RESOURCES,r)).join(',')==='1,2,3','resources roll three stored defence levels');
   const faction={m_eRole:1,m_sFactionKey:'AROR_OCCUPIERS',m_sAssetFactionKey:'US',m_sInfantry:'rifle',m_sMarksman:'',m_sStaticMG:'mg',m_sCrew:'crew',m_sParkedArmour:'lav',m_aMannedVehicles:['lav','humvee']};
-  const add=compile(sources.garrison,'AddSlot'),reserve=compile(sources.garrison,'ReservedPersonnel'),generate=compile(sources.garrison,'Generate_S');
+  const add=compile(sources.garrison,'AddSlot'),reserve=compile(sources.garrison,'ReservedPersonnel');let generate=compile(sources.garrison,'Generate_S');
   function roster(type,override=0,staticOverride=0,omitParked=false,extraTeams=0,parked=[],posts=0){
     const state={m_aSlots:[],m_bGenerated:false,m_iDefenceLevel:override,m_iStaticWeaponCountOverride:staticOverride,m_bOmitParkedArmour:omitParked,IsEligible:()=>true,
       m_aExtraParkedVehicles:parked,GetExtraInfantryTeams:()=>extraTeams,SentryPosts:()=>Array.from({length:posts},()=>({})),GetOwner:()=>({}),stocked:0,StockStores_S(entity,depth){this.stocked++;},GetExtraParkedCount:()=>parked.length,
       m_Location:{GetControllingRole:()=>1,GetLocationType:()=>type,GetId:()=>'site'},AddSlot:add,ReservedPersonnel:reserve,InfantryPrefab:compile(sources.garrison,'InfantryPrefab'),StaticPrefab:compile(sources.garrison,'StaticPrefab'),GetStaticWeaponCount:compile(sources.garrison,'GetStaticWeaponCount')};
     generate.call(state,faction);return state;
+  }
+  {
+    // With presets asking for specialists, each team's rifleman (variant 0) is an AT or AA soldier (variants 4 and 5)
+    const plainGenerate=generate;
+    env.AROR_FactionPresetsComponent={GetInstance:()=>({GetSpecialistCount:()=>1})};
+    generate=compile(sources.garrison,'Generate_S');
+    const teams=roster(types.AIRPORT,4).m_aSlots.filter(s=>s.m_iKind===0&&s.m_iVariant<1000);
+    check(teams.some(s=>s.m_iVariant===4)&&teams.some(s=>s.m_iVariant===5)&&!teams.some(s=>s.m_iVariant===0),'each garrison team turns its rifleman into an AT or AA specialist');
+    env.AROR_FactionPresetsComponent={GetInstance:()=>null};
+    generate=plainGenerate;
   }
   const towered=roster(types.OUTPOST,1,0,false,0,[],2),plain=roster(types.OUTPOST,1);
   check(towered.stocked===1&&plain.stocked===1,'stores are stocked once, when the roster is generated');

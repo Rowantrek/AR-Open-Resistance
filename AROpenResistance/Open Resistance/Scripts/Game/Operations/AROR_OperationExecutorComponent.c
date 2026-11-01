@@ -219,6 +219,8 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 	protected int m_iWakeRetryInterval;
 	[Attribute("10", desc: "Seconds of incomplete initial ground boarding before retries may interrupt a stuck native get-in queue for this package's unseated AI", params: "5 60 1")]
 	protected int m_iQRFSeatRecoveryDelay;
+	[Attribute("90", desc: "Maximum seconds for an existing ground roster to board; failed requests never spawn replacement soldiers", params: "15 300 1")]
+	protected int m_iQRFBoardingTimeout;
 	[Attribute("", desc: "Optional force pool. Empty retains the existing infantry-only configuration.")]
 	protected ref array<ref AROR_ForceProfile> m_aForceProfiles;
 	[Attribute("", desc: "Optional explicit ground QRF recipe ID; empty restores existing profile/level selection. Same ID can have one entry per role.")]
@@ -1178,6 +1180,8 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			FailOperation(operation, "Native passenger capacity or required crew exceeds the reserved full-load profile");
 			return;
 		}
+		if (force.m_Group != force.m_CrewGroup)
+			AROR_InfantryRoster.Apply_S(operation.GetRole(), force.m_Group.m_aUnitPrefabSlots, profile.m_sAssetFactionKey);
 		int requested = force.m_Group.m_aUnitPrefabSlots.Count();
 		int totalRequested = requested;
 		if (force.m_Group != force.m_CrewGroup)
@@ -1351,7 +1355,10 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		group.GetOnAgentAdded().Insert(force.OnAgentAdded);
 		force.m_bTacticalControlled = operation.m_TacticalCommander != null;
 		if (group.m_aUnitPrefabSlots)
+		{
+			AROR_InfantryRoster.Apply_S(operation.GetRole(), group.m_aUnitPrefabSlots, force.m_sAssetFactionKey);
 			force.m_iReservedMembers = group.m_aUnitPrefabSlots.Count();
+		}
 		int requestedMembers = force.m_iReservedMembers;
 		if (profile && requestedMembers <= profile.m_iPersonnelBudget)
 			force.m_iReservedMembers = profile.m_iPersonnelBudget;
@@ -1523,6 +1530,8 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 				FailOperation(operation, "Ground-force group faction mismatch");
 				return;
 			}
+			if (!force.PrepareBoarding_S())
+				return;
 			if (!force.m_bMountRequested && !force.Mount_S())
 			{
 				FailOperation(operation, "Vehicle is not AI-drivable or crew/passenger seating failed");
@@ -1533,15 +1542,14 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 				ReportPackageProgress(force, "Waiting for actual driver, crew and passenger seat occupancy after direct placement");
 				// Seat teleports can be dropped silently; re-request the missing seats like garrison crews do
 				force.m_iMountWaitTicks++;
+				if (force.m_iMountWaitTicks >= m_iQRFBoardingTimeout)
+				{
+					FailPackage(force, operation, "Ground boarding timed out: " + force.GetMountRejection());
+					return;
+				}
 				if (Math.Mod(force.m_iMountWaitTicks, m_iWakeRetryInterval) == 0)
 				{
-					// Still refused after the recovery delay twice over: spawn the missing people straight into their seats
-					if (force.m_iMountWaitTicks >= m_iQRFSeatRecoveryDelay * 2)
-					{
-						int replaced = force.ReplaceUnseated_S();
-						if (replaced > 0)
-							Print(string.Format("[AROR] %1 package=%2 spawned %3 replacement(s) straight into their seats after %4 s of refused seating", operation.GetId(), force.m_iPackageIndex + 1, replaced, force.m_iMountWaitTicks), LogLevel.WARNING);
-					}
+					force.PrepareBoarding_S(true);
 					Print(string.Format("[AROR] %1 package=%2 seating retry after %3 s: %4", operation.GetId(), force.m_iPackageIndex + 1, force.m_iMountWaitTicks, force.ReseatMissing_S(force.m_iMountWaitTicks >= m_iQRFSeatRecoveryDelay)), LogLevel.WARNING);
 				}
 				return;
@@ -1804,6 +1812,11 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		if (m_iQRFSeatRecoveryDelay < 5 || m_iQRFSeatRecoveryDelay > 60)
 		{
 			Print("[AROR] Initial boarding recovery delay must be between 5 and 60 seconds", LogLevel.ERROR);
+			return;
+		}
+		if (m_iQRFBoardingTimeout < 15 || m_iQRFBoardingTimeout > 300)
+		{
+			Print("[AROR] Ground boarding timeout must be between 15 and 300 seconds", LogLevel.ERROR);
 			return;
 		}
 		// Attribute containers are populated from the prefab/world. Declaration initializers

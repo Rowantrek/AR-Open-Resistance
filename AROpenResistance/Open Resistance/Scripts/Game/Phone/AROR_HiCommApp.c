@@ -162,7 +162,6 @@ class AROR_HiCommApp
 	protected bool m_bUseGameMap = true;	//!< Base game map (default for now, untinted) or the procedural tactical view
 	protected bool m_bGameMapOpen;
 	protected Widget m_wMapButton;
-	protected EditBoxWidget m_wNameEdit;
 
 	protected ref array<ImageWidget> m_aPanels = {};
 	protected ref array<RichTextWidget> m_aTexts = {};
@@ -237,7 +236,6 @@ class AROR_HiCommApp
 	protected ref array<int> m_aSelected = {};	//!< Selected squad IDs
 	protected AROR_EHighCommandOrder m_eSelectedOrder = AROR_EHighCommandOrder.MOVE;
 	protected string m_sSelectedTarget;
-	protected bool m_bNameEditFilled;
 
 	// Map input (screen pixels unless noted)
 	protected bool m_bLeftDown;
@@ -286,9 +284,13 @@ class AROR_HiCommApp
 		m_wGameMapRoot = phoneRoot.FindAnyWidget("HiCommGameMap");
 		m_wMapOverlay = CanvasWidget.Cast(phoneRoot.FindAnyWidget("HiCommMapOverlay"));
 		m_wMapButton = phoneRoot.FindAnyWidget("HiCommMapButton");
-		m_wNameEdit = EditBoxWidget.Cast(phoneRoot.FindAnyWidget("HiCommNameEdit"));
-		if (!m_wRoot || !m_wBackground || !m_wMapCanvas || !m_wMapClip || !m_wMapOverlay || !m_wMapButton || !m_wNameEdit)
+		if (!m_wRoot || !m_wBackground || !m_wMapCanvas || !m_wMapClip || !m_wMapOverlay || !m_wMapButton)
 			return false;
+
+		// The layout's old rename field is no longer used (the name is chosen at campaign setup)
+		Widget nameEdit = phoneRoot.FindAnyWidget("HiCommNameEdit");
+		if (nameEdit)
+			nameEdit.SetVisible(false);
 
 		m_ClickHandler = new AROR_HiCommClickHandler(this);
 		m_wMapButton.AddHandler(m_ClickHandler);
@@ -396,7 +398,6 @@ class AROR_HiCommApp
 			m_eScreen = AROR_EHiCommScreen.LOGIN;
 
 		bool showMap = m_eScreen == AROR_EHiCommScreen.STRATEGIC;
-		bool showNameEdit = false;
 
 		// The login sequence replays each time the login screen is shown
 		if (m_eScreen == AROR_EHiCommScreen.LOGIN && m_eLastScreen != AROR_EHiCommScreen.LOGIN)
@@ -412,7 +413,7 @@ class AROR_HiCommApp
 		{
 			DrawTopBar();
 			if (m_eScreen == AROR_EHiCommScreen.COMMAND)
-				showNameEdit = DrawCommand(highCommand);
+				DrawCommand(highCommand);
 			else if (m_eScreen == AROR_EHiCommScreen.STRATEGIC)
 				DrawStrategic(highCommand);
 			else
@@ -436,10 +437,6 @@ class AROR_HiCommApp
 			m_bRightDown = false;
 			m_bDragging = false;
 		}
-		m_wNameEdit.SetVisible(showNameEdit);
-		if (!showNameEdit)
-			m_bNameEditFilled = false;
-
 		HideUnused();
 	}
 
@@ -598,37 +595,16 @@ class AROR_HiCommApp
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Resistance identity and leaders; returns true if the name edit box is shown
-	protected bool DrawCommand(AROR_HighCommandComponent highCommand)
+	//! Resistance identity and leaders
+	protected void DrawCommand(AROR_HighCommandComponent highCommand)
 	{
 		int localId = GetLocalPlayerId();
 		bool isHost = highCommand.IsHost(localId);
 
-		// Left: the resistance
+		// Left: the resistance (its name is chosen at campaign setup)
 		Box(30, 110, 790, 770);
 		Header(55, 125, "// THE RESISTANCE");
 		Text(55, 175, 740, 70, 52, Upper(highCommand.GetResistanceName()), m_Amber, true);
-
-		bool showNameEdit = false;
-		if (isHost)
-		{
-			Text(55, 265, 740, 34, 22, "RENAME (HOST ONLY)", m_GreenDim);
-			Panel(55, 305, 520, 64, m_Border);
-			Panel(57, 307, 516, 60, m_Dark);
-			Place(m_wNameEdit, 70 * m_fScale, 315 * m_fScale, 495 * m_fScale, 46 * m_fScale);
-			if (!m_bNameEditFilled)
-			{
-				m_wNameEdit.SetText(highCommand.GetResistanceName());
-				m_bNameEditFilled = true;
-			}
-
-			showNameEdit = true;
-			Button(595, 305, 200, 64, "APPLY", "rename", STYLE_PRIMARY, 26);
-		}
-		else
-		{
-			Text(55, 280, 740, 60, 22, "Only the host can rename the resistance.", m_GreenDim);
-		}
 
 		// Campaign summary
 		int held, total;
@@ -700,8 +676,6 @@ class AROR_HiCommApp
 			Panel(875, y + 54, 775, 1, m_GreenFaint);
 			y += 60;
 		}
-
-		return showNameEdit;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -2541,10 +2515,6 @@ class AROR_HiCommApp
 		else if (verb == "leader" && parts.Count() > 2)
 		{
 			controller.AROR_RequestHiCommSetLeader(parts[1].ToInt(), parts[2].ToInt() != 0);
-		}
-		else if (verb == "rename")
-		{
-			controller.AROR_RequestHiCommRename(m_wNameEdit.GetText());
 		}
 	}
 

@@ -52,7 +52,7 @@ class AROR_ForceProfile
 	AROR_EVehicleType m_eVehicleType;
 	[Attribute("0", desc: "Pick the airborne gunship escort from the role's faction preset instead (authored gunship as fallback)", category: "Faction preset")]
 	bool m_bEscortFromPreset;
-	[Attribute("10", UIWidgets.ComboBox, desc: "Preset vehicle type used when picking the gunship escort from the preset", enums: ParamEnumArray.FromEnum(AROR_EVehicleType), category: "Faction preset")]
+	[Attribute("13", UIWidgets.ComboBox, desc: "Preset vehicle type used when picking the gunship escort from the preset", enums: ParamEnumArray.FromEnum(AROR_EVehicleType), category: "Faction preset")]
 	AROR_EVehicleType m_eEscortVehicleType;
 
 	//! The vehicle for one dispatch: from the faction preset when enabled and available, else the authored one

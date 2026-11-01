@@ -1,12 +1,12 @@
 //! Imports ("Used Imports", see ARCHITECTURE.md -> Black Market): a phone shop for vehicles. It sells every land
-//! vehicle in the Resistance faction preset, one click at a time (no cart). Each entry needs a number of held import
+//! vehicle and helicopter in the enabled content packs, one click at a time (no cart). Each entry needs a number of held import
 //! facilities and optionally one seaport or one heliport/airport. A bought vehicle goes straight into the Resistance
 //! Garage in factory condition (full fuel, default cargo); the Garage's capacity limits how many can be held.
 //! A Resistance Leader pays from faction funds or personal funds per click; everyone else pays personally.
 class AROR_Imports
 {
 	protected static ref array<ref AROR_ShopOffer> s_aCatalogue;
-	protected static string s_sCataloguePreset;
+	protected static int s_iCatalogueRevision;
 
 	// Server: invoked after a delivery, (int playerId, string prefab, int price, bool fromFaction)
 	protected static ref ScriptInvoker s_OnImported;
@@ -32,12 +32,15 @@ class AROR_Imports
 			case AROR_EVehicleType.AMBULANCE:
 				return 0;
 			case AROR_EVehicleType.MOTOR_TRUCK:
+			case AROR_EVehicleType.ARMED_TRUCK:
 			case AROR_EVehicleType.SUPPLY_TRUCK:
 			case AROR_EVehicleType.FUEL_TRUCK:
 				return 1;
 			case AROR_EVehicleType.APC:
 			case AROR_EVehicleType.IFV:
 			case AROR_EVehicleType.TANK:
+			case AROR_EVehicleType.AA_VEHICLE:
+			case AROR_EVehicleType.RADAR_AA_VEHICLE:
 				return 2;
 			case AROR_EVehicleType.HELI_TRANSPORT:
 			case AROR_EVehicleType.HELI_ATTACK:
@@ -50,37 +53,32 @@ class AROR_Imports
 	//------------------------------------------------------------------------------------------------
 	static array<ref AROR_ShopOffer> GetCatalogue()
 	{
-		array<AROR_FactionPreset> presets = {};
-		string presetKey = AROR_ImportShop.GetShopPresets(presets);
-
-		if (!s_aCatalogue || s_sCataloguePreset != presetKey)
+		int revision = AROR_ImportShop.GetCatalogueRevision();
+		if (!s_aCatalogue || s_iCatalogueRevision != revision)
 		{
 			s_aCatalogue = {};
-			s_sCataloguePreset = presetKey;
-			Build(presets, s_aCatalogue);
+			s_iCatalogueRevision = revision;
+			Build(s_aCatalogue);
 		}
 
 		return s_aCatalogue;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected static void Build(notnull array<AROR_FactionPreset> presets, notnull array<ref AROR_ShopOffer> outOffers)
+	//! The enabled content packs' vehicles; each prefab appears once (the packs already resolved duplicates and replacements)
+	protected static void Build(notnull array<ref AROR_ShopOffer> outOffers)
 	{
-		set<string> seen = new set<string>();
-		foreach (AROR_FactionPreset preset : presets)
-		{
-			array<AROR_FactionPresetEntry> entries = {};
-			preset.GetAllEntries(AROR_EFactionPresetCategory.VEHICLES, entries);
-			foreach (AROR_FactionPresetEntry entry : entries)
-			{
-				// A prefab listed by several factions is sold once, at the first listing's price
-				int category = GetCategoryOf(entry.GetTypeValue());
-				if (category < 0 || entry.GetPrefab().IsEmpty() || seen.Contains(entry.GetPrefab()))
-					continue;
+		AROR_ContentPacksComponent packs = AROR_ContentPacksComponent.GetInstance();
+		if (!packs)
+			return;
 
-				seen.Insert(entry.GetPrefab());
+		array<AROR_ContentPackEntry> entries = {};
+		packs.GetEnabledEntries(AROR_EFactionPresetCategory.VEHICLES, entries);
+		foreach (AROR_ContentPackEntry entry : entries)
+		{
+			int category = GetCategoryOf(entry.GetTypeValue());
+			if (category >= 0)
 				outOffers.Insert(AROR_ImportShop.CreateOffer(entry, category, true));
-			}
 		}
 	}
 

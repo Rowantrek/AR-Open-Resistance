@@ -1,17 +1,17 @@
-//! The Black Market (see ARCHITECTURE.md -> Black Market): a phone shop for items. It sells everything in the
-//! Resistance faction preset except units and vehicles (those are Imports, see AROR_Imports). Each entry needs a number
+//! The Black Market (see ARCHITECTURE.md -> Black Market): a phone shop for items. It sells every item in the enabled
+//! content packs except vehicles (those are Imports, see AROR_Imports). Each entry needs a number
 //! of held import facilities and optionally one seaport or one heliport/airport. Players fill a cart and import it;
 //! the server checks everything again, takes payment (personal funds, or faction funds for a Resistance Leader who
 //! chooses so) and puts the items in Resistance Storage.
-//! The catalogue is the same on every machine (it comes from the replicated preset); the client sends prefabs and
-//! quantities, never prices. Extender mods change what is sold by changing the preset, or by overriding Categories().
+//! The catalogue is the same on every machine (it comes from the replicated enabled packs); the client sends prefabs
+//! and quantities, never prices. Extender mods change what is sold by adding or changing content packs.
 class AROR_BlackMarket
 {
 	protected static const int MAX_CART_LINES = 40;
 	protected static const int MAX_LINE_QUANTITY = 50;
 
 	protected static ref array<ref AROR_ShopOffer> s_aCatalogue;
-	protected static string s_sCataloguePreset;
+	protected static int s_iCatalogueRevision;
 
 	// Server: invoked after a delivery, (int playerId, array<string> prefabs, array<int> quantities, int total, bool fromFaction)
 	protected static ref ScriptInvoker s_OnImported;
@@ -25,7 +25,6 @@ class AROR_BlackMarket
 		outNames.Insert("Ammunition");
 		outNames.Insert("Gear");
 		outNames.Insert("Equipment");
-		outNames.Insert("Vehicle ammo");
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -38,50 +37,43 @@ class AROR_BlackMarket
 			case 1: return AROR_EFactionPresetCategory.WEAPON_ACCESSORIES;
 			case 2: return AROR_EFactionPresetCategory.AMMUNITION;
 			case 3: return AROR_EFactionPresetCategory.GEAR;
-			case 4: return AROR_EFactionPresetCategory.EQUIPMENT;
 		}
 
-		return AROR_EFactionPresetCategory.VEHICLE_AMMUNITION;
+		return AROR_EFactionPresetCategory.EQUIPMENT;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Every item on offer, grouped by tab. Rebuilt when the Resistance's preset changes.
+	//! Every item on offer, grouped by tab. Rebuilt when the enabled content packs change.
 	static array<ref AROR_ShopOffer> GetCatalogue()
 	{
-		array<AROR_FactionPreset> presets = {};
-		string presetKey = AROR_ImportShop.GetShopPresets(presets);
-
-		if (!s_aCatalogue || s_sCataloguePreset != presetKey)
+		int revision = AROR_ImportShop.GetCatalogueRevision();
+		if (!s_aCatalogue || s_iCatalogueRevision != revision)
 		{
 			s_aCatalogue = {};
-			s_sCataloguePreset = presetKey;
-			Build(presets, s_aCatalogue);
+			s_iCatalogueRevision = revision;
+			Build(s_aCatalogue);
 		}
 
 		return s_aCatalogue;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected static void Build(notnull array<AROR_FactionPreset> presets, notnull array<ref AROR_ShopOffer> outOffers)
+	//! The enabled content packs' items; each prefab appears once (the packs already resolved duplicates and replacements)
+	protected static void Build(notnull array<ref AROR_ShopOffer> outOffers)
 	{
+		AROR_ContentPacksComponent packs = AROR_ContentPacksComponent.GetInstance();
+		if (!packs)
+			return;
+
 		array<string> names = {};
 		GetCategoryNames(names);
-		set<string> seen = new set<string>();
 		foreach (int category, string name : names)
 		{
-			foreach (AROR_FactionPreset preset : presets)
+			array<AROR_ContentPackEntry> entries = {};
+			packs.GetEnabledEntries(GetPresetCategory(category), entries);
+			foreach (AROR_ContentPackEntry entry : entries)
 			{
-				array<AROR_FactionPresetEntry> entries = {};
-				preset.GetAllEntries(GetPresetCategory(category), entries);
-				foreach (AROR_FactionPresetEntry entry : entries)
-				{
-					// A prefab listed by several factions is sold once, at the first listing's price
-					if (entry.GetPrefab().IsEmpty() || seen.Contains(entry.GetPrefab()))
-						continue;
-
-					seen.Insert(entry.GetPrefab());
-					outOffers.Insert(AROR_ImportShop.CreateOffer(entry, category, false));
-				}
+				outOffers.Insert(AROR_ImportShop.CreateOffer(entry, category, false));
 			}
 		}
 	}

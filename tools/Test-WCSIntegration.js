@@ -34,13 +34,13 @@ function runWCSIntegrationTests(sources) {
       .replace(/(\w+)\.ToLower\(\);/g, '$1 = $1.toLowerCase();')
       .replace(/\.Contains\(/g, '.includes(').replace(/\.LastIndexOf\(/g, '.lastIndexOf(')
       .replace(/\.Substring\(/g, '.substr(').replace(/\.Length\(\)/g, '.length');
-    for (const helper of ['LowerName', 'IsTankName', 'StaticWeaponType']) {
+    for (const helper of ['LowerName', 'IsTankName', 'IsAntiAirName', 'StaticWeaponType']) {
       body = body.replace(new RegExp('(?<![.\\w])' + helper + '\\(', 'g'), 'AROR_CatalogClassifier.' + helper + '(');
     }
     if (outTerms) body = body.replace(/\breturn;/g, 'return {cost, importPoints, importRequirement};') + '\nreturn {cost, importPoints, importRequirement};';
     return new Function('env', 'with(env) { return function(' + args + ') {' + body + '}; }')(env);
   }
-  for (const name of ['LowerName', 'IsTankName', 'StaticWeaponType', 'VehicleType', 'DefaultReadiness', 'WeaponType']) {
+  for (const name of ['LowerName', 'IsTankName', 'IsAntiAirName', 'StaticWeaponType', 'VehicleType', 'DefaultReadiness', 'WeaponType']) {
     env.AROR_CatalogClassifier[name] = compile(sources.classifier, name);
   }
   const classifier = env.AROR_CatalogClassifier;
@@ -52,7 +52,8 @@ function runWCSIntegrationTests(sources) {
     ['M1A2_SEP.et', ['VEHICLE_APC'], types.TANK],
     ['M923A1_tanker.et', ['VEHICLE_TRUCK', 'TRAIT_REFUELING'], types.FUEL_TRUCK],
     ['Ural4320_tanker_CIV_randomized.et', ['VEHICLE_TRUCK', 'TRAIT_REFUELING'], types.FUEL_TRUCK],
-    ['M923A1_ZU23.et', ['VEHICLE_TRUCK', 'TRAIT_ARMED', 'TRAIT_LOGISTICS'], types.ARMED_CAR],
+    ['M923A1_ZU23.et', ['VEHICLE_TRUCK', 'TRAIT_ARMED', 'TRAIT_LOGISTICS'], types.AA_VEHICLE],
+    ['M923A1_M2.et', ['VEHICLE_TRUCK', 'TRAIT_ARMED'], types.ARMED_TRUCK],
     ['M923A1_transport.et', ['VEHICLE_TRUCK'], types.MOTOR_TRUCK],
     ['M923A1_supply.et', ['VEHICLE_TRUCK', 'TRAIT_LOGISTICS'], types.SUPPLY_TRUCK],
     ['BMP3_Green.et', ['VEHICLE_APC'], types.IFV],
@@ -61,7 +62,9 @@ function runWCSIntegrationTests(sources) {
     ['UH1H_unarmed.et', ['VEHICLE_HELICOPTER'], types.HELI_TRANSPORT],
     ['WeaponTripod_ZU23_USSR.et', ['VEHICLE_TURRET'], types.STATIC_AA],
     ['Tripod_9M113.et', ['VEHICLE_TURRET'], types.STATIC_AT],
-    ['Tripod_M122_MG_M60.et', ['VEHICLE_TURRET'], types.STATIC_MG]
+    ['Tripod_M122_MG_M60.et', ['VEHICLE_TURRET'], types.STATIC_MG_LOW],
+    ['Tripod_6T7_NSV.et', ['VEHICLE_TURRET'], types.STATIC_MG_HIGH],
+    ['Mortar_M252.et', ['VEHICLE_TURRET'], types.STATIC_MORTAR]
   ];
   for (const [prefab, labels, expected] of fixtures) {
     check(classifier.VehicleType(entry('{0000000000000000}Prefabs/Test/' + prefab, labels)) === expected, 'Correct classification: ' + prefab);
@@ -72,13 +75,18 @@ function runWCSIntegrationTests(sources) {
   check(classifier.WeaponType('ROCKET_LAUNCHER', 'launcher_9k38_igla.et') === weapons.LAUNCHER_AA, 'Igla is anti-air, not anti-tank');
   check(classifier.WeaponType('ROCKET_LAUNCHER', 'launcher_fim92_stinger.et') === weapons.LAUNCHER_AA, 'Stinger is anti-air, not anti-tank');
   check(classifier.WeaponType('ROCKET_LAUNCHER', 'launcher_rpg7.et') === weapons.LAUNCHER_AT, 'RPG retains anti-tank classification');
-  check(classifier.WeaponType('RIFLE', 'rifle_scar.et') === weapons.RIFLE, 'WCS rifle remains a rifle');
+  check(classifier.WeaponType('RIFLE', 'rifle_scar.et') === weapons.ASSAULT_RIFLE, 'WCS rifle remains an assault rifle');
 
   const vehicleTerms = compile(sources.classifier, 'DefaultVehicleTerms', true);
   const tank = vehicleTerms(types.TANK);
   check(tank.cost === 40000 && tank.importPoints === 6 && tank.importRequirement === requirements.PORT, 'New tanks have non-zero tank pricing and port requirements');
   const gunship = vehicleTerms(types.HELI_ATTACK);
   check(gunship.cost === 60000 && gunship.importRequirement === requirements.AIR, 'Attack helicopters need aircraft pricing and air facilities');
+  const weaponTerms = compile(sources.classifier, 'DefaultWeaponTerms', true);
+  for (const launcher of [weapons.LAUNCHER_AT, weapons.LAUNCHER_AA]) {
+    const terms = weaponTerms(launcher);
+    check(terms.importPoints === 1 && terms.importRequirement === requirements.PORT, 'AT and AA launchers are imported from the first seaport');
+  }
 
   const airMisfit = compile(sources.air, 'PresetAircraftMisfit');
   const aircraft = (crew, cargo, helicopter = true) => ({m_Vehicle: {FindComponent: () => helicopter ? {} : null}, CountRequiredCrewSeats_S: () => crew, CountCargoSeats_S: () => cargo});
