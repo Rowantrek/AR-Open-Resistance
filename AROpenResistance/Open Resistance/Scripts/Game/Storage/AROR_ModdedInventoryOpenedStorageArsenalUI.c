@@ -41,7 +41,13 @@ modded class SCR_InventoryOpenedStorageArsenalUI
 	protected ref AROR_ArsenalTabHandler m_ARORTabHandler;
 	protected ref AROR_ArsenalCatalog m_ARORCatalog;
 
-	protected int m_iARORCategory = AROR_ArsenalCatalog.CATEGORY_OTHER - 1;	//!< below every real value = not chosen yet
+	protected static const int AROR_CATEGORY_UNSET = AROR_ArsenalCatalog.CATEGORY_ALL - 1;	//!< below every real value = not chosen yet
+
+	//! Last selection, so reopening an arsenal returns to the same tab
+	protected static int s_iARORLastCategory = AROR_CATEGORY_UNSET;
+	protected static int s_iARORLastType = AROR_ArsenalCatalog.TYPE_ALL;
+
+	protected int m_iARORCategory = AROR_CATEGORY_UNSET;
 	protected int m_iARORType = AROR_ArsenalCatalog.TYPE_ALL;
 
 	protected ref array<int> m_aARORCategories = {};	//!< Categories to show, in button order
@@ -67,10 +73,24 @@ modded class SCR_InventoryOpenedStorageArsenalUI
 	//------------------------------------------------------------------------------------------------
 	override void Init()
 	{
+		// Set before super.Init(), which lists the items through GetAllItems
+		m_iARORCategory = s_iARORLastCategory;
+		m_iARORType = s_iARORLastType;
+
 		super.Init();
 
 		if (!AROR_IsResistance())
 			return;
+
+		// Vanilla only subscribes to arsenal updates when the layout has its supply widgets, which ours lacks, so listen
+		// to the stock directly (and drop any vanilla subscription so a change does not refresh twice)
+		SCR_ArsenalComponent arsenal = SCR_ArsenalComponent.Cast(m_Storage.GetOwner().FindComponent(SCR_ArsenalComponent));
+		if (arsenal)
+			arsenal.GetOnArsenalUpdated().Remove(OnArsenalUpdated);
+
+		AROR_ResistanceStorageComponent stock = AROR_ResistanceStorageComponent.GetInstance();
+		if (stock)
+			stock.GetOnStorageChanged().Insert(AROR_OnStockChanged);
 
 		array<ResourceName> prefabs = {};
 		AROR_GetStockedPrefabs(prefabs);
@@ -88,8 +108,22 @@ modded class SCR_InventoryOpenedStorageArsenalUI
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Several stock changes in one frame (e.g. a deposit unpacking a weapon and its magazine) refresh once
+	protected void AROR_OnStockChanged()
+	{
+		GetGame().GetCallqueue().Remove(Refresh);
+		GetGame().GetCallqueue().CallLater(Refresh, 0);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override event void HandlerDeattached(Widget w)
 	{
+		AROR_ResistanceStorageComponent stock = AROR_ResistanceStorageComponent.GetInstance();
+		if (stock)
+			stock.GetOnStorageChanged().Remove(AROR_OnStockChanged);
+
+		GetGame().GetCallqueue().Remove(Refresh);
+
 		m_aARORButtons.Clear();
 		m_aARORButtonCategory.Clear();
 		m_aARORButtonType.Clear();
@@ -104,21 +138,31 @@ modded class SCR_InventoryOpenedStorageArsenalUI
 		if (!m_ARORCatalog)
 			m_ARORCatalog = AROR_ArsenalCatalog.Build();
 
+		set<int> stocked = new set<int>();
+		foreach (ResourceName prefab : prefabs)
+		{
+			stocked.Insert(m_ARORCatalog.GetCategory(prefab));
+		}
+
 		// Every category regardless of stock, in tab order; Other only when something falls in it
 		m_aARORCategories.Clear();
 		AROR_ArsenalCatalog.GetCategories(m_aARORCategories);
-		foreach (ResourceName prefab : prefabs)
-		{
-			if (m_ARORCatalog.GetCategory(prefab) == AROR_ArsenalCatalog.CATEGORY_OTHER)
-			{
-				m_aARORCategories.Insert(AROR_ArsenalCatalog.CATEGORY_OTHER);
-				break;
-			}
-		}
+		if (stocked.Contains(AROR_ArsenalCatalog.CATEGORY_OTHER))
+			m_aARORCategories.Insert(AROR_ArsenalCatalog.CATEGORY_OTHER);
 
 		if (!m_aARORCategories.IsEmpty() && m_aARORCategories.Find(m_iARORCategory) < 0)
 		{
+			// Open on the first stocked category rather than All: listing all stock builds a slot per item
 			m_iARORCategory = m_aARORCategories[0];
+			foreach (int category : m_aARORCategories)
+			{
+				if (category != AROR_ArsenalCatalog.CATEGORY_ALL && stocked.Contains(category))
+				{
+					m_iARORCategory = category;
+					break;
+				}
+			}
+
 			m_iARORType = AROR_ArsenalCatalog.TYPE_ALL;
 		}
 
@@ -284,6 +328,8 @@ modded class SCR_InventoryOpenedStorageArsenalUI
 			m_iARORType = type;
 		}
 
+		s_iARORLastCategory = m_iARORCategory;
+		s_iARORLastType = m_iARORType;
 		m_iLastShownPage = 0;
 
 		// Refresh rebuilds the column holding the clicked button, so let the click finish first
