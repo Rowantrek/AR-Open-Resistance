@@ -33,7 +33,19 @@ They live in `Configs/FactionPresets/BaseGame/`. Open one next to this page as a
    - Units: at most one per unit type (RIFLEMAN, AUTORIFLEMAN, MACHINEGUNNER, GRENADIER, MEDIC, MARKSMAN, SNIPER, AT, AA, ENGINEER, RADIO_OPERATOR, LEADER, CREW, PILOT, OFFICER, CIVILIAN).
    - Every other category: as many entries per type as you like.
 4. **Give units their kit.** See [Unit loadouts](#unit-loadouts).
-5. **Register the preset.** Override `Configs/FactionPresets/AROR_FactionPresetRegistry.conf` in your addon and add your preset to its list (see [Modding](Modding#override-in-addon)).
+5. **Register the preset.** Add a script to your addon (e.g. `Scripts/Game/MyMod_FactionPresetRegistry.c`) that adds your preset's path. An addon can register several presets, and several addons can register presets without clashing:
+   ```
+   modded class AROR_FactionPresetRegistry
+   {
+   	override void GetExtraPresetPaths(notnull array<ResourceName> outPresets)
+   	{
+   		super.GetExtraPresetPaths(outPresets);
+
+   		outPresets.Insert("{GUID}Configs/FactionPresets/MyMod_Preset.conf");
+   	}
+   }
+   ```
+   Copy the preset's path with its GUID from the Resource Browser (right-click the preset → Copy Resource Name).
 6. **Test.** Press Play and check the console for `[AROR] Faction preset` warnings. Your preset should then appear in campaign setup for its roles.
 
 A minimal preset, as text:

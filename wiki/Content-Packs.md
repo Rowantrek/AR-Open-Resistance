@@ -83,7 +83,19 @@ If the replacement takes different magazines or attachments, replace those as we
    - **Enabled By Default**: whether new campaigns start with it on.
 3. **Add a group** for each set of addons your entries need (a pack for one mod usually has one group), and set its Required Addons.
 4. **Add entries** to the group: pick the entry class (Vehicle, Gear, Equipment, Weapon, Weapon accessory or Ammunition), its type, prefab, cost, and any readiness, import or replacement settings.
-5. **Register the pack.** Override `Configs/ContentPacks/AROR_ContentPackRegistry.conf` in your addon and add your pack to its list (see [Modding](Modding#override-in-addon)). Its position sets its priority against other packs.
+5. **Register the pack.** Add a script to your addon (e.g. `Scripts/Game/MyMod_ContentPackRegistry.c`) that adds your pack's path. An addon can register several packs, and several addons can register packs without clashing:
+   ```
+   modded class AROR_ContentPackRegistry
+   {
+   	override void GetExtraPackPaths(notnull array<ResourceName> outPacks)
+   	{
+   		super.GetExtraPackPaths(outPacks);
+
+   		outPacks.Insert("{GUID}Configs/ContentPacks/MyMod_ContentPack.conf");
+   	}
+   }
+   ```
+   Copy the pack's path with its GUID from the Resource Browser (right-click the pack → Copy Resource Name). The core's packs come first, then extender packs in script load order; that order sets priority between packs.
 6. **Test.** Press Play and check the console: it lists the enabled packs and their entry and replacement counts, and warns about entries without a prefab or with an unknown type. Your items should then show in the Black Market or Imports.
 
 A minimal pack, as text:
