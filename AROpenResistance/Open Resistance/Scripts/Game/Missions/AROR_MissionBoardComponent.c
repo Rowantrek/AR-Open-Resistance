@@ -1206,7 +1206,7 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 
 		foreach (IEntity entity : mission.m_aEntities)
 		{
-			if (entity && !HasPlayerAboard(entity))
+			if (entity && !HasPlayerAboard(entity) && !AROR_ResistanceFleet.IsClaimed(entity))
 				SCR_EntityHelper.DeleteEntityAndChildren(entity);
 		}
 		mission.m_aGroups.Clear();

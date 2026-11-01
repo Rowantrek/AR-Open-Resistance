@@ -94,7 +94,8 @@ class AROR_QRFSpotting
 			int last = old.m_iLastLook;
 			if (old.m_bConfirmed)
 				last = old.m_iLastSeen;
-			if (now - last > lifetime)
+			// A vehicle the Resistance has since taken stops being reported straight away
+			if (now - last > lifetime || AROR_ResistanceFleet.IsClaimed(old.m_Entity))
 				m_aSightings.Remove(index);
 		}
 		array<IEntity> vehicles = {};

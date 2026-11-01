@@ -810,7 +810,8 @@ class AROR_GroundOperationForce : AROR_OperationForce
 			m_TownSearch.Cleanup_S();
 		m_TownSearch = null;
 		CountLivingMembers();
-		bool preserveVehicle;
+		// Kept if the Resistance has taken it (even parked empty) or a player is aboard
+		bool preserveVehicle = AROR_ResistanceFleet.IsClaimed(m_Vehicle);
 		if (m_Vehicle)
 		{
 			BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(m_Vehicle.FindComponent(BaseCompartmentManagerComponent));

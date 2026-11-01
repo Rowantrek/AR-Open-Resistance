@@ -1678,7 +1678,7 @@ class AROR_GarrisonComponent : ScriptComponent
 	//! Never delete a stolen/foreign-occupied asset or a player-controlled soldier.
 	protected bool IsPlayerOrForeignAsset(IEntity entity)
 	{
-		if (GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(entity) > 0)
+		if (GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(entity) > 0 || AROR_ResistanceFleet.IsClaimed(entity))
 			return true;
 		FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(entity.FindComponent(FactionAffiliationComponent));
 		if (affiliation && !affiliation.GetAffiliatedFactionKey().IsEmpty() && affiliation.GetAffiliatedFactionKey() != m_sFactionKey)

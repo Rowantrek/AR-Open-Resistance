@@ -340,14 +340,15 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			Faction campaignFaction = roles.GetFaction(operation.GetRole());
 			if (!campaignFaction || !resistance.IsFactionEnemy(campaignFaction))
 				continue;
-			if (ground.m_Vehicle)
+			// A vehicle the Resistance has taken is theirs now, not an enemy asset
+			if (ground.m_Vehicle && !AROR_ResistanceFleet.IsClaimed(ground.m_Vehicle))
 			{
 				vehicles.Insert(ground.m_Vehicle);
 				kinds.Insert(ground.m_Profile.GetSpottingKind());
 				sides.Insert(operation.GetRole());
 			}
 			AROR_ReaperAirForce air = AROR_ReaperAirForce.Cast(force);
-			if (air && air.m_Escort && air.m_Escort.m_Vehicle)
+			if (air && air.m_Escort && air.m_Escort.m_Vehicle && !AROR_ResistanceFleet.IsClaimed(air.m_Escort.m_Vehicle))
 			{
 				vehicles.Insert(air.m_Escort.m_Vehicle);
 				kinds.Insert(4);
