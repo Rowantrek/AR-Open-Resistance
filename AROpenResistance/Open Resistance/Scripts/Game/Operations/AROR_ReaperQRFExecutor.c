@@ -12,6 +12,10 @@ modded class AROR_OperationExecutorComponent
 	protected int m_iReaperPreparationTimeout;
 	[Attribute("120", desc: "Initial occupied aircraft height above terrain", params: "60 300 1")]
 	protected float m_fReaperInsertionHeight;
+	[Attribute("3000", desc: "Airborne packages launch from the nearest usable owned origin at least this far from the target (else the farthest usable one), so aircraft fly in instead of appearing near the fight. Ground elements keep the normal origin.", params: "0 8000 100", category: "Airborne launch")]
+	protected float m_fReaperMinLaunchDistance;
+	[Attribute("1500", desc: "Aircraft are built and boarded hovering at their launch point, so it moves back over land, away from the target, until every player is at least this far away", params: "0 4000 100", category: "Airborne launch")]
+	protected float m_fReaperLaunchPlayerClearance;
 	[Attribute("160", desc: "Transport ingress/landing waypoint maximum speed, km/h; REAPER controls final braking", params: "100 200 1")]
 	protected float m_fReaperTransportSpeed;
 	[Attribute("60", desc: "Transport ingress/landing commanded height above terrain; backend controls touchdown", params: "40 120 1")]
@@ -64,6 +68,119 @@ modded class AROR_OperationExecutorComponent
 		return m_fReaperGunshipHeight + force.m_iPackageIndex * m_fReaperGunshipBand;
 	}
 
+	//! Steps for moving a launch point out of players' sight (metres each, at most this many)
+	protected static const float REAPER_LAUNCH_STEP = 250;
+	protected static const int REAPER_LAUNCH_STEPS = 12;
+
+	//------------------------------------------------------------------------------------------------
+	//! Where the aircraft of an airborne response appear: a farther owned site than the ground origin, moved out of
+	//! every player's sight. outSite is that site (null when the ground origin is kept). A fixed scripted origin
+	//! (e.g. a stronghold's beach) is kept as it is.
+	protected vector ReaperLaunchPoint(AROR_Operation operation, AROR_LocationComponent target, vector groundOrigin, out AROR_LocationComponent outSite)
+	{
+		outSite = null;
+		if (operation.m_bHasOriginOverride || groundOrigin == vector.Zero)
+			return groundOrigin;
+
+		vector origin = groundOrigin;
+		string siteName = "ground origin";
+		outSite = ReaperOriginSite(operation, target);
+		if (outSite)
+		{
+			origin = outSite.GetCenter();
+			siteName = outSite.GetId();
+		}
+
+		vector launch = OutOfPlayerSight(origin, target.GetCenter());
+		Print(string.Format("[AROR REAPER] QRF %1 air launch site=%2 distance=%3m nearestPlayer=%4m", operation.GetId(), siteName, Math.Round(vector.DistanceXZ(launch, target.GetCenter())), Math.Round(NearestPlayerDistance(launch))), LogLevel.NORMAL);
+		return launch;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The nearest usable origin at least m_fReaperMinLaunchDistance from the target, else the farthest usable one
+	protected AROR_LocationComponent ReaperOriginSite(AROR_Operation operation, AROR_LocationComponent target)
+	{
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
+		if (!locations)
+			return null;
+
+		array<AROR_LocationComponent> sites = {};
+		locations.GetLocations(sites);
+		AROR_LocationComponent nearestFar;
+		float nearestFarDistance = float.MAX;
+		AROR_LocationComponent farthest;
+		float farthestDistance = -1;
+		foreach (AROR_LocationComponent site : sites)
+		{
+			if (!IsUsableOrigin(site, operation.GetRole(), target, operation))
+				continue;
+
+			float distance = vector.DistanceXZ(site.GetCenter(), target.GetCenter());
+			if (distance >= m_fReaperMinLaunchDistance && distance < nearestFarDistance)
+			{
+				nearestFar = site;
+				nearestFarDistance = distance;
+			}
+			if (distance > farthestDistance)
+			{
+				farthest = site;
+				farthestDistance = distance;
+			}
+		}
+
+		if (nearestFar)
+			return nearestFar;
+		return farthest;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Moves the point away from the target over land until no player is within m_fReaperLaunchPlayerClearance;
+	//! stops at the coast or map edge and keeps the step farthest from every player
+	protected vector OutOfPlayerSight(vector origin, vector target)
+	{
+		vector away = origin - target;
+		away[1] = 0;
+		if (away.Length() < 1)
+			return origin;
+		away.Normalize();
+
+		vector best = origin;
+		float bestClearance = NearestPlayerDistance(origin);
+		for (int step = 0; step <= REAPER_LAUNCH_STEPS && bestClearance < m_fReaperLaunchPlayerClearance; step++)
+		{
+			vector candidate = origin + away * (step * REAPER_LAUNCH_STEP);
+			if (!IsLaunchPositionSafe(candidate, target))
+				break;
+
+			float clearance = NearestPlayerDistance(candidate);
+			if (clearance > bestClearance)
+			{
+				best = candidate;
+				bestClearance = clearance;
+			}
+		}
+
+		return best;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static float NearestPlayerDistance(vector position)
+	{
+		float nearest = float.MAX;
+		array<int> playerIds = {};
+		PlayerManager playerManager = GetGame().GetPlayerManager();
+		playerManager.GetPlayers(playerIds);
+		foreach (int playerId : playerIds)
+		{
+			IEntity player = playerManager.GetPlayerControlledEntity(playerId);
+			if (player)
+				nearest = Math.Min(nearest, vector.DistanceXZ(position, player.GetOrigin()));
+		}
+
+		return nearest;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected float ReaperGunshipRunHeight(AROR_ReaperAirForce force)
 	{
 		return m_fReaperGunshipRunHeight + force.m_iPackageIndex * m_fReaperGunshipRunBand;
@@ -404,8 +521,11 @@ modded class AROR_OperationExecutorComponent
 		if (!PrepareReaperLanding(operation, target, level))
 			return;
 		home = ResolveQRFOrigin(operation, target, home);
+		// Aircraft launch farther out than the ground origin (home), which stays the tactical origin
+		AROR_LocationComponent airSite;
+		vector airHome = ReaperLaunchPoint(operation, target, home, airSite);
 		int padCount = m_ReaperLandingSearch.GetResultCount();
-		vector commonHeading = AROR_ReaperFlightGeometry.Direction(home, target.GetCenter());
+		vector commonHeading = AROR_ReaperFlightGeometry.Direction(airHome, target.GetCenter());
 		vector right = Vector(commonHeading[2], 0, -commonHeading[0]);
 		array<ref AROR_ReaperAirForce> prepared = {};
 		for (int index = 0; index < level; index++)
@@ -413,7 +533,7 @@ modded class AROR_OperationExecutorComponent
 			// Reuse a pad only when fewer safe sites exist than transports; those users queue.
 			int padIndex = index - (index / padCount) * padCount;
 			vector landing = m_ReaperLandingSearch.GetResult(padIndex);
-			vector launch = home + right * ((index - (level - 1) * 0.5) * 200);
+			vector launch = airHome + right * ((index - (level - 1) * 0.5) * 200);
 			vector heading = AROR_ReaperFlightGeometry.Direction(launch, landing);
 			vector escortLaunch = AROR_ReaperFlightGeometry.FormationPoint(launch, heading, m_fReaperFormationSpacing);
 			if (!IsLaunchPositionSafe(launch, target.GetCenter()) || (profile.m_iEscortCount > 0 && !IsLaunchPositionSafe(escortLaunch, target.GetCenter())))
@@ -488,6 +608,9 @@ modded class AROR_OperationExecutorComponent
 			return;
 		operation.m_bResponseMixAirborne = true;
 		CreateQRFTacticalCommander(operation, totalPackages, home);
+		// The air base is committed too: it cannot launch again until its cooldown passes
+		if (airSite)
+			m_mOriginLaunchedAt.Set(airSite.GetId(), m_iExecutorClock);
 		if (jointRecipe && operation.m_TacticalCommander)
 			operation.m_TacticalCommander.m_bJointResponse = true;
 		if (jointRecipe && operation.m_TacticalCommander && operation.m_TacticalCommander.m_iFirstWaveCount - 1 > m_iQRFMaxLiveGround)
@@ -746,7 +869,9 @@ modded class AROR_OperationExecutorComponent
 			return false;
 		force.m_bOrdersIssued = true;
 		force.m_iFlightStage = 1;
-		force.m_iFlightDeadline = m_iExecutorClock + m_iReaperFlightTimeout * force.m_iPackageCount;
+		// Plus the time to cover the inbound leg at half the commanded speed, as launches can be far out
+		float inboundSeconds = vector.DistanceXZ(force.m_vLaunch, force.m_vAirApproach) * 2 / (m_fReaperTransportSpeed / 3.6);
+		force.m_iFlightDeadline = m_iExecutorClock + m_iReaperFlightTimeout * force.m_iPackageCount + Math.Round(inboundSeconds);
 		force.m_iEscortDeadline = force.m_iFlightDeadline;
 		return true;
 	}
