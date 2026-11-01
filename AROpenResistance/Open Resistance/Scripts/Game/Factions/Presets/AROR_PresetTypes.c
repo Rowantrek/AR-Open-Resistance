@@ -12,7 +12,7 @@ class AROR_PresetTypes
 		switch (category)
 		{
 			case AROR_EFactionPresetCategory.UNITS:
-				return type <= AROR_EUnitType.CIVILIAN;
+				return type <= AROR_EUnitType.LAT;
 			case AROR_EFactionPresetCategory.VEHICLES:
 				return type <= AROR_EVehicleType.STATIC_ARTILLERY;
 			case AROR_EFactionPresetCategory.GEAR:
@@ -22,7 +22,7 @@ class AROR_PresetTypes
 			case AROR_EFactionPresetCategory.WEAPONS:
 				return type <= AROR_EWeaponType.MARKSMAN_RIFLE;
 			case AROR_EFactionPresetCategory.WEAPON_ACCESSORIES:
-				return type <= AROR_EWeaponAccessoryType.LIGHT;
+				return type <= AROR_EWeaponAccessoryType.OTHER;
 			case AROR_EFactionPresetCategory.AMMUNITION:
 				return type <= AROR_EAmmunitionType.BOMB;
 		}

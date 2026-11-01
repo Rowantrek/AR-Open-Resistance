@@ -132,19 +132,15 @@ class AROR_ConvoyAmbushMission : AROR_Mission
 		int cargoSeats = CountCargoSeats(vehicle);
 		passengers = Math.Min(passengers, cargoSeats);
 
-		array<ResourceName> members = {};
-		ResourceName crew = board.GetUnitPrefab_S(m_eEnemyRole, AROR_EUnitType.CREW);
+		array<AROR_EUnitType> members = {};
 		for (int i = 0; i < crewSeats; i++)
 		{
-			if (!crew.IsEmpty())
-				members.Insert(crew);
+			members.Insert(AROR_EUnitType.CREW);
 		}
 
-		ResourceName rifleman = board.GetUnitPrefab_S(m_eEnemyRole, AROR_EUnitType.RIFLEMAN);
 		for (int p = 0; p < passengers; p++)
 		{
-			if (!rifleman.IsEmpty())
-				members.Insert(rifleman);
+			members.Insert(AROR_EUnitType.RIFLEMAN);
 		}
 
 		if (members.IsEmpty())
@@ -161,7 +157,7 @@ class AROR_ConvoyAmbushMission : AROR_Mission
 
 		m_aVehicles.Insert(vehicle);
 		m_aCrews.Insert(group);
-		m_aCrewSizes.Insert(members.Count());
+		m_aCrewSizes.Insert(group.m_aUnitPrefabSlots.Count());
 		m_aSpawnedCrewCounts.Insert(0);
 		return true;
 	}

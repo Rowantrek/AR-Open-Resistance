@@ -1,6 +1,7 @@
-//! A faction preset (see ARCHITECTURE.md -> Factions): everything an army makes available to the game, in fixed
-//! categories (AROR_EFactionPresetCategory), each entry a prefab of a type. A preset only lists what exists; garrisons,
-//! QRFs, missions and other systems decide what to use. One `.conf` per preset, listed in AROR_FactionPresetRegistry.
+//! A faction preset (see ARCHITECTURE.md -> Factions): the AI units an army fields (with their loadouts), the player
+//! loadout and the army's empty vehicles. Items (gear, weapons, ammunition...) live in content packs. A preset only
+//! lists what exists; garrisons, QRFs, missions and other systems decide what to use. One `.conf` per preset, listed
+//! in AROR_FactionPresetRegistry.
 [BaseContainerProps(configRoot: true)]
 class AROR_FactionPreset
 {
@@ -22,21 +23,6 @@ class AROR_FactionPreset
 
 	[Attribute(desc: "Empty vehicles (no crew)", category: "Vehicles")]
 	protected ref array<ref AROR_FactionPresetVehicle> m_aVehicles;
-
-	[Attribute(desc: "Clothing and carried kit", category: "Gear")]
-	protected ref array<ref AROR_FactionPresetGear> m_aGear;
-
-	[Attribute(desc: "Medical supplies, binoculars, radios and other equipment", category: "Equipment")]
-	protected ref array<ref AROR_FactionPresetEquipment> m_aEquipment;
-
-	[Attribute(desc: "Hand-held weapons", category: "Weapons")]
-	protected ref array<ref AROR_FactionPresetWeapon> m_aWeapons;
-
-	[Attribute(desc: "Weapon accessories", category: "Weapon accessories")]
-	protected ref array<ref AROR_FactionPresetWeaponAccessory> m_aWeaponAccessories;
-
-	[Attribute(desc: "Ammunition, including rocket pods and other munitions loaded onto vehicles and aircraft", category: "Ammunition")]
-	protected ref array<ref AROR_FactionPresetAmmunition> m_aAmmunition;
 
 	//------------------------------------------------------------------------------------------------
 	string GetId()
@@ -146,7 +132,7 @@ class AROR_FactionPreset
 		set<int> unitTypes = new set<int>();
 		int empty;
 
-		for (int category = 0; category <= AROR_EFactionPresetCategory.AMMUNITION; category++)
+		for (int category = 0; category <= AROR_EFactionPresetCategory.VEHICLES; category++)
 		{
 			string categoryName = typename.EnumToString(AROR_EFactionPresetCategory, category);
 
@@ -210,61 +196,6 @@ class AROR_FactionPreset
 					{
 						if (vehicle)
 							outEntries.Insert(vehicle);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.GEAR:
-				if (m_aGear)
-				{
-					foreach (AROR_FactionPresetGear gear : m_aGear)
-					{
-						if (gear)
-							outEntries.Insert(gear);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.EQUIPMENT:
-				if (m_aEquipment)
-				{
-					foreach (AROR_FactionPresetEquipment equipment : m_aEquipment)
-					{
-						if (equipment)
-							outEntries.Insert(equipment);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.WEAPONS:
-				if (m_aWeapons)
-				{
-					foreach (AROR_FactionPresetWeapon weapon : m_aWeapons)
-					{
-						if (weapon)
-							outEntries.Insert(weapon);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.WEAPON_ACCESSORIES:
-				if (m_aWeaponAccessories)
-				{
-					foreach (AROR_FactionPresetWeaponAccessory accessory : m_aWeaponAccessories)
-					{
-						if (accessory)
-							outEntries.Insert(accessory);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.AMMUNITION:
-				if (m_aAmmunition)
-				{
-					foreach (AROR_FactionPresetAmmunition ammunition : m_aAmmunition)
-					{
-						if (ammunition)
-							outEntries.Insert(ammunition);
 					}
 				}
 				break;

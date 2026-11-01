@@ -27,6 +27,8 @@ class AROR_AdminApp : AROR_PhonePooledApp
 	protected static const float SUPPORT_STEP = 10;
 
 	protected Widget m_wResource;
+	protected EditBoxWidget m_wLoadoutName;
+	protected bool m_bLoadoutNameShown;
 	protected AROR_AdminMenu m_Menu;
 	protected int m_iTab;
 	protected ref array<AROR_EFactionRole> m_aRoles = {};
@@ -38,6 +40,15 @@ class AROR_AdminApp : AROR_PhonePooledApp
 		m_wResource = GetGame().GetWorkspace().CreateWidgets(LAYOUT, parent);
 		if (!m_wResource || !InitPools(m_wResource, "BM", 96, 120, 64, 16))
 			return false;
+
+		// The layout's search box serves as the capture loadout name field (Workbench only, see DrawTools)
+		m_wLoadoutName = EditBoxWidget.Cast(m_wResource.FindAnyWidget("BMSearch"));
+		if (m_wLoadoutName)
+		{
+			m_wLoadoutName.SetColor(C(AROR_UIColors.TEXT));
+			m_wLoadoutName.SetPlaceholderText("Loadout name, e.g. us_rifleman");
+			m_wLoadoutName.SetVisible(false);
+		}
 
 		m_wBackground.SetColor(C(AROR_UIColors.SURFACE));
 		AROR_FactionRoles.GetMilitary(m_aRoles);
@@ -51,6 +62,7 @@ class AROR_AdminApp : AROR_PhonePooledApp
 			m_wResource.RemoveFromHierarchy();
 
 		m_wResource = null;
+		m_wLoadoutName = null;
 		m_Menu = null;
 	}
 
@@ -68,6 +80,9 @@ class AROR_AdminApp : AROR_PhonePooledApp
 			case TAB_SUPPORT: DrawSupport(); break;
 			case TAB_TOOLS: DrawTools(); break;
 		}
+
+		if (m_iTab != TAB_TOOLS)
+			ShowLoadoutName(false);
 
 		EndFrame();
 	}
@@ -285,7 +300,7 @@ class AROR_AdminApp : AROR_PhonePooledApp
 
 		Card(rightLeft, CONTENT_TOP + 324, rightWidth, 116 + 80, "ACTIONS");
 		ActionButton(rightLeft + 24, CONTENT_TOP + 324 + 76, rightWidth - 48, 56, "PAY INCOME NOW", "income");
-		ActionButton(rightLeft + 24, CONTENT_TOP + 324 + 76 + 68, rightWidth - 48, 56, "FILL RESISTANCE STOCK FROM PRESET", "stock");
+		ActionButton(rightLeft + 24, CONTENT_TOP + 324 + 76 + 68, rightWidth - 48, 56, "FILL RESISTANCE STOCK (10 EACH)", "stock");
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -330,6 +345,32 @@ class AROR_AdminApp : AROR_PhonePooledApp
 		DrawTool(0, "TELEPORT", "Opens the map. Click a position to move your character there.", "TELEPORT ON MAP", "teleport");
 		DrawTool(1, "GAME MASTER", "Unlocks the Game Master editor for you and opens it.", "OPEN GAME MASTER", "gamemaster");
 		DrawTool(2, "TEST NOTIFICATIONS", "Sends a headline and a notification to everyone and a hint to you, to check the notification styles.", "SEND TEST NOTIFICATIONS", "notifications");
+#ifdef WORKBENCH
+		DrawCaptureLoadout(3);
+#endif
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Workbench only: a name field over the card and a button that saves the kit your character carries (see AROR_LoadoutCapture)
+	protected void DrawCaptureLoadout(int index)
+	{
+		float y = CONTENT_TOP + index * 200;
+		Card(CONTENT_LEFT, y, CONTENT_WIDTH, 176, "CAPTURE LOADOUT");
+		Text(CONTENT_LEFT + 24, y + 66, 760, 40, 17, "Dress your character as the unit should look, name the kit, and capture it. It is saved to the profile folder (AROR_Loadouts) for a faction preset.", C(AROR_UIColors.TEXT));
+		ActionButton(CONTENT_LEFT + CONTENT_WIDTH - 24 - 440, y + 84, 440, 64, "CAPTURE LOADOUT", "captureloadout", true);
+		ShowLoadoutName(true);
+		if (m_wLoadoutName)
+			Place(m_wLoadoutName, (CONTENT_LEFT + 24) * m_fScale, (y + 112) * m_fScale, 760 * m_fScale, 48 * m_fScale);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void ShowLoadoutName(bool show)
+	{
+		if (!m_wLoadoutName || m_bLoadoutNameShown == show)
+			return;
+
+		m_bLoadoutNameShown = show;
+		m_wLoadoutName.SetVisible(show);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -364,6 +405,11 @@ class AROR_AdminApp : AROR_PhonePooledApp
 			controller.AROR_RequestAdminPayIncome();
 		else if (action == "stock")
 			controller.AROR_RequestAdminFillResistanceStock();
+		else if (action == "captureloadout")
+		{
+			if (m_wLoadoutName)
+				controller.AROR_RequestAdminCaptureLoadout(m_wLoadoutName.GetText());
+		}
 		else if (action == "money:self")
 			controller.AROR_RequestAdminMoney(AROR_EFactionRole.RESISTANCE, true, MONEY_STEP);
 		else if (action.IndexOf("money:") == 0)

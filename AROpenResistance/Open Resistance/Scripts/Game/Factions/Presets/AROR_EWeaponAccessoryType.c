@@ -6,5 +6,6 @@ enum AROR_EWeaponAccessoryType
 	SUPPRESSOR,
 	BAYONET,
 	UNDERBARREL,
-	LIGHT
+	LIGHT,
+	OTHER	//!< Anything the importers cannot place (muzzle devices, grips, rail covers...)
 }

@@ -1,6 +1,11 @@
 //! Resistance Storage arsenals list every stocked prefab (qty > 0) instead of the faction catalog.
 modded class SCR_ArsenalComponent
 {
+	//! Sorted stock shared by every Resistance arsenal; rebuilt when the stock revision changes
+	protected static ref array<ResourceName> s_aARORSortedPrefabs = {};
+	protected static AROR_ResistanceStorageComponent s_ARORSortedSource;
+	protected static int s_iARORSortedRevision = -1;
+
 	//------------------------------------------------------------------------------------------------
 	//! Resistance stock is the budget — never gate the HQ arsenal on vanilla supplies.
 	override bool IsArsenalUsingSupplies()
@@ -32,38 +37,44 @@ modded class SCR_ArsenalComponent
 		if (!storage)
 			return true;
 
-		array<ResourceName> prefabs = {};
-		array<int> quantities = {};
-		storage.GetEntries(prefabs, quantities);
-
-		int count = Math.Min(prefabs.Count(), quantities.Count());
-		for (int i = 0; i < count; i++)
+		// Every Resistance arsenal shows the same stock and the UI asks several times per refresh, so sort once per change
+		if (storage != s_ARORSortedSource || storage.GetRevision() != s_iARORSortedRevision)
 		{
-			if (quantities[i] > 0 && !prefabs[i].IsEmpty())
-				availablePrefabs.Insert(prefabs[i]);
+			BuildSortedResistancePrefabs(storage, s_aARORSortedPrefabs);
+			s_ARORSortedSource = storage;
+			s_iARORSortedRevision = storage.GetRevision();
 		}
 
-		SortResistancePrefabs(availablePrefabs);
+		availablePrefabs.InsertAll(s_aARORSortedPrefabs);
 
 		// Empty stock is a valid list — do not fall through to faction-catalog init
 		return true;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Gear → Equipment → Weapons → Accessories → Ammo → other; then by prefab path.
-	protected void SortResistancePrefabs(notnull array<ResourceName> prefabs)
+	//! Stocked prefabs (qty > 0) ordered Gear → Equipment → Weapons → Accessories → Ammo → other; then by prefab path.
+	protected void BuildSortedResistancePrefabs(notnull AROR_ResistanceStorageComponent storage, notnull array<ResourceName> outPrefabs)
 	{
-		int n = prefabs.Count();
-		if (n < 2)
-			return;
+		outPrefabs.Clear();
+
+		array<ResourceName> prefabs = {};
+		array<int> quantities = {};
+		storage.GetEntries(prefabs, quantities);
 
 		map<ResourceName, int> categoryRanks = new map<ResourceName, int>();
 		BuildResistanceCategoryRanks(categoryRanks);
 
+		// The full prefab name ends each key, so keys are unique and the sorted key maps back to its prefab
 		array<string> sortKeys = {};
-		foreach (ResourceName prefab : prefabs)
+		map<string, ResourceName> keyToPrefab = new map<string, ResourceName>();
+		int count = Math.Min(prefabs.Count(), quantities.Count());
+		for (int i = 0; i < count; i++)
 		{
-			int rank = 99;
+			ResourceName prefab = prefabs[i];
+			if (quantities[i] <= 0 || prefab.IsEmpty())
+				continue;
+
+			int rank;
 			if (!categoryRanks.Find(prefab, rank))
 				rank = 99;
 
@@ -71,24 +82,16 @@ modded class SCR_ArsenalComponent
 			if (rank < 10)
 				rankStr = "0" + rankStr;
 
-			sortKeys.Insert(rankStr + "_" + PrefabPathKey(prefab));
+			string key = rankStr + "_" + PrefabPathKey(prefab) + "|" + prefab;
+			sortKeys.Insert(key);
+			keyToPrefab.Set(key, prefab);
 		}
 
-		for (int i = 0; i < n - 1; i++)
-		{
-			for (int j = 0; j < n - i - 1; j++)
-			{
-				if (sortKeys[j].Compare(sortKeys[j + 1]) > 0)
-				{
-					string keyTmp = sortKeys[j];
-					sortKeys[j] = sortKeys[j + 1];
-					sortKeys[j + 1] = keyTmp;
+		sortKeys.Sort();
 
-					ResourceName prefabTmp = prefabs[j];
-					prefabs[j] = prefabs[j + 1];
-					prefabs[j + 1] = prefabTmp;
-				}
-			}
+		foreach (string key : sortKeys)
+		{
+			outPrefabs.Insert(keyToPrefab.Get(key));
 		}
 	}
 
@@ -98,27 +101,23 @@ modded class SCR_ArsenalComponent
 	{
 		outRanks.Clear();
 
-		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
-		if (!presets)
+		AROR_ContentPacksComponent packs = AROR_ContentPacksComponent.GetInstance();
+		if (!packs)
 			return;
 
-		AROR_FactionPreset preset = presets.GetPreset(AROR_EFactionRole.RESISTANCE);
-		if (!preset)
-			return;
-
-		InsertCategoryRanks(preset, AROR_EFactionPresetCategory.GEAR, 0, outRanks);
-		InsertCategoryRanks(preset, AROR_EFactionPresetCategory.EQUIPMENT, 1, outRanks);
-		InsertCategoryRanks(preset, AROR_EFactionPresetCategory.WEAPONS, 2, outRanks);
-		InsertCategoryRanks(preset, AROR_EFactionPresetCategory.WEAPON_ACCESSORIES, 3, outRanks);
-		InsertCategoryRanks(preset, AROR_EFactionPresetCategory.AMMUNITION, 4, outRanks);
+		InsertCategoryRanks(packs, AROR_EFactionPresetCategory.GEAR, 0, outRanks);
+		InsertCategoryRanks(packs, AROR_EFactionPresetCategory.EQUIPMENT, 1, outRanks);
+		InsertCategoryRanks(packs, AROR_EFactionPresetCategory.WEAPONS, 2, outRanks);
+		InsertCategoryRanks(packs, AROR_EFactionPresetCategory.WEAPON_ACCESSORIES, 3, outRanks);
+		InsertCategoryRanks(packs, AROR_EFactionPresetCategory.AMMUNITION, 4, outRanks);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void InsertCategoryRanks(notnull AROR_FactionPreset preset, AROR_EFactionPresetCategory category, int rank, notnull map<ResourceName, int> outRanks)
+	protected void InsertCategoryRanks(notnull AROR_ContentPacksComponent packs, AROR_EFactionPresetCategory category, int rank, notnull map<ResourceName, int> outRanks)
 	{
-		array<AROR_FactionPresetEntry> entries = {};
-		preset.GetAllEntries(category, entries);
-		foreach (AROR_FactionPresetEntry entry : entries)
+		array<AROR_ContentPackEntry> entries = {};
+		packs.GetEnabledEntries(category, entries);
+		foreach (AROR_ContentPackEntry entry : entries)
 		{
 			ResourceName prefab = entry.GetPrefab();
 			int existingRank;

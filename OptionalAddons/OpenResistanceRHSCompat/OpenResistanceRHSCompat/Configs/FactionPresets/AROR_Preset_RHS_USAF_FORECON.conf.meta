@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{0B9D15CDFDB3EDDF}Configs/FactionPresets/AROR_Preset_RHS_USAF_FORECON.conf"
+ Configurations {
+  CONFResourceClass PC {
+  }
+  CONFResourceClass XBOX_ONE : PC {
+  }
+  CONFResourceClass XBOX_SERIES : PC {
+  }
+  CONFResourceClass PS4 : PC {
+  }
+  CONFResourceClass PS5 : PC {
+  }
+  CONFResourceClass HEADLESS : PC {
+  }
+ }
+}

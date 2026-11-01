@@ -20,7 +20,7 @@ What uses it:
 |---|---|
 | Black Market (phone) | Sells everything except vehicles into Resistance Storage, at each entry's cost and import requirements. Trading needs at least one held import facility. |
 | Imports (phone) | Sells vehicles into the Resistance garage, at each entry's cost and import requirements |
-| Faction presets | Only use items an enabled pack offers, and use pack replacements |
+| Faction presets | Only use vehicles an enabled pack offers, and use pack replacements (also for loadout items) |
 | Enemy missions and outpost stores | Only field items the army's current Readiness allows |
 
 ## Entries
@@ -57,7 +57,7 @@ The types per category:
 | Gear | UNIFORM, VEST, HELMET, HEADGEAR, BACKPACK, FACEWEAR, OTHER |
 | Equipment | MEDICAL, BINOCULARS, RADIO, MAP, COMPASS, WATCH, FLASHLIGHT, TOOL, EXPLOSIVE, OTHER |
 | Weapons | PISTOL, ASSAULT_RIFLE, CARBINE, SMG, MACHINEGUN, SNIPER_RIFLE, SHOTGUN, LAUNCHER_AT, LAUNCHER_AA, EXPLOSIVE_GRENADE, SMOKE_GRENADE, MARKSMAN_RIFLE |
-| Weapon accessories | OPTIC, SUPPRESSOR, BAYONET, UNDERBARREL, LIGHT |
+| Weapon accessories | OPTIC, SUPPRESSOR, BAYONET, UNDERBARREL, LIGHT, OTHER |
 | Ammunition | MAGAZINE, BELT, ROCKET, SHELL, GRENADE_ROUND, MISSILE, BOMB |
 
 Ammunition includes munitions loaded onto vehicles and aircraft as items, such as helicopter rocket pods.
@@ -67,7 +67,7 @@ Ammunition includes munitions loaded onto vehicles and aircraft as items, such a
 An entry can **replace** other prefabs. While its pack is enabled:
 
 - The replaced prefabs are no longer sold.
-- Any faction preset (or loadout) that lists a replaced prefab gets the replacement instead.
+- Any faction preset vehicle or unit loadout item that lists a replaced prefab gets the replacement instead.
 - Chains are followed: if A replaces B and B replaces C, presets listing C get A.
 
 This is how a weapons mod plugs into every army at once. For example, a pack whose M16A2 entry replaces the base-game `Rifle_M16A2.et` makes every US Army preset and kit use the mod's M16A2, without touching the presets.
@@ -86,6 +86,7 @@ If the replacement takes different magazines or attachments, replace those as we
 4. **Add entries** to the group: pick the entry class (Vehicle, Gear, Equipment, Weapon, Weapon accessory or Ammunition), its type, prefab, cost, and any readiness, import or replacement settings.
 5. **Register the pack.** Add a script to your addon (e.g. `Scripts/Game/MyMod_ContentPackRegistry.c`) that adds your pack's path. An addon can register several packs, and several addons can register packs without clashing:
    ```
+   [BaseContainerProps(configRoot: true)]
    modded class AROR_ContentPackRegistry
    {
    	override void GetExtraPackPaths(notnull array<ResourceName> outPacks)
@@ -135,6 +136,6 @@ Packs written for the earlier layout, with a separate list per category (`m_aWea
 
 ## Tips
 
-- **Presets need packs.** If your [faction preset](Faction-Presets) uses your mod's items, your pack must offer them, or the preset skips them (the log says which).
+- **Presets need packs.** If your [faction preset](Faction-Presets) uses your mod's vehicles, your pack must offer them, or the preset skips them (the log says which).
 - **Pricing:** use the `BASE_GAME` pack's costs as a scale.
 - **Readiness** only limits enemy armies. Resistance players can buy anything the Black Market offers, except entries with **Resistance Can Purchase** turned off.

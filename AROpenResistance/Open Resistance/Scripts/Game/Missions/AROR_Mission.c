@@ -126,7 +126,7 @@ class AROR_Mission
 	// Shared helpers
 	//------------------------------------------------------------------------------------------------
 	//! Spawns a group of the role and tracks it for affiliation and cleanup
-	protected SCR_AIGroup AddGroup_S(AROR_MissionBoardComponent board, AROR_EFactionRole role, notnull array<ResourceName> members, vector position)
+	protected SCR_AIGroup AddGroup_S(AROR_MissionBoardComponent board, AROR_EFactionRole role, notnull array<AROR_EUnitType> members, vector position)
 	{
 		SCR_AIGroup group = board.SpawnGroup_S(role, members, position);
 		if (group)
@@ -145,8 +145,8 @@ class AROR_Mission
 		if (count <= 0)
 			return null;
 
-		array<ResourceName> members = {};
-		board.BuildGuardTeam_S(m_eEnemyRole, count, members);
+		array<AROR_EUnitType> members = {};
+		board.BuildGuardTeam_S(count, members);
 
 		vector spot = centre;
 		vector found;

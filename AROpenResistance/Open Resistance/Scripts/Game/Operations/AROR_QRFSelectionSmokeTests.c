@@ -104,8 +104,6 @@ class AROR_QRFSelectionSmokeTests
 		profile.m_iPersonnelBudget = budget;
 		profile.m_iCrewCount = 1;
 		profile.m_sVehicle = "test_vehicle.et";
-		profile.m_sCrewCharacter = "test_crew.et";
-		profile.m_sInfantryGroup = "test_team.et";
 		profile.m_fDismountDistance = 100;
 		return profile;
 	}

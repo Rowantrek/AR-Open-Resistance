@@ -26,10 +26,20 @@ class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
 
 	protected ref ScriptInvokerBase<AROR_OnResistanceStorageChanged> m_OnStorageChanged = new ScriptInvokerBase<AROR_OnResistanceStorageChanged>();
 
+	//! Local counter bumped whenever the stock changes, so readers can cache derived lists
+	protected int m_iRevision;
+
 	//------------------------------------------------------------------------------------------------
 	static AROR_ResistanceStorageComponent GetInstance()
 	{
 		return s_Instance;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every machine: changes whenever the stock does (not replicated; only compare values from one machine)
+	int GetRevision()
+	{
+		return m_iRevision;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -150,6 +160,65 @@ class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Server only. For a freshly spawned item (its own prefab already taken): takes one of each nested inventory
+	//! item (default magazines, attachments, contents) from stock and deletes the ones that are not stocked, so taking
+	//! costs exactly what AddEntity_S gives back on deposit.
+	void TakeNestedContents_S(IEntity root)
+	{
+		if (!Replication.IsServer() || !root)
+			return;
+
+		array<IEntity> visited = {root};
+		if (TakeNestedContents(root, visited))
+			Publish_S();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! true when any stock was taken
+	protected bool TakeNestedContents(IEntity parent, notnull array<IEntity> visited)
+	{
+		bool changed = false;
+
+		array<Managed> components = {};
+		parent.FindComponents(BaseInventoryStorageComponent, components);
+		foreach (Managed managed : components)
+		{
+			BaseInventoryStorageComponent storage = BaseInventoryStorageComponent.Cast(managed);
+			if (!storage)
+				continue;
+
+			array<IEntity> nested = {};
+			storage.GetAll(nested, false);
+			foreach (IEntity child : nested)
+			{
+				// Same rule as CollectItemEntities: only inventory items count, each once
+				if (!child || visited.Contains(child) || !child.FindComponent(InventoryItemComponent))
+					continue;
+
+				visited.Insert(child);
+
+				ResourceName prefab = SCR_ResourceNameUtils.GetPrefabName(child);
+				if (prefab.IsEmpty())
+					continue;
+
+				if (GetQuantity(prefab) <= 0)
+				{
+					SCR_EntityHelper.DeleteEntityAndChildren(child);
+					continue;
+				}
+
+				AdjustStock(prefab, -1);
+				changed = true;
+
+				if (TakeNestedContents(child, visited))
+					changed = true;
+			}
+		}
+
+		return changed;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Server only: replace stock from a save (used by the serializer)
 	void RestoreEntries_S(notnull array<ResourceName> prefabs, notnull array<int> quantities)
 	{
@@ -196,6 +265,7 @@ class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
 			m_aQuantities.Insert(qty);
 		}
 
+		m_iRevision++;
 		Replication.BumpMe();
 		m_OnStorageChanged.Invoke();
 	}
@@ -215,6 +285,7 @@ class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
 			m_mStock.Set(prefab, qty);
 		}
 
+		m_iRevision++;
 		m_OnStorageChanged.Invoke();
 	}
 
