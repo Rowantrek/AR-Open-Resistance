@@ -86,18 +86,41 @@ modded class SCR_ResourcePlayerControllerInventoryComponent
 		if (!resistanceStorage || !resistanceStorage.Take_S(resourceNameItem, 1))
 			return true;
 
-		if (inventoryManagerComponent.TrySpawnPrefabToStorage(resourceNameItem, storageComponent, cb: new SCR_PrefabSpawnCallback(storageComponent)))
+		// Spawned here rather than with TrySpawnPrefabToStorage so its default contents can be charged before handing it over
+		IEntity item = SpawnArsenalItem(resourceNameItem, storagePosition);
+		if (!item)
+		{
+			resistanceStorage.Add_S(resourceNameItem, 1);
+			return true;
+		}
+
+		resistanceStorage.TakeNestedContents_S(item);
+
+		if (inventoryManagerComponent.TryInsertItemInStorage(item, storageComponent, cb: new SCR_PrefabSpawnCallback(storageComponent)))
 		{
 			if (s_OnArsenalItemRequested)
 				s_OnArsenalItemRequested.Invoke(resourceComponent, resourceNameItem, controller, storageComponent, resourceType, 0);
 		}
 		else
 		{
-			// Spawn failed after Take_S (same risk as vanilla consuming supplies first)
-			resistanceStorage.Add_S(resourceNameItem, 1);
+			// Returns the item and whatever was charged for its contents, and deletes it
+			resistanceStorage.AddEntity_S(item);
 		}
 
 		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected IEntity SpawnArsenalItem(ResourceName prefab, vector position)
+	{
+		Resource resource = Resource.Load(prefab);
+		if (!resource || !resource.IsValid())
+			return null;
+
+		EntitySpawnParams params = new EntitySpawnParams();
+		params.TransformMode = ETransformMode.WORLD;
+		params.Transform[3] = position;
+		return GetGame().SpawnEntityPrefab(resource, GetGame().GetWorld(), params);
 	}
 
 	//------------------------------------------------------------------------------------------------
