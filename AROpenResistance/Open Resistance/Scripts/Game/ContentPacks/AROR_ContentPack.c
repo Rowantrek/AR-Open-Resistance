@@ -1,8 +1,9 @@
 //! A content pack (see ARCHITECTURE.md -> Content Packs): the items and vehicles one content source (the base game, a
 //! mod such as RHS) offers, each with a price, a minimum readiness and import requirements, in the same fixed
-//! categories as faction presets (no units). A pack can need addons: it is only available while all of them are
-//! loaded. The admin enables or disables available packs per campaign. One `.conf` per pack, listed in
-//! AROR_ContentPackRegistry.
+//! categories as faction presets (no units). Entries sit in groups, one per set of addons they need (usually one
+//! group per mod), so a pack can cover a mod family and only the entries of loaded mods are offered. A pack can also
+//! need addons itself: it is then only available while all of them are loaded. The admin enables or disables
+//! available packs per campaign. One `.conf` per pack, listed in AROR_ContentPackRegistry.
 [BaseContainerProps(configRoot: true)]
 class AROR_ContentPack
 {
@@ -12,30 +13,14 @@ class AROR_ContentPack
 	[Attribute("", desc: "Name shown to the admin when enabling packs")]
 	protected string m_sName;
 
-	[Attribute("", desc: "GUIDs of the addons this pack needs (as in their addon.gproj). Empty: always available.")]
+	[Attribute("", desc: "GUIDs of the addons this whole pack needs (as in their addon.gproj). Empty: always available. To cover a mod family, leave this empty and put each mod's GUID on its own group.")]
 	protected ref array<string> m_aRequiredAddons;
 
 	[Attribute("1", desc: "Enabled when available, unless the admin turned it off in this campaign")]
 	protected bool m_bEnabledByDefault;
 
-	// One typed list per category, so the config editor only offers the right entry class
-	[Attribute(desc: "Empty vehicles (no crew)", category: "Vehicles")]
-	protected ref array<ref AROR_ContentPackVehicle> m_aVehicles;
-
-	[Attribute(desc: "Clothing and carried kit", category: "Gear")]
-	protected ref array<ref AROR_ContentPackGear> m_aGear;
-
-	[Attribute(desc: "Medical supplies, binoculars, radios and other equipment", category: "Equipment")]
-	protected ref array<ref AROR_ContentPackEquipment> m_aEquipment;
-
-	[Attribute(desc: "Hand-held weapons", category: "Weapons")]
-	protected ref array<ref AROR_ContentPackWeapon> m_aWeapons;
-
-	[Attribute(desc: "Weapon accessories", category: "Weapon accessories")]
-	protected ref array<ref AROR_ContentPackWeaponAccessory> m_aWeaponAccessories;
-
-	[Attribute(desc: "Ammunition, including rocket pods and other munitions loaded onto vehicles and aircraft", category: "Ammunition")]
-	protected ref array<ref AROR_ContentPackAmmunition> m_aAmmunition;
+	[Attribute(desc: "Entries grouped by the addons they need")]
+	protected ref array<ref AROR_ContentPackGroup> m_aGroups;
 
 	//------------------------------------------------------------------------------------------------
 	string GetId()
@@ -56,8 +41,8 @@ class AROR_ContentPack
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! True when every required addon is in loadedAddons (GUIDs, compared case-insensitively). Entries can have their
-	//! own requirements on top (AROR_ContentPackEntry), so one pack can cover many optional mods.
+	//! True when every required addon is in loadedAddons (GUIDs, compared case-insensitively). Groups have their own
+	//! requirements on top (AROR_ContentPackGroup), so one pack can cover many optional mods.
 	bool HasRequiredAddons(notnull array<string> loadedAddons)
 	{
 		return AreAddonsLoaded(m_aRequiredAddons, loadedAddons);
@@ -97,19 +82,44 @@ class AROR_ContentPack
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Adds every entry of the category with a known type; returns how many were added
+	//! Adds every entry of the category with a known type, whatever its addons; returns how many were added
 	int GetAllEntries(AROR_EFactionPresetCategory category, notnull array<AROR_ContentPackEntry> outEntries)
 	{
-		array<AROR_ContentPackEntry> entries = {};
-		CollectEntries(category, entries);
+		if (!m_aGroups)
+			return 0;
 
 		int added;
-		foreach (AROR_ContentPackEntry entry : entries)
+		foreach (AROR_ContentPackGroup group : m_aGroups)
 		{
-			if (entry.IsKnownType())
+			if (group)
+				added += group.GetEntries(category, outEntries);
+		}
+
+		return added;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Adds the entries of the category with a known type whose group has all its addons loaded. Entries of groups with
+	//! a missing addon are not added but counted in skipped (which is added to, not reset). Returns how many were added.
+	int GetAvailableEntries(AROR_EFactionPresetCategory category, notnull array<string> loadedAddons, notnull array<AROR_ContentPackEntry> outEntries, inout int skipped)
+	{
+		if (!m_aGroups)
+			return 0;
+
+		int added;
+		foreach (AROR_ContentPackGroup group : m_aGroups)
+		{
+			if (!group)
+				continue;
+
+			if (group.HasRequiredAddons(loadedAddons))
 			{
-				outEntries.Insert(entry);
-				added++;
+				added += group.GetEntries(category, outEntries);
+			}
+			else
+			{
+				array<AROR_ContentPackEntry> unavailable = {};
+				skipped += group.GetEntries(category, unavailable);
 			}
 		}
 
@@ -126,18 +136,24 @@ class AROR_ContentPack
 			return false;
 		}
 
+		if (!m_aGroups)
+			return true;
+
 		int empty;
-		for (int category = AROR_EFactionPresetCategory.VEHICLES; category <= AROR_EFactionPresetCategory.AMMUNITION; category++)
+		foreach (AROR_ContentPackGroup group : m_aGroups)
 		{
+			if (!group)
+				continue;
+
 			array<AROR_ContentPackEntry> entries = {};
-			CollectEntries(category, entries);
+			group.GetAllEntries(entries);
 			foreach (AROR_ContentPackEntry entry : entries)
 			{
 				if (entry.GetPrefab().IsEmpty())
 					empty++;
 
 				if (!entry.IsKnownType())
-					Print(string.Format("[AROR] Content pack '%1' has a %2 entry with an unknown type (%3); it is ignored", m_sId, typename.EnumToString(AROR_EFactionPresetCategory, category), entry.GetTypeValue()), LogLevel.WARNING);
+					Print(string.Format("[AROR] Content pack '%1' has a %2 entry with an unknown type (%3); it is ignored", m_sId, typename.EnumToString(AROR_EFactionPresetCategory, entry.GetCategory()), entry.GetTypeValue()), LogLevel.WARNING);
 			}
 		}
 
@@ -145,79 +161,5 @@ class AROR_ContentPack
 			Print(string.Format("[AROR] Content pack '%1' has %2 entries without a prefab", m_sId, empty), LogLevel.WARNING);
 
 		return true;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! The one place that maps a category to its list; everything else works on the shared entry type
-	protected void CollectEntries(AROR_EFactionPresetCategory category, notnull array<AROR_ContentPackEntry> outEntries)
-	{
-		switch (category)
-		{
-			case AROR_EFactionPresetCategory.VEHICLES:
-				if (m_aVehicles)
-				{
-					foreach (AROR_ContentPackVehicle vehicle : m_aVehicles)
-					{
-						if (vehicle)
-							outEntries.Insert(vehicle);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.GEAR:
-				if (m_aGear)
-				{
-					foreach (AROR_ContentPackGear gear : m_aGear)
-					{
-						if (gear)
-							outEntries.Insert(gear);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.EQUIPMENT:
-				if (m_aEquipment)
-				{
-					foreach (AROR_ContentPackEquipment equipment : m_aEquipment)
-					{
-						if (equipment)
-							outEntries.Insert(equipment);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.WEAPONS:
-				if (m_aWeapons)
-				{
-					foreach (AROR_ContentPackWeapon weapon : m_aWeapons)
-					{
-						if (weapon)
-							outEntries.Insert(weapon);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.WEAPON_ACCESSORIES:
-				if (m_aWeaponAccessories)
-				{
-					foreach (AROR_ContentPackWeaponAccessory accessory : m_aWeaponAccessories)
-					{
-						if (accessory)
-							outEntries.Insert(accessory);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.AMMUNITION:
-				if (m_aAmmunition)
-				{
-					foreach (AROR_ContentPackAmmunition ammunition : m_aAmmunition)
-					{
-						if (ammunition)
-							outEntries.Insert(ammunition);
-					}
-				}
-				break;
-		}
 	}
 }

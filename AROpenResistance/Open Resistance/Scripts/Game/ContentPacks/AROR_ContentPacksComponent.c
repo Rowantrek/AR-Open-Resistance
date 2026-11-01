@@ -331,13 +331,13 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 		{
 			for (int category = AROR_EFactionPresetCategory.VEHICLES; category <= AROR_EFactionPresetCategory.AMMUNITION; category++)
 			{
+				// Only entries of groups whose addons are loaded: an entry for a mod that is not loaded must not hide the item it would replace
 				array<AROR_ContentPackEntry> entries = {};
-				pack.GetAllEntries(category, entries);
+				int unavailable;
+				pack.GetAvailableEntries(category, m_aLoadedAddons, entries, unavailable);
 				foreach (AROR_ContentPackEntry entry : entries)
 				{
-					// An entry for a mod that is not loaded must not hide the item it would replace
-					if (entry.HasRequiredAddons(m_aLoadedAddons))
-						AddReplacements(pack, entry);
+					AddReplacements(pack, entry);
 				}
 			}
 		}
@@ -348,15 +348,9 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 			for (int category = AROR_EFactionPresetCategory.VEHICLES; category <= AROR_EFactionPresetCategory.AMMUNITION; category++)
 			{
 				array<AROR_ContentPackEntry> entries = {};
-				pack.GetAllEntries(category, entries);
+				pack.GetAvailableEntries(category, m_aLoadedAddons, entries, skipped);
 				foreach (AROR_ContentPackEntry entry : entries)
 				{
-					if (!entry.HasRequiredAddons(m_aLoadedAddons))
-					{
-						skipped++;
-						continue;
-					}
-
 					ResourceName prefab = entry.GetPrefab();
 					if (prefab.IsEmpty() || m_mReplacements.Contains(prefab) || m_mCatalogue.Contains(prefab))
 						continue;

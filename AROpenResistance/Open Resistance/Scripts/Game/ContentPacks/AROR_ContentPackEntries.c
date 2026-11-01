@@ -20,11 +20,11 @@ class AROR_ContentPackEntry
 	[Attribute("0", desc: "Import facilities (seaports, heliports and airports together) the role must hold to import this asset", params: "0 inf")]
 	protected int m_iRequiredImportPoints;
 
+	[Attribute("1", desc: "Whether the Resistance can buy this in the Black Market or Imports. Turn off for items that only enemy armies should field (they stay available to faction presets and missions).")]
+	protected bool m_bResistanceCanPurchase;
+
 	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Prefabs this entry replaces while its pack is enabled: they are not sold, and faction presets listing them use this prefab instead", params: "et")]
 	protected ref array<ResourceName> m_aReplaces;
-
-	[Attribute("", desc: "GUIDs of the addons this entry needs (as in their addon.gproj). The entry is ignored, including what it replaces, unless all are loaded. Empty: always available.")]
-	protected ref array<string> m_aRequiredAddons;
 
 	//------------------------------------------------------------------------------------------------
 	ResourceName GetPrefab()
@@ -33,10 +33,10 @@ class AROR_ContentPackEntry
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! True when every addon this entry needs is in loadedAddons
-	bool HasRequiredAddons(notnull array<string> loadedAddons)
+	//! False for entries the Resistance cannot buy: the shops leave them out, enemy armies can still field them
+	bool CanResistancePurchase()
 	{
-		return AROR_ContentPack.AreAddonsLoaded(m_aRequiredAddons, loadedAddons);
+		return m_bResistanceCanPurchase;
 	}
 
 	//------------------------------------------------------------------------------------------------
