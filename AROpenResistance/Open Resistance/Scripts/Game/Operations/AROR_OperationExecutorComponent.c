@@ -173,10 +173,8 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 
 	[Attribute("0", desc: "Enable only after configuring infantry groups, waypoints and safe launch positions")]
 	protected bool m_bExecuteOperations;
-	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Occupier infantry group prefab; its faction and every member must match the commander", params: "et")]
-	protected ResourceName m_sOccupiersGroupPrefab;
-	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Invader infantry group prefab; its faction and every member must match the commander", params: "et")]
-	protected ResourceName m_sInvadersGroupPrefab;
+	[Attribute("", UIWidgets.ComboBox, desc: "Infantry unit types for responses without a force profile, in order (the first leads). Empty uses a fire team.", enums: ParamEnumArray.FromEnum(AROR_EUnitType))]
+	protected ref array<AROR_EUnitType> m_aLegacyInfantryUnits;
 	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Attack waypoint prefab, e.g. a search-and-destroy waypoint", params: "et")]
 	protected ResourceName m_sAttackWaypointPrefab;
 	[Attribute("", UIWidgets.ResourceNamePicker, desc: "QRF waypoint prefab, e.g. a defend waypoint", params: "et")]
@@ -1006,6 +1004,16 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		TryActivateOperation(operation);
 	}
 
+	//! Fills a group with one member per unit type of the role: the role's base character, dressed from its faction
+	//! preset loadout at the role's current Readiness as it spawns. Returns the slot count.
+	protected int FillUnits(SCR_AIGroup group, AROR_EFactionRole role, notnull array<AROR_EUnitType> types)
+	{
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		if (!group || !presets)
+			return 0;
+		return presets.FillGroup_S(group, role, types);
+	}
+
 	protected SCR_AIGroup SpawnEmptyGroup(ResourceName prefab, vector position)
 	{
 		Resource resource = Resource.Load(prefab);
@@ -1150,20 +1158,27 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			FailOperation(operation, "Crew group cannot adopt the configured campaign faction");
 			return;
 		}
-		if (!force.m_CrewGroup.m_aUnitPrefabSlots)
-			force.m_CrewGroup.m_aUnitPrefabSlots = {};
-		force.m_CrewGroup.m_aUnitPrefabSlots.Clear();
+		array<AROR_EUnitType> crewTypes = {};
 		for (int c = 0; c < profile.m_iCrewCount; c++)
-			force.m_CrewGroup.m_aUnitPrefabSlots.Insert(profile.m_sCrewCharacter);
+			crewTypes.Insert(profile.m_eCrewType);
+		if (FillUnits(force.m_CrewGroup, profile.m_eRole, crewTypes) != profile.m_iCrewCount)
+		{
+			FailOperation(operation, "Crew has no character in the role's faction presets");
+			return;
+		}
 		if ((profile.m_eType == AROR_EForceType.ARMOUR && !profile.m_bFillPassengerSeats))
 			force.m_Group = force.m_CrewGroup;
 		else
 		{
 			vector infantryPosition = launchPosition;
 			infantryPosition[0] = infantryPosition[0] - 8;
-			force.m_Group = SpawnEmptyGroup(profile.m_sInfantryGroup, infantryPosition);
+			force.m_Group = SpawnEmptyGroup(m_sCrewGroupPrefab, infantryPosition);
 			if (force.m_Group)
+			{
 				force.m_Group.GetOnAgentAdded().Insert(force.OnAgentAdded);
+				profile.GetInfantryUnits(force.m_aInfantryTypes);
+				FillUnits(force.m_Group, profile.m_eRole, force.m_aInfantryTypes);
+			}
 		}
 		if (!force.m_Group || !force.m_Group.m_aUnitPrefabSlots || force.m_Group.m_aUnitPrefabSlots.Count() < 1)
 		{
@@ -1236,15 +1251,18 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
-		ResourceName groupPrefab = m_sOccupiersGroupPrefab;
+		// Infantry spawn into a generic group as the role's base characters, dressed from the faction preset
+		ResourceName groupPrefab = m_sCrewGroupPrefab;
 		vector launchPosition = m_vOccupiersSpawnPosition;
 		if (operation.GetRole() == AROR_EFactionRole.INVADERS)
-		{
-			groupPrefab = m_sInvadersGroupPrefab;
 			launchPosition = m_vInvadersSpawnPosition;
-		}
+		array<AROR_EUnitType> infantryTypes = {};
 		if (profile)
-			groupPrefab = profile.m_sInfantryGroup;
+			profile.GetInfantryUnits(infantryTypes);
+		else if (m_aLegacyInfantryUnits && !m_aLegacyInfantryUnits.IsEmpty())
+			infantryTypes.Copy(m_aLegacyInfantryUnits);
+		else
+			AROR_ForceProfile.GetDefaultFireTeam(infantryTypes);
 		if (operation.m_TacticalCommander)
 			launchPosition = TacticalLaunchPoint(operation.m_TacticalCommander, packageIndex);
 		else
@@ -1292,8 +1310,7 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		force.m_bLogFriendlyDamage = m_bLogFriendlyDamage;
 		group.GetOnAgentAdded().Insert(force.OnAgentAdded);
 		force.m_bTacticalControlled = operation.m_TacticalCommander != null;
-		if (group.m_aUnitPrefabSlots)
-			force.m_iReservedMembers = group.m_aUnitPrefabSlots.Count();
+		force.m_iReservedMembers = FillUnits(group, operation.GetRole(), infantryTypes);
 		int requestedMembers = force.m_iReservedMembers;
 		if (profile && requestedMembers <= profile.m_iPersonnelBudget)
 			force.m_iReservedMembers = profile.m_iPersonnelBudget;

@@ -494,7 +494,7 @@ class AROR_GarrisonComponent : ScriptComponent
 		{
 			for (int member = 0; member < 4; member++)
 			{
-				int infantry = AddSlot(InfantryPrefab(faction, member), 0, group);
+				int infantry = AddSlot(CharacterPrefab(InfantryType(member)), 0, group);
 				m_aSlots[infantry].m_iVariant = member;
 			}
 			group++;
@@ -531,7 +531,7 @@ class AROR_GarrisonComponent : ScriptComponent
 		// ordinals are unchanged. The variant records which post he holds.
 		for (int post = 0; post < SentryPosts().Count(); post++)
 		{
-			int sentry = AddSlot(InfantryPrefab(faction, SENTRY_VARIANT + post), 0, group++);
+			int sentry = AddSlot(CharacterPrefab(InfantryType(SENTRY_VARIANT + post)), 0, group++);
 			m_aSlots[sentry].m_iVariant = SENTRY_VARIANT + post;
 		}
 		// Crew slots are added from each actual hull's seat list on first activation.
@@ -611,21 +611,36 @@ class AROR_GarrisonComponent : ScriptComponent
 		return FindDefencePosition(slot.m_iKind, PositionOrdinal(index));
 	}
 
-	protected ResourceName InfantryPrefab(AROR_GarrisonFaction faction, int variant)
+	//! The preset unit type behind a saved infantry variant: team members 0-3 are rifleman, automatic rifleman,
+	//! grenadier and team leader; tower sentries are marksmen
+	protected static AROR_EUnitType InfantryType(int variant)
 	{
 		if (variant >= SENTRY_VARIANT)
+			return AROR_EUnitType.MARKSMAN;
+		switch (variant)
 		{
-			if (!faction.m_sMarksman.IsEmpty())
-				return faction.m_sMarksman;
-			return faction.m_sInfantry;
+			case 1: return AROR_EUnitType.AUTORIFLEMAN;
+			case 2: return AROR_EUnitType.GRENADIER;
+			case 3: return AROR_EUnitType.TEAMLEADER;
 		}
-		if (variant > 0 && faction.m_aInfantryVariants && variant <= faction.m_aInfantryVariants.Count())
-		{
-			ResourceName specialist = faction.m_aInfantryVariants[variant - 1];
-			if (!specialist.IsEmpty())
-				return specialist;
-		}
-		return faction.m_sInfantry;
+		return AROR_EUnitType.RIFLEMAN;
+	}
+
+	//! The preset unit type of a team or crew slot
+	protected static AROR_EUnitType SlotUnitType(AROR_GarrisonSlot slot)
+	{
+		if (slot.m_iKind == 4)
+			return AROR_EUnitType.CREW;
+		return InfantryType(slot.m_iVariant);
+	}
+
+	//! The character a roster unit spawns as (the role's base character, dressed from its preset loadout)
+	protected ResourceName CharacterPrefab(AROR_EUnitType type)
+	{
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		if (!presets)
+			return string.Empty;
+		return presets.GetSpawnPrefab(m_eRosterRole, type);
 	}
 
 	protected bool InitializeFaction(IEntity entity)
@@ -1165,7 +1180,7 @@ class AROR_GarrisonComponent : ScriptComponent
 		}
 		for (int extra = previous.Count(); extra < usable.Count(); extra++)
 		{
-			int added = AddSlot(faction.m_sCrew, 4, m_aSlots[vehicleIndex].m_iGroup, vehicleIndex, usable[extra]);
+			int added = AddSlot(CharacterPrefab(AROR_EUnitType.CREW), 4, m_aSlots[vehicleIndex].m_iGroup, vehicleIndex, usable[extra]);
 			if (!previous.IsEmpty() || m_aSlots[vehicleIndex].m_bCrewRecorded)
 				m_aSlots[added].m_bLost = true; // A changed catalogue cannot grant replacement personnel.
 		}
@@ -1265,11 +1280,17 @@ class AROR_GarrisonComponent : ScriptComponent
 				return false;
 			}
 			first.m_iPlacementFailureSince = -1;
-			if (!group.m_aUnitPrefabSlots)
-				group.m_aUnitPrefabSlots = {};
-			group.m_aUnitPrefabSlots.Clear();
+			// Members spawn as the role's base character and are dressed from their preset loadout at current Readiness
+			array<AROR_EUnitType> types = {};
 			foreach (int slotIndex : indices)
-				group.m_aUnitPrefabSlots.Insert(m_aSlots[slotIndex].m_sPrefab);
+				types.Insert(SlotUnitType(m_aSlots[slotIndex]));
+			AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+			if (!presets || presets.FillGroup_S(group, m_eRosterRole, types) != indices.Count())
+			{
+				SCR_EntityHelper.DeleteEntityAndChildren(group);
+				ReportPlacementFailure(indices[0], "role has no character for a roster unit (faction presets)");
+				return false;
+			}
 			AROR_GarrisonGroup pending = new AROR_GarrisonGroup();
 			pending.m_iId = groupId;
 			pending.m_Group = group;
@@ -1769,10 +1790,10 @@ class AROR_GarrisonComponent : ScriptComponent
 		{
 			switch (slot.m_iKind)
 			{
-				case 0: slot.m_sPrefab = InfantryPrefab(faction, slot.m_iVariant); break;
+				case 0: slot.m_sPrefab = CharacterPrefab(InfantryType(slot.m_iVariant)); break;
 				case 1: slot.m_sPrefab = StaticPrefab(faction, slot.m_iVariant); break;
 				case 2: slot.m_sPrefab = ParkedPrefab(faction, slot.m_iVariant); break;
-				case 4: slot.m_sPrefab = faction.m_sCrew; break;
+				case 4: slot.m_sPrefab = CharacterPrefab(AROR_EUnitType.CREW); break;
 				case 3:
 				{
 					if (!faction.m_aMannedVehicles || faction.m_aMannedVehicles.IsEmpty())

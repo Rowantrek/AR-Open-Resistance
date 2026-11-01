@@ -722,17 +722,20 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 		group.SetPrivacyChangeable(false);
 		group.SetLifecyclePolicy(SCR_EAIGroupLifecyclePolicy.Manual);
 
-		if (!group.m_aUnitPrefabSlots)
-			group.m_aUnitPrefabSlots = {};
+		// Each member spawns as the Resistance base character and is dressed from its preset unit loadout
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		int slots;
+		if (presets)
+			slots = presets.FillGroup_S(group, AROR_EFactionRole.RESISTANCE, type.m_aUnits);
 
-		group.m_aUnitPrefabSlots.Clear();
-		foreach (ResourceName member : type.m_aMembers)
+		if (slots < 1)
 		{
-			group.m_aUnitPrefabSlots.Insert(member);
+			SCR_EntityHelper.DeleteEntityAndChildren(group);
+			return null;
 		}
 
 		// Members spawn through the engine's shared AI queue, not all in this frame
-		group.RequestSpawn(type.GetSize());
+		group.RequestSpawn(slots);
 		return group;
 	}
 

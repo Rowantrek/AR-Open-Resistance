@@ -1,5 +1,5 @@
 MetaFileClass {
- Name "{B47E2C19D5A6F308}Configs/FactionPresets/AROR_DefaultUnitPrefabs.conf"
+ Name "{B47E2C19D5A6F308}Configs/FactionPresets/AROR_RoleBaseCharacters.conf"
  Configurations {
   CONFResourceClass PC {
   }

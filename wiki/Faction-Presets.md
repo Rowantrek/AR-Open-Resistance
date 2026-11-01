@@ -76,12 +76,13 @@ AROR_FactionPreset {
 
 ## Unit characters
 
-A unit's **prefab** is its character. You can either:
+Every AI soldier spawns as its **role's base character**, a gear-less character, and is then dressed from its unit's [loadout](#unit-loadouts). This happens in garrisons, QRFs and attacks, missions and High Command squads. Those systems ask your preset for a unit **type** (RIFLEMAN, CREW…), never for a character prefab. So:
 
-- **Name a character** that already wears its gear (as the base-game presets currently do), or
-- **Leave the prefab empty.** The unit then uses its role's default gear-less character, from `Configs/FactionPresets/AROR_DefaultUnitPrefabs.conf` (e.g. `AROR_Character_Occupiers_Rifleman`), and its [loadout](#unit-loadouts) dresses it.
+- **Every unit you want fielded needs loadouts.** A unit's own **prefab** is not spawned. It is only where the [loadout importer](#getting-kits-from-existing-characters) reads a kit from, so you can leave it empty once the unit has loadouts.
+- **Missing units fall back.** If your preset has no unit of a type with a loadout (say, no PILOT), the same type from the role's base-game preset is used instead (`US_ARMY` for the Occupiers, `USSR_ARMY` for the Invaders, `FIA` for the Resistance), and failing that its rifleman. The log names each fallback once.
+- **Civilians** have no base character, so CIVILIAN units still spawn as the prefab the preset names.
 
-The default characters inherit a base-game rifleman of the role's *default* army, so they carry that army's faces and voices. If your army sounds different, make your own gear-less characters and name them in your preset.
+The base characters are set per role in `Configs/FactionPresets/AROR_RoleBaseCharacters.conf` (`AROR_Character_Resistance_AI_Base`, `AROR_Character_Occupiers_Base`, `AROR_Character_Invaders_Base`). Each inherits a base-game rifleman of the role's *default* army, so it carries that army's faces and voices. If your army should sound different, make your own gear-less characters and point the roles at them with **Override in addon** on that config.
 
 To make a gear-less character, create a prefab inheriting a base-game character, then in Prefab Edit Mode empty:
 
@@ -114,7 +115,7 @@ So a rifleman can start with an iron-sight rifle at readiness 1, and get an opti
 
 Every prefab in a loadout goes through content pack **replacements** (so a weapons mod's pack can swap the rifles every army carries), but content pack readiness does *not* gate loadout items. The variant's own readiness decides.
 
-> **Status:** unit loadouts are data only for now. AI still spawn with their character prefab's own kit until the AI outfitter is added.
+AI are dressed at the moment they spawn, from their army's readiness at that time. A soldier keeps their kit when readiness rises later.
 
 ## Player loadout
 
@@ -124,4 +125,4 @@ When a player spawns wearing nothing, the server dresses them from their role's 
 
 ## Getting kits from existing characters
 
-Writing a loadout by hand is slow. To copy kits from existing characters, look at how the core does it: a Workbench-only option on `AROR_FactionPresetsComponent` (**Import Loadout Presets**, a list of preset IDs) spawns those presets' infantry in Play mode, reads what they carry, and writes it into the preset files as readiness 1 loadouts. Only the IDs you list are touched, and units that already have loadouts are kept. The core registers `FIA`, `US_ARMY` and `USSR_ARMY`; an extender mod registers its own presets by overriding `GetExtraTargets` in a `modded class AROR_UnitLoadoutImporter` (inside `#ifdef WORKBENCH`), giving each preset's ID, the folder of its file and the file name. See the RHS compat addon for an example.
+Writing a loadout by hand is slow. To copy kits from existing characters, look at how the core does it: a Workbench-only option on `AROR_FactionPresetsComponent` (**Import Loadout Presets**, a list of preset IDs) spawns those presets' infantry in Play mode, reads what they carry, and writes it into the preset files as readiness 1 loadouts. Only the IDs you list are touched, and units that already have loadouts are kept. The core registers `FIA`, `US_ARMY` and `USSR_ARMY`; an extender mod registers its own presets by overriding `GetExtraTargets` in a `modded class AROR_UnitLoadoutImporter` (inside `#ifdef WORKBENCH`), giving each preset's ID, the folder of its file and the file name. For a unit type your preset does not list yet, override `GetExtraUnitPrefabs` in the same class to name the character to read: the importer adds a new unit (that prefab, its type and the loadout) to the preset file. See the RHS compat addon for an example.

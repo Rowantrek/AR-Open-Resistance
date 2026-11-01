@@ -628,9 +628,12 @@ modded class AROR_OperationExecutorComponent
 		vector troopPoint = force.m_vLaunch + Vector(-15, 0, 0);
 		vector pilotPoint = force.m_vLaunch + Vector(8, 0, 0);
 		SCR_AIGroup crew = ReaperGroup(force, m_sCrewGroupPrefab, pilot, pilotPoint);
-		SCR_AIGroup infantry = ReaperGroup(force, force.m_Profile.m_sInfantryGroup, "", troopPoint);
+		// Pilots are REAPER's own characters; infantry are the role's base characters dressed from the faction preset
+		SCR_AIGroup infantry = ReaperGroup(force, m_sCrewGroupPrefab, "", troopPoint);
 		if (!crew || !infantry)
 			return false;
+		force.m_Profile.GetInfantryUnits(force.m_aInfantryTypes);
+		FillUnits(infantry, force.m_Profile.m_eRole, force.m_aInfantryTypes);
 		if (force.m_Escort)
 		{
 			vector escortPilotPoint = force.m_vEscortLaunch + Vector(8, 0, 0);

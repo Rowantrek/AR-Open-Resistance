@@ -49,20 +49,21 @@ class AROR_FactionPresetEntry
 	}
 }
 
-//! AI character. A preset has at most one unit per type. The prefab is optional: empty uses the role's default for the
-//! type (AROR_DefaultUnitPrefabs), so a preset can give a unit a loadout without naming a character. Loadouts are
-//! Readiness variants of the unit's kit; with none, the character keeps its prefab's own kit.
+//! AI unit. A preset has at most one unit per type. AI spawns as the role's gear-less base character
+//! (AROR_RoleBaseCharacters) and is dressed from the unit's loadouts, Readiness variants of its kit. The prefab is
+//! optional: it is the character the Workbench loadout importer reads a kit from, and the character itself only for a
+//! role without a base character (Civilians).
 [BaseContainerProps(), SCR_BaseContainerCustomTitleEnum(AROR_EUnitType, "m_eType")]
 class AROR_FactionPresetUnit : AROR_FactionPresetEntry
 {
 	[Attribute("0", UIWidgets.ComboBox, desc: "Unit type (one unit per type in a preset)", enums: ParamEnumArray.FromEnum(AROR_EUnitType))]
 	protected AROR_EUnitType m_eType;
 
-	[Attribute(desc: "Kit variants by Readiness. Empty keeps the character prefab's own kit; when set, use a character without gear (e.g. the role default).")]
+	[Attribute(desc: "Kit variants by Readiness, applied to the role's gear-less base character. A unit without loadouts is replaced by the base-game preset's unit of its type.")]
 	protected ref array<ref AROR_UnitLoadout> m_aLoadouts;
 
 	//------------------------------------------------------------------------------------------------
-	//! True when the unit names its own character instead of the role default
+	//! True when the unit names a character (the importer's kit source; the spawned character only for Civilians)
 	bool HasPrefab()
 	{
 		return !m_sPrefab.IsEmpty();
@@ -75,7 +76,7 @@ class AROR_FactionPresetUnit : AROR_FactionPresetEntry
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The loadout to use at a readiness (see AROR_UnitLoadout.Pick), or null to keep the prefab's own kit
+	//! The loadout to use at a readiness (see AROR_UnitLoadout.Pick), or null when it has none
 	AROR_UnitLoadout PickLoadout(int readiness)
 	{
 		return AROR_UnitLoadout.Pick(m_aLoadouts, readiness);

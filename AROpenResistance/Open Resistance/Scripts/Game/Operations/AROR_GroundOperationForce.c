@@ -1,6 +1,8 @@
 class AROR_GroundOperationForce : AROR_OperationForce
 {
 	ref AROR_ForceProfile m_Profile;
+	//! Infantry unit types in slot order (faction preset units; see AROR_FactionPresetsComponent.FillGroup_S)
+	ref array<AROR_EUnitType> m_aInfantryTypes = {};
 	SCR_AIGroup m_CrewGroup;
 	IEntity m_Vehicle;
 	AIWaypoint m_CrewWaypoint;
@@ -185,7 +187,7 @@ class AROR_GroundOperationForce : AROR_OperationForce
 			return false;
 		if (!m_Profile.m_bFillPassengerSeats)
 			return true;
-		if (m_Group == m_CrewGroup || !m_Group.m_aUnitPrefabSlots || m_Group.m_aUnitPrefabSlots.IsEmpty())
+		if (m_Group == m_CrewGroup || m_aInfantryTypes.IsEmpty())
 			return false;
 		BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(m_Vehicle.FindComponent(BaseCompartmentManagerComponent));
 		SCR_AIVehicleUsageComponent usage = SCR_AIVehicleUsageComponent.Cast(m_Vehicle.FindComponent(SCR_AIVehicleUsageComponent));
@@ -220,12 +222,13 @@ class AROR_GroundOperationForce : AROR_OperationForce
 		int passengers = cargoSeats - (transportCrew - crewSeats);
 		if (passengers < 1 || passengers + transportCrew + escortCrew > m_iReservedMembers)
 			return false;
-		array<ResourceName> infantryMix = {};
-		infantryMix.Copy(m_Group.m_aUnitPrefabSlots);
-		m_Group.m_aUnitPrefabSlots.Clear();
+		array<AROR_EUnitType> infantryMix = {};
+		infantryMix.Copy(m_aInfantryTypes);
+		m_aInfantryTypes.Clear();
 		for (int i = 0; i < passengers; i++)
-			m_Group.m_aUnitPrefabSlots.Insert(infantryMix[i % infantryMix.Count()]);
-		return true;
+			m_aInfantryTypes.Insert(infantryMix[i % infantryMix.Count()]);
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		return presets && presets.FillGroup_S(m_Group, m_Profile.m_eRole, m_aInfantryTypes) == passengers;
 	}
 
 	//! Spawn into known seats only after every requested member exists; no crew/infantry index mixing.
@@ -438,8 +441,8 @@ class AROR_GroundOperationForce : AROR_OperationForce
 
 	//! Last resort for the first seating. Moving a character into a seat is refused for AI the engine has not woken
 	//! (packages spawned about a kilometre or more from every player), so each member still standing beside the
-	//! hull is replaced by the seat's default occupant spawned straight into that seat
-	//! (BaseCompartmentSlot.SpawnDefaultCharacterInCompartment, the base game's "spawn with crew"), in the same
+	//! hull is replaced by a new character of the same unit type spawned straight into that seat
+	//! (BaseCompartmentSlot.SpawnCharacterInCompartment) and dressed from its faction preset loadout, in the same
 	//! group so orders, faction and loss tracking carry on. Seats are assigned as in ReseatMissing_S.
 	//! Returns how many were replaced.
 	int ReplaceUnseated_S()
@@ -475,7 +478,7 @@ class AROR_GroundOperationForce : AROR_OperationForce
 				assigned = crewSeats[crewIndex];
 			else if (crewIndex - crewSeats.Count() < cargoSeats.Count())
 				assigned = cargoSeats[crewIndex - crewSeats.Count()];
-			if (ReplaceIntoSeat(agent.GetControlledEntity(), assigned, m_CrewGroup))
+			if (ReplaceIntoSeat(agent.GetControlledEntity(), assigned, m_CrewGroup, m_Profile.m_eCrewType))
 				replaced++;
 		}
 		int passengerIndex = Math.Max(0, crew.Count() - crewSeats.Count());
@@ -485,7 +488,10 @@ class AROR_GroundOperationForce : AROR_OperationForce
 			if (passengerIndex < cargoSeats.Count())
 				passengerSeat = cargoSeats[passengerIndex];
 			passengerIndex++;
-			IEntity replacement = ReplaceIntoSeatEntity(m_aPassengers[p], passengerSeat, m_Group);
+			AROR_EUnitType passengerType = AROR_EUnitType.RIFLEMAN;
+			if (!m_aInfantryTypes.IsEmpty())
+				passengerType = m_aInfantryTypes[p % m_aInfantryTypes.Count()];
+			IEntity replacement = ReplaceIntoSeatEntity(m_aPassengers[p], passengerSeat, m_Group, passengerType);
 			if (replacement)
 			{
 				m_aPassengers[p] = replacement;
@@ -495,13 +501,13 @@ class AROR_GroundOperationForce : AROR_OperationForce
 		return replaced;
 	}
 
-	protected bool ReplaceIntoSeat(IEntity member, BaseCompartmentSlot seat, SCR_AIGroup group)
+	protected bool ReplaceIntoSeat(IEntity member, BaseCompartmentSlot seat, SCR_AIGroup group, AROR_EUnitType type)
 	{
-		return ReplaceIntoSeatEntity(member, seat, group) != null;
+		return ReplaceIntoSeatEntity(member, seat, group, type) != null;
 	}
 
 	//! The seated replacement, or null when the member is already seated or the seat cannot be filled this way
-	protected IEntity ReplaceIntoSeatEntity(IEntity member, BaseCompartmentSlot seat, SCR_AIGroup group)
+	protected IEntity ReplaceIntoSeatEntity(IEntity member, BaseCompartmentSlot seat, SCR_AIGroup group, AROR_EUnitType type)
 	{
 		if (!member || !seat || !group || IsSeatedInOwnVehicle(member))
 			return null;
@@ -510,12 +516,19 @@ class AROR_GroundOperationForce : AROR_OperationForce
 		ChimeraCharacter character = ChimeraCharacter.Cast(member);
 		if (!character || !character.GetCharacterController() || character.GetCharacterController().IsDead())
 			return null;
-		if (seat.IsOccupied() || seat.GetOccupant() || !seat.IsCompartmentAccessible() || seat.GetDefaultOccupantPrefab().IsEmpty())
+		if (seat.IsOccupied() || seat.GetOccupant() || !seat.IsCompartmentAccessible())
+			return null;
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		if (!presets || !m_Profile)
+			return null;
+		ResourceName prefab = presets.GetSpawnPrefab(m_Profile.m_eRole, type);
+		if (prefab.IsEmpty())
 			return null;
 		AIGroup target = group;
-		IEntity spawned = seat.SpawnDefaultCharacterInCompartment(target);
+		IEntity spawned = seat.SpawnCharacterInCompartment(prefab, target);
 		if (!spawned)
 			return null;
+		presets.OutfitLater_S(spawned, m_Profile.m_eRole, type);
 		// Keep the replacement in this package's group whatever group the engine put it in
 		AIControlComponent control = AIControlComponent.Cast(spawned.FindComponent(AIControlComponent));
 		if (control && control.GetControlAIAgent())

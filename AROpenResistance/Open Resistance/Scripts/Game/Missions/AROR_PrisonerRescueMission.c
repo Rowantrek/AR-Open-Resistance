@@ -20,8 +20,7 @@ class AROR_PrisonerRescueMission : AROR_Mission
 	//------------------------------------------------------------------------------------------------
 	override bool Plan_S(AROR_MissionBoardComponent board)
 	{
-		ResourceName prisoner = board.GetUnitPrefab_S(AROR_EFactionRole.CIVILIANS, AROR_EUnitType.CIVILIAN);
-		if (prisoner.IsEmpty())
+		if (!board.HasUnit_S(AROR_EFactionRole.CIVILIANS, AROR_EUnitType.CIVILIAN))
 			return false;
 
 		AROR_LocationComponent site = board.PickEnemyLocation_S(SITE_TYPES);
@@ -47,11 +46,10 @@ class AROR_PrisonerRescueMission : AROR_Mission
 		if (!board.FindClearPosition_S(site.GetCenter(), 35, 2, m_vHoldSpot))
 			return false;
 
-		array<ResourceName> members = {};
-		ResourceName prisoner = board.GetUnitPrefab_S(AROR_EFactionRole.CIVILIANS, AROR_EUnitType.CIVILIAN);
+		array<AROR_EUnitType> members = {};
 		for (int i = 0; i < PRISONERS; i++)
 		{
-			members.Insert(prisoner);
+			members.Insert(AROR_EUnitType.CIVILIAN);
 		}
 
 		m_Prisoners = AddGroup_S(board, AROR_EFactionRole.CIVILIANS, members, m_vHoldSpot);

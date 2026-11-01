@@ -386,25 +386,11 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! A unit of the type from the role's faction preset, falling back to its rifleman
-	ResourceName GetUnitPrefab_S(AROR_EFactionRole role, AROR_EUnitType type)
+	//! True when the role can field the unit type (from its faction preset or the base-game preset it falls back to)
+	bool HasUnit_S(AROR_EFactionRole role, AROR_EUnitType type)
 	{
 		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
-		if (!presets)
-			return string.Empty;
-
-		AROR_FactionPreset preset = presets.GetPreset(role);
-		if (!preset)
-			return string.Empty;
-
-		AROR_FactionPresetUnit unit = preset.GetUnit(type);
-		if (!unit)
-			unit = preset.GetUnit(AROR_EUnitType.RIFLEMAN);
-
-		if (!unit)
-			return string.Empty;
-
-		return unit.GetPrefab();
+		return presets && presets.HasUnit(role, type);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -441,7 +427,7 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! A guard team for the role: a leader and riflemen with an automatic rifleman and a machine gunner mixed in
-	void BuildGuardTeam_S(AROR_EFactionRole role, int count, notnull array<ResourceName> outMembers)
+	void BuildGuardTeam_S(int count, notnull array<AROR_EUnitType> outMembers)
 	{
 		outMembers.Clear();
 		for (int i = 0; i < count; i++)
@@ -454,17 +440,17 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 			else if (i == 4)
 				type = AROR_EUnitType.MACHINEGUNNER;
 
-			ResourceName prefab = GetUnitPrefab_S(role, type);
-			if (!prefab.IsEmpty())
-				outMembers.Insert(prefab);
+			outMembers.Insert(type);
 		}
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! An AI group of the role with these members (spawned through the engine's queue, not all this frame)
-	SCR_AIGroup SpawnGroup_S(AROR_EFactionRole role, notnull array<ResourceName> members, vector position)
+	//! An AI group of the role with one member per unit type, each spawned as the role's base character and dressed
+	//! from its preset loadout at the role's current Readiness (through the engine's queue, not all this frame)
+	SCR_AIGroup SpawnGroup_S(AROR_EFactionRole role, notnull array<AROR_EUnitType> members, vector position)
 	{
-		if (members.IsEmpty())
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		if (members.IsEmpty() || !presets)
 			return null;
 
 		string factionKey = GetFactionKey(role);
@@ -502,16 +488,14 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 		group.SetPrivacyChangeable(false);
 		group.SetLifecyclePolicy(SCR_EAIGroupLifecyclePolicy.Manual);
 
-		if (!group.m_aUnitPrefabSlots)
-			group.m_aUnitPrefabSlots = {};
-
-		group.m_aUnitPrefabSlots.Clear();
-		foreach (ResourceName member : members)
+		int slots = presets.FillGroup_S(group, role, members);
+		if (slots < 1)
 		{
-			group.m_aUnitPrefabSlots.Insert(member);
+			SCR_EntityHelper.DeleteEntityAndChildren(group);
+			return null;
 		}
 
-		group.RequestSpawn(members.Count());
+		group.RequestSpawn(slots);
 		return group;
 	}
 

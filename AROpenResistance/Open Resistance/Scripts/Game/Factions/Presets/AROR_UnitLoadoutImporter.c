@@ -64,6 +64,7 @@ class AROR_LoadoutImportUnit
 {
 	string m_sPresetId;
 	AROR_EUnitType m_eType;
+	ResourceName m_sPrefab;
 	IEntity m_Entity;
 	ref array<ref AROR_LoadoutImportClothing> m_aClothing = {};
 	ref array<ref AROR_LoadoutImportWeapon> m_aWeapons = {};
@@ -157,7 +158,44 @@ class AROR_UnitLoadoutImporter
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The unit types this importer handles: infantry
+	//! Extension point for extender mods (inside #ifdef WORKBENCH): override, call super, then add the character to read
+	//! a unit type's kit from for one of your presets, for types the preset does not list or lists without a prefab.
+	//! A type the preset does not list gets a new unit block (that prefab, its type and the loadout) in the file.
+	protected void GetExtraUnitPrefabs(string presetId, notnull map<AROR_EUnitType, ResourceName> outPrefabs)
+	{
+		// The base-game armies have no character for some types; each gets the closest one of the same army
+		switch (presetId)
+		{
+			case "FIA":
+			{
+				outPrefabs.Set(AROR_EUnitType.AUTORIFLEMAN, "{58E47E5A4D599432}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_MG.et");
+				outPrefabs.Set(AROR_EUnitType.GRENADIER, "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et");
+				outPrefabs.Set(AROR_EUnitType.SNIPER, "{CE33AB22F61F3365}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Sharpshooter.et");
+				outPrefabs.Set(AROR_EUnitType.LAT, "{C77DFB8546B3F2A2}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_LAT.et");
+				outPrefabs.Set(AROR_EUnitType.AA, "{C77DFB8546B3F2A2}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_LAT.et");
+				outPrefabs.Set(AROR_EUnitType.SQUADLEADER, "{FE65E8C60C751352}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_PL.et");
+				outPrefabs.Set(AROR_EUnitType.PILOT, "{641AD7731E23454B}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Crew.et");
+				break;
+			}
+			case "US_ARMY":
+			{
+				outPrefabs.Set(AROR_EUnitType.MARKSMAN, "{0F6689B491641155}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Sniper.et");
+				outPrefabs.Set(AROR_EUnitType.LAT, "{27BF1FF235DD6036}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_LAT.et");
+				outPrefabs.Set(AROR_EUnitType.AA, "{27BF1FF235DD6036}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_LAT.et");
+				break;
+			}
+			case "USSR_ARMY":
+			{
+				outPrefabs.Set(AROR_EUnitType.SNIPER, "{976AC400219898FA}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Sharpshooter.et");
+				outPrefabs.Set(AROR_EUnitType.LAT, "{BF643BE4ADBDFDD3}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_LAT.et");
+				outPrefabs.Set(AROR_EUnitType.AA, "{BF643BE4ADBDFDD3}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_LAT.et");
+				break;
+			}
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The unit types this importer handles: infantry, crew and pilots
 	protected static void GetInfantryTypes(notnull array<AROR_EUnitType> outTypes)
 	{
 		outTypes.Insert(AROR_EUnitType.RIFLEMAN);
@@ -174,6 +212,8 @@ class AROR_UnitLoadoutImporter
 		outTypes.Insert(AROR_EUnitType.RADIO_OPERATOR);
 		outTypes.Insert(AROR_EUnitType.TEAMLEADER);
 		outTypes.Insert(AROR_EUnitType.SQUADLEADER);
+		outTypes.Insert(AROR_EUnitType.CREW);
+		outTypes.Insert(AROR_EUnitType.PILOT);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -193,22 +233,34 @@ class AROR_UnitLoadoutImporter
 				continue;
 			}
 
+			map<AROR_EUnitType, ResourceName> extraPrefabs = new map<AROR_EUnitType, ResourceName>();
+			GetExtraUnitPrefabs(presetId, extraPrefabs);
+
 			foreach (AROR_EUnitType type : types)
 			{
+				// The preset's own character, else one the extender names for the type
+				ResourceName prefab;
 				AROR_FactionPresetUnit unit = preset.GetUnit(type);
-				if (!unit || !unit.HasPrefab())
+				if (unit && unit.HasPrefab())
+					prefab = unit.GetListedPrefab();
+				else
+					prefab = extraPrefabs.Get(type);
+
+				if (prefab.IsEmpty())
 					continue;
 
-				IEntity entity = SpawnOutOfTheWay(unit.GetListedPrefab());
+				string typeName = typename.EnumToString(AROR_EUnitType, type);
+				IEntity entity = SpawnOutOfTheWay(prefab);
 				if (!entity)
 				{
-					Print(string.Format("[AROR] Import unit loadouts: %1 %2 could not be spawned from %3", presetId, unit.GetTypeName(), unit.GetListedPrefab()), LogLevel.WARNING);
+					Print(string.Format("[AROR] Import unit loadouts: %1 %2 could not be spawned from %3", presetId, typeName, prefab), LogLevel.WARNING);
 					continue;
 				}
 
 				AROR_LoadoutImportUnit importUnit = new AROR_LoadoutImportUnit();
 				importUnit.m_sPresetId = presetId;
 				importUnit.m_eType = type;
+				importUnit.m_sPrefab = prefab;
 				importUnit.m_Entity = entity;
 				m_aUnits.Insert(importUnit);
 			}
@@ -468,9 +520,10 @@ class AROR_UnitLoadoutImporter
 		}
 
 		array<string> output = {};
-		int written, kept;
+		int written, kept, added;
 		bool inUnits, inUnit, hasLoadouts;
 		AROR_EUnitType blockType;
+		set<int> listedTypes = new set<int>();
 
 		foreach (string line : lines)
 		{
@@ -484,7 +537,12 @@ class AROR_UnitLoadoutImporter
 			if (!inUnit)
 			{
 				if (line == " }")
+				{
 					inUnits = false;
+					// Types the preset does not list yet get their own block (see GetExtraUnitPrefabs)
+					added = AppendNewUnits(presetId, listedTypes, output);
+					written += added;
+				}
 
 				// A unit block opens at two-space indent; Workbench omits m_eType when it is the default (RIFLEMAN)
 				inUnit = line.IndexOf("  AROR_FactionPresetUnit") == 0;
@@ -507,6 +565,7 @@ class AROR_UnitLoadoutImporter
 			if (line == "  }")
 			{
 				inUnit = false;
+				listedTypes.Insert(blockType);
 				AROR_LoadoutImportUnit unit = FindUnit(presetId, blockType);
 				if (unit && hasLoadouts)
 				{
@@ -532,7 +591,7 @@ class AROR_UnitLoadoutImporter
 		if (writtenPath.IsEmpty())
 			return;
 
-		Print(string.Format("[AROR] Import unit loadouts: %1: wrote %2 loadouts to %3 (%4 units already had loadouts and were kept)", presetId, written, writtenPath, kept), LogLevel.NORMAL);
+		Print(string.Format("[AROR] Import unit loadouts: %1: wrote %2 loadouts (%3 as new units) to %4 (%5 units already had loadouts and were kept)", presetId, written, added, writtenPath, kept), LogLevel.NORMAL);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -545,6 +604,29 @@ class AROR_UnitLoadoutImporter
 		}
 
 		return null;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Adds a unit block (prefab, type, loadout) for each read unit of the preset whose type has no block yet; returns
+	//! how many were added
+	protected int AppendNewUnits(string presetId, set<int> listedTypes, notnull array<string> output)
+	{
+		int added;
+		foreach (AROR_LoadoutImportUnit unit : m_aUnits)
+		{
+			if (unit.m_sPresetId != presetId || listedTypes.Contains(unit.m_eType))
+				continue;
+
+			output.Insert("  AROR_FactionPresetUnit {");
+			output.Insert(string.Format("   m_sPrefab \"%1\"", unit.m_sPrefab));
+			output.Insert("   m_eType " + typename.EnumToString(AROR_EUnitType, unit.m_eType));
+			AppendLoadout(unit, output);
+			output.Insert("  }");
+			listedTypes.Insert(unit.m_eType);
+			added++;
+		}
+
+		return added;
 	}
 
 	//------------------------------------------------------------------------------------------------
