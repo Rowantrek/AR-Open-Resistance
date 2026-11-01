@@ -31,7 +31,9 @@ class AROR_SetupApp : AROR_PhonePooledApp
 	protected static const float SAVE_ROW_STEP = 60;
 	protected static const float SAVE_ROW_INDENT = 60;
 	protected static const float EXPAND_WIDTH = 220;
-	protected static const int PACK_ROWS = 4;
+	protected static const int PACK_VISIBLE_ROWS = 5;
+	protected static const float PACK_ROW_HEIGHT = 52;
+	protected static const float PACK_SCROLLBAR_WIDTH = 44;
 	protected static const int SETTING_ROWS = 7;
 
 	protected Widget m_wResource;
@@ -58,7 +60,8 @@ class AROR_SetupApp : AROR_PhonePooledApp
 
 	// New campaign
 	protected int m_iOpenRole = -1;	//!< Role whose army dropdown is open, or -1
-	protected int m_iPackPage;
+	protected int m_iPackScroll;	//!< First visible row of the content pack tree
+	protected ref array<string> m_aExpanded = {};	//!< Expanded packs ("pack") and groups ("pack:group"), as indices
 	protected int m_iCategory;
 	protected int m_iSettingPage;
 
@@ -160,7 +163,7 @@ class AROR_SetupApp : AROR_PhonePooledApp
 		m_bWaitingForList = false;
 		m_bNameFilled = false;
 		m_iOpenRole = -1;
-		m_iPackPage = 0;
+		m_iPackScroll = 0;
 		m_iSettingPage = 0;
 	}
 
@@ -659,20 +662,30 @@ class AROR_SetupApp : AROR_PhonePooledApp
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! The content pack tree: every pack is a row, collapsed by default; expanding it lists its groups (usually one per
+	//! mod), and expanding a group lists the categories it has entries in. Each row has a switch. A pack or group with a
+	//! mix of on and off below it shows PARTIAL; a group whose mod is not loaded is off and cannot be turned on. The
+	//! visible rows scroll (wheel or the bar on the right).
 	protected void DrawPacks(notnull AROR_SetupDraft draft)
 	{
 		array<AROR_ContentPack> packs = {};
 		AROR_SetupDraft.GetAvailablePacks(packs);
 
-		int pages = Math.Max(1, (packs.Count() + PACK_ROWS - 1) / PACK_ROWS);
-		m_iPackPage = Math.ClampInt(m_iPackPage, 0, pages - 1);
+		array<string> rows = {};
+		BuildPackRows(packs, rows);
+
+		int total = rows.Count();
+		m_iPackScroll = Math.ClampInt(m_iPackScroll, 0, Math.Max(total - PACK_VISIBLE_ROWS, 0));
 		string note;
-		if (pages > 1)
-			note = string.Format("PAGE %1 OF %2", m_iPackPage + 1, pages);
+		if (total > PACK_VISIBLE_ROWS)
+			note = string.Format("ROWS %1-%2 OF %3", m_iPackScroll + 1, Math.Min(m_iPackScroll + PACK_VISIBLE_ROWS, total), total);
 
 		float top = CONTENT_TOP + 250;
 		SectionLabel(top, "CONTENT PACKS", note);
-		Text(LEFT, top + 24, CONTENT_WIDTH, 24, 16, "What can be bought and fielded, per content source. Only packs whose mods are loaded on this server are listed.", C(AROR_UIColors.TEXT_MUTED));
+		if (draft.HasPartialChoices())
+			Text(LEFT, top + 24, CONTENT_WIDTH, 24, 16, "Warning: turning off parts of a content pack can break things, e.g. an army whose vehicles or gear are no longer offered.", C(AROR_UIColors.WARN), true);
+		else
+			Text(LEFT, top + 24, CONTENT_WIDTH, 24, 16, "What can be bought and fielded, per content source. Expand a pack to turn off parts of it. Packs whose mods are not loaded are not listed.", C(AROR_UIColors.TEXT_MUTED));
 
 		if (packs.IsEmpty())
 		{
@@ -681,36 +694,218 @@ class AROR_SetupApp : AROR_PhonePooledApp
 		}
 
 		float rowsTop = top + 58;
-		float toggleX = LEFT + CONTENT_WIDTH - 24 - 140;
-		for (int r = 0; r < PACK_ROWS; r++)
+		for (int r = 0; r < PACK_VISIBLE_ROWS; r++)
 		{
-			int index = m_iPackPage * PACK_ROWS + r;
-			if (index >= packs.Count())
+			int index = m_iPackScroll + r;
+			if (index >= total)
 				break;
 
-			AROR_ContentPack pack = packs[index];
-			bool enabled = draft.IsPackEnabled(pack.GetId());
-			float y = rowsTop + r * 62;
-			Card(LEFT, y, CONTENT_WIDTH, 54);
-			Text(LEFT + 24, y + 14, 900, 30, 22, pack.GetName(), C(AROR_UIColors.TEXT), true);
+			DrawPackRow(draft, packs, rows[index], rowsTop + r * PACK_ROW_HEIGHT);
+		}
+
+		DrawPackScrollbar(LEFT + CONTENT_WIDTH - PACK_SCROLLBAR_WIDTH, rowsTop, PACK_VISIBLE_ROWS * PACK_ROW_HEIGHT - 6, total);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The rows of the tree in order, as "p:pack", "g:pack:group" and "s:pack:group:category" (indices into the
+	//! available packs, the pack's groups and AROR_EFactionPresetCategory)
+	protected void BuildPackRows(notnull array<AROR_ContentPack> packs, notnull array<string> outRows)
+	{
+		foreach (int packIndex, AROR_ContentPack pack : packs)
+		{
+			outRows.Insert("p:" + packIndex);
+			if (!m_aExpanded.Contains(packIndex.ToString()))
+				continue;
+
+			for (int g = 0; g < pack.GetGroupCount(); g++)
+			{
+				if (!AROR_SetupDraft.HasAnyEntries(pack, g))
+					continue;
+
+				outRows.Insert("g:" + packIndex + ":" + g);
+				if (!m_aExpanded.Contains(packIndex.ToString() + ":" + g) || !AROR_SetupDraft.IsGroupAvailable(pack, g))
+					continue;
+
+				for (int c = AROR_EFactionPresetCategory.VEHICLES; c <= AROR_EFactionPresetCategory.AMMUNITION; c++)
+				{
+					if (AROR_SetupDraft.HasSection(pack, g, c))
+						outRows.Insert("s:" + packIndex + ":" + g + ":" + c);
+				}
+			}
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void DrawPackRow(notnull AROR_SetupDraft draft, notnull array<AROR_ContentPack> packs, string row, float y)
+	{
+		array<string> parts = {};
+		row.Split(":", parts, false);
+		if (parts.Count() < 2)
+			return;
+
+		AROR_ContentPack pack = packs.Get(parts[1].ToInt());
+		float rowHeight = PACK_ROW_HEIGHT - 6;
+		float toggleX = LEFT + CONTENT_WIDTH - PACK_SCROLLBAR_WIDTH - 16 - 140;
+		string kind = parts[0];
+
+		if (kind == "p")
+		{
+			string packKey = parts[1];
+			Card(LEFT, y, CONTENT_WIDTH - PACK_SCROLLBAR_WIDTH, rowHeight);
+			ExpanderButton(LEFT + 12, y + 5, m_aExpanded.Contains(packKey), "expandpack:" + parts[1]);
+			Text(LEFT + 64, y + 9, 900, 30, 22, pack.GetName(), C(AROR_UIColors.TEXT), true);
+			HitArea(LEFT + 60, y, 700, rowHeight, "expandpack:" + parts[1]);
 
 			string defaultText = "OFF BY DEFAULT";
 			if (pack.IsEnabledByDefault())
 				defaultText = "ON BY DEFAULT";
 
-			TextRight(toggleX - 24, y + 18, 15, defaultText, C(AROR_UIColors.TEXT_FAINT), true);
-			if (enabled)
-				Button(toggleX, y + 9, 140, 36, "ON", "pack:" + index, C(AROR_UIColors.REBEL), C(AROR_UIColors.REBEL_INK), 17);
-			else
-				ActionButton(toggleX, y + 9, 140, 36, "OFF", "pack:" + index, false, true, 17);
+			TextRight(toggleX - 24, y + 14, 15, defaultText, C(AROR_UIColors.TEXT_FAINT), true);
+			StateButton(toggleX, y + 5, draft.GetPackState(pack), "pack:" + parts[1]);
+			return;
 		}
 
-		if (pages > 1)
+		if (parts.Count() < 3)
+			return;
+
+		int groupIndex = parts[2].ToInt();
+		if (kind == "g")
 		{
-			float pagerY = rowsTop + PACK_ROWS * 62;
-			ActionButton(LEFT + CONTENT_WIDTH - 216, pagerY, 100, 36, "PREV", "packpage:-1", false, m_iPackPage > 0, 16);
-			ActionButton(LEFT + CONTENT_WIDTH - 100, pagerY, 100, 36, "NEXT", "packpage:1", false, m_iPackPage < pages - 1, 16);
+			float groupIndent = 40;
+			string groupKey = parts[1] + ":" + parts[2];
+			string label = pack.GetGroup(groupIndex).GetLabel();
+			if (label.IsEmpty())
+				label = string.Format("Group %1", groupIndex + 1);
+
+			Card(LEFT + groupIndent, y, CONTENT_WIDTH - PACK_SCROLLBAR_WIDTH - groupIndent, rowHeight);
+			if (!AROR_SetupDraft.IsGroupAvailable(pack, groupIndex))
+			{
+				Text(LEFT + groupIndent + 64, y + 10, 900, 28, 20, label, C(AROR_UIColors.TEXT_FAINT), true);
+				TextRight(toggleX - 24, y + 14, 15, "REQUIRED MOD NOT LOADED", C(AROR_UIColors.WARN), true);
+				ActionButton(toggleX, y + 5, 140, 36, "OFF", string.Empty, false, false, 17);
+				return;
+			}
+
+			ExpanderButton(LEFT + groupIndent + 12, y + 5, m_aExpanded.Contains(groupKey), "expandgroup:" + groupKey);
+			Text(LEFT + groupIndent + 64, y + 10, 900, 28, 20, label, C(AROR_UIColors.TEXT), true);
+			HitArea(LEFT + groupIndent + 60, y, 700, rowHeight, "expandgroup:" + groupKey);
+			StateButton(toggleX, y + 5, draft.GetGroupState(pack, groupIndex), "group:" + groupKey);
+			return;
 		}
+
+		if (kind == "s" && parts.Count() > 3)
+		{
+			float sectionIndent = 80;
+			AROR_EFactionPresetCategory category = parts[3].ToInt();
+			array<AROR_ContentPackEntry> entries = {};
+			pack.GetGroup(groupIndex).GetEntries(category, entries);
+			string sectionLabel = string.Format("%1  (%2)", GetSectionName(category), entries.Count());
+
+			Card(LEFT + sectionIndent, y, CONTENT_WIDTH - PACK_SCROLLBAR_WIDTH - sectionIndent, rowHeight);
+			Text(LEFT + sectionIndent + 24, y + 10, 900, 28, 20, sectionLabel, C(AROR_UIColors.TEXT), true);
+			int state = AROR_SetupDraft.STATE_OFF;
+			if (draft.IsSectionEnabled(pack, groupIndex, category))
+				state = AROR_SetupDraft.STATE_ON;
+
+			StateButton(toggleX, y + 5, state, "section:" + parts[1] + ":" + parts[2] + ":" + parts[3]);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! ON (rebel), PARTIAL (yellow: some of what is below is off) or OFF (outlined)
+	protected void StateButton(float x, float y, int state, string action)
+	{
+		if (state == AROR_SetupDraft.STATE_ON)
+			Button(x, y, 140, 36, "ON", action, C(AROR_UIColors.REBEL), C(AROR_UIColors.REBEL_INK), 17);
+		else if (state == AROR_SetupDraft.STATE_PARTIAL)
+			Button(x, y, 140, 36, "PARTIAL", action, C(AROR_UIColors.WARN), C(AROR_UIColors.REBEL_INK), 17);
+		else
+			ActionButton(x, y, 140, 36, "OFF", action, false, true, 17);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void ExpanderButton(float x, float y, bool expanded, string action)
+	{
+		string label = "+";
+		if (expanded)
+			label = "-";
+
+		Button(x, y, 36, 36, label, action, C(AROR_UIColors.SURFACE), C(AROR_UIColors.REBEL), 22);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void DrawPackScrollbar(float x, float top, float height, int total)
+	{
+		if (total <= PACK_VISIBLE_ROWS)
+			return;
+
+		float width = PACK_SCROLLBAR_WIDTH - 8;
+		Button(x, top, width, 28, "^", "packscroll:-1", C(AROR_UIColors.SURFACE_RAISED), C(AROR_UIColors.REBEL), 16);
+		Button(x, top + height - 28, width, 28, "v", "packscroll:1", C(AROR_UIColors.SURFACE_RAISED), C(AROR_UIColors.REBEL), 16);
+
+		float trackTop = top + 34;
+		float trackHeight = height - 68;
+		Panel(x + width * 0.5 - 2, trackTop, 4, trackHeight, C(AROR_UIColors.LINE));
+		float thumbHeight = Math.Max(trackHeight * PACK_VISIBLE_ROWS / total, 24);
+		float thumbTop = trackTop + (trackHeight - thumbHeight) * m_iPackScroll / (total - PACK_VISIBLE_ROWS);
+		Panel(x + 6, thumbTop, width - 12, thumbHeight, C(AROR_UIColors.REBEL));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Mouse wheel over the pack list on the armies and content screen scrolls it
+	override protected bool OnWheel(float x, float y, int wheel)
+	{
+		if (m_iScreen != SCREEN_FACTIONS || m_iOpenRole >= 0 || y < CONTENT_TOP + 250 + 58 || y > FOOTER_Y - 16)
+			return false;
+
+		if (wheel > 0)
+			m_iPackScroll--;
+		else
+			m_iPackScroll++;
+
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void ToggleExpanded(string key)
+	{
+		if (m_aExpanded.Contains(key))
+			m_aExpanded.RemoveItem(key);
+		else
+			m_aExpanded.Insert(key);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static AROR_ContentPack GetPackAt(int index)
+	{
+		array<AROR_ContentPack> packs = {};
+		AROR_SetupDraft.GetAvailablePacks(packs);
+		if (packs.IsIndexValid(index))
+			return packs[index];
+
+		return null;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static string GetSectionName(AROR_EFactionPresetCategory category)
+	{
+		switch (category)
+		{
+			case AROR_EFactionPresetCategory.VEHICLES:
+				return "VEHICLES";
+			case AROR_EFactionPresetCategory.GEAR:
+				return "GEAR";
+			case AROR_EFactionPresetCategory.EQUIPMENT:
+				return "EQUIPMENT";
+			case AROR_EFactionPresetCategory.WEAPONS:
+				return "WEAPONS";
+			case AROR_EFactionPresetCategory.WEAPON_ACCESSORIES:
+				return "ACCESSORIES";
+			case AROR_EFactionPresetCategory.AMMUNITION:
+				return "AMMUNITION";
+		}
+
+		return string.Empty;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1056,17 +1251,39 @@ class AROR_SetupApp : AROR_PhonePooledApp
 			PickPreset(draft, parts[1].ToInt(), parts[2].ToInt());
 			m_iOpenRole = -1;
 		}
+		else if (verb == "expandpack" && parts.Count() > 1)
+		{
+			ToggleExpanded(parts[1]);
+		}
+		else if (verb == "expandgroup" && parts.Count() > 2)
+		{
+			ToggleExpanded(parts[1] + ":" + parts[2]);
+		}
 		else if (verb == "pack" && parts.Count() > 1)
 		{
-			array<AROR_ContentPack> packs = {};
-			AROR_SetupDraft.GetAvailablePacks(packs);
-			int packIndex = parts[1].ToInt();
-			if (packs.IsIndexValid(packIndex))
-				draft.SetPackEnabled(packs[packIndex].GetId(), !draft.IsPackEnabled(packs[packIndex].GetId()));
+			AROR_ContentPack pack = GetPackAt(parts[1].ToInt());
+			if (pack)
+				draft.TogglePack(pack);
 		}
-		else if (verb == "packpage" && parts.Count() > 1)
+		else if (verb == "group" && parts.Count() > 2)
 		{
-			m_iPackPage += parts[1].ToInt();
+			AROR_ContentPack groupPack = GetPackAt(parts[1].ToInt());
+			if (groupPack)
+				draft.ToggleGroup(groupPack, parts[2].ToInt());
+		}
+		else if (verb == "section" && parts.Count() > 3)
+		{
+			AROR_ContentPack sectionPack = GetPackAt(parts[1].ToInt());
+			if (sectionPack)
+			{
+				int sectionGroup = parts[2].ToInt();
+				AROR_EFactionPresetCategory sectionCategory = parts[3].ToInt();
+				draft.SetSectionEnabled(sectionPack, sectionGroup, sectionCategory, !draft.IsSectionEnabled(sectionPack, sectionGroup, sectionCategory));
+			}
+		}
+		else if (verb == "packscroll" && parts.Count() > 1)
+		{
+			m_iPackScroll += parts[1].ToInt();
 		}
 		else if (verb == "category" && parts.Count() > 1)
 		{

@@ -209,7 +209,7 @@ Purpose: everything that can be bought or fielded, per content source (the base 
 - Saved: the overrides (`AROR_ContentPacksComponentSerializer`). A saved pack whose mod is missing is kept in the save and simply unavailable.
 - Used by: Black Market and Imports (catalogue, prices, import gate); missions and outpost stores (an enemy role only fields prefabs its current readiness allows).
 - Extension points: extender mods register packs from script (`GetExtraPackPaths`) or ship packs that replace core prefabs.
-- The admin chooses which available packs are on when creating a campaign (Setup UI); packs whose mods are not loaded are not shown.
+- The admin chooses which available packs are on when creating a campaign (Setup UI); packs whose mods are not loaded are not shown. The pack list is a collapsed-by-default tree that scrolls: a pack expands to its **groups**, and a group to the **categories** (vehicles, gear, equipment, weapons, accessories, ammunition) it has entries in; any level can be switched off. A pack or group with a mix shows *partial* (yellow), and a warning explains that turning parts off can break things (e.g. an army whose vehicles are no longer offered). A turned-off group or category's entries are not sold, replace nothing and are not offered to faction presets. A group whose required addons are missing is always off and cannot be turned on. Group and category overrides are stored in the same disabled list as pack overrides (as `PACK_ID:GROUP` and `PACK_ID:GROUP:CATEGORY`, the group being its label), so replication and saves are unchanged.
 - Planned: admin UI to toggle packs during play (the server API exists); an RHS pack.
 
 ### Commanders — In progress
