@@ -30,8 +30,8 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	[Attribute("EVERON_CIV", desc: "Preset ID the Civilians use unless the admin picks another", category: "Defaults")]
 	protected string m_sDefaultCivilians;
 
-	[Attribute("0", desc: "Workbench only: on Play, read the base-game infantry kits and write them into the FIA, US and Soviet presets as readiness 1 loadouts (units with loadouts are kept). Untick after use.", category: "Workbench")]
-	protected bool m_bImportBaseUnitLoadouts;
+	[Attribute("", desc: "Workbench only: preset IDs (e.g. RHS_USAF_FORECON) to import unit loadouts for on Play. Each preset's infantry characters are read and their kit is written into the preset file as readiness 1 loadouts (units that already have loadouts are kept). Only the IDs listed here are touched; leave empty for no import, and clear it after use.", category: "Workbench")]
+	protected ref array<string> m_aImportLoadoutPresets;
 
 	protected static AROR_FactionPresetsComponent s_Instance;
 
@@ -446,7 +446,7 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 
 #ifdef WORKBENCH
 		// Let the world settle before spawning the characters to read
-		if (m_bImportBaseUnitLoadouts && Replication.IsServer())
+		if (m_aImportLoadoutPresets && !m_aImportLoadoutPresets.IsEmpty() && Replication.IsServer())
 			GetGame().GetCallqueue().CallLater(StartLoadoutImport, 5000);
 #endif
 	}
@@ -455,7 +455,7 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	protected void StartLoadoutImport()
 	{
-		AROR_UnitLoadoutImporter.Start();
+		AROR_UnitLoadoutImporter.Start(m_aImportLoadoutPresets);
 	}
 #endif
 

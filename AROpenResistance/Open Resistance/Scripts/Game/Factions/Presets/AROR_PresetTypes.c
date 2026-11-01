@@ -12,7 +12,7 @@ class AROR_PresetTypes
 		switch (category)
 		{
 			case AROR_EFactionPresetCategory.UNITS:
-				return type <= AROR_EUnitType.CIVILIAN;
+				return type <= AROR_EUnitType.LAT;
 			case AROR_EFactionPresetCategory.VEHICLES:
 				return type <= AROR_EVehicleType.STATIC_ARTILLERY;
 			case AROR_EFactionPresetCategory.GEAR:

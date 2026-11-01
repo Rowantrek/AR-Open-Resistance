@@ -181,7 +181,7 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 		if (name.Contains("crew") || entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_VEHICLE_CREW))
 			return AROR_EUnitType.CREW;
 		if (name.Contains("officer"))
-			return AROR_EUnitType.OFFICER;
+			return AROR_EUnitType.SQUADLEADER;
 		if (name.Contains("sniper"))
 			return AROR_EUnitType.SNIPER;
 		if (name.Contains("_aa.") || name.Contains("_aa_") || name.Contains("antiair"))
@@ -192,7 +192,7 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 			return AROR_EUnitType.CIVILIAN;
 
 		if (entry.HasEditableEntityLabel(EEditableEntityLabel.ROLE_LEADER))
-			return AROR_EUnitType.LEADER;
+			return AROR_EUnitType.TEAMLEADER;
 		if (entry.HasEditableEntityLabel(EEditableEntityLabel.ROLE_MEDIC))
 			return AROR_EUnitType.MEDIC;
 		if (entry.HasEditableEntityLabel(EEditableEntityLabel.ROLE_ANTITANK))

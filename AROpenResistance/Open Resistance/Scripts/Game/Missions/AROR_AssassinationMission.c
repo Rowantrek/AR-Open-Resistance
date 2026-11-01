@@ -15,7 +15,7 @@ class AROR_AssassinationMission : AROR_Mission
 			return false;
 
 		m_eEnemyRole = site.GetControllingRole();
-		ResourceName officer = board.GetUnitPrefab_S(m_eEnemyRole, AROR_EUnitType.OFFICER);
+		ResourceName officer = board.GetUnitPrefab_S(m_eEnemyRole, AROR_EUnitType.SQUADLEADER);
 		if (officer.IsEmpty())
 			return false;
 
@@ -39,7 +39,7 @@ class AROR_AssassinationMission : AROR_Mission
 			return false;
 
 		// The officer is alone in his group, so his death is unambiguous
-		array<ResourceName> officer = {board.GetUnitPrefab_S(m_eEnemyRole, AROR_EUnitType.OFFICER)};
+		array<ResourceName> officer = {board.GetUnitPrefab_S(m_eEnemyRole, AROR_EUnitType.SQUADLEADER)};
 		m_Officer = AddGroup_S(board, m_eEnemyRole, officer, spot);
 		if (!m_Officer)
 			return false;

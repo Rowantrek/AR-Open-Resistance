@@ -448,7 +448,7 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 		{
 			AROR_EUnitType type = AROR_EUnitType.RIFLEMAN;
 			if (i == 0)
-				type = AROR_EUnitType.LEADER;
+				type = AROR_EUnitType.TEAMLEADER;
 			else if (i == 2)
 				type = AROR_EUnitType.AUTORIFLEMAN;
 			else if (i == 4)

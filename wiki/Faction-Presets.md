@@ -30,7 +30,7 @@ They live in `Configs/FactionPresets/BaseGame/`. Open one next to this page as a
    - **Name**: shown to the admin, e.g. `US Marines`.
    - **Usable Roles**: the roles it may be picked for.
 3. **Add entries**: pick each entry's **type** and its **prefab**.
-   - Units: at most one per unit type (RIFLEMAN, AUTORIFLEMAN, MACHINEGUNNER, GRENADIER, MEDIC, MARKSMAN, SNIPER, AT, AA, ENGINEER, RADIO_OPERATOR, LEADER, CREW, PILOT, OFFICER, CIVILIAN).
+   - Units: at most one per unit type (RIFLEMAN, AUTORIFLEMAN, MACHINEGUNNER, GRENADIER, MEDIC, MARKSMAN, SNIPER, LAT, AT, AA, ENGINEER, RADIO_OPERATOR, TEAMLEADER, SQUADLEADER, CREW, PILOT, CIVILIAN).
    - Vehicles: as many entries per type as you like.
 4. **Give units their kit.** See [Unit loadouts](#unit-loadouts).
 5. **Register the preset.** Add a script to your addon (e.g. `Scripts/Game/MyMod_FactionPresetRegistry.c`) that adds your preset's path. An addon can register several presets, and several addons can register presets without clashing:
@@ -124,4 +124,4 @@ When a player spawns wearing nothing, the server dresses them from their role's 
 
 ## Getting kits from existing characters
 
-Writing a loadout by hand is slow. To copy kits from existing characters, look at how the core does it: a Workbench-only option on `AROR_FactionPresetsComponent` (**Import Base Unit Loadouts**) spawns the base presets' infantry in Play mode, reads what they carry, and writes it into the preset files as readiness 1 loadouts. It currently covers the core's base presets only, but the base-game loadouts it produced are a good reference for your own.
+Writing a loadout by hand is slow. To copy kits from existing characters, look at how the core does it: a Workbench-only option on `AROR_FactionPresetsComponent` (**Import Loadout Presets**, a list of preset IDs) spawns those presets' infantry in Play mode, reads what they carry, and writes it into the preset files as readiness 1 loadouts. Only the IDs you list are touched, and units that already have loadouts are kept. The core registers `FIA`, `US_ARMY` and `USSR_ARMY`; an extender mod registers its own presets by overriding `GetExtraTargets` in a `modded class AROR_UnitLoadoutImporter` (inside `#ifdef WORKBENCH`), giving each preset's ID, the folder of its file and the file name. See the RHS compat addon for an example.
