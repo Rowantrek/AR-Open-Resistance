@@ -82,6 +82,43 @@ class AROR_ContentPack
 	}
 
 	//------------------------------------------------------------------------------------------------
+	int GetGroupCount()
+	{
+		if (!m_aGroups)
+			return 0;
+
+		return m_aGroups.Count();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	AROR_ContentPackGroup GetGroup(int index)
+	{
+		if (!m_aGroups || !m_aGroups.IsIndexValid(index))
+			return null;
+
+		return m_aGroups[index];
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The group's ID within the pack, used to save which groups the admin turned off: its label (without the
+	//! characters the saved lists use as separators), or its position if it has none. Renaming a group or reordering
+	//! unlabelled ones resets the admin's choice for them.
+	string GetGroupId(int index)
+	{
+		AROR_ContentPackGroup group = GetGroup(index);
+		string id;
+		if (group)
+			id = group.GetLabel();
+
+		if (id.IsEmpty())
+			return "#" + index;
+
+		id.Replace(",", "_");
+		id.Replace(":", "_");
+		return id;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Adds every entry of the category with a known type, whatever its addons; returns how many were added
 	int GetAllEntries(AROR_EFactionPresetCategory category, notnull array<AROR_ContentPackEntry> outEntries)
 	{

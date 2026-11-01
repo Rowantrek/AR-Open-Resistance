@@ -19,6 +19,7 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 	protected ResourceName m_sRegistry;
 
 	protected static const string ID_SEPARATOR = ",";
+	protected static const string SECTION_SEPARATOR = ":";
 	protected static const int MAX_REPLACEMENT_DEPTH = 8;
 
 	protected static AROR_ContentPacksComponent s_Instance;
@@ -148,6 +149,43 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! The ID a pack's group is stored under in the disabled list. Groups and their categories are on unless listed,
+	//! so these overrides never need the enabled list.
+	static string GetGroupKey(string packId, string groupId)
+	{
+		return packId + SECTION_SEPARATOR + groupId;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The ID a category within a pack's group is stored under in the disabled list
+	static string GetSectionKey(string packId, string groupId, AROR_EFactionPresetCategory category)
+	{
+		return GetGroupKey(packId, groupId) + SECTION_SEPARATOR + typename.EnumToString(AROR_EFactionPresetCategory, category);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True when the pack's group exists and has all its addons loaded
+	bool IsGroupAvailable(notnull AROR_ContentPack pack, int groupIndex)
+	{
+		AROR_ContentPackGroup group = pack.GetGroup(groupIndex);
+		return group && group.HasRequiredAddons(m_aLoadedAddons);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True unless the admin turned the group off in this campaign. Says nothing about whether its pack is enabled.
+	bool IsGroupEnabled(string packId, string groupId)
+	{
+		return !ContainsId(m_sDisabledPacks, GetGroupKey(packId, groupId));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True unless the admin turned this category of the group off (e.g. only its vehicles)
+	bool IsSectionEnabled(string packId, string groupId, AROR_EFactionPresetCategory category)
+	{
+		return !ContainsId(m_sDisabledPacks, GetSectionKey(packId, groupId, category));
+	}
+
+	//------------------------------------------------------------------------------------------------
 	// Catalogue
 	//------------------------------------------------------------------------------------------------
 	//! The prefab's replacement from an enabled pack (following chains), or the prefab itself
@@ -264,7 +302,31 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Server only. Sets this campaign's overrides of the packs' defaults (new campaign, or a save restored). IDs of
+	//! Server only. Turns one of a pack's groups (see AROR_ContentPack.GetGroupId) on or off for this campaign. A
+	//! disabled group's entries are not sold, replace nothing and are not offered to faction presets.
+	void SetGroupEnabled_S(string packId, string groupId, bool enabled)
+	{
+		if (!Replication.IsServer() || !FindPack(packId))
+			return;
+
+		m_sDisabledPacks = WithId(m_sDisabledPacks, GetGroupKey(packId, groupId), !enabled);
+		Changed_S();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server only. Turns one category within a pack's group on or off for this campaign (e.g. only its vehicles).
+	void SetSectionEnabled_S(string packId, string groupId, AROR_EFactionPresetCategory category, bool enabled)
+	{
+		if (!Replication.IsServer() || !FindPack(packId))
+			return;
+
+		m_sDisabledPacks = WithId(m_sDisabledPacks, GetSectionKey(packId, groupId, category), !enabled);
+		Changed_S();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server only. Sets this campaign's overrides of the packs' defaults (new campaign, or a save restored). The
+	//! disabled list also holds the turned-off groups and sections (GetGroupKey, GetSectionKey). IDs of
 	//! packs that are not loaded are kept, so a save keeps its choice if their mod comes back.
 	void SetPackOverrides_S(array<string> disabledIds, array<string> enabledIds)
 	{
@@ -334,7 +396,7 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 				// Only entries of groups whose addons are loaded: an entry for a mod that is not loaded must not hide the item it would replace
 				array<AROR_ContentPackEntry> entries = {};
 				int unavailable;
-				pack.GetAvailableEntries(category, m_aLoadedAddons, entries, unavailable);
+				CollectEntries(pack, category, entries, unavailable);
 				foreach (AROR_ContentPackEntry entry : entries)
 				{
 					AddReplacements(pack, entry);
@@ -348,7 +410,7 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 			for (int category = AROR_EFactionPresetCategory.VEHICLES; category <= AROR_EFactionPresetCategory.AMMUNITION; category++)
 			{
 				array<AROR_ContentPackEntry> entries = {};
-				pack.GetAvailableEntries(category, m_aLoadedAddons, entries, skipped);
+				CollectEntries(pack, category, entries, skipped);
 				foreach (AROR_ContentPackEntry entry : entries)
 				{
 					ResourceName prefab = entry.GetPrefab();
@@ -364,6 +426,30 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 		s_iRevision++;
 		Print(string.Format("[AROR] Content packs enabled: %1 (%2 entries, %3 replacements, %4 skipped for missing addons)", DescribeEnabled(enabled), m_aCatalogueOrder.Count(), m_mReplacements.Count(), skipped), LogLevel.NORMAL);
 		m_OnPacksChanged.Invoke();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Adds the pack's entries of the category from groups that have their addons loaded and that the admin left on
+	//! (the group and the category within it). Entries of groups with a missing addon are counted in skipped.
+	protected void CollectEntries(notnull AROR_ContentPack pack, AROR_EFactionPresetCategory category, notnull array<AROR_ContentPackEntry> outEntries, inout int skipped)
+	{
+		for (int g = 0; g < pack.GetGroupCount(); g++)
+		{
+			AROR_ContentPackGroup group = pack.GetGroup(g);
+			if (!group)
+				continue;
+
+			if (!group.HasRequiredAddons(m_aLoadedAddons))
+			{
+				array<AROR_ContentPackEntry> unavailable = {};
+				skipped += group.GetEntries(category, unavailable);
+				continue;
+			}
+
+			string groupId = pack.GetGroupId(g);
+			if (IsGroupEnabled(pack.GetId(), groupId) && IsSectionEnabled(pack.GetId(), groupId, category))
+				group.GetEntries(category, outEntries);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------

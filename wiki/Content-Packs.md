@@ -11,6 +11,7 @@ The core ships one pack, `BASE_GAME` (`Configs/ContentPacks/BaseGame/AROR_Conten
 - Entries are Vehicles (empty, no crew), Gear, Equipment, Weapons, Weapon accessories and Ammunition. Units are not in packs: they belong to [faction presets](Faction-Presets). A group's list mixes them freely; each entry picks its own type.
 - **Availability:** a pack can name the addons it needs. It only exists in a game while all of them are loaded, so the core can ship packs for popular mods without depending on them.
 - **On or off per campaign:** each available pack has a default (Enabled By Default). The admin can turn packs on or off when creating a campaign; the choice is saved with it. Packs whose addons are not loaded are not shown.
+- **Groups and sections:** on the setup screen a pack expands (everything is collapsed by default) to its groups, and a group expands to the categories it has entries in (vehicles, gear, equipment, weapons, accessories, ammunition). Any level can be switched off for the campaign; a pack or group that is only partly on shows yellow. A switched-off group or category is not sold, replaces nothing and is not offered to armies, so turning things off can break armies that rely on them. A group whose required mod is not loaded is shown as off and cannot be switched on. Saves identify a group by its **label**, so renaming a label resets that choice.
 - **One catalogue:** the enabled packs are merged in **registry order**. If two enabled packs list the same prefab, or replace the same prefab, the earlier pack wins.
 
 What uses it:
