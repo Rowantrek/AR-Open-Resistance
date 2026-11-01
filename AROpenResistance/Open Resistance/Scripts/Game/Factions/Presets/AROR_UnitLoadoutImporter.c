@@ -213,6 +213,14 @@ class AROR_UnitLoadoutImporter
 				ReadCharacter(unit);
 		}
 
+		SpawnWeaponDefaults();
+		GetGame().GetCallqueue().CallLater(Finish, SETTLE_DELAY_MS);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Spawns each weapon prefab read so far once on its own, to learn what it carries by default
+	protected void SpawnWeaponDefaults()
+	{
 		foreach (AROR_LoadoutImportUnit unit : m_aUnits)
 		{
 			foreach (AROR_LoadoutImportWeapon weapon : unit.m_aWeapons)
@@ -225,8 +233,6 @@ class AROR_UnitLoadoutImporter
 				m_mWeaponDefaults.Insert(weapon.m_sPrefab, defaults);
 			}
 		}
-
-		GetGame().GetCallqueue().CallLater(Finish, SETTLE_DELAY_MS);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -351,6 +357,20 @@ class AROR_UnitLoadoutImporter
 	//------------------------------------------------------------------------------------------------
 	protected void Finish()
 	{
+		SubtractWeaponDefaults();
+
+		foreach (int index, string presetId : m_aPresetIds)
+		{
+			WritePreset(presetId, m_aPresetFiles[index]);
+		}
+
+		CleanUp();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Reads what each spawned weapon carries by itself and removes that from the units' weapons, so only differences remain
+	protected void SubtractWeaponDefaults()
+	{
 		foreach (ResourceName prefab, AROR_LoadoutImportWeaponDefaults defaults : m_mWeaponDefaults)
 		{
 			if (!defaults.m_Entity)
@@ -380,12 +400,12 @@ class AROR_UnitLoadoutImporter
 					weapon.m_sMagazine = string.Empty;
 			}
 		}
+	}
 
-		foreach (int index, string presetId : m_aPresetIds)
-		{
-			WritePreset(presetId, m_aPresetFiles[index]);
-		}
-
+	//------------------------------------------------------------------------------------------------
+	//! Deletes the spawned characters and weapons (a unit with no entity was not spawned by the importer) and ends the run
+	protected void CleanUp()
+	{
 		foreach (AROR_LoadoutImportUnit unit : m_aUnits)
 		{
 			if (unit.m_Entity)

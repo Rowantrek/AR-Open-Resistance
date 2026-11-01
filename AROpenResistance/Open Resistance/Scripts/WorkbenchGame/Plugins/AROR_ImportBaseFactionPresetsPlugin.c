@@ -36,8 +36,9 @@ class AROR_PresetImportResult
 //! (Configs/FactionPresets/BaseGame/*.conf). Reads each faction's entity catalogs through our faction manager prefab
 //! (which inherits the base-game factions), sorts every entry into the preset types using the base game's own tags
 //! (Game Master labels for characters and vehicles, arsenal item type/mode for items) plus a few file-name hints, and
-//! rewrites the preset files. Prices, readiness and import requirements live in the Base Game content pack, which this
-//! never touches; add new prefabs there by hand. Anything that cannot be placed is listed in the log.
+//! rewrites the preset files. Presets keep only units, the player loadout and vehicles; the sorted items are collected
+//! too, but only for the content pack export (AROR_ExportContentPackPlugin). Prices, readiness and import requirements
+//! live in the Base Game content pack, which this never touches. Anything that cannot be placed is listed in the log.
 //! Re-run after game updates; it overwrites the four base preset files, except their units (hand-authored prefabs and
 //! loadouts) and player loadout, which are kept as they are. Units are generated only for a preset that has none.
 [WorkbenchPluginAttribute(name: "Import base faction presets", description: "Fill the base-game faction presets (US, USSR, FIA, CIV) from the game's faction catalogs.", wbModules: {"WorldEditor", "ResourceManager"}, category: "Open Resistance")]
@@ -337,12 +338,7 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 
 		if (itemMode == SCR_EArsenalItemMode.ATTACHMENT || itemType == SCR_EArsenalItemType.WEAPON_ATTACHMENT)
 		{
-			int accessory = AccessoryType(name);
-			if (accessory < 0)
-				result.m_aSkipped.Insert("accessory (no matching type): " + prefab);
-			else
-				AddEntry(result.m_aAccessories, "AROR_FactionPresetWeaponAccessory", AROR_EWeaponAccessoryType, accessory, prefab);
-
+			AddEntry(result.m_aAccessories, "AROR_FactionPresetWeaponAccessory", AROR_EWeaponAccessoryType, AccessoryType(name), prefab);
 			return;
 		}
 
@@ -425,7 +421,7 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 		if (name.Contains("optic") || name.Contains("scope") || name.Contains("sight") || name.Contains("artii") || name.Contains("pso") || name.Contains("kobra") || name.Contains("_pu"))
 			return AROR_EWeaponAccessoryType.OPTIC;
 
-		return -1;
+		return AROR_EWeaponAccessoryType.OTHER;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -544,19 +540,13 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 			file.WriteLine(playerLine);
 		}
 
+		// Items (gear, weapons, ammunition...) are not part of presets: they belong to content packs
 		WriteList(file, "m_aVehicles", result.m_aVehicles);
-		WriteList(file, "m_aGear", result.m_aGear);
-		WriteList(file, "m_aEquipment", result.m_aEquipment);
-		WriteList(file, "m_aWeapons", result.m_aWeapons);
-		WriteList(file, "m_aWeaponAccessories", result.m_aAccessories);
-		WriteList(file, "m_aAmmunition", result.m_aAmmunition);
 		file.WriteLine("}");
 		file.Close();
 
-		Print(string.Format("[AROR] Import base faction presets: %1 (%2) -> %3: %4 units, %5 vehicles, %6 gear, %7 equipment, %8 weapons, %9 accessories",
-			factionImport.m_sPresetId, factionImport.m_sFactionKey, path, result.m_aUnits.Count(), result.m_aVehicles.Count(), result.m_aGear.Count(),
-			result.m_aEquipment.Count(), result.m_aWeapons.Count(), result.m_aAccessories.Count()), LogLevel.NORMAL);
-		Print(string.Format("[AROR] Import base faction presets: %1: %2 ammunition, %3 skipped", factionImport.m_sPresetId, result.m_aAmmunition.Count(), result.m_aSkipped.Count()), LogLevel.NORMAL);
+		Print(string.Format("[AROR] Import base faction presets: %1 (%2) -> %3: %4 units, %5 vehicles, %6 skipped",
+			factionImport.m_sPresetId, factionImport.m_sFactionKey, path, result.m_aUnits.Count(), result.m_aVehicles.Count(), result.m_aSkipped.Count()), LogLevel.NORMAL);
 
 		foreach (string skipped : result.m_aSkipped)
 		{

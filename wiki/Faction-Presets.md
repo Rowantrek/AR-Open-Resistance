@@ -1,6 +1,6 @@
 # Faction Presets
 
-A **faction preset** describes an army: the units it fields, its vehicles and equipment, the kit each unit wears, and (for the Resistance) the players' starting kit. When creating a campaign, the admin picks a preset for each role. A role keeps its name and colour whatever preset it uses, so the Occupiers can field Soviet equipment, or a modded army, while staying the Occupiers.
+A **faction preset** describes an army: the units it fields, the kit each unit wears, its vehicles, and (for the Resistance) the players' starting kit. Items such as weapons and gear are not listed in presets: they come from [content packs](Content-Packs). When creating a campaign, the admin picks a preset for each role. A role keeps its name and colour whatever preset it uses, so the Occupiers can field Soviet units, or a modded army, while staying the Occupiers.
 
 The core ships four presets, written the same way you would write yours:
 
@@ -17,10 +17,10 @@ They live in `Configs/FactionPresets/BaseGame/`. Open one next to this page as a
 
 - A preset is one `.conf` file of class `AROR_FactionPreset`, listed in the preset registry.
 - Its **usable roles** decide where it can be picked. The setup screen only offers a role the presets that list it, and the server refuses any other choice (falling back to the role's default).
-- Entries are sorted into **seven fixed categories**: Units, Vehicles, Gear, Equipment, Weapons, Weapon accessories and Ammunition. Every entry is a **prefab of a type**, for example an ASSAULT_RIFLE or an APC. The categories and types are a fixed core list; entries with any other type are ignored.
-- A preset only says what an army *has*. The game's systems (garrisons, QRFs, missions, shops) decide what to pick from it.
-- **Items must be in a content pack.** Every non-unit entry must be offered by an enabled [content pack](Content-Packs), or it is skipped (with one warning in the log). If your preset uses a mod's items, ship a content pack for them too.
-- **Replacements apply.** If an enabled content pack replaces a prefab your preset lists, the replacement is used instead.
+- A preset has two lists: **Units** (AI characters, each with its [loadouts](#unit-loadouts)) and **Vehicles** (empty, no crew). It can also carry a [player loadout](#player-loadout). Every unit and vehicle is a **type** (for example RIFLEMAN or APC) plus a prefab. The types are a fixed core list; entries with any other type are ignored.
+- A preset only says what an army *has*. The game's systems (garrisons, QRFs, missions) decide what to pick from it.
+- **Vehicles must be in a content pack.** A vehicle must be offered by an enabled [content pack](Content-Packs), or it is skipped (with one warning in the log). If your preset uses a mod's vehicles, ship a content pack for them too.
+- **Replacements apply.** If an enabled content pack replaces a vehicle your preset lists, the replacement is used instead. The same goes for every prefab in a loadout.
 
 ## Making a preset
 
@@ -29,12 +29,13 @@ They live in `Configs/FactionPresets/BaseGame/`. Open one next to this page as a
    - **ID**: unique and permanent, e.g. `MYMOD_MARINES`. It is saved with campaigns, so never change it after release.
    - **Name**: shown to the admin, e.g. `US Marines`.
    - **Usable Roles**: the roles it may be picked for.
-3. **Add entries** in each category: pick the entry's **type** and its **prefab**.
+3. **Add entries**: pick each entry's **type** and its **prefab**.
    - Units: at most one per unit type (RIFLEMAN, AUTORIFLEMAN, MACHINEGUNNER, GRENADIER, MEDIC, MARKSMAN, SNIPER, AT, AA, ENGINEER, RADIO_OPERATOR, LEADER, CREW, PILOT, OFFICER, CIVILIAN).
-   - Every other category: as many entries per type as you like.
+   - Vehicles: as many entries per type as you like.
 4. **Give units their kit.** See [Unit loadouts](#unit-loadouts).
 5. **Register the preset.** Add a script to your addon (e.g. `Scripts/Game/MyMod_FactionPresetRegistry.c`) that adds your preset's path. An addon can register several presets, and several addons can register presets without clashing:
    ```
+   [BaseContainerProps(configRoot: true)]
    modded class AROR_FactionPresetRegistry
    {
    	override void GetExtraPresetPaths(notnull array<ResourceName> outPresets)
@@ -64,10 +65,10 @@ AROR_FactionPreset {
    m_eType RIFLEMAN
   }
  }
- m_aWeapons {
-  AROR_FactionPresetWeapon {
-   m_sPrefab "{GUID}Prefabs/Weapons/MyMod/Rifle_M27.et"
-   m_eType ASSAULT_RIFLE
+ m_aVehicles {
+  AROR_FactionPresetVehicle {
+   m_sPrefab "{GUID}Prefabs/Vehicles/MyMod/Humvee.et"
+   m_eType MOTOR_CAR
   }
  }
 }
@@ -111,7 +112,7 @@ Items can contain items: a pouch lists the magazines inside it. **Listed content
 
 So a rifleman can start with an iron-sight rifle at readiness 1, and get an optic and body armour from readiness 3. Variants are optional: one loadout at readiness 1 is enough.
 
-Every prefab in a loadout goes through content pack **replacements**, but content pack readiness does *not* gate loadout items. The variant's own readiness decides.
+Every prefab in a loadout goes through content pack **replacements** (so a weapons mod's pack can swap the rifles every army carries), but content pack readiness does *not* gate loadout items. The variant's own readiness decides.
 
 > **Status:** unit loadouts are data only for now. AI still spawn with their character prefab's own kit until the AI outfitter is added.
 

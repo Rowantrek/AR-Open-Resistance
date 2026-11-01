@@ -22,7 +22,7 @@ class AROR_PresetTypes
 			case AROR_EFactionPresetCategory.WEAPONS:
 				return type <= AROR_EWeaponType.MARKSMAN_RIFLE;
 			case AROR_EFactionPresetCategory.WEAPON_ACCESSORIES:
-				return type <= AROR_EWeaponAccessoryType.LIGHT;
+				return type <= AROR_EWeaponAccessoryType.OTHER;
 			case AROR_EFactionPresetCategory.AMMUNITION:
 				return type <= AROR_EAmmunitionType.BOMB;
 		}

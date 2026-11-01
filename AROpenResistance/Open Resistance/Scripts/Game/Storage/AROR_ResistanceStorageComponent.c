@@ -26,10 +26,20 @@ class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
 
 	protected ref ScriptInvokerBase<AROR_OnResistanceStorageChanged> m_OnStorageChanged = new ScriptInvokerBase<AROR_OnResistanceStorageChanged>();
 
+	//! Local counter bumped whenever the stock changes, so readers can cache derived lists
+	protected int m_iRevision;
+
 	//------------------------------------------------------------------------------------------------
 	static AROR_ResistanceStorageComponent GetInstance()
 	{
 		return s_Instance;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every machine: changes whenever the stock does (not replicated; only compare values from one machine)
+	int GetRevision()
+	{
+		return m_iRevision;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -196,6 +206,7 @@ class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
 			m_aQuantities.Insert(qty);
 		}
 
+		m_iRevision++;
 		Replication.BumpMe();
 		m_OnStorageChanged.Invoke();
 	}
@@ -215,6 +226,7 @@ class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
 			m_mStock.Set(prefab, qty);
 		}
 
+		m_iRevision++;
 		m_OnStorageChanged.Invoke();
 	}
 

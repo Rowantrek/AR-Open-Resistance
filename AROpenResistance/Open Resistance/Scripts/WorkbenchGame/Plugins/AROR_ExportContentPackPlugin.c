@@ -463,6 +463,29 @@ class AROR_ExportContentPackPlugin : AROR_ImportBaseFactionPresetsPlugin
 			return;
 		}
 
+		// Items the catalog lists without arsenal data (vest pouches, headgear and weapon variants) are placed by
+		// their folder (the full path; `name` is only the file name) instead, so players can still take them from the arsenal
+		if (!arsenal)
+		{
+			string folder = prefab;
+			folder.ToLower();
+			if (folder.Contains("/headgear/"))
+			{
+				AddEntry(result.m_aGear, "AROR_FactionPresetGear", AROR_EGearType, GearType(SCR_EArsenalItemType.HEADWEAR, name), prefab);
+				return;
+			}
+			if (folder.Contains("/vests/"))
+			{
+				AddEntry(result.m_aGear, "AROR_FactionPresetGear", AROR_EGearType, AROR_EGearType.OTHER, prefab);
+				return;
+			}
+			if (folder.Contains("/weapons/rifles/"))
+			{
+				AddEntry(result.m_aWeapons, "AROR_FactionPresetWeapon", AROR_EWeaponType, AROR_EWeaponType.ASSAULT_RIFLE, prefab);
+				return;
+			}
+		}
+
 		// Mortar rounds and their ammo boxes are ammunition; the ballistic tables fall through to equipment
 		if (arsenal && arsenal.GetItemType() == SCR_EArsenalItemType.MORTARS && arsenal.GetItemMode() != SCR_EArsenalItemMode.AMMUNITION && !name.Contains("ballistic"))
 		{
