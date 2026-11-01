@@ -1,8 +1,9 @@
 /* Native affiliation clearing versus actual capture; mocked seats, not a native test. */
 function runQRFVehicleFactionTests(sources) {
+  if(!String.prototype.IsEmpty)Object.defineProperty(String.prototype,'IsEmpty',{value(){return !this.length},configurable:true});
   let assertions=0;
   const check=(ok,msg)=>{assertions++;if(!ok)throw Error(msg);};
-  const env={BaseCompartmentManagerComponent:{Cast:x=>x},FactionAffiliationComponent:{Cast:x=>x},
+  const env={AROR_ForceSpawner:{IsAlive:x=>!!x&&!x.dead},BaseCompartmentManagerComponent:{Cast:x=>x},FactionAffiliationComponent:{Cast:x=>x},
     SCR_VehicleFactionAffiliationComponent:{Cast:x=>x&&x.native?x:null},
     GetGame:()=>({GetPlayerManager:()=>({GetPlayerIdFromControlledEntity:e=>e.player||0})}),
     Print:()=>{},string:{Format:()=>''},LogLevel:{NORMAL:0,WARNING:1},AROR_EForceType:{ARMOUR:2}};
@@ -50,9 +51,23 @@ function runQRFVehicleFactionTests(sources) {
   actual='AROR_INVADERS';check(!validate.call(ctx,force,operation,affiliation)&&failures===1,'explicit hostile hull affiliation still fails');
   actual='';occupant={};check(!validate.call(ctx,force,operation,affiliation)&&failures===2,'blank hull with foreign occupant still fails');
   check(!validate.call(ctx,force,operation,null)&&failures===3,'missing affiliation component still fails');
+
+  const airAudit=compile(sources.reaper,'ReaperVehicleFaction');
+  let aircraftFaction=affiliation;
+  const aircraft={m_Vehicle:{FindComponent:()=>aircraftFaction},m_sFactionKey:'AROR_OCCUPIERS',m_sAssetFactionKey:'US',
+    HasOnlyOwnedVehicleOccupants:run,HasVehicleOccupants:()=>slotOccupied};
+  actual='AROR_OCCUPIERS';check(airAudit(aircraft),'correct aircraft faction accepted');
+  actual='';occupant=null;slotOccupied=false;check(airAudit(aircraft),'empty native aircraft survives pilot-loss affiliation clearing');
+  occupant=own;slotOccupied=true;check(airAudit(aircraft),'verified friendly occupants survive native aircraft affiliation clearing');
+  own.dead=true;key='';check(airAudit(aircraft),'retained own dead pilot is not mistaken for a faction takeover');own.dead=false;key='AROR_OCCUPIERS';
+  actual='AROR_RESISTANCE';check(!airAudit(aircraft),'Resistance capture still rejects aircraft');
+  actual='';player=1;check(!airAudit(aircraft),'human occupant cannot bypass aircraft affiliation mismatch');player=0;
+  occupant={};check(!airAudit(aircraft),'unknown aircraft occupant fails closed');
+  occupant=null;slotOccupied=false;actual='US';check(airAudit(aircraft),'empty aircraft may restore declared source affiliation');
+  aircraftFaction=null;check(!airAudit(aircraft),'missing aircraft affiliation component rejected');
   return {assertions,note:'Compile and combat test required; no vehicle re-factioning or loss-price changes.'};
 }
 if(typeof require==='function'&&typeof module!=='undefined'&&require.main===module){
   const fs=require('fs'),path=require('path'),root=path.join(__dirname,'../AROpenResistance/Open Resistance/Scripts/Game/Operations');
-  console.log(JSON.stringify(runQRFVehicleFactionTests({ground:fs.readFileSync(path.join(root,'AROR_GroundOperationForce.c'),'utf8'),executor:fs.readFileSync(path.join(root,'AROR_OperationExecutorComponent.c'),'utf8')})));
+  console.log(JSON.stringify(runQRFVehicleFactionTests({ground:fs.readFileSync(path.join(root,'AROR_GroundOperationForce.c'),'utf8'),executor:fs.readFileSync(path.join(root,'AROR_OperationExecutorComponent.c'),'utf8'),reaper:fs.readFileSync(path.join(root,'AROR_ReaperQRFExecutor.c'),'utf8')})));
 }

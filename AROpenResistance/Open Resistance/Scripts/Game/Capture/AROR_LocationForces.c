@@ -1,6 +1,6 @@
 //! Counts living characters inside a location's radius, per role, split into players and AI.
-//! Characters whose faction fills no role are ignored. Arrays are indexed by role and sized from AROR_FactionRoles,
-//! so every role (including Civilians) has a slot.
+//! Characters whose faction fills no role, or who are seated in a helicopter, are ignored. Arrays are indexed by role
+//! and sized from AROR_FactionRoles, so every role (including Civilians) has a slot.
 class AROR_LocationForces : Managed
 {
 	protected ref array<int> m_aPlayers = {};
@@ -35,6 +35,30 @@ class AROR_LocationForces : Managed
 			GetGame().GetWorld().QueryEntitiesBySphere(forces.m_vCenter, forces.m_fRadius, forces.OnEntity, null, EQueryEntitiesFlags.DYNAMIC);
 
 		return forces;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True while the character is seated in a helicopter. Aircraft occupants never hold or contest ground: a
+	//! transport passing over or landing beside a location must not count towards capturing or defending it.
+	static bool IsInAircraft(notnull ChimeraCharacter character)
+	{
+		CompartmentAccessComponent access = CompartmentAccessComponent.Cast(character.FindComponent(CompartmentAccessComponent));
+		if (!access || !access.IsInCompartment())
+			return false;
+
+		BaseCompartmentSlot slot = access.GetCompartment();
+		if (!slot)
+			return false;
+
+		IEntity vehicle = slot.GetVehicle();
+		if (!vehicle)
+			return false;
+
+		// Turret seats (door guns) can live on child entities of the hull
+		if (vehicle.GetRootParent())
+			vehicle = vehicle.GetRootParent();
+
+		return vehicle.FindComponent(HelicopterControllerComponent) != null;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -79,6 +103,9 @@ class AROR_LocationForces : Managed
 			return true;
 
 		if (vector.DistanceXZ(m_vCenter, character.GetOrigin()) > m_fRadius)
+			return true;
+
+		if (IsInAircraft(character))
 			return true;
 
 		AROR_EFactionRole role;

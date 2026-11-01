@@ -35,6 +35,10 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 	protected int m_iNextProximityAt;
 	protected int m_iCursor;
 
+	// Bindings resolved against the role's faction preset, and the preset state each was resolved for
+	protected ref map<int, ref AROR_GarrisonFaction> m_mResolvedFactions = new map<int, ref AROR_GarrisonFaction>();
+	protected ref map<int, string> m_mResolvedFor = new map<int, string>();
+
 	protected AROR_GarrisonFaction FactionFor(AROR_EFactionRole role)
 	{
 		AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
@@ -43,9 +47,38 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 		foreach (AROR_GarrisonFaction faction : m_aFactions)
 		{
 			if (faction && faction.m_eRole == role && faction.m_sFactionKey == roles.GetFactionKey(role))
-				return faction;
+				return ResolveWithPreset(faction);
 		}
 		return null;
+	}
+
+	//! The binding with the role's faction preset applied (see AROR_GarrisonFaction.m_bUseFactionPreset). Re-resolved when
+	//! the role's preset changes or gains entries (catalog augmentation runs a frame after loading) or the content packs change.
+	protected AROR_GarrisonFaction ResolveWithPreset(AROR_GarrisonFaction faction)
+	{
+		if (!faction.m_bUseFactionPreset)
+			return faction;
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		if (!presets)
+			return faction;
+		AROR_FactionPreset preset = presets.GetPreset(faction.m_eRole);
+		if (!preset)
+			return faction;
+		array<AROR_FactionPresetEntry> vehicles = {};
+		// Content packs decide which entries are offered (and replace prefabs): their revision is part of the state
+		int packRevision = -1;
+		AROR_ContentPacksComponent packs = AROR_ContentPacksComponent.GetInstance();
+		if (packs)
+			packRevision = packs.GetRevision();
+		string state = string.Format("%1#%2#%3", preset.GetId(), preset.GetAllEntries(AROR_EFactionPresetCategory.VEHICLES, vehicles), packRevision);
+		if (m_mResolvedFor.Get(faction.m_eRole) == state && m_mResolvedFactions.Contains(faction.m_eRole))
+			return m_mResolvedFactions.Get(faction.m_eRole);
+		AROR_GarrisonFaction resolved = faction.ResolveWithPreset(preset);
+		m_mResolvedFactions.Set(faction.m_eRole, resolved);
+		m_mResolvedFor.Set(faction.m_eRole, state);
+		Print(string.Format("[AROR GARRISON] %1 binding resolved with preset %2: %3 static choices, %4 manned choices, assets %5",
+			typename.EnumToString(AROR_EFactionRole, faction.m_eRole), preset.GetId(), resolved.m_aStaticVariants.Count() + 1, resolved.m_aMannedVehicles.Count(), resolved.m_sAssetFactionKey), LogLevel.NORMAL);
+		return resolved;
 	}
 
 	protected bool EnsureRegistry_S()

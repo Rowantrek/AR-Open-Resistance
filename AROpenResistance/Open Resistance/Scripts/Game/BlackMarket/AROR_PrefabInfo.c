@@ -57,18 +57,40 @@ class AROR_PrefabInfo
 	//------------------------------------------------------------------------------------------------
 	protected static SCR_UIInfo FindUiInfo(ResourceName prefab, bool vehicle)
 	{
-		SCR_EntityCatalogManagerComponent catalogs = SCR_EntityCatalogManagerComponent.GetInstance();
-		if (!catalogs || prefab.IsEmpty())
+		FactionManager factions = GetGame().GetFactionManager();
+		if (!factions || prefab.IsEmpty())
 			return null;
 
 		EEntityCatalogType type = EEntityCatalogType.ITEM;
 		if (vehicle)
 			type = EEntityCatalogType.VEHICLE;
 
-		SCR_EntityCatalogEntry entry = catalogs.GetEntryWithPrefabFromAnyCatalog(type, prefab, null);
-		if (!entry)
-			return null;
+		SCR_EntityCatalogManagerComponent catalogs = SCR_EntityCatalogManagerComponent.GetInstance();
+		if (catalogs)
+		{
+			SCR_EntityCatalog general = catalogs.GetEntityCatalogOfType(type, false);
+			if (general)
+			{
+				SCR_EntityCatalogEntry generalEntry = general.GetEntryWithPrefab(prefab);
+				if (generalEntry)
+					return generalEntry.GetEntityUiInfo();
+			}
+		}
 
-		return entry.GetEntityUiInfo();
+		// Role identity factions need not own asset catalogues. Probe quietly while
+		// preserving entries contributed by any loaded faction/content addon.
+		for (int i = 0; i < factions.GetFactionsCount(); i++)
+		{
+			SCR_Faction faction = SCR_Faction.Cast(factions.GetFactionByIndex(i));
+			if (!faction)
+				continue;
+			SCR_EntityCatalog catalog = faction.GetFactionEntityCatalogOfType(type, false);
+			if (!catalog)
+				continue;
+			SCR_EntityCatalogEntry entry = catalog.GetEntryWithPrefab(prefab);
+			if (entry)
+				return entry.GetEntityUiInfo();
+		}
+		return null;
 	}
 }

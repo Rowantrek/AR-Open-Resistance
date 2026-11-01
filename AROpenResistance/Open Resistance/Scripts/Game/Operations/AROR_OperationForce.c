@@ -141,11 +141,18 @@ class AROR_OperationForce
 	{
 		foreach (IEntity member : m_aMembers)
 		{
-			if (!member)
+			// Corpses remain owned for retention/accounting, but are not active faction participants.
+			if (!member || !AROR_ForceSpawner.IsAlive(member))
 				continue;
 			FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(member.FindComponent(FactionAffiliationComponent));
 			if (!affiliation || affiliation.GetAffiliatedFactionKey() != m_sFactionKey)
+			{
+				string actual = "<missing affiliation>";
+				if (affiliation)
+					actual = affiliation.GetAffiliatedFactionKey();
+				Print(string.Format("[AROR] Personnel faction audit: operation=%1 package=%2 entity=%3 expected=%4 actual=%5", m_sOperationId, m_iPackageIndex + 1, member, m_sFactionKey, actual), LogLevel.WARNING);
 				return false;
+			}
 		}
 		return true;
 	}

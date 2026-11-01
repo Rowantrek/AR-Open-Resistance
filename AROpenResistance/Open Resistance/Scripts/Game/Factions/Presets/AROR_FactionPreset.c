@@ -13,6 +13,12 @@ class AROR_FactionPreset
 	[Attribute("", UIWidgets.ComboBox, desc: "Roles this preset can be chosen for", enums: ParamEnumArray.FromEnum(AROR_EFactionRole))]
 	protected ref array<AROR_EFactionRole> m_aUsableRoles;
 
+	[Attribute("", desc: "Preset ID this one takes over as a role default while it is loaded, e.g. US_ARMY for a content mod's variant of the US Army. Empty: none.")]
+	protected string m_sReplacesPreset;
+
+	[Attribute(desc: "Workbench only: characters whose kits are captured into this preset's unit loadouts (see the presets component's Capture Unit Loadouts)", category: "Units")]
+	protected ref AROR_LoadoutCapture m_LoadoutCapture;
+
 	// One typed list per category, so the config editor only offers the right entry class
 	[Attribute(desc: "AI units: at most one per unit type", category: "Units")]
 	protected ref array<ref AROR_FactionPresetUnit> m_aUnits;
@@ -38,6 +44,22 @@ class AROR_FactionPreset
 	[Attribute(desc: "Ammunition, including rocket pods and other munitions loaded onto vehicles and aircraft", category: "Ammunition")]
 	protected ref array<ref AROR_FactionPresetAmmunition> m_aAmmunition;
 
+	// Catalog augmentation: mods such as WCS add their weapons, vehicles and aircraft to the base-game faction
+	// catalogs, so a preset picks them up at runtime without an extender listing them. Only the prefab and its type
+	// are added: price, readiness and import requirements come from the content pack that offers it (see
+	// AROR_ContentPack's catalog generation), and an entry no enabled pack offers is not used.
+	[Attribute("", desc: "Faction whose entity catalogs augment this preset at runtime (e.g. US): everything they hold that the preset does not list is added, units only for unit types the preset lacks. Empty: no augmentation.", category: "Catalog augmentation")]
+	protected string m_sCatalogFactionKey;
+
+	[Attribute(desc: "Further factions whose hand-held weapons, weapon accessories and ammunition are added too", category: "Catalog augmentation")]
+	protected ref array<string> m_aHandHeldFactionKeys;
+
+	[Attribute(desc: "Addon filesystems (e.g. ArmaReforger) whose items are not taken from the further factions; an item whose prefab exists in one of them is left out", category: "Catalog augmentation")]
+	protected ref array<string> m_aHandHeldExcludedSources;
+
+	[Attribute(desc: "Lower-case file name fragments (e.g. javelin) whose items are not taken from the further factions, e.g. guided launchers kept for the Black Market", category: "Catalog augmentation")]
+	protected ref array<string> m_aHandHeldExcludedNames;
+
 	//------------------------------------------------------------------------------------------------
 	string GetId()
 	{
@@ -51,9 +73,40 @@ class AROR_FactionPreset
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! The base-game faction whose catalogs augment this preset (also the native faction of its assets), or empty
+	string GetCatalogFactionKey()
+	{
+		return m_sCatalogFactionKey;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	bool IsUsableAs(AROR_EFactionRole role)
 	{
 		return m_aUsableRoles && m_aUsableRoles.Contains(role);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The preset ID this one takes over as a role default, or empty
+	string GetReplacedPresetId()
+	{
+		return m_sReplacesPreset;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The Workbench capture settings, or null
+	AROR_LoadoutCapture GetLoadoutCapture()
+	{
+		return m_LoadoutCapture;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True when the preset dresses its own infantry: its rifleman names no character and has loadouts, so its soldiers
+	//! are the role's gear-less defaults dressed by Readiness (see AROR_AIOutfitter). Spawning systems then build their
+	//! infantry from the preset's units instead of their authored characters.
+	bool DressesInfantry()
+	{
+		AROR_FactionPresetUnit rifleman = GetUnit(AROR_EUnitType.RIFLEMAN);
+		return rifleman && !rifleman.HasPrefab() && rifleman.HasLoadouts();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -120,13 +173,178 @@ class AROR_FactionPreset
 
 	//------------------------------------------------------------------------------------------------
 	//! Units are always usable (content packs do not list units). Any other entry needs its prefab, after replacements,
-	//! in an enabled content pack; otherwise it is skipped and logged once.
+	//! in an enabled content pack; otherwise it is skipped and logged once. Entries added from the catalogs are skipped
+	//! quietly: their pack (e.g. mod assets) may simply be turned off in this campaign.
 	protected bool IsOffered(notnull AROR_FactionPresetEntry entry)
 	{
 		if (entry.GetCategory() == AROR_EFactionPresetCategory.UNITS)
 			return true;
 
-		return AROR_ContentPacksComponent.IsOffered(entry.GetPrefab(), m_sId);
+		return AROR_ContentPacksComponent.IsOffered(entry.GetPrefab(), m_sId, !entry.IsGenerated());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	// Catalog augmentation
+	//------------------------------------------------------------------------------------------------
+	//! Every machine, once the factions exist: adds what the catalog faction's entity catalogs hold that the preset
+	//! does not list (sorted by AROR_CatalogClassifier), and the hand-held items of the further factions that do not
+	//! come from an excluded source. Listed entries always win. Returns how many were added.
+	int AugmentFromCatalogs(notnull FactionManager factionManager)
+	{
+		if (m_sCatalogFactionKey.IsEmpty())
+			return 0;
+
+		set<string> known = new set<string>();
+		set<int> unitTypes = new set<int>();
+		for (int category = 0; category <= AROR_EFactionPresetCategory.AMMUNITION; category++)
+		{
+			array<AROR_FactionPresetEntry> entries = {};
+			CollectEntries(category, entries);
+			foreach (AROR_FactionPresetEntry entry : entries)
+			{
+				known.Insert(entry.GetListedPrefab());
+				if (category == AROR_EFactionPresetCategory.UNITS)
+					unitTypes.Insert(entry.GetTypeValue());
+			}
+		}
+
+		int added = AugmentFromFaction(factionManager, m_sCatalogFactionKey, false, known, unitTypes);
+		if (m_aHandHeldFactionKeys)
+		{
+			foreach (string factionKey : m_aHandHeldFactionKeys)
+			{
+				added += AugmentFromFaction(factionManager, factionKey, true, known, unitTypes);
+			}
+		}
+
+		return added;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected int AugmentFromFaction(FactionManager factionManager, string factionKey, bool handHeldOnly, set<string> known, set<int> unitTypes)
+	{
+		SCR_Faction faction = SCR_Faction.Cast(factionManager.GetFactionByKey(factionKey));
+		if (!faction)
+		{
+			Print(string.Format("[AROR] Faction preset '%1': catalog faction '%2' not found", m_sId, factionKey), LogLevel.WARNING);
+			return 0;
+		}
+
+		array<EEntityCatalogType> catalogTypes = {};
+		if (!handHeldOnly)
+		{
+			catalogTypes.Insert(EEntityCatalogType.CHARACTER);
+			catalogTypes.Insert(EEntityCatalogType.VEHICLE);
+			catalogTypes.Insert(EEntityCatalogType.WEAPONS_TRIPOD);
+		}
+		catalogTypes.Insert(EEntityCatalogType.ITEM);
+
+		int added;
+		foreach (EEntityCatalogType catalogType : catalogTypes)
+		{
+			SCR_EntityCatalog catalog = faction.GetFactionEntityCatalogOfType(catalogType, false);
+			if (!catalog)
+				continue;
+
+			array<SCR_EntityCatalogEntry> entries = {};
+			catalog.GetEntityList(entries);
+			foreach (SCR_EntityCatalogEntry entry : entries)
+			{
+				ResourceName prefab = entry.GetPrefab();
+				if (prefab.IsEmpty() || known.Contains(prefab))
+					continue;
+
+				AROR_EFactionPresetCategory category;
+				int type;
+				if (!AROR_CatalogClassifier.Classify(catalogType, entry, category, type))
+					continue;
+
+				if (handHeldOnly && !AROR_CatalogClassifier.IsHandHeldFromAllowedSource(category, prefab, m_aHandHeldExcludedSources, m_aHandHeldExcludedNames))
+					continue;
+
+				// One unit per type: listed units and earlier catalog units win
+				if (category == AROR_EFactionPresetCategory.UNITS && !unitTypes.Insert(type))
+					continue;
+
+				AddGenerated(category, type, prefab);
+				known.Insert(prefab);
+				added++;
+			}
+		}
+
+		return added;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Adds a runtime-created entry to the category's list
+	protected void AddGenerated(AROR_EFactionPresetCategory category, int type, ResourceName prefab)
+	{
+		switch (category)
+		{
+			case AROR_EFactionPresetCategory.UNITS:
+			{
+				AROR_FactionPresetUnit unit = new AROR_FactionPresetUnit();
+				unit.InitGenerated(prefab, type);
+				if (!m_aUnits)
+					m_aUnits = {};
+				m_aUnits.Insert(unit);
+				break;
+			}
+			case AROR_EFactionPresetCategory.VEHICLES:
+			{
+				AROR_FactionPresetVehicle vehicle = new AROR_FactionPresetVehicle();
+				vehicle.InitGenerated(prefab, type);
+				if (!m_aVehicles)
+					m_aVehicles = {};
+				m_aVehicles.Insert(vehicle);
+				break;
+			}
+			case AROR_EFactionPresetCategory.GEAR:
+			{
+				AROR_FactionPresetGear gear = new AROR_FactionPresetGear();
+				gear.InitGenerated(prefab, type);
+				if (!m_aGear)
+					m_aGear = {};
+				m_aGear.Insert(gear);
+				break;
+			}
+			case AROR_EFactionPresetCategory.EQUIPMENT:
+			{
+				AROR_FactionPresetEquipment equipment = new AROR_FactionPresetEquipment();
+				equipment.InitGenerated(prefab, type);
+				if (!m_aEquipment)
+					m_aEquipment = {};
+				m_aEquipment.Insert(equipment);
+				break;
+			}
+			case AROR_EFactionPresetCategory.WEAPONS:
+			{
+				AROR_FactionPresetWeapon weapon = new AROR_FactionPresetWeapon();
+				weapon.InitGenerated(prefab, type);
+				if (!m_aWeapons)
+					m_aWeapons = {};
+				m_aWeapons.Insert(weapon);
+				break;
+			}
+			case AROR_EFactionPresetCategory.WEAPON_ACCESSORIES:
+			{
+				AROR_FactionPresetWeaponAccessory accessory = new AROR_FactionPresetWeaponAccessory();
+				accessory.InitGenerated(prefab, type);
+				if (!m_aWeaponAccessories)
+					m_aWeaponAccessories = {};
+				m_aWeaponAccessories.Insert(accessory);
+				break;
+			}
+			case AROR_EFactionPresetCategory.AMMUNITION:
+			{
+				AROR_FactionPresetAmmunition ammunition = new AROR_FactionPresetAmmunition();
+				ammunition.InitGenerated(prefab, type);
+				if (!m_aAmmunition)
+					m_aAmmunition = {};
+				m_aAmmunition.Insert(ammunition);
+				break;
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------

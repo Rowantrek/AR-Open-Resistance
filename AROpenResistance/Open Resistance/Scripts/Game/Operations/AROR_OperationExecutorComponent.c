@@ -219,6 +219,8 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 	protected int m_iWakeRetryInterval;
 	[Attribute("10", desc: "Seconds of incomplete initial ground boarding before retries may interrupt a stuck native get-in queue for this package's unseated AI", params: "5 60 1")]
 	protected int m_iQRFSeatRecoveryDelay;
+	[Attribute("90", desc: "Maximum seconds for an existing ground roster to board; failed requests never spawn replacement soldiers", params: "15 300 1")]
+	protected int m_iQRFBoardingTimeout;
 	[Attribute("", desc: "Optional force pool. Empty retains the existing infantry-only configuration.")]
 	protected ref array<ref AROR_ForceProfile> m_aForceProfiles;
 	[Attribute("", desc: "Optional explicit ground QRF recipe ID; empty restores existing profile/level selection. Same ID can have one entry per role.")]
@@ -1121,9 +1123,7 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		force.m_vApproachPosition = approach;
 		ConvertReservation(reservation, profile);
 		m_aForces.Insert(force);
-		Resource vehicleResource = Resource.Load(profile.m_sVehicle);
-		if (vehicleResource && vehicleResource.IsValid())
-			force.m_Vehicle = SpawnGroundVehicle(vehicleResource, launchPosition, target.GetCenter());
+		SpawnProfileGroundVehicle(force, profile, QRFPoolReadinessLevel(operation), launchPosition, target.GetCenter());
 		if (!force.m_Vehicle)
 		{
 			FailOperation(operation, "Ground-force vehicle resource failed");
@@ -1153,7 +1153,7 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		if (!force.m_CrewGroup.m_aUnitPrefabSlots)
 			force.m_CrewGroup.m_aUnitPrefabSlots = {};
 		force.m_CrewGroup.m_aUnitPrefabSlots.Clear();
-		for (int c = 0; c < profile.m_iCrewCount; c++)
+		for (int c = 0; c < force.GetCrewCount(); c++)
 			force.m_CrewGroup.m_aUnitPrefabSlots.Insert(profile.m_sCrewCharacter);
 		if ((profile.m_eType == AROR_EForceType.ARMOUR && !profile.m_bFillPassengerSeats))
 			force.m_Group = force.m_CrewGroup;
@@ -1180,10 +1180,12 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			FailOperation(operation, "Native passenger capacity or required crew exceeds the reserved full-load profile");
 			return;
 		}
+		if (force.m_Group != force.m_CrewGroup)
+			AROR_InfantryRoster.Apply_S(operation.GetRole(), force.m_Group.m_aUnitPrefabSlots, profile.m_sAssetFactionKey);
 		int requested = force.m_Group.m_aUnitPrefabSlots.Count();
 		int totalRequested = requested;
 		if (force.m_Group != force.m_CrewGroup)
-			totalRequested += profile.m_iCrewCount;
+			totalRequested += force.GetCrewCount();
 		if (totalRequested > profile.m_iPersonnelBudget)
 		{
 			FailOperation(operation, "Ground-force members exceed profile reservation");
@@ -1210,8 +1212,68 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			ConfigureGroup(force.m_Group, operation);
 			force.m_Group.RequestSpawn(requested);
 		}
-		force.m_CrewGroup.RequestSpawn(profile.m_iCrewCount);
+		force.m_CrewGroup.RequestSpawn(force.GetCrewCount());
 		Print(string.Format("[AROR] Ground package queued: %1 profile=%2 personnel=%3", operation.GetId(), profile.m_sId, totalRequested), LogLevel.NORMAL);
+	}
+
+	//! Spawns the package hull: picked from the faction preset when the profile asks for it, with the crew raised to the
+	//! hull's driver and turret seats; a picked hull that does not fit the crew and personnel budget is replaced by the
+	//! profile's authored vehicle. Leaves force.m_Vehicle null on failure.
+	protected void SpawnProfileGroundVehicle(AROR_GroundOperationForce force, AROR_ForceProfile profile, int readinessLevel, vector launchPosition, vector targetPosition)
+	{
+		ResourceName picked = profile.PickVehicle(readinessLevel);
+		if (picked != profile.m_sVehicle)
+		{
+			Resource pickedResource = Resource.Load(picked);
+			if (pickedResource && pickedResource.IsValid())
+				force.m_Vehicle = SpawnGroundVehicle(pickedResource, launchPosition, targetPosition);
+			if (force.m_Vehicle)
+			{
+				force.m_bPresetVehicle = true;
+				string misfit = PresetHullMisfit(force, profile);
+				if (misfit.IsEmpty())
+				{
+					Print(string.Format("[AROR] Ground package %1 uses preset vehicle %2 (crew %3)", profile.m_sId, picked, force.GetCrewCount()), LogLevel.NORMAL);
+					return;
+				}
+				Print(string.Format("[AROR] Ground package %1: preset vehicle %2 does not fit (%3); using the authored vehicle", profile.m_sId, picked, misfit), LogLevel.WARNING);
+				SCR_EntityHelper.DeleteEntityAndChildren(force.m_Vehicle);
+				force.m_Vehicle = null;
+				force.m_bPresetVehicle = false;
+				force.m_iCrewCount = -1;
+			}
+		}
+		Resource vehicleResource = Resource.Load(profile.m_sVehicle);
+		if (vehicleResource && vehicleResource.IsValid())
+			force.m_Vehicle = SpawnGroundVehicle(vehicleResource, launchPosition, targetPosition);
+	}
+
+	//! Why a preset-picked hull cannot carry this package, or empty if it can; sets the dispatch crew count
+	protected string PresetHullMisfit(AROR_GroundOperationForce force, AROR_ForceProfile profile)
+	{
+		int required = force.CountRequiredCrewSeats_S();
+		if (required < 1)
+			return "no pilot seat";
+		force.m_iCrewCount = Math.Max(profile.m_iCrewCount, required);
+		bool crewOnly = profile.m_eType == AROR_EForceType.ARMOUR && !profile.m_bFillPassengerSeats;
+		if (crewOnly)
+		{
+			if (force.m_iCrewCount > profile.m_iPersonnelBudget)
+				return string.Format("needs %1 crew, budget %2", force.m_iCrewCount, profile.m_iPersonnelBudget);
+			return string.Empty;
+		}
+		// Without seat filling the infantry group keeps its authored size, so the crew cannot grow
+		if (!profile.m_bFillPassengerSeats)
+		{
+			if (required > profile.m_iCrewCount)
+				return string.Format("needs %1 crew, profile has %2", required, profile.m_iCrewCount);
+			return string.Empty;
+		}
+		if (force.m_iCrewCount + 1 > profile.m_iPersonnelBudget)
+			return string.Format("needs %1 crew, budget %2", force.m_iCrewCount, profile.m_iPersonnelBudget);
+		if (force.CountCargoSeats_S() - (force.m_iCrewCount - required) < 1)
+			return "no passenger seats";
+		return string.Empty;
 	}
 
 	protected void StartInfantryForce(AROR_Operation operation, AROR_ForceProfile profile = null, int packageIndex = 0, AROR_OperationForce reservation = null)
@@ -1293,7 +1355,10 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		group.GetOnAgentAdded().Insert(force.OnAgentAdded);
 		force.m_bTacticalControlled = operation.m_TacticalCommander != null;
 		if (group.m_aUnitPrefabSlots)
+		{
+			AROR_InfantryRoster.Apply_S(operation.GetRole(), group.m_aUnitPrefabSlots, force.m_sAssetFactionKey);
 			force.m_iReservedMembers = group.m_aUnitPrefabSlots.Count();
+		}
 		int requestedMembers = force.m_iReservedMembers;
 		if (profile && requestedMembers <= profile.m_iPersonnelBudget)
 			force.m_iReservedMembers = profile.m_iPersonnelBudget;
@@ -1465,6 +1530,8 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 				FailOperation(operation, "Ground-force group faction mismatch");
 				return;
 			}
+			if (!force.PrepareBoarding_S())
+				return;
 			if (!force.m_bMountRequested && !force.Mount_S())
 			{
 				FailOperation(operation, "Vehicle is not AI-drivable or crew/passenger seating failed");
@@ -1475,15 +1542,14 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 				ReportPackageProgress(force, "Waiting for actual driver, crew and passenger seat occupancy after direct placement");
 				// Seat teleports can be dropped silently; re-request the missing seats like garrison crews do
 				force.m_iMountWaitTicks++;
+				if (force.m_iMountWaitTicks >= m_iQRFBoardingTimeout)
+				{
+					FailPackage(force, operation, "Ground boarding timed out: " + force.GetMountRejection());
+					return;
+				}
 				if (Math.Mod(force.m_iMountWaitTicks, m_iWakeRetryInterval) == 0)
 				{
-					// Still refused after the recovery delay twice over: spawn the missing people straight into their seats
-					if (force.m_iMountWaitTicks >= m_iQRFSeatRecoveryDelay * 2)
-					{
-						int replaced = force.ReplaceUnseated_S();
-						if (replaced > 0)
-							Print(string.Format("[AROR] %1 package=%2 spawned %3 replacement(s) straight into their seats after %4 s of refused seating", operation.GetId(), force.m_iPackageIndex + 1, replaced, force.m_iMountWaitTicks), LogLevel.WARNING);
-					}
+					force.PrepareBoarding_S(true);
 					Print(string.Format("[AROR] %1 package=%2 seating retry after %3 s: %4", operation.GetId(), force.m_iPackageIndex + 1, force.m_iMountWaitTicks, force.ReseatMissing_S(force.m_iMountWaitTicks >= m_iQRFSeatRecoveryDelay)), LogLevel.WARNING);
 				}
 				return;
@@ -1746,6 +1812,11 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		if (m_iQRFSeatRecoveryDelay < 5 || m_iQRFSeatRecoveryDelay > 60)
 		{
 			Print("[AROR] Initial boarding recovery delay must be between 5 and 60 seconds", LogLevel.ERROR);
+			return;
+		}
+		if (m_iQRFBoardingTimeout < 15 || m_iQRFBoardingTimeout > 300)
+		{
+			Print("[AROR] Ground boarding timeout must be between 15 and 300 seconds", LogLevel.ERROR);
 			return;
 		}
 		// Attribute containers are populated from the prefab/world. Declaration initializers

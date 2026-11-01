@@ -7,6 +7,9 @@ class AROR_FactionPresetEntry
 	[Attribute("", UIWidgets.ResourcePickerThumbnail, desc: "Prefab", params: "et")]
 	protected ResourceName m_sPrefab;
 
+	//! Added at runtime from the faction catalogs (not listed in the preset's config)
+	protected bool m_bGenerated;
+
 	//------------------------------------------------------------------------------------------------
 	//! The prefab to use: the listed one, or its replacement from an enabled content pack (e.g. a weapon mod's variant)
 	ResourceName GetPrefab()
@@ -25,6 +28,27 @@ class AROR_FactionPresetEntry
 	AROR_EFactionPresetCategory GetCategory()
 	{
 		return -1;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Fills an entry created at runtime (catalog augmentation, see AROR_FactionPreset.AugmentFromCatalogs)
+	void InitGenerated(ResourceName prefab, int type)
+	{
+		m_sPrefab = prefab;
+		m_bGenerated = true;
+		SetTypeValue(type);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True for entries added from the faction catalogs at runtime
+	bool IsGenerated()
+	{
+		return m_bGenerated;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void SetTypeValue(int type)
+	{
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -115,6 +139,12 @@ class AROR_FactionPresetUnit : AROR_FactionPresetEntry
 	{
 		return m_eType;
 	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
+	}
 }
 
 //! Empty vehicle (no crew)
@@ -134,6 +164,12 @@ class AROR_FactionPresetVehicle : AROR_FactionPresetEntry
 	override int GetTypeValue()
 	{
 		return m_eType;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
 	}
 }
 
@@ -155,6 +191,12 @@ class AROR_FactionPresetGear : AROR_FactionPresetEntry
 	{
 		return m_eType;
 	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
+	}
 }
 
 //! Medical supplies, binoculars, radios and other equipment
@@ -174,6 +216,12 @@ class AROR_FactionPresetEquipment : AROR_FactionPresetEntry
 	override int GetTypeValue()
 	{
 		return m_eType;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
 	}
 }
 
@@ -195,6 +243,12 @@ class AROR_FactionPresetWeapon : AROR_FactionPresetEntry
 	{
 		return m_eType;
 	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
+	}
 }
 
 [BaseContainerProps(), SCR_BaseContainerCustomTitleEnum(AROR_EWeaponAccessoryType, "m_eType")]
@@ -213,6 +267,12 @@ class AROR_FactionPresetWeaponAccessory : AROR_FactionPresetEntry
 	override int GetTypeValue()
 	{
 		return m_eType;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
 	}
 }
 
@@ -233,5 +293,11 @@ class AROR_FactionPresetAmmunition : AROR_FactionPresetEntry
 	override int GetTypeValue()
 	{
 		return m_eType;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
 	}
 }

@@ -376,204 +376,73 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	// Spawning helpers: thin wrappers over AROR_ForceSpawner (shared with Patrols)
+	//------------------------------------------------------------------------------------------------
 	string GetFactionKey(AROR_EFactionRole role)
 	{
-		AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
-		if (!roles)
-			return string.Empty;
-
-		return roles.GetFactionKey(role);
+		return AROR_ForceSpawner.FactionKey(role);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! A unit of the type from the role's faction preset, falling back to its rifleman
 	ResourceName GetUnitPrefab_S(AROR_EFactionRole role, AROR_EUnitType type)
 	{
-		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
-		if (!presets)
-			return string.Empty;
-
-		AROR_FactionPreset preset = presets.GetPreset(role);
-		if (!preset)
-			return string.Empty;
-
-		AROR_FactionPresetUnit unit = preset.GetUnit(type);
-		if (!unit)
-			unit = preset.GetUnit(AROR_EUnitType.RIFLEMAN);
-
-		if (!unit)
-			return string.Empty;
-
-		return unit.GetPrefab();
+		return AROR_ForceSpawner.UnitPrefab(role, type);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! A random vehicle of the type from the role's faction preset that its readiness allows (any of the type if none
-	//! is allowed yet), or empty if it has none
+	//! A random vehicle of the type from the role's faction preset available at the army's current Readiness, or
+	//! empty if it has none (presets augmented by mods hold heavier variants that unlock later)
 	ResourceName GetVehiclePrefab_S(AROR_EFactionRole role, AROR_EVehicleType type)
 	{
-		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
-		if (!presets)
-			return string.Empty;
+		int readiness = 5;
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		if (operations)
+			readiness = operations.GetReadinessLevel(role);
 
-		AROR_FactionPreset preset = presets.GetPreset(role);
-		if (!preset)
-			return string.Empty;
-
-		array<AROR_FactionPresetEntry> entries = {};
-		preset.GetEntries(AROR_EFactionPresetCategory.VEHICLES, type, entries);
-		if (entries.IsEmpty())
-			return string.Empty;
-
-		array<ResourceName> allowed = {};
-		foreach (AROR_FactionPresetEntry candidate : entries)
-		{
-			if (AROR_ContentPacksComponent.IsAvailableAtReadiness(candidate.GetPrefab(), role))
-				allowed.Insert(candidate.GetPrefab());
-		}
-
-		if (!allowed.IsEmpty())
-			return allowed.GetRandomElement();
-
-		AROR_FactionPresetEntry entry = entries.GetRandomElement();
-		return entry.GetPrefab();
+		return AROR_ForceSpawner.VehiclePrefab(role, type, readiness);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! A guard team for the role: a leader and riflemen with an automatic rifleman and a machine gunner mixed in
 	void BuildGuardTeam_S(AROR_EFactionRole role, int count, notnull array<ResourceName> outMembers)
 	{
-		outMembers.Clear();
-		for (int i = 0; i < count; i++)
-		{
-			AROR_EUnitType type = AROR_EUnitType.RIFLEMAN;
-			if (i == 0)
-				type = AROR_EUnitType.LEADER;
-			else if (i == 2)
-				type = AROR_EUnitType.AUTORIFLEMAN;
-			else if (i == 4)
-				type = AROR_EUnitType.MACHINEGUNNER;
-
-			ResourceName prefab = GetUnitPrefab_S(role, type);
-			if (!prefab.IsEmpty())
-				outMembers.Insert(prefab);
-		}
+		AROR_ForceSpawner.BuildTeam(role, count, outMembers);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! An AI group of the role with these members (spawned through the engine's queue, not all this frame)
 	SCR_AIGroup SpawnGroup_S(AROR_EFactionRole role, notnull array<ResourceName> members, vector position)
 	{
-		if (members.IsEmpty())
-			return null;
-
-		string factionKey = GetFactionKey(role);
-		Faction faction = GetGame().GetFactionManager().GetFactionByKey(factionKey);
-		if (!faction)
-			return null;
-
-		SCR_AIGroup.IgnoreSpawning(true);
-		IEntity entity = SpawnPrefab_S(m_sGroupPrefab, position, 0);
-		SCR_AIGroup.IgnoreSpawning(false);
-
-		SCR_AIGroup group = SCR_AIGroup.Cast(entity);
-		if (!group)
-		{
-			if (entity)
-				SCR_EntityHelper.DeleteEntityAndChildren(entity);
-
-			return null;
-		}
-
-		bool assigned;
-		if (!group.GetFaction())
-			assigned = group.InitFactionKey(factionKey);
-		else
-			assigned = group.SetFaction(faction);
-
-		if (!assigned)
-		{
-			SCR_EntityHelper.DeleteEntityAndChildren(group);
-			return null;
-		}
-
-		group.SetCanDeleteIfNoPlayer(false);
-		group.SetPrivate(true);
-		group.SetPrivacyChangeable(false);
-		group.SetLifecyclePolicy(SCR_EAIGroupLifecyclePolicy.Manual);
-
-		if (!group.m_aUnitPrefabSlots)
-			group.m_aUnitPrefabSlots = {};
-
-		group.m_aUnitPrefabSlots.Clear();
-		foreach (ResourceName member : members)
-		{
-			group.m_aUnitPrefabSlots.Insert(member);
-		}
-
-		group.RequestSpawn(members.Count());
-		return group;
+		return AROR_ForceSpawner.SpawnGroup(m_sGroupPrefab, role, members, position);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! A vehicle affiliated with the role (yaw in degrees)
 	IEntity SpawnVehicle_S(AROR_EFactionRole role, ResourceName prefab, vector position, float yaw)
 	{
-		IEntity vehicle = SpawnPrefab_S(prefab, position, yaw);
-		if (!vehicle)
-			return null;
-
-		FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(vehicle.FindComponent(FactionAffiliationComponent));
-		string factionKey = GetFactionKey(role);
-		if (affiliation && !factionKey.IsEmpty())
-			affiliation.SetAffiliatedFactionByKey(factionKey);
-
-		return vehicle;
+		return AROR_ForceSpawner.SpawnVehicle(role, prefab, position, yaw);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Spawns a prefab on the terrain surface (yaw in degrees)
 	IEntity SpawnPrefab_S(ResourceName prefab, vector position, float yaw)
 	{
-		if (prefab.IsEmpty())
-			return null;
-
-		Resource resource = Resource.Load(prefab);
-		if (!resource || !resource.IsValid())
-			return null;
-
-		BaseWorld world = GetGame().GetWorld();
-		position[1] = world.GetSurfaceY(position[0], position[2]);
-
-		EntitySpawnParams params = new EntitySpawnParams();
-		params.TransformMode = ETransformMode.WORLD;
-		vector rotation[3];
-		Math3D.AnglesToMatrix(Vector(yaw, 0, 0), rotation);
-		params.Transform[0] = rotation[0];
-		params.Transform[1] = rotation[1];
-		params.Transform[2] = rotation[2];
-		params.Transform[3] = position;
-		return GetGame().SpawnEntityPrefab(resource, world, params);
+		return AROR_ForceSpawner.SpawnPrefab(prefab, position, yaw);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Gives the group a defend or move waypoint; the waypoint is added to entities for cleanup
 	AIWaypoint AddWaypoint_S(SCR_AIGroup group, bool defend, vector position, float radius, notnull array<IEntity> entities)
 	{
-		if (!group)
-			return null;
-
 		ResourceName prefab = m_sMoveWaypointPrefab;
 		if (defend)
 			prefab = m_sDefendWaypointPrefab;
 
-		AIWaypoint waypoint = AIWaypoint.Cast(SpawnPrefab_S(prefab, position, 0));
-		if (!waypoint)
-			return null;
+		AIWaypoint waypoint = AROR_ForceSpawner.AddWaypoint(group, prefab, position, radius);
+		if (waypoint)
+			entities.Insert(waypoint);
 
-		waypoint.SetCompletionRadius(radius);
-		group.AddWaypoint(waypoint);
-		entities.Insert(waypoint);
 		return waypoint;
 	}
 
@@ -587,35 +456,14 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 	//! A clear spot on dry land within radius of centre with room for an object of the clearance radius
 	bool FindClearPosition_S(vector centre, float radius, float clearance, out vector position)
 	{
-		BaseWorld world = GetGame().GetWorld();
-		for (int attempt = 0; attempt < 6; attempt++)
-		{
-			vector found;
-			if (!SCR_WorldTools.FindEmptyTerrainPosition(found, centre, radius, clearance, 3))
-				continue;
-
-			if (world.GetSurfaceY(found[0], found[2]) <= world.GetOceanHeight(found[0], found[2]) + 0.5)
-				continue;
-
-			position = found;
-			return true;
-		}
-
-		return false;
+		return AROR_ForceSpawner.FindClearPosition(centre, radius, clearance, position);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! A reachable road point near a position (searching towards goal)
 	bool FindRoadPosition_S(vector near, vector goal, out vector position)
 	{
-		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
-		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
-			return false;
-
-		BaseWorld world = GetGame().GetWorld();
-		near[1] = world.GetSurfaceY(near[0], near[2]);
-		goal[1] = world.GetSurfaceY(goal[0], goal[2]);
-		return aiWorld.GetRoadNetworkManager().GetReachableWaypointInRoad(near, goal, 150, position);
+		return AROR_ForceSpawner.FindRoadPosition(near, goal, position);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -648,78 +496,27 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 	//! native faction)
 	int CountAlive_S(SCR_AIGroup group, AROR_EFactionRole role, notnull array<IEntity> affiliated)
 	{
-		if (!group)
-			return 0;
-
-		string factionKey = GetFactionKey(role);
-		array<AIAgent> agents = {};
-		group.GetAgents(agents);
-		int alive;
-		foreach (AIAgent agent : agents)
-		{
-			if (!agent)
-				continue;
-
-			IEntity entity = agent.GetControlledEntity();
-			if (!IsAlive(entity))
-				continue;
-
-			alive++;
-			if (affiliated.Contains(entity))
-				continue;
-
-			affiliated.Insert(entity);
-			FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(entity.FindComponent(FactionAffiliationComponent));
-			if (affiliation && !factionKey.IsEmpty() && affiliation.GetAffiliatedFactionKey() != factionKey)
-				affiliation.SetAffiliatedFactionByKey(factionKey);
-		}
-
-		return alive;
+		return AROR_ForceSpawner.CountAlive(group, role, affiliated);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Living members of a group (no affiliation changes)
 	static int CountLiving(SCR_AIGroup group, notnull array<IEntity> outMembers)
 	{
-		outMembers.Clear();
-		if (!group)
-			return 0;
-
-		array<AIAgent> agents = {};
-		group.GetAgents(agents);
-		foreach (AIAgent agent : agents)
-		{
-			if (!agent)
-				continue;
-
-			IEntity entity = agent.GetControlledEntity();
-			if (IsAlive(entity))
-				outMembers.Insert(entity);
-		}
-
-		return outMembers.Count();
+		return AROR_ForceSpawner.CountLiving(group, outMembers);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	static bool IsAlive(IEntity entity)
 	{
-		ChimeraCharacter character = ChimeraCharacter.Cast(entity);
-		if (!character)
-			return false;
-
-		CharacterControllerComponent controller = character.GetCharacterController();
-		return controller && !controller.IsDead();
+		return AROR_ForceSpawner.IsAlive(entity);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Gone or wrecked
 	static bool IsDestroyed(IEntity entity)
 	{
-		if (!entity)
-			return true;
-
-		DamageManagerComponent damage = DamageManagerComponent.Cast(entity.FindComponent(DamageManagerComponent));
-		return damage && damage.IsDestroyed();
+		return AROR_ForceSpawner.IsDestroyed(entity);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -727,70 +524,7 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 	//! every update until it returns true: seat requests can be dropped, and members spawn over several frames.
 	bool SeatGroup_S(SCR_AIGroup group, IEntity vehicle, int expectedMembers)
 	{
-		if (!group || !vehicle)
-			return false;
-
-		BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(vehicle.FindComponent(BaseCompartmentManagerComponent));
-		SCR_AIVehicleUsageComponent usage = SCR_AIVehicleUsageComponent.Cast(vehicle.FindComponent(SCR_AIVehicleUsageComponent));
-		if (!compartments || !usage || !usage.GetPilotCompartmentSlot())
-			return false;
-
-		array<IEntity> members = {};
-		CountLiving(group, members);
-		if (members.Count() < expectedMembers)
-			return false;
-
-		array<BaseCompartmentSlot> slots = {};
-		compartments.GetCompartments(slots);
-		array<BaseCompartmentSlot> ordered = {usage.GetPilotCompartmentSlot()};
-		foreach (BaseCompartmentSlot slot : slots)
-		{
-			if (slot && TurretCompartmentSlot.Cast(slot) && !ordered.Contains(slot))
-				ordered.Insert(slot);
-		}
-
-		foreach (BaseCompartmentSlot slot : slots)
-		{
-			if (slot && CargoCompartmentSlot.Cast(slot) && !ordered.Contains(slot))
-				ordered.Insert(slot);
-		}
-
-		bool allSeated = true;
-		foreach (IEntity member : members)
-		{
-			CompartmentAccessComponent access = CompartmentAccessComponent.Cast(member.FindComponent(CompartmentAccessComponent));
-			if (!access)
-			{
-				allSeated = false;
-				continue;
-			}
-
-			BaseCompartmentSlot current = access.GetCompartment();
-			if (access.IsInCompartment() && current && current.GetVehicle() == vehicle)
-				continue;
-
-			allSeated = false;
-			if (access.IsGettingIn() || access.IsGettingOut() || access.IsInCompartment())
-				continue;
-
-			foreach (BaseCompartmentSlot seat : ordered)
-			{
-				if (!seat.IsCompartmentAccessible() || seat.IsOccupied() || seat.GetOccupant())
-					continue;
-
-				access.GetInVehicle(vehicle, seat, true, -1, ECloseDoorAfterActions.CLOSE_DOOR, false);
-				break;
-			}
-		}
-
-		if (!allSeated || !usage.GetPilotCompartmentSlot().GetOccupant())
-			return false;
-
-		SCR_AIGroupUtilityComponent utility = group.GetGroupUtilityComponent();
-		if (utility)
-			utility.AddUsableVehicle(usage);
-
-		return true;
+		return AROR_ForceSpawner.SeatGroup(group, vehicle, expectedMembers);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1309,20 +1043,7 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 	//! A vehicle with a player in one of its seats
 	protected static bool HasPlayerAboard(IEntity entity)
 	{
-		BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(entity.FindComponent(BaseCompartmentManagerComponent));
-		if (!compartments)
-			return false;
-
-		array<BaseCompartmentSlot> slots = {};
-		compartments.GetCompartments(slots);
-		PlayerManager playerManager = GetGame().GetPlayerManager();
-		foreach (BaseCompartmentSlot slot : slots)
-		{
-			if (slot && slot.GetOccupant() && playerManager.GetPlayerIdFromControlledEntity(slot.GetOccupant()) > 0)
-				return true;
-		}
-
-		return false;
+		return AROR_ForceSpawner.HasPlayerAboard(entity);
 	}
 
 	//------------------------------------------------------------------------------------------------

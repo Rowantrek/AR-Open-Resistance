@@ -1,8 +1,9 @@
 //! Saves Resistance item stock (AROR_ResistanceStorageComponent on the game mode, which has a Persistence component).
 //! Nothing is written while the stock is empty.
+//! Version 2 adds the loose magazine rounds; version 1 saves load with none.
 class AROR_ResistanceStorageComponentSerializer : ScriptedComponentSerializer
 {
-	protected static const int VERSION = 1;
+	protected static const int VERSION = 2;
 
 	//------------------------------------------------------------------------------------------------
 	override static typename GetTargetType()
@@ -21,9 +22,15 @@ class AROR_ResistanceStorageComponentSerializer : ScriptedComponentSerializer
 		array<int> quantities = {};
 		storage.GetEntries(prefabs, quantities);
 
+		array<ResourceName> loosePrefabs = {};
+		array<int> looseRounds = {};
+		storage.GetLooseRounds(loosePrefabs, looseRounds);
+
 		context.WriteValue("version", VERSION);
 		context.WriteValue("prefabs", prefabs);
 		context.WriteValue("quantities", quantities);
+		context.WriteValue("loosePrefabs", loosePrefabs);
+		context.WriteValue("looseRounds", looseRounds);
 		return ESerializeResult.OK;
 	}
 
@@ -39,6 +46,14 @@ class AROR_ResistanceStorageComponentSerializer : ScriptedComponentSerializer
 		array<int> quantities = {};
 		if (context.ReadValue("prefabs", prefabs) && context.ReadValue("quantities", quantities))
 			storage.RestoreEntries_S(prefabs, quantities);
+
+		if (version >= 2)
+		{
+			array<ResourceName> loosePrefabs = {};
+			array<int> looseRounds = {};
+			if (context.ReadValue("loosePrefabs", loosePrefabs) && context.ReadValue("looseRounds", looseRounds))
+				storage.RestoreLooseRounds_S(loosePrefabs, looseRounds);
+		}
 
 		return true;
 	}

@@ -236,6 +236,18 @@ class AROR_NotificationManagerComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Client: the full-screen HUD overlay that other HUD elements are created inside (e.g. the personal marker),
+	//! or null on a dedicated server
+	Widget GetHudRoot()
+	{
+		AROR_NotificationDisplay display = GetDisplay();
+		if (!display)
+			return null;
+
+		return display.GetRoot();
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override void OnPostInit(IEntity owner)
 	{
 		super.OnPostInit(owner);

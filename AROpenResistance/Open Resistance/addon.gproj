@@ -1,7 +1,7 @@
 GameProject {
  ID "OpenResistance"
- GUID "6AA282336705EED2"
- TITLE "Open Resistance"
+ GUID "6C68A5E5654D7210"
+ TITLE "Open Resistance Ultimate"
  Dependencies {
   "58D0FB3206B6F859"
   "69A4D664A6284E06"

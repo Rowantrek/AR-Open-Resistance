@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{0A7B138107D514DE}Configs/FactionPresets/WCS/AROR_Preset_USSR_Army_WCS.conf"
+ Configurations {
+  CONFResourceClass PC {
+  }
+  CONFResourceClass XBOX_ONE : PC {
+  }
+  CONFResourceClass XBOX_SERIES : PC {
+  }
+  CONFResourceClass PS4 : PC {
+  }
+  CONFResourceClass PS5 : PC {
+  }
+  CONFResourceClass HEADLESS : PC {
+  }
+ }
+}

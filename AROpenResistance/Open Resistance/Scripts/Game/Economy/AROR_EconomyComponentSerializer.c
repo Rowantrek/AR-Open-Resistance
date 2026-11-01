@@ -27,6 +27,16 @@ class AROR_EconomyComponentSerializer : ScriptedComponentSerializer
 		if (highCommand)
 			highCommand.GetRefundValue_S(refundFunds, refundManpower);
 
+		// Personal recruits use the same session-only refund policy as High Command.
+		AROR_RecruitmentComponent recruitment = AROR_RecruitmentComponent.Cast(owner.FindComponent(AROR_RecruitmentComponent));
+		if (recruitment)
+		{
+			int recruitFunds, recruitManpower;
+			recruitment.GetRefundValue_S(recruitFunds, recruitManpower);
+			refundFunds += recruitFunds;
+			refundManpower += recruitManpower;
+		}
+
 		if (economy.HasStartingFactionFunds() && economy.HasStartingManpower() && playerKeys.IsEmpty() && refundFunds == 0 && refundManpower == 0)
 			return ESerializeResult.DEFAULT;
 

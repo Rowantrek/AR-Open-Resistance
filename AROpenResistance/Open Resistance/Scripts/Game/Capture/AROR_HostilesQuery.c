@@ -1,4 +1,5 @@
-//! Finds whether any living character hostile to a faction is inside a location's radius.
+//! Finds whether any living character hostile to a faction is inside a location's radius. Helicopter occupants are
+//! ignored, as in AROR_LocationForces: an aircraft overhead does not block a capture.
 class AROR_HostilesQuery : Managed
 {
 	protected Faction m_Faction;
@@ -33,6 +34,9 @@ class AROR_HostilesQuery : Managed
 			return true;
 
 		if (vector.DistanceXZ(m_vCenter, character.GetOrigin()) > m_fRadius)
+			return true;
+
+		if (AROR_LocationForces.IsInAircraft(character))
 			return true;
 
 		Faction characterFaction = SCR_Faction.GetEntityFaction(character);

@@ -7,12 +7,12 @@ Object.defineProperty(String.prototype,'IsEmpty',{value(){return !this.length;},
 for(const [name,fn]of Object.entries({Count(){return this.length;},Insert(x){this.push(x);},Contains(x){return this.includes(x);},IsEmpty(){return !this.length;},Clear(){this.length=0;},Copy(x){this.splice(0,this.length,...x);}}))Object.defineProperty(Array.prototype,name,{value:fn,configurable:true});
 const env={Math:{Max:Math.max},Replication:{IsServer:()=>server},GetGame:()=>({GetPlayerManager:()=>({GetPlayerIdFromControlledEntity:x=>x?.player?1:0})}),
   AROR_EForceType:{AIRBORNE:3,MOTORIZED:0},ECloseDoorAfterActions:{CLOSE_DOOR:1,INVALID:-1},
-  string:{Format:(s,...a)=>s.replace(/%(\d+)/g,(_,i)=>a[i-1])}};
+  string:{Empty:'',Format:(s,...a)=>s.replace(/%(\d+)/g,(_,i)=>a[i-1])},AROR_ForceSpawner:{IsAlive:x=>!!x?.character&&!x.dead}};
 for(const name of ['BaseCompartmentManagerComponent','SCR_AIVehicleUsageComponent','CompartmentAccessComponent'])env[name]={Cast:x=>x};
 env.ChimeraCharacter={Cast:x=>x?.character?x:null};
 let deleted=[];env.AIControlComponent={Cast:x=>x};env.SCR_EntityHelper={DeleteEntityAndChildren:x=>deleted.push(x)};
 env.TurretCompartmentSlot={Cast:x=>x?.kind==='turret'?x:null};env.CargoCompartmentSlot={Cast:x=>x?.kind==='cargo'?x:null};
-const methods=['ReplaceUnseated_S','ReplaceIntoSeat','ReplaceIntoSeatEntity','Seat','PreparePassengerRoster_S','Mount_S','IsRequiredGunnerSeat','IsMountComplete','ReseatMissing_S','ReseatMember','RecoverStaleBoarding_S','IsSeatedInOwnVehicle'];
+const methods=['GetCrewCount','ReplaceUnseated_S','Seat','PreparePassengerRoster_S','Mount_S','IsRequiredGunnerSeat','IsMountComplete','GetMountRejection','ReseatMissing_S','ReseatMember','RecoverStaleBoarding_S','IsSeatedInOwnVehicle','PrepareBoarding_S','WakeBoardingGroup_S'];
 function compile(name){
   const m=source.match(new RegExp('^\\t[^\\r\\n]*\\b'+name+'\\(([^\\r\\n]*)\\)\\r?\\n\\t\\{([\\s\\S]*?)^\\t\\}', 'm'));
   if(!m)throw Error('Missing '+name);
@@ -32,7 +32,7 @@ function fixture(crewCount=1,passengerCount=4){
   const all=[],calls=[],resets=[];
   const vehicle={speed:0,FindComponent(type){return type===env.BaseCompartmentManagerComponent?{GetCompartments:a=>a.push(...slots)}:usage;},GetPhysics(){return {GetVelocity:()=>({Length:()=>this.speed})};}};
   function seat(kind){return {kind,occupant:null,reserved:null,accessible:true,GetOccupant(){return this.occupant;},IsOccupied(){return !!this.occupant;},
-    GetAttachedTurret(){return this.attachedTurret||null;},GetOwner(){return this.owner||null;},IsCompartmentAccessible(){return this.accessible;},IsReserved(){return !!this.reserved;},IsReservedBy(x){return this.reserved===x;},SetReserved(x){this.reserved=x;},GetVehicle:()=>vehicle};}
+    GetCompartmentSlotID(){return slots.indexOf(this);},GetAttachedTurret(){return this.attachedTurret||null;},GetOwner(){return this.owner||null;},IsCompartmentAccessible(){return this.accessible;},IsReserved(){return !!this.reserved;},IsReservedBy(x){return this.reserved===x;},SetReserved(x){this.reserved=x;},GetVehicle:()=>vehicle};}
   const slots=[seat('driver'),...Array.from({length:crewCount-1},()=>seat('turret')),...Array.from({length:passengerCount},()=>seat('cargo'))];
   const usage={CanBePiloted:()=>true,GetPilotCompartmentSlot:()=>slots[0]};
   function actor(){
@@ -68,7 +68,7 @@ check(f.force.IsMountComplete()&&f.calls.length===7,'IFV crew and infantry all r
 check(new Set(f.calls.map(x=>x.slot)).size===7,'one occupant per seat');
 f=fixture();f.crew[0].access.allow=false;report=f.force.ReseatMissing_S(true);
 check(report.includes('accepted=4 attempted=5'),'native rejection distinguishable from retry being skipped');
-check(report.includes('canEnter=false')&&report.includes('paused=true'),'paced rejection diagnostic records native entry eligibility and execution mode');
+check(report.includes('canEnter=false')&&report.includes('initialDeployment=true'),'paced rejection diagnostic records initial deployment without claiming measured simulation state');
 check(!f.force.IsMountComplete(),'accepted passengers cannot hide an absent driver');
 f=fixture();f.crew[0].access.entering=false;check(f.force.Seat(f.crew[0],f.slots[0])&&f.calls[0].paused,'first placement also uses paused execution');
 f=fixture();f.force.m_bMounted=true;f.force.Seat(f.crew[0],f.slots[0]);check(f.calls[0].paused===false,'live-operation reseating does not force paused execution');
@@ -129,7 +129,7 @@ for(const [label,change]of [
  ['occupied turret',f=>f.slots[1].occupant={player:true}],['blocked turret',f=>f.slots[1].accessible=false],
  ['reserved turret',f=>f.slots[1].reserved={}]
 ]){
- f=fixture(2,2);change(f);check(!f.force.Mount_S(),label+' must not be skipped in favour of cargo');
+ f=fixture(2,2);change(f);check(f.force.Mount_S()&&!f.force.IsMountComplete(),label+' retains its crew assignment and blocks dispatch during bounded retries');
 }
 f=fixture(3,2);f.force.ReseatMissing_S(true);f.slots[2].occupant=null;
 check(!f.force.IsMountComplete(),'every turret in a multi-gunner vehicle is required');
@@ -159,26 +159,34 @@ for(const escorts of [0,1]){
 f=fixture(2,4);f.slots.forEach(s=>s.reserved=null);f.all.forEach(a=>{a.access.entering=false;a.access.GetInVehicle=(v,s)=>{f.calls.push({actor:a,slot:s});return true;}});
 f.force.ReseatMissing_S();
 check(f.calls.length===6&&new Set(f.calls.map(c=>c.slot)).size===6,'ground retry assigns distinct destinations without synchronous native reservation updates');
-// Last resort: refused seating is replaced by the seat's default occupant spawned straight into the seat.
+// Failed native entry must preserve the authored soldiers and never spawn/delete replacements.
 {
-  const r=fixture(2,3);r.all.forEach(a=>{a.access.entering=false;a.access.allow=false;});deleted=[];
-  const given=[],foreign={removed:0,RemoveAgent(){this.removed++;}};
-  for(const g of [r.force.m_CrewGroup,r.force.m_Group]){g.added=[];g.AddAgent=function(a){this.added.push(a);};}
-  r.slots.forEach(s=>{s.GetDefaultOccupantPrefab=()=>'{0000000000000000}US_Soldier.et';
-    s.SpawnDefaultCharacterInCompartment=g=>{given.push(g);const agent={GetParentGroup:()=>foreign};
-      const c={character:true,spawned:true,GetCharacterController:()=>({IsDead:()=>false}),access:{IsInCompartment:()=>true,IsGettingIn:()=>false,IsGettingOut:()=>false,GetCompartment:()=>s},
-        FindComponent(t){return t===env.AIControlComponent?{GetControlAIAgent:()=>agent}:this.access;}};
-      s.occupant=c;return c;};});
-  const originals=[...r.all];
-  check(r.force.ReplaceUnseated_S()===5,'every refused crew member and passenger is replaced in its seat');
-  check(r.slots.every(s=>s.occupant&&s.occupant.spawned),'driver, gunner and cargo seats are all occupied by the spawned replacements');
-  check(given[0]===r.force.m_CrewGroup&&given[1]===r.force.m_CrewGroup&&given.slice(2).every(g=>g===r.force.m_Group),'crew seats spawn into the crew group, cargo seats into the infantry group');
-  check(r.force.m_CrewGroup.added.length===2&&r.force.m_Group.added.length===3&&foreign.removed===5,'replacements spawned into another group are moved into the package groups');
-  check(deleted.length===5&&originals.every(a=>deleted.includes(a)),'the characters left standing are removed');
-  check(r.force.m_aPassengers.every(p=>p.spawned),'the passenger roster follows the replacements for delivery and dismount');
-  check(r.force.ReplaceUnseated_S()===0&&deleted.length===5,'occupied seats are never replaced twice');
-  const none=fixture(1,2);none.all.forEach(a=>{a.access.entering=false;});none.slots.forEach(s=>{s.GetDefaultOccupantPrefab=()=>'';});deleted=[];
-  check(none.force.ReplaceUnseated_S()===0&&!deleted.length,'a seat without a default occupant keeps its member and the normal retries');
-  const moving=fixture(1,2);moving.force.m_bMounted=true;check(moving.force.ReplaceUnseated_S()===0,'never used once the package has mounted');
+ const r=fixture(2,3);r.all.forEach(a=>{a.access.entering=false;a.access.allow=false;});deleted=[];
+ let spawns=0;r.slots.forEach(s=>{s.SpawnDefaultCharacterInCompartment=()=>{spawns++;throw Error('replacement forbidden');};});
+ const originals=[...r.all];
+ check(r.force.Mount_S(),'valid seat plan survives native request rejection for bounded retry');
+ check(r.force.m_aPassengers.length===3,'all passengers tracked even when the first seat request fails');
+ check(!r.force.IsMountComplete(),'rejected requests cannot dispatch');
+ check(r.force.ReplaceUnseated_S()===0&&spawns===0&&deleted.length===0,'compatibility method cannot create replacement churn');
+ check(originals.every(a=>r.all.includes(a)),'original actors survive rejection');
+ r.all.forEach(a=>a.access.allow=true);r.force.ReseatMissing_S(true);
+ check(r.force.IsMountComplete(),'the same roster can board on a later successful native retry');
+ r.crew[1].dead=true;
+ check(r.force.GetMountRejection().includes('dead'),'occupied dead crew produces an explicit readiness rejection');
+ check(!r.force.IsMountComplete(),'dead crew cannot pass readiness');
 }
-console.log(JSON.stringify({assertions,note:'Native paused simulation/queue cancellation must be verified in Workbench Play.'}));
+// Activation precedes initial seating, observes the native cap and leases LOD only briefly.
+{
+ const r=fixture();const wakes=[];
+ for(const group of [r.force.m_Group,r.force.m_CrewGroup])group.GetAgents=out=>out.push({
+  GetControlledEntity:()=>r.crew[0],PreventMaxLOD:seconds=>wakes.push(['lease',seconds]),ActivateAI:limit=>wakes.push(['activate',limit])});
+ check(!r.force.PrepareBoarding_S()&&wakes.length===4,'first activation yields a tick before seating');
+ check(r.force.PrepareBoarding_S()&&wakes.length===4,'ordinary polling does not repeatedly activate');
+ check(wakes.filter(w=>w[0]==='activate').every(w=>w[1]===true),'native activation checks world capacity');
+ check(wakes.filter(w=>w[0]==='lease').every(w=>w[1]===10),'boarding never pins a permanent LOD');
+ r.force.PrepareBoarding_S(true);check(wakes.length===8,'paced retry can renew activation');
+ r.crew[0].player=true;r.force.PrepareBoarding_S(true);check(wakes.length===8,'player-controlled actors never activated');
+ r.crew[0].player=false;server=false;r.force.PrepareBoarding_S(true);check(wakes.length===8,'clients never activate deployment AI');server=true;
+ r.force.m_CrewGroup.players=1;check(!r.force.PrepareBoarding_S(),'player-controlled group cannot prepare');
+}
+console.log(JSON.stringify({assertions,note:'Native activation, capacity and compartment operations require Workbench Play.'}));

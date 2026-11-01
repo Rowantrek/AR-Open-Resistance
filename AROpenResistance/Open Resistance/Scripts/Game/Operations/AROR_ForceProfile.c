@@ -46,6 +46,36 @@ class AROR_ForceProfile
 	int m_iVehicleLossValue;
 	[Attribute("2000", desc: "Replacement value of each airborne gunship", params: "0 100000 1")]
 	int m_iEscortLossValue;
+	[Attribute("0", desc: "Pick the vehicle from the role's faction preset instead: a random one of the vehicle type available at the operation's readiness (so mods such as WCS that extend the preset take part). The authored vehicle is the fallback when none is available or the picked hull does not fit the crew and personnel budget.", category: "Faction preset")]
+	bool m_bVehicleFromPreset;
+	[Attribute("0", UIWidgets.ComboBox, desc: "Preset vehicle type used when picking the vehicle from the preset", enums: ParamEnumArray.FromEnum(AROR_EVehicleType), category: "Faction preset")]
+	AROR_EVehicleType m_eVehicleType;
+	[Attribute("0", desc: "Pick the airborne gunship escort from the role's faction preset instead (authored gunship as fallback)", category: "Faction preset")]
+	bool m_bEscortFromPreset;
+	[Attribute("13", UIWidgets.ComboBox, desc: "Preset vehicle type used when picking the gunship escort from the preset", enums: ParamEnumArray.FromEnum(AROR_EVehicleType), category: "Faction preset")]
+	AROR_EVehicleType m_eEscortVehicleType;
+
+	//! The vehicle for one dispatch: from the faction preset when enabled and available, else the authored one
+	ResourceName PickVehicle(int readinessLevel)
+	{
+		return PickFromPreset(m_bVehicleFromPreset, m_eVehicleType, readinessLevel, m_sVehicle);
+	}
+
+	//! The gunship escort for one dispatch, chosen like PickVehicle
+	ResourceName PickEscortVehicle(int readinessLevel)
+	{
+		return PickFromPreset(m_bEscortFromPreset, m_eEscortVehicleType, readinessLevel, m_sEscortVehicle);
+	}
+
+	protected ResourceName PickFromPreset(bool enabled, AROR_EVehicleType type, int readinessLevel, ResourceName fallback)
+	{
+		if (!enabled)
+			return fallback;
+		ResourceName picked = AROR_ForceSpawner.VehiclePrefab(m_eRole, type, Math.ClampInt(readinessLevel, 1, 5));
+		if (picked.IsEmpty())
+			return fallback;
+		return picked;
+	}
 
 	//! Preserve explicit Readiness/pricing defaults for script-created fixtures; caller fills required identity/assets.
 	static AROR_ForceProfile CreateForScript()

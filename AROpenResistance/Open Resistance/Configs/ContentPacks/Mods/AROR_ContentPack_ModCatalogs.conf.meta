@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{5F3A9C2E7B1D4086}Configs/ContentPacks/Mods/AROR_ContentPack_ModCatalogs.conf"
+ Configurations {
+  CONFResourceClass PC {
+  }
+  CONFResourceClass XBOX_ONE : PC {
+  }
+  CONFResourceClass XBOX_SERIES : PC {
+  }
+  CONFResourceClass PS4 : PC {
+  }
+  CONFResourceClass PS5 : PC {
+  }
+  CONFResourceClass HEADLESS : PC {
+  }
+ }
+}

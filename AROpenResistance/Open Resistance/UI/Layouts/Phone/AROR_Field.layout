@@ -1,0 +1,1540 @@
+FrameWidgetClass {
+ Name "FieldResource"
+ Slot FrameWidgetSlot {
+  Anchor 0 0 1 1
+ }
+ {
+  RichTextWidgetClass {
+   Name "FieldTileGlyph"
+   Slot FrameWidgetSlot {
+    Anchor 0 0 0 0
+   }
+   FontProperties FontProperties {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
+  }
+  RichTextWidgetClass {
+   Name "FieldTileLabel"
+   Slot FrameWidgetSlot {
+    Anchor 0 0 0 0
+   }
+   FontProperties FontProperties {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
+  }
+  ButtonWidgetClass {
+   Name "FieldTileButton"
+   Slot FrameWidgetSlot {
+    Anchor 0 0 0 0
+   }
+  }
+  FrameWidgetClass {
+   Name "FieldApp"
+   Slot FrameWidgetSlot {
+    Anchor 0 0 0 0
+   }
+   {
+    ImageWidgetClass {
+     Name "FieldBackground"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel32"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel33"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel34"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel35"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel36"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel37"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel38"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldPanel39"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText32"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText33"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText34"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText35"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText36"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText37"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText38"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText39"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText40"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText41"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText42"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText43"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText44"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText45"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText46"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText47"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText48"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText49"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText50"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText51"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText52"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText53"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText54"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText55"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText56"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText57"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText58"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText59"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText60"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText61"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText62"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldText63"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn0"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn1"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn2"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn3"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn4"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn5"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn6"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn7"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn8"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn9"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn10"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn11"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn12"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn13"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn14"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn15"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn16"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn17"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn18"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn19"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn20"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn21"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn22"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn23"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn24"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn25"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn26"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn27"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn28"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn29"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn30"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass {
+     Name "FieldBtnBg31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass {
+     Name "FieldBtnLabel31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ButtonWidgetClass {
+     Name "FieldBtn31"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+    EditBoxWidgetClass {
+     Name "FieldCaption"
+     Slot FrameWidgetSlot {
+      Anchor 0 0 0 0
+     }
+    }
+   }
+  }
+ }
+}

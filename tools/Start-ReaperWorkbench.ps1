@@ -43,7 +43,7 @@ $reaperProject = Get-ChildItem -LiteralPath $GameAddonsPath -Directory |
 	Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } |
 	Select-Object -First 1
 if (!$reaperProject) { throw "REAPER project not found beneath $GameAddonsPath" }
-if (![IO.File]::ReadAllText($corePath).Contains('6AA282336705EED2')) { throw 'The repository core project has an unexpected GUID' }
+if (![IO.File]::ReadAllText($corePath).Contains('6C68A5E5654D7210')) { throw 'The repository core project has an unexpected GUID' }
 if (![IO.File]::ReadAllText($reaperProject).Contains('69A4D664A6284E06')) { throw 'The installed REAPER project has an unexpected GUID' }
 if (![IO.File]::ReadAllText($baseGameProject).Contains('58D0FB3206B6F859')) { throw 'The installed base-game project has an unexpected GUID' }
 if (![IO.File]::ReadAllText($engineProject).Contains('5614BBCCBB55ED1C')) { throw 'The installed engine-core project has an unexpected GUID' }

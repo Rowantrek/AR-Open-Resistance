@@ -433,8 +433,12 @@ class AROR_PlayerLoadoutsComponent : SCR_BaseGameModeComponent
 			return false;
 		}
 
+		// Worn gear counts at what depositing it is worth (an emptied magazine is worth nothing), so the swap below
+		// can neither refill ammunition for free nor strip the player and then find the stock short
+		array<IEntity> rootItems = {};
+		CollectRootInventoryItems(character, rootItems);
 		map<ResourceName, int> current = new map<ResourceName, int>();
-		CollectFlatPrefabCountsToMap(character, current);
+		storage.GetDepositYield(rootItems, current);
 
 		foreach (ResourceName prefab, int need : required)
 		{
@@ -448,8 +452,6 @@ class AROR_PlayerLoadoutsComponent : SCR_BaseGameModeComponent
 			}
 		}
 
-		array<IEntity> rootItems = {};
-		CollectRootInventoryItems(character, rootItems);
 		foreach (IEntity item : rootItems)
 		{
 			if (item)

@@ -587,6 +587,53 @@ modded class AROR_OperationExecutorComponent
 		return GetGame().SpawnEntityPrefab(resource, GetGame().GetWorld(), parameters);
 	}
 
+	//! Spawns a package aircraft: the preset-picked one when it differs from the authored one and fits (a pilot seat,
+	//! and passenger seats for a transport), otherwise the authored one. Null on failure.
+	protected IEntity SpawnPresetAircraft(AROR_GroundOperationForce force, ResourceName picked, ResourceName authored, bool transport, vector launch, float height)
+	{
+		if (picked != authored)
+		{
+			Resource pickedResource = Resource.Load(picked);
+			IEntity aircraft;
+			if (pickedResource && pickedResource.IsValid())
+				aircraft = SpawnReaperAircraft(pickedResource, launch, height);
+			if (aircraft)
+			{
+				force.m_Vehicle = aircraft;
+				string misfit = PresetAircraftMisfit(force, transport);
+				if (misfit.IsEmpty())
+				{
+					force.m_bPresetVehicle = true;
+					Print(string.Format("[AROR REAPER] package uses preset aircraft %1", picked), LogLevel.NORMAL);
+					return aircraft;
+				}
+				Print(string.Format("[AROR REAPER] preset aircraft %1 does not fit (%2); using the authored one", picked, misfit), LogLevel.WARNING);
+				force.m_Vehicle = null;
+				SCR_EntityHelper.DeleteEntityAndChildren(aircraft);
+			}
+		}
+		Resource resource = Resource.Load(authored);
+		if (!resource || !resource.IsValid())
+			return null;
+		return SpawnReaperAircraft(resource, launch, height);
+	}
+
+	//! This adapter currently boards one pilot per aircraft. A gunship requiring separate turret crew cannot
+	//! replace the authored pilot-controlled gunship: it would dispatch successfully but never fire that turret.
+	protected string PresetAircraftMisfit(AROR_GroundOperationForce force, bool transport)
+	{
+		if (!force.m_Vehicle || !force.m_Vehicle.FindComponent(HelicopterControllerComponent))
+			return "no helicopter controller";
+		int crew = force.CountRequiredCrewSeats_S();
+		if (crew < 1)
+			return "no pilot seat";
+		if (transport && force.CountCargoSeats_S() < 1)
+			return "no passenger seats";
+		if (!transport && crew > 1)
+			return "gunship requires additional turret crew; this adapter boards one pilot";
+		return string.Empty;
+	}
+
 	protected bool SpawnReaperPackage(AROR_Operation operation, AROR_ReaperAirForce force, ResourceName pilot)
 	{
 		force.m_iPreparationDeadline = m_iExecutorClock + m_iReaperPreparationTimeout;
@@ -595,10 +642,10 @@ modded class AROR_OperationExecutorComponent
 			return false;
 		if (!force.m_bUnescorted && (!IsLaunchPositionSafe(force.m_vEscortLaunch, force.m_vTown) || !AROR_ReaperFlightGeometry.IsAirspaceClear(force.m_vEscortLaunch, ReaperGunshipHeight(force), 14)))
 			return false;
-		Resource transport = Resource.Load(force.m_Profile.m_sVehicle);
-		if (!transport || !transport.IsValid())
+		int readinessLevel = QRFPoolReadinessLevel(operation);
+		force.m_Vehicle = SpawnPresetAircraft(force, force.m_Profile.PickVehicle(readinessLevel), force.m_Profile.m_sVehicle, true, force.m_vLaunch, m_fReaperInsertionHeight + force.m_iPackageIndex * 15);
+		if (!force.m_Vehicle)
 			return false;
-		force.m_Vehicle = SpawnReaperAircraft(transport, force.m_vLaunch, m_fReaperInsertionHeight + force.m_iPackageIndex * 15);
 		// Own and hold the hull before any later faction/resource failure can abort construction.
 		force.m_bAircraftHeld = true;
 		force.HoldAircraft_S();
@@ -616,10 +663,9 @@ modded class AROR_OperationExecutorComponent
 			ConfigureForceFunding(force.m_Escort, operation, force.m_Profile);
 			force.m_Escort.m_bOwnsPackageQuote = false; // Parent releases the shared air-package margin after both groups are cancelled.
 			force.m_Escort.m_iVehicleLossValue = force.m_Profile.m_iEscortLossValue;
-			Resource gunship = Resource.Load(force.m_Profile.m_sEscortVehicle);
-			if (!gunship || !gunship.IsValid())
+			force.m_Escort.m_Vehicle = SpawnPresetAircraft(force.m_Escort, force.m_Profile.PickEscortVehicle(readinessLevel), force.m_Profile.m_sEscortVehicle, false, force.m_vEscortLaunch, ReaperGunshipHeight(force));
+			if (!force.m_Escort.m_Vehicle)
 				return false;
-			force.m_Escort.m_Vehicle = SpawnReaperAircraft(gunship, force.m_vEscortLaunch, ReaperGunshipHeight(force));
 			force.HoldAircraft_S();
 			if (!force.m_Escort.InitializeSpawnFaction_S(force.m_Escort.m_Vehicle) || !force.m_Escort.m_Vehicle.GetPhysics())
 				return false;
@@ -643,6 +689,7 @@ modded class AROR_OperationExecutorComponent
 			return false;
 		if (!force.PreparePassengerRoster_S())
 			return false;
+		AROR_InfantryRoster.Apply_S(operation.GetRole(), infantry.m_aUnitPrefabSlots, force.m_Profile.m_sAssetFactionKey);
 		if (infantry.m_aUnitPrefabSlots.Count() + 1 + force.m_Profile.m_iEscortCount > force.m_iReservedMembers)
 			return false;
 		force.m_Waypoint = SpawnWaypoint(m_sQRFWaypointPrefab, force.m_vTown);
@@ -893,7 +940,18 @@ modded class AROR_OperationExecutorComponent
 		if (!aircraft || !aircraft.m_Vehicle)
 			return false;
 		FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(aircraft.m_Vehicle.FindComponent(FactionAffiliationComponent));
-		return affiliation && affiliation.GetAffiliatedFactionKey() == aircraft.m_sFactionKey;
+		if (affiliation && affiliation.GetAffiliatedFactionKey() == aircraft.m_sFactionKey)
+			return true;
+		string actual = "<missing affiliation>";
+		if (affiliation)
+			actual = affiliation.GetAffiliatedFactionKey();
+		// Occupant loss can restore an empty hull's native affiliation. Do not overwrite it;
+		// require a full empty/own-AI seat audit and never accept a captured or unknown hull.
+		bool nativeKey = actual.IsEmpty() || (!aircraft.m_sAssetFactionKey.IsEmpty() && actual == aircraft.m_sAssetFactionKey);
+		if (SCR_VehicleFactionAffiliationComponent.Cast(affiliation) && nativeKey && aircraft.HasOnlyOwnedVehicleOccupants())
+			return true;
+		Print(string.Format("[AROR REAPER] Aircraft faction audit: operation=%1 package=%2 vehicle=%3 expected=%4 actual=%5 occupied=%6", aircraft.m_sOperationId, aircraft.m_iPackageIndex + 1, aircraft.m_Vehicle, aircraft.m_sFactionKey, actual, aircraft.HasVehicleOccupants()), LogLevel.WARNING);
+		return false;
 	}
 
 	protected bool ReaperGroupFaction(SCR_AIGroup group, string key)
@@ -1000,7 +1058,7 @@ modded class AROR_OperationExecutorComponent
 			return false;
 		if (AROR_ReaperAirForce.AircraftAlive(force.m_Vehicle) && !ReaperVehicleFaction(force))
 			return false;
-		if (!force.m_Escort)
+		if (!force.m_Escort || force.m_bEscortLost)
 			return true;
 		if (!force.m_Escort.HasCorrectMemberFactions())
 			return false;
@@ -1379,7 +1437,10 @@ modded class AROR_OperationExecutorComponent
 		// Do not refresh this deadline for dormant groups, pending seats, or a ready package at the lead barrier.
 		if (!force.m_bOrdersIssued && force.m_iPreparationDeadline > 0 && m_iExecutorClock >= force.m_iPreparationDeadline)
 		{
-			FailReaperPackage(force, operation, "Airborne package preparation/boarding timed out");
+			string preparationReason = "Airborne boarding timed out: " + force.m_sBoardingRejection;
+			if (force.m_bReady)
+				preparationReason = "Airborne package ready; shared dispatch barrier timed out waiting for other packages";
+			FailReaperPackage(force, operation, preparationReason);
 			return;
 		}
 		if (!force.m_Group)
@@ -1448,12 +1509,23 @@ modded class AROR_OperationExecutorComponent
 				FailReaperPackage(force, operation, "REAPER infantry/pilot group faction mismatch");
 				return;
 			}
+			if (!force.PrepareBoarding_S())
+			{
+				if (force.m_Escort)
+					AROR_GroundOperationForce.WakeBoardingGroup_S(force.m_Escort.m_CrewGroup);
+				return;
+			}
 			if (!force.m_bMounted && !force.BoardPackage_S())
 			{
 				ReportSpawnWait(operation, "Waiting for verified transport/escort pilot and passenger occupancy");
 				force.m_iMountWaitTicks++;
 				if (Math.Mod(force.m_iMountWaitTicks, m_iWakeRetryInterval) == 0)
-					Print(string.Format("[AROR REAPER] %1 package=%2/%3 boarding wait=%4s living infantry=%5 planned infantry=%6 transport pilots=%7; native occupancy not yet verified", operation.GetId(), force.m_iPackageIndex + 1, force.m_iPackageCount, force.m_iMountWaitTicks, infantry, force.m_Group.m_aUnitPrefabSlots.Count(), crew), LogLevel.WARNING);
+				{
+					force.PrepareBoarding_S(true);
+					if (force.m_Escort)
+						AROR_GroundOperationForce.WakeBoardingGroup_S(force.m_Escort.m_CrewGroup);
+					Print(string.Format("[AROR REAPER] %1 package=%2/%3 boarding wait=%4s living infantry=%5 planned infantry=%6 transport pilots=%7; readiness=%8", operation.GetId(), force.m_iPackageIndex + 1, force.m_iPackageCount, force.m_iMountWaitTicks, infantry, force.m_Group.m_aUnitPrefabSlots.Count(), crew, force.m_sBoardingRejection), LogLevel.WARNING);
+				}
 				return;
 			}
 			REAPER_AiHelicopterControllerComponent transportController = AROR_ReaperAirForce.Controller(force.m_Vehicle);

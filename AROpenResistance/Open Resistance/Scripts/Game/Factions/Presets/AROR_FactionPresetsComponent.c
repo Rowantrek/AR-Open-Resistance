@@ -30,8 +30,17 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	[Attribute("EVERON_CIV", desc: "Preset ID the Civilians use unless the admin picks another", category: "Defaults")]
 	protected string m_sDefaultCivilians;
 
+	[Attribute("4", desc: "Infantry specialists: one AT or AA soldier per this many members of an enemy group (at least one in a group of the minimum size below)", params: "2 20 1", category: "Infantry specialists")]
+	protected int m_iMembersPerSpecialist;
+
+	[Attribute("3", desc: "Infantry specialists: smallest enemy group that gets an AT or AA soldier", params: "2 20 1", category: "Infantry specialists")]
+	protected int m_iSpecialistMinimumGroup;
+
 	[Attribute("0", desc: "Workbench only: on Play, read the base-game infantry kits and write them into the FIA, US and Soviet presets as readiness 1 loadouts (units with loadouts are kept). Untick after use.", category: "Workbench")]
 	protected bool m_bImportBaseUnitLoadouts;
+
+	[Attribute("0", desc: "Workbench only: on Play, capture the kits named by each loaded preset's Loadout Capture (e.g. the WCS armies) into that preset's file as unit loadouts (a unit's existing loadout at the same readiness is kept). Untick after use.", category: "Workbench")]
+	protected bool m_bCaptureUnitLoadouts;
 
 	protected static AROR_FactionPresetsComponent s_Instance;
 
@@ -55,10 +64,19 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 
 	protected ref ScriptInvokerBase<AROR_OnFactionPresetsChanged> m_OnPresetsChanged = new ScriptInvokerBase<AROR_OnFactionPresetsChanged>();
 
+	protected bool m_bCatalogsAugmented;
+
 	//------------------------------------------------------------------------------------------------
 	static AROR_FactionPresetsComponent GetInstance()
 	{
 		return s_Instance;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True once catalog augmentation has run (a frame after loading); caches of preset entries built before it are stale
+	bool AreCatalogsAugmented()
+	{
+		return m_bCatalogsAugmented;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -215,7 +233,25 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! The role's default preset: the configured one, or a loaded preset that takes it over (e.g. a content mod's
+	//! variant of the same army, see AROR_FactionPreset.GetReplacedPresetId)
 	string GetDefaultPresetId(AROR_EFactionRole role)
+	{
+		string configured = GetConfiguredDefaultPresetId(role);
+		if (configured.IsEmpty())
+			return configured;
+
+		foreach (AROR_FactionPreset preset : m_aPresets)
+		{
+			if (preset.GetReplacedPresetId() == configured && preset.IsUsableAs(role))
+				return preset.GetId();
+		}
+
+		return configured;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected string GetConfiguredDefaultPresetId(AROR_EFactionRole role)
 	{
 		switch (role)
 		{
@@ -230,6 +266,44 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 		}
 
 		return string.Empty;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The unit type whose character, for the role, is this prefab (the preset unit's own, or the role default it falls
+	//! back to). False when no infantry unit type of the role uses it.
+	bool FindUnitTypeOf(AROR_EFactionRole role, ResourceName prefab, out AROR_EUnitType type)
+	{
+		if (prefab.IsEmpty())
+			return false;
+
+		for (int candidate = 0; candidate <= AROR_EUnitType.CIVILIAN; candidate++)
+		{
+			if (GetUnitPrefab(role, candidate) == prefab)
+			{
+				type = candidate;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! How many of an enemy group's members are AT or AA specialists (see AROR_InfantryRoster)
+	int GetSpecialistCount(int members)
+	{
+		if (members < m_iSpecialistMinimumGroup)
+			return 0;
+
+		int perSpecialist = m_iMembersPerSpecialist;
+		if (perSpecialist < 1)
+			perSpecialist = 1;
+
+		int count = members / perSpecialist;
+		if (count < 1)
+			count = 1;
+
+		return count;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -350,8 +424,13 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 
 		array<ResourceName> paths = {};
 		registry.GetPresetPaths(paths);
+		set<string> loadedPaths = new set<string>();
 		foreach (ResourceName path : paths)
 		{
+			// An addon's registry override may repeat the core's entries; the same file twice is not a mistake
+			if (!loadedPaths.Insert(path))
+				continue;
+
 			AROR_FactionPreset preset = AROR_FactionPreset.Cast(LoadConfig(path));
 			if (!preset)
 			{
@@ -407,6 +486,29 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Every machine, a frame after loading so the factions and their catalogs exist: adds what mods put into the
+	//! faction catalogs (e.g. WCS weapons, vehicles and helicopters) to the presets that ask for it
+	protected void AugmentPresetsFromCatalogs()
+	{
+		FactionManager factionManager = GetGame().GetFactionManager();
+		if (!factionManager)
+		{
+			Print("[AROR] Faction presets: no faction manager, catalog augmentation skipped", LogLevel.WARNING);
+			return;
+		}
+
+		foreach (AROR_FactionPreset preset : m_aPresets)
+		{
+			int added = preset.AugmentFromCatalogs(factionManager);
+			if (added > 0)
+				Print(string.Format("[AROR] Faction preset '%1': %2 entries added from the faction catalogs", preset.GetId(), added), LogLevel.NORMAL);
+		}
+
+		m_bCatalogsAugmented = true;
+		m_OnPresetsChanged.Invoke();
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected static Managed LoadConfig(ResourceName path)
 	{
 		if (path.IsEmpty())
@@ -429,6 +531,7 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 
 		s_Instance = this;
 		LoadPresets();
+		GetGame().GetCallqueue().CallLater(AugmentPresetsFromCatalogs, 0);
 
 		// Defaults until a campaign is created or a save restores the real choice; set directly (no BumpMe during
 		// init), the initial replication snapshot carries them to clients
@@ -448,6 +551,8 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 		// Let the world settle before spawning the characters to read
 		if (m_bImportBaseUnitLoadouts && Replication.IsServer())
 			GetGame().GetCallqueue().CallLater(StartLoadoutImport, 5000);
+		else if (m_bCaptureUnitLoadouts && Replication.IsServer())
+			GetGame().GetCallqueue().CallLater(StartLoadoutCapture, 5000);
 #endif
 	}
 
@@ -456,6 +561,12 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	protected void StartLoadoutImport()
 	{
 		AROR_UnitLoadoutImporter.Start();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void StartLoadoutCapture()
+	{
+		AROR_UnitLoadoutImporter.StartCapture();
 	}
 #endif
 
@@ -487,6 +598,8 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	override void OnDelete(IEntity owner)
 	{
+		GetGame().GetCallqueue().Remove(AugmentPresetsFromCatalogs);
+
 		if (s_Instance == this)
 			s_Instance = null;
 

@@ -97,6 +97,23 @@ class AROR_ContentPackEntry
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Fills an entry created at runtime (catalog generation, see AROR_ContentPack.GenerateFromCatalogs)
+	void InitGenerated(ResourceName prefab, int type, int cost, int minimumReadinessLevel, int requiredImportPoints, AROR_EImportPointRequirement importPointRequirement)
+	{
+		m_sPrefab = prefab;
+		m_iCost = cost;
+		m_iMinimumReadinessLevel = minimumReadinessLevel;
+		m_iRequiredImportPoints = requiredImportPoints;
+		m_eImportPointRequirement = importPointRequirement;
+		SetTypeValue(type);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void SetTypeValue(int type)
+	{
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! The entry's type within its category, as the int value of that category's type enum
 	int GetTypeValue()
 	{
@@ -166,6 +183,12 @@ class AROR_ContentPackVehicle : AROR_ContentPackCompatibleEntry
 	{
 		return m_eType;
 	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
+	}
 }
 
 //! Clothing and carried kit
@@ -185,6 +208,12 @@ class AROR_ContentPackGear : AROR_ContentPackEntry
 	override int GetTypeValue()
 	{
 		return m_eType;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
 	}
 }
 
@@ -206,6 +235,12 @@ class AROR_ContentPackEquipment : AROR_ContentPackEntry
 	{
 		return m_eType;
 	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
+	}
 }
 
 //! Hand-held weapon
@@ -226,6 +261,12 @@ class AROR_ContentPackWeapon : AROR_ContentPackCompatibleEntry
 	{
 		return m_eType;
 	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
+	}
 }
 
 [BaseContainerProps(), SCR_BaseContainerCustomTitleEnum(AROR_EWeaponAccessoryType, "m_eType")]
@@ -244,6 +285,12 @@ class AROR_ContentPackWeaponAccessory : AROR_ContentPackEntry
 	override int GetTypeValue()
 	{
 		return m_eType;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
 	}
 }
 
@@ -264,5 +311,11 @@ class AROR_ContentPackAmmunition : AROR_ContentPackEntry
 	override int GetTypeValue()
 	{
 		return m_eType;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void SetTypeValue(int type)
+	{
+		m_eType = type;
 	}
 }

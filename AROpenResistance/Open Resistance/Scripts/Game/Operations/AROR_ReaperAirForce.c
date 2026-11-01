@@ -3,6 +3,7 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 {
 	ref AROR_GroundOperationForce m_Escort;
 	int m_iPreparationDeadline;
+	string m_sBoardingRejection;
 	bool m_bUnescorted;
 	int m_iPackageCount = 1;
 	vector m_vLaunch;
@@ -208,6 +209,8 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 		if (agents.Count() != 1 || !agents[0])
 			return false;
 		IEntity pilot = agents[0].GetControlledEntity();
+		if (!AROR_ForceSpawner.IsAlive(pilot))
+			return false;
 		BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(vehicle.FindComponent(BaseCompartmentManagerComponent));
 		if (!pilot || !compartments || GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(pilot) > 0)
 			return false;
@@ -228,7 +231,11 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 				// Final argument is performWhenPaused (installed CompartmentAccessComponent API).
 				// Initial aircraft stay in collision-only simulation while boarding; allow this teleport then.
 				// The return value acknowledges a request, so readiness still checks actual seat occupancy.
-				access.GetInVehicle(vehicle, slot, true, -1, ECloseDoorAfterActions.CLOSE_DOOR, true);
+				IEntity seatEntity = slot.GetOwner();
+				if (!seatEntity)
+					seatEntity = vehicle;
+				if (!access.GetInVehicle(seatEntity, slot, true, -1, ECloseDoorAfterActions.INVALID, true))
+					access.GetInVehicle(seatEntity, slot, true, -1, ECloseDoorAfterActions.INVALID, false);
 				break;
 			}
 		}
@@ -238,6 +245,7 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 
 	bool BoardPackage_S()
 	{
+		m_sBoardingRejection = "aircraft, infantry group or escort missing, or player-controlled infantry";
 		if (!Replication.IsServer() || (!m_bUnescorted && !m_Escort) || !m_Group || !m_Vehicle || m_Group.GetPlayerCount() > 0)
 			return false;
 		bool transportReady = BoardPilot_S(m_CrewGroup, m_Vehicle);
@@ -245,12 +253,14 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 		if (m_Escort)
 			escortReady = BoardPilot_S(m_Escort.m_CrewGroup, m_Escort.m_Vehicle);
 		BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(m_Vehicle.FindComponent(BaseCompartmentManagerComponent));
+		m_sBoardingRejection = "transport compartment manager unavailable";
 		if (!compartments)
 			return false;
 		array<BaseCompartmentSlot> slots = {};
 		compartments.GetCompartments(slots);
 		array<AIAgent> agents = {};
 		m_Group.GetAgents(agents);
+		m_sBoardingRejection = "infantry group has no materialised agents";
 		if (agents.Count() < 1)
 			return false;
 		array<BaseCompartmentSlot> passengerSeats = {};
@@ -259,6 +269,7 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 			if (candidate && CargoCompartmentSlot.Cast(candidate) && candidate.IsCompartmentAccessible() && !candidate.GetAttachedTurret())
 				passengerSeats.Insert(candidate);
 		}
+		m_sBoardingRejection = "infantry count exceeds accessible passenger seats";
 		if (agents.Count() > passengerSeats.Count())
 			return false;
 		bool passengersReady = true;
@@ -268,6 +279,11 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 			if (!agent || !agent.GetControlledEntity())
 				return false;
 			IEntity passenger = agent.GetControlledEntity();
+			if (!AROR_ForceSpawner.IsAlive(passenger))
+			{
+				m_sBoardingRejection = string.Format("passenger %1 dead or missing", passengerIndex);
+				return false;
+			}
 			if (!m_aPassengers.Contains(passenger))
 				m_aPassengers.Insert(passenger);
 			if (IsSeatedInOwnVehicle(passenger))
@@ -281,6 +297,13 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 			Seat(passenger, passengerSeats[passengerIndex]);
 		}
 		m_bMounted = transportReady && escortReady && passengersReady;
+		m_sBoardingRejection = "";
+		if (!transportReady)
+			m_sBoardingRejection += "transport pilot not settled; ";
+		if (!escortReady)
+			m_sBoardingRejection += "escort pilot not settled; ";
+		if (!passengersReady)
+			m_sBoardingRejection += "passengers not settled; " + m_sSeatRejection;
 		return m_bMounted;
 	}
 

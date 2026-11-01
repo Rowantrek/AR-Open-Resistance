@@ -107,14 +107,18 @@ const executor='AROR_OperationExecutorComponent',reaper='AROR_ReaperQRFExecutor'
  let missing='',spawned=[],groups=[],loaded=[];
  env.Resource={Load:n=>{loaded.push(n);return n===missing?null:{name:n,IsValid:()=>true}}};
  env.AROR_ReaperFlightGeometry={Direction:()=>[0,0,1],FormationPoint:()=>[75,0,0],IsAirspaceClear:()=>missing!=='airspace'};
+ env.AROR_InfantryRoster={Apply_S(){}};
  const spawn=compile(reaper,'SpawnReaperPackage');
  for(const escorted of [false,true])for(const failure of ['none','transport','gunship','airspace','clearance','transportPhysics','escortPhysics','transportFaction','escortFaction','crew','infantry','escortCrew','slots','waypoint']){
   missing=failure;spawned=[];groups=[];loaded=[];
-  const profile={m_sVehicle:'transport',m_sEscortVehicle:'gunship',m_sInfantryGroup:'infantry',m_iEscortCount:escorted?1:0,m_iEscortLossValue:2000};
+  const profile={m_sVehicle:'transport',m_sEscortVehicle:'gunship',m_sInfantryGroup:'infantry',m_iEscortCount:escorted?1:0,m_iEscortLossValue:2000,
+   PickVehicle(){return this.m_sVehicle},PickEscortVehicle(){return this.m_sEscortVehicle}};
   const force={ground:true,air:true,m_Profile:profile,m_bUnescorted:!escorted,m_iPackageIndex:0,m_iPackageCount:1,m_iReservedMembers:8,
    PreparePassengerRoster_S:()=>true,InitializeSpawnFaction_S:entity=>entity?.allowFaction!==false,TrackDamage_S(){},HoldAircraft_S(){this.held=(this.held||0)+1}};
   const ctx={m_iExecutorClock:10,m_iReaperPreparationTimeout:120,m_fReaperInsertionHeight:100,IsLaunchPositionSafe:()=>failure!=='clearance',ReaperGunshipHeight:()=>200,
-   ConfigureForceFunding(f){f.m_bOwnsPackageQuote=true},SpawnWaypoint:()=>failure==='waypoint'?null:{},
+   ConfigureForceFunding(f){f.m_bOwnsPackageQuote=true},SpawnWaypoint:()=>failure==='waypoint'?null:{},QRFPoolReadinessLevel:()=>3,
+   // Authored aircraft only here (the profile picks no preset hull); preset fitting is covered by its own review
+   SpawnPresetAircraft(owner,picked,authored,transport,launch,height){const r=env.Resource.Load(authored);return r&&r.IsValid()?this.SpawnReaperAircraft(r,launch,height):null},
    SpawnReaperAircraft(resource){const v={name:resource.name,allowFaction:failure!==(resource.name==='gunship'?'escortFaction':'transportFaction'),GetPhysics:()=>failure!==(resource.name==='gunship'?'escortPhysics':'transportPhysics')};spawned.push(v);return v},
    ReaperGroup(owner,prefab,pilot){
     const kind=owner===force?(pilot?'crew':'infantry'):'escortCrew';
@@ -122,7 +126,7 @@ const executor='AROR_OperationExecutorComponent',reaper='AROR_ReaperQRFExecutor'
     const g={m_aUnitPrefabSlots:Array(failure==='slots'&&kind==='infantry'?10:4).fill('unit'),requests:0,RequestSpawn(n){this.requests+=n}};
     if(pilot)owner.m_CrewGroup=g;else owner.m_Group=g;groups.push(g);return g;
    }};
-  const ok=spawn.call(ctx,{GetId:()=> 'test'},force,'pilot');
+  const ok=spawn.call(ctx,{GetId:()=> 'test',GetRole:()=>1},force,'pilot');
   check(force.m_iPreparationDeadline===130,'construction freezes a finite per-package preparation deadline');
   const irrelevant=!escorted&&['gunship','escortPhysics','escortFaction','escortCrew'].includes(failure);
   check(ok===(failure==='none'||irrelevant),'optional-escort construction/failure outcome '+[escorted,failure]);
@@ -295,7 +299,7 @@ for(const state of ['empty','ordered','vehicle','group','crew','casualties','res
   const force={m_sOperationId:'boarding',m_iPreparationDeadline:130,m_bUnescorted:unescorted,
    m_Group:group,m_CrewGroup:group,m_Vehicle:{alive:true},m_iWakeRetryTicks:0,
    m_Escort:unescorted?null:{m_Vehicle:{alive:true},m_CrewGroup:group,CountLivingMembers:()=>1},
-   CountInfantry:()=>4,CountCrew:()=>1,HoldAircraft_S(){},BoardPackage_S:()=>false};
+   CountInfantry:()=>4,CountCrew:()=>1,HoldAircraft_S(){},PrepareBoarding_S:()=>true,BoardPackage_S:()=>false};
   const op={IsTerminal:()=>false,GetState:()=>state};
   const ctx={m_iExecutorClock:10,m_Operations:{GetOperation:()=>op},ReaperFactionsValid:()=>true,ReaperGroupFaction:()=>true,
    FailReaperPackage(f,o,reason){check(reason.includes('timed out'),'timeout gives an explicit boarding diagnostic');failed++},ReportSpawnWait(){waits++}};
@@ -535,5 +539,23 @@ for(const state of ['empty','ordered','vehicle','group','crew','casualties','res
  const manager={...methods,m_aDeployments:[],m_iOccupierDebt:0,m_iInvaderDebt:0};
  check(!manager.Reserve_S({GetRole:()=>1},100,10),'clients cannot create funding allocations');
  server=true;
+}
+// A valid but rejected ground seat plan keeps its actors and expires at its own bound.
+{
+ const monitor=compile(executor,'MonitorGroundForce');
+ let failed=0,retries=0,refreshes=0;
+ const group={IsDormant:()=>false,IsExpandComplete:()=>true,GetFaction:()=>({GetFactionKey:()=>'army'})};
+ const force={m_sOperationId:'ground-boarding',m_sFactionKey:'army',m_Group:group,m_CrewGroup:group,
+  m_Vehicle:{FindComponent:()=>null},m_bMountRequested:true,m_iMountWaitTicks:0,m_iWakeRetryTicks:0,
+  CountInfantry:()=>4,CountCrew:()=>2,HasCorrectMemberFactions:()=>true,IsMountComplete:()=>false,
+  GetMountRejection:()=>'gunner seat blocked',PrepareBoarding_S(refresh){if(refresh)refreshes++;return true},
+  ReseatMissing_S(){retries++;return 'blocked'},ReplaceUnseated_S(){throw Error('must not spawn replacements')}};
+ const operation={IsTerminal:()=>false,GetId:()=>'ground-boarding'};
+ const ctx={m_Operations:{GetOperation:()=>operation},m_iQRFBoardingTimeout:3,m_iWakeRetryInterval:1,m_iQRFSeatRecoveryDelay:1,
+  ValidateGroundVehicleFaction:()=>true,ReportPackageProgress(){},FailPackage(f,o,reason){
+   check(f===force&&o===operation&&reason.includes('gunner seat blocked'),'timeout retains package identity and audit reason');failed++}};
+ monitor.call(ctx,force);monitor.call(ctx,force);
+ check(failed===0&&retries===2&&refreshes===2,'bounded retries renew activation without replacement churn');
+ monitor.call(ctx,force);check(failed===1&&force.m_iMountWaitTicks===3&&retries===2,'ground boarding expires exactly at configured limit');
 }
 console.log(JSON.stringify({assertions,settingsEvidence,note:'Actual-source interruption, optional-escort, retention and Economy checks; native physics, spawn queues and multiplayer still require Workbench.'}));

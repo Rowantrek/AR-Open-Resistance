@@ -75,12 +75,13 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	//! True when an enabled pack offers the prefab, so a faction preset may use it. Otherwise logs once per prefab
 	//! (source names who asked, e.g. the preset ID) and returns false. True before the component exists.
-	static bool IsOffered(ResourceName prefab, string source)
+	//! logMissing false skips the log (e.g. an entry added from the catalogs whose pack is turned off).
+	static bool IsOffered(ResourceName prefab, string source, bool logMissing = true)
 	{
 		if (!s_Instance || prefab.IsEmpty() || s_Instance.FindEntry(prefab))
 			return true;
 
-		if (s_Instance.m_NotOfferedWarned.Insert(prefab))
+		if (logMissing && s_Instance.m_NotOfferedWarned.Insert(prefab))
 			Print(string.Format("[AROR] '%1' lists %2, which no enabled content pack offers; it is not used", source, prefab), LogLevel.WARNING);
 
 		return false;
@@ -228,6 +229,16 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! As GetMinimumReadiness, safe to call before the component exists (1)
+	static int GetMinimumReadinessOf(ResourceName prefab)
+	{
+		if (!s_Instance)
+			return 1;
+
+		return s_Instance.GetMinimumReadiness(prefab);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! True when the role may field the prefab at its current readiness. Roles without readiness (Resistance,
 	//! Civilians) may always use it.
 	static bool IsAvailableAtReadiness(ResourceName prefab, AROR_EFactionRole role)
@@ -318,6 +329,8 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 		m_mReplacements.Clear();
 		m_mCatalogue.Clear();
 		m_aCatalogueOrder.Clear();
+		// What is offered changed: report prefabs that are still missing again
+		m_NotOfferedWarned.Clear();
 
 		array<AROR_ContentPack> enabled = {};
 		foreach (AROR_ContentPack pack : m_aPacks)
@@ -520,6 +533,63 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Every machine, a frame after loading so the factions and their catalogs exist: packs with catalog generation
+	//! (e.g. mod assets such as WCS and RHS) add what the faction catalogs hold that no listed pack entry covers, then
+	//! the catalogue is rebuilt. Generation does not depend on which packs are enabled, so toggling packs never
+	//! changes what a pack offers.
+	protected void GenerateCatalogEntries()
+	{
+		FactionManager factionManager = GetGame().GetFactionManager();
+		if (!factionManager)
+		{
+			Print("[AROR] Content packs: no faction manager, catalog generation skipped", LogLevel.WARNING);
+			return;
+		}
+
+		// Every listed entry of every loaded pack: its prefab is left to that pack, the first entry of each type is
+		// the template generated entries copy their price and import requirements from
+		set<string> offered = new set<string>();
+		map<int, AROR_ContentPackEntry> templates = new map<int, AROR_ContentPackEntry>();
+		array<ResourceName> replacedPrefabs = {};
+		foreach (AROR_ContentPack pack : m_aPacks)
+		{
+			for (int category = AROR_EFactionPresetCategory.VEHICLES; category <= AROR_EFactionPresetCategory.AMMUNITION; category++)
+			{
+				array<AROR_ContentPackEntry> entries = {};
+				pack.GetAllEntries(category, entries);
+				foreach (AROR_ContentPackEntry entry : entries)
+				{
+					offered.Insert(entry.GetPrefab());
+					entry.GetReplaces(replacedPrefabs);
+
+					int key = AROR_ContentPack.TemplateKey(category, entry.GetTypeValue());
+					if (!templates.Contains(key))
+						templates.Insert(key, entry);
+				}
+			}
+		}
+
+		// A prefab some pack replaces is never generated: the replacement stands in for it
+		foreach (ResourceName replaced : replacedPrefabs)
+		{
+			offered.Insert(replaced);
+		}
+
+		int added;
+		foreach (AROR_ContentPack pack : m_aPacks)
+		{
+			int packAdded = pack.GenerateFromCatalogs(factionManager, offered, templates);
+			if (packAdded > 0)
+				Print(string.Format("[AROR] Content pack '%1': %2 entries added from the faction catalogs", pack.GetId(), packAdded), LogLevel.NORMAL);
+
+			added += packAdded;
+		}
+
+		if (added > 0)
+			Rebuild();
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected static Managed LoadConfig(ResourceName path)
 	{
 		if (path.IsEmpty())
@@ -546,6 +616,9 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 		// Pack defaults until a save restores the campaign's choice; the initial replication snapshot carries any
 		// overrides to clients
 		Rebuild();
+
+		// The faction catalogs exist only once the factions have initialised
+		GetGame().GetCallqueue().CallLater(GenerateCatalogEntries, 0);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -555,6 +628,7 @@ class AROR_ContentPacksComponent : SCR_BaseGameModeComponent
 			s_Instance = null;
 
 		GetGame().GetCallqueue().Remove(RebuildQueued);
+		GetGame().GetCallqueue().Remove(GenerateCatalogEntries);
 		super.OnDelete(owner);
 	}
 }

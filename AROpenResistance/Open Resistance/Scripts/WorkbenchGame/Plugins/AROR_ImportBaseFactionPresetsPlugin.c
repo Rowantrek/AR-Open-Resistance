@@ -106,7 +106,8 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Every catalog of the faction: characters, vehicles, static weapons and inventory items
+	//! Every catalog of the faction: characters, vehicles, static weapons and inventory items, sorted by
+	//! AROR_CatalogClassifier (the same rules the runtime catalog augmentation uses)
 	protected void ReadFaction(BaseContainer faction, AROR_PresetImportResult result)
 	{
 		BaseContainerList catalogs = faction.GetObjectArray("m_aEntityCatalogs");
@@ -128,357 +129,53 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 			EEntityCatalogType catalogType = catalog.GetCatalogType();
 			foreach (SCR_EntityCatalogEntry entry : entries)
 			{
-				switch (catalogType)
+				AROR_EFactionPresetCategory category;
+				int type;
+				if (!AROR_CatalogClassifier.Classify(catalogType, entry, category, type))
 				{
-					case EEntityCatalogType.CHARACTER:
-						AddUnit(entry, result);
-						break;
-					case EEntityCatalogType.VEHICLE:
-						AddVehicle(entry, result);
-						break;
-					case EEntityCatalogType.WEAPONS_TRIPOD:
-						AddEntry(result.m_aVehicles, "AROR_FactionPresetVehicle", AROR_EVehicleType, StaticType(LowerName(entry.GetPrefab())), entry.GetPrefab());
-						break;
-					case EEntityCatalogType.ITEM:
-						AddItem(entry, result);
-						break;
+					result.m_aSkipped.Insert(string.Format("%1 (no matching type): %2", typename.EnumToString(EEntityCatalogType, catalogType), entry.GetPrefab()));
+					continue;
 				}
+
+				AddClassified(category, type, entry.GetPrefab(), result);
 			}
 		}
 	}
 
 	//------------------------------------------------------------------------------------------------
-	// Characters
-	//------------------------------------------------------------------------------------------------
-	protected void AddUnit(SCR_EntityCatalogEntry entry, AROR_PresetImportResult result)
+	protected void AddClassified(AROR_EFactionPresetCategory category, int type, ResourceName prefab, AROR_PresetImportResult result)
 	{
-		int type = UnitType(entry);
-		if (type < 0)
+		switch (category)
 		{
-			result.m_aSkipped.Insert("unit (no matching type): " + entry.GetPrefab());
-			return;
+			case AROR_EFactionPresetCategory.UNITS:
+				// One unit per type: the first match wins
+				if (!result.m_UnitTypesUsed.Insert(type))
+				{
+					result.m_aSkipped.Insert(string.Format("unit (%1 already set): %2", typename.EnumToString(AROR_EUnitType, type), prefab));
+					return;
+				}
+
+				AddEntry(result.m_aUnits, "AROR_FactionPresetUnit", AROR_EUnitType, type, prefab);
+				break;
+			case AROR_EFactionPresetCategory.VEHICLES:
+				AddEntry(result.m_aVehicles, "AROR_FactionPresetVehicle", AROR_EVehicleType, type, prefab);
+				break;
+			case AROR_EFactionPresetCategory.GEAR:
+				AddEntry(result.m_aGear, "AROR_FactionPresetGear", AROR_EGearType, type, prefab);
+				break;
+			case AROR_EFactionPresetCategory.EQUIPMENT:
+				AddEntry(result.m_aEquipment, "AROR_FactionPresetEquipment", AROR_EEquipmentType, type, prefab);
+				break;
+			case AROR_EFactionPresetCategory.WEAPONS:
+				AddEntry(result.m_aWeapons, "AROR_FactionPresetWeapon", AROR_EWeaponType, type, prefab);
+				break;
+			case AROR_EFactionPresetCategory.WEAPON_ACCESSORIES:
+				AddEntry(result.m_aAccessories, "AROR_FactionPresetWeaponAccessory", AROR_EWeaponAccessoryType, type, prefab);
+				break;
+			case AROR_EFactionPresetCategory.AMMUNITION:
+				AddEntry(result.m_aAmmunition, "AROR_FactionPresetAmmunition", AROR_EAmmunitionType, type, prefab);
+				break;
 		}
-
-		// One unit per type: the first match wins
-		if (!result.m_UnitTypesUsed.Insert(type))
-		{
-			result.m_aSkipped.Insert(string.Format("unit (%1 already set): %2", typename.EnumToString(AROR_EUnitType, type), entry.GetPrefab()));
-			return;
-		}
-
-		AddEntry(result.m_aUnits, "AROR_FactionPresetUnit", AROR_EUnitType, type, entry.GetPrefab());
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected int UnitType(SCR_EntityCatalogEntry entry)
-	{
-		string name = LowerName(entry.GetPrefab());
-
-		// Roles the labels cannot tell apart are recognised by file name
-		if (name.Contains("pilot") || entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_HELI_CREW))
-			return AROR_EUnitType.PILOT;
-		if (name.Contains("crew") || entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_VEHICLE_CREW))
-			return AROR_EUnitType.CREW;
-		if (name.Contains("officer"))
-			return AROR_EUnitType.OFFICER;
-		if (name.Contains("sniper"))
-			return AROR_EUnitType.SNIPER;
-		if (name.Contains("_aa.") || name.Contains("_aa_") || name.Contains("antiair"))
-			return AROR_EUnitType.AA;
-		if (name.Contains("_ar.") || name.Contains("_ar_") || name.Contains("autorifle"))
-			return AROR_EUnitType.AUTORIFLEMAN;
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.FACTION_CIV) || name.Contains("civilian"))
-			return AROR_EUnitType.CIVILIAN;
-
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.ROLE_LEADER))
-			return AROR_EUnitType.LEADER;
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.ROLE_MEDIC))
-			return AROR_EUnitType.MEDIC;
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.ROLE_ANTITANK))
-			return AROR_EUnitType.AT;
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.ROLE_MACHINEGUNNER))
-			return AROR_EUnitType.MACHINEGUNNER;
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.ROLE_GRENADIER))
-			return AROR_EUnitType.GRENADIER;
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.ROLE_SHARPSHOOTER))
-			return AROR_EUnitType.MARKSMAN;
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.ROLE_SAPPER))
-			return AROR_EUnitType.ENGINEER;
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.ROLE_RADIOOPERATOR))
-			return AROR_EUnitType.RADIO_OPERATOR;
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.ROLE_RIFLEMAN))
-			return AROR_EUnitType.RIFLEMAN;
-
-		return -1;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	// Vehicles
-	//------------------------------------------------------------------------------------------------
-	protected void AddVehicle(SCR_EntityCatalogEntry entry, AROR_PresetImportResult result)
-	{
-		int type = VehicleType(entry);
-		if (type < 0)
-		{
-			result.m_aSkipped.Insert("vehicle (no matching type): " + entry.GetPrefab());
-			return;
-		}
-
-		AddEntry(result.m_aVehicles, "AROR_FactionPresetVehicle", AROR_EVehicleType, type, entry.GetPrefab());
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Static weapons are told apart by name: mortars, the tall 6T7 tripod (high) and the rest (low)
-	protected int StaticType(string name)
-	{
-		if (name.Contains("mortar"))
-			return AROR_EVehicleType.STATIC_MORTAR;
-		if (name.Contains("6t7"))
-			return AROR_EVehicleType.STATIC_MG_HIGH;
-
-		return AROR_EVehicleType.STATIC_MG_LOW;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected int VehicleType(SCR_EntityCatalogEntry entry)
-	{
-		string name = LowerName(entry.GetPrefab());
-
-		if (name.Contains("boat"))
-			return AROR_EVehicleType.BOAT;
-
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.VEHICLE_TURRET))
-			return StaticType(name);
-
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.VEHICLE_HELICOPTER))
-		{
-			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_ARMED))
-				return AROR_EVehicleType.HELI_ATTACK;
-
-			return AROR_EVehicleType.HELI_TRANSPORT;
-		}
-
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.VEHICLE_APC))
-		{
-			// Tracked/armoured fighting vehicles carrying an autocannon are treated as IFVs by name
-			if (name.Contains("bmp") || name.Contains("ifv"))
-				return AROR_EVehicleType.IFV;
-
-			return AROR_EVehicleType.APC;
-		}
-
-		if (name.Contains("tank") || name.Contains("t72") || name.Contains("m1a"))
-			return AROR_EVehicleType.TANK;
-
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.VEHICLE_TRUCK))
-		{
-			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_ARMED))
-				return AROR_EVehicleType.ARMED_TRUCK;
-			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_REFUELING))
-				return AROR_EVehicleType.FUEL_TRUCK;
-			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_MEDICAL))
-				return AROR_EVehicleType.AMBULANCE;
-			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_SUPPLYSTORAGE_SMALL) || entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_SUPPLYSTORAGE_LARGE)
-				|| entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_LOGISTICS))
-				return AROR_EVehicleType.SUPPLY_TRUCK;
-
-			return AROR_EVehicleType.MOTOR_TRUCK;
-		}
-
-		if (entry.HasEditableEntityLabel(EEditableEntityLabel.VEHICLE_CAR))
-		{
-			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_MEDICAL))
-				return AROR_EVehicleType.AMBULANCE;
-			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_ARMED))
-				return AROR_EVehicleType.ARMED_CAR;
-
-			return AROR_EVehicleType.MOTOR_CAR;
-		}
-
-		return -1;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	// Items: weapons, ammunition, accessories, gear and equipment, from the arsenal data
-	//------------------------------------------------------------------------------------------------
-	protected void AddItem(SCR_EntityCatalogEntry entry, AROR_PresetImportResult result)
-	{
-		SCR_ArsenalItem arsenal = SCR_ArsenalItem.Cast(entry.GetEntityDataOfType(SCR_ArsenalItem));
-		if (!arsenal)
-		{
-			result.m_aSkipped.Insert("item (no arsenal data): " + entry.GetPrefab());
-			return;
-		}
-
-		ResourceName prefab = entry.GetPrefab();
-		string name = LowerName(prefab);
-		SCR_EArsenalItemType itemType = arsenal.GetItemType();
-		SCR_EArsenalItemMode itemMode = arsenal.GetItemMode();
-
-		// Munitions loaded onto aircraft and vehicles as items (e.g. helicopter rocket pods)
-		if (itemMode == SCR_EArsenalItemMode.PYLON || itemType == SCR_EArsenalItemType.HELICOPTER || itemType == SCR_EArsenalItemType.VEHICLE)
-		{
-			int vehicleAmmunition = AROR_EAmmunitionType.ROCKET;
-			if (name.Contains("missile") || name.Contains("atgm"))
-				vehicleAmmunition = AROR_EAmmunitionType.MISSILE;
-			else if (name.Contains("bomb"))
-				vehicleAmmunition = AROR_EAmmunitionType.BOMB;
-
-			AddEntry(result.m_aAmmunition, "AROR_FactionPresetAmmunition", AROR_EAmmunitionType, vehicleAmmunition, prefab);
-			return;
-		}
-
-		if (itemMode == SCR_EArsenalItemMode.AMMUNITION)
-		{
-			int ammo = AmmunitionType(itemType, name);
-			AddEntry(result.m_aAmmunition, "AROR_FactionPresetAmmunition", AROR_EAmmunitionType, ammo, prefab);
-			return;
-		}
-
-		if (itemMode == SCR_EArsenalItemMode.ATTACHMENT || itemType == SCR_EArsenalItemType.WEAPON_ATTACHMENT)
-		{
-			int accessory = AccessoryType(name);
-			if (accessory < 0)
-				result.m_aSkipped.Insert("accessory (no matching type): " + prefab);
-			else
-				AddEntry(result.m_aAccessories, "AROR_FactionPresetWeaponAccessory", AROR_EWeaponAccessoryType, accessory, prefab);
-
-			return;
-		}
-
-		int weapon = WeaponType(itemType, name);
-		if (weapon >= 0)
-		{
-			AddEntry(result.m_aWeapons, "AROR_FactionPresetWeapon", AROR_EWeaponType, weapon, prefab);
-			return;
-		}
-
-		int gear = GearType(itemType, name);
-		if (gear >= 0)
-		{
-			AddEntry(result.m_aGear, "AROR_FactionPresetGear", AROR_EGearType, gear, prefab);
-			return;
-		}
-
-		int equipment = EquipmentType(itemType, name);
-		if (equipment >= 0)
-		{
-			AddEntry(result.m_aEquipment, "AROR_FactionPresetEquipment", AROR_EEquipmentType, equipment, prefab);
-			return;
-		}
-
-		result.m_aSkipped.Insert(string.Format("item (%1 has no matching type): %2", typename.EnumToString(SCR_EArsenalItemType, itemType), prefab));
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected int WeaponType(SCR_EArsenalItemType itemType, string name)
-	{
-		switch (itemType)
-		{
-			case SCR_EArsenalItemType.PISTOL:
-				return AROR_EWeaponType.PISTOL;
-			case SCR_EArsenalItemType.RIFLE:
-				return AROR_EWeaponType.ASSAULT_RIFLE;
-			case SCR_EArsenalItemType.MACHINE_GUN:
-				return AROR_EWeaponType.MACHINEGUN;
-			case SCR_EArsenalItemType.SNIPER_RIFLE:
-				return AROR_EWeaponType.SNIPER_RIFLE;
-			case SCR_EArsenalItemType.ROCKET_LAUNCHER:
-				return AROR_EWeaponType.LAUNCHER_AT;
-			case SCR_EArsenalItemType.LETHAL_THROWABLE:
-			case SCR_EArsenalItemType.NON_LETHAL_THROWABLE:
-				if (name.Contains("smoke"))
-					return AROR_EWeaponType.SMOKE_GRENADE;
-
-				return AROR_EWeaponType.EXPLOSIVE_GRENADE;
-		}
-
-		return -1;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected int AmmunitionType(SCR_EArsenalItemType itemType, string name)
-	{
-		if (itemType == SCR_EArsenalItemType.ROCKET_LAUNCHER)
-			return AROR_EAmmunitionType.ROCKET;
-		if (itemType == SCR_EArsenalItemType.MORTARS)
-			return AROR_EAmmunitionType.SHELL;
-		if (name.Contains("40mm") || name.Contains("vog") || name.Contains("gp25") || name.Contains("m203") || name.Contains("grenade"))
-			return AROR_EAmmunitionType.GRENADE_ROUND;
-		if (itemType == SCR_EArsenalItemType.MACHINE_GUN || name.Contains("belt") || name.Contains("box"))
-			return AROR_EAmmunitionType.BELT;
-
-		return AROR_EAmmunitionType.MAGAZINE;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected int AccessoryType(string name)
-	{
-		if (name.Contains("suppressor") || name.Contains("silencer") || name.Contains("pbs"))
-			return AROR_EWeaponAccessoryType.SUPPRESSOR;
-		if (name.Contains("bayonet"))
-			return AROR_EWeaponAccessoryType.BAYONET;
-		if (name.Contains("ugl") || name.Contains("m203") || name.Contains("gp25") || name.Contains("bipod"))
-			return AROR_EWeaponAccessoryType.UNDERBARREL;
-		if (name.Contains("flashlight") || name.Contains("light"))
-			return AROR_EWeaponAccessoryType.LIGHT;
-		if (name.Contains("optic") || name.Contains("scope") || name.Contains("sight") || name.Contains("artii") || name.Contains("pso") || name.Contains("kobra") || name.Contains("_pu"))
-			return AROR_EWeaponAccessoryType.OPTIC;
-
-		return -1;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected int GearType(SCR_EArsenalItemType itemType, string name)
-	{
-		if (itemType == SCR_EArsenalItemType.HEADWEAR)
-		{
-			if (name.Contains("helmet") || name.Contains("pasgt") || name.Contains("ssh") || name.Contains("6b"))
-				return AROR_EGearType.HELMET;
-			if (name.Contains("glasses") || name.Contains("goggles") || name.Contains("balaclava") || name.Contains("mask"))
-				return AROR_EGearType.FACEWEAR;
-
-			return AROR_EGearType.HEADGEAR;
-		}
-
-		// Reforger splits clothing into jacket, trousers, boots and gloves; all count as uniform
-		if (itemType == SCR_EArsenalItemType.TORSO || itemType == SCR_EArsenalItemType.LEGS
-			|| itemType == SCR_EArsenalItemType.FOOTWEAR || itemType == SCR_EArsenalItemType.HANDWEAR)
-			return AROR_EGearType.UNIFORM;
-
-		if (itemType == SCR_EArsenalItemType.VEST_AND_WAIST)
-			return AROR_EGearType.VEST;
-
-		if (itemType == SCR_EArsenalItemType.BACKPACK || itemType == SCR_EArsenalItemType.RADIO_BACKPACK)
-			return AROR_EGearType.BACKPACK;
-
-		return -1;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected int EquipmentType(SCR_EArsenalItemType itemType, string name)
-	{
-		if (itemType == SCR_EArsenalItemType.HEAL)
-			return AROR_EEquipmentType.MEDICAL;
-		if (itemType == SCR_EArsenalItemType.EXPLOSIVES)
-			return AROR_EEquipmentType.EXPLOSIVE;
-		if (itemType != SCR_EArsenalItemType.EQUIPMENT)
-			return -1;
-
-		if (name.Contains("binocular"))
-			return AROR_EEquipmentType.BINOCULARS;
-		if (name.Contains("radio"))
-			return AROR_EEquipmentType.RADIO;
-		if (name.Contains("map"))
-			return AROR_EEquipmentType.MAP;
-		if (name.Contains("compass"))
-			return AROR_EEquipmentType.COMPASS;
-		if (name.Contains("watch"))
-			return AROR_EEquipmentType.WATCH;
-		if (name.Contains("flashlight") || name.Contains("torch"))
-			return AROR_EEquipmentType.FLASHLIGHT;
-
-		return AROR_EEquipmentType.TOOL;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -647,18 +344,5 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 
 		file.Close();
 		return outLines.Count();
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Lower-case file name of a prefab, for name hints
-	protected static string LowerName(ResourceName prefab)
-	{
-		string path = prefab;
-		int slash = path.LastIndexOf("/");
-		if (slash >= 0)
-			path = path.Substring(slash + 1, path.Length() - slash - 1);
-
-		path.ToLower();
-		return path;
 	}
 }

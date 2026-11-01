@@ -9,6 +9,7 @@ typedef func AROR_OnResistanceStorageChanged;
 //! Resistance Storage (see ARCHITECTURE.md -> Resistance Storage): a campaign ledger of item prefabs and
 //! quantities for the Resistance. The server owns the stock; parallel arrays replicate to every client.
 //! Depositing an entity (AddEntity_S) unpacks nested inventory into separate stock lines, then deletes the entity.
+//! Magazines are credited by their rounds, never as full magazines (see DepositCredit).
 //! Saved by AROR_ResistanceStorageComponentSerializer. Slot/type/volume stay on the item when something later
 //! spawns or equips it — this component only tracks prefab + count.
 class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
@@ -17,6 +18,9 @@ class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
 
 	//! Server and (after replication) client: prefab -> quantity. Zero qty is never kept.
 	protected ref map<ResourceName, int> m_mStock = new map<ResourceName, int>();
+
+	//! Server only: magazine prefab -> deposited rounds not yet adding up to a full magazine. Zero is never kept.
+	protected ref map<ResourceName, int> m_mLooseRounds = new map<ResourceName, int>();
 
 	[RplProp(onRplName: "OnStorageReplicated")]
 	protected ref array<ResourceName> m_aPrefabIds = {};
@@ -68,10 +72,24 @@ class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! True while nothing is stocked (nothing to save)
+	//! True while nothing is stocked and no loose rounds are held (nothing to save)
 	bool IsEmpty()
 	{
-		return m_mStock.IsEmpty();
+		return m_mStock.IsEmpty() && m_mLooseRounds.IsEmpty();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server: parallel lists of every magazine prefab with loose rounds and the rounds held
+	void GetLooseRounds(notnull array<ResourceName> prefabs, notnull array<int> rounds)
+	{
+		prefabs.Clear();
+		rounds.Clear();
+
+		foreach (ResourceName prefab, int held : m_mLooseRounds)
+		{
+			prefabs.Insert(prefab);
+			rounds.Insert(held);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -123,8 +141,8 @@ class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Server only. Unpacks nested inventory into separate stock lines (vest cargo, weapon attachments,
-	//! magazines, etc.), adds each item's prefab once, then deletes the root entity. Rejects entities
-	//! without an InventoryItemComponent. Magazine fill and item health are not preserved.
+	//! magazines, etc.), credits each item (see DepositCredit), then deletes the root entity. Rejects entities
+	//! without an InventoryItemComponent. Item health is not preserved.
 	bool AddEntity_S(IEntity item)
 	{
 		if (!Replication.IsServer() || !item)
@@ -140,13 +158,77 @@ class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
 		foreach (IEntity entity : entities)
 		{
 			ResourceName prefab = SCR_ResourceNameUtils.GetPrefabName(entity);
-			if (!prefab.IsEmpty())
-				AdjustStock(prefab, 1);
+			if (prefab.IsEmpty())
+				continue;
+
+			int credit = DepositCredit(entity, prefab, m_mLooseRounds);
+			if (credit > 0)
+				AdjustStock(prefab, credit);
 		}
 
 		Publish_S();
 		SCR_EntityHelper.DeleteEntityAndChildren(item);
 		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server: whole items per prefab that depositing these entities (and everything nested in them) would add
+	//! now, without changing anything. Lets a swap check stock before it deposits anything.
+	void GetDepositYield(notnull array<IEntity> items, notnull map<ResourceName, int> outYield)
+	{
+		map<ResourceName, int> looseRounds = new map<ResourceName, int>();
+		foreach (ResourceName loosePrefab, int held : m_mLooseRounds)
+			looseRounds.Set(loosePrefab, held);
+
+		array<IEntity> entities = {};
+		foreach (IEntity item : items)
+			CollectItemEntities(item, entities);
+
+		foreach (IEntity entity : entities)
+		{
+			ResourceName prefab = SCR_ResourceNameUtils.GetPrefabName(entity);
+			if (prefab.IsEmpty())
+				continue;
+
+			int credit = DepositCredit(entity, prefab, looseRounds);
+			if (credit <= 0)
+				continue;
+
+			int qty;
+			outYield.Find(prefab, qty);
+			outYield.Set(prefab, qty + credit);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Whole items one deposited entity is worth. A magazine is worth its rounds: they join the prefab's loose
+	//! rounds, and each full magazine's worth becomes one stocked magazine. An emptied magazine adds nothing and two
+	//! half-empty ones add one, so taking a full magazine and returning it empty cannot create ammunition.
+	//! Everything else is worth one. Updates looseRounds.
+	protected static int DepositCredit(IEntity entity, ResourceName prefab, notnull map<ResourceName, int> looseRounds)
+	{
+		BaseMagazineComponent magazine = BaseMagazineComponent.Cast(entity.FindComponent(BaseMagazineComponent));
+		if (!magazine)
+			return 1;
+
+		int capacity = magazine.GetMaxAmmoCount();
+		if (capacity <= 0)
+			return 1;
+
+		int rounds;
+		looseRounds.Find(prefab, rounds);
+		int loaded = magazine.GetAmmoCount();
+		if (loaded > 0)
+			rounds += loaded;
+
+		int whole = rounds / capacity;
+		rounds -= whole * capacity;
+		if (rounds > 0)
+			looseRounds.Set(prefab, rounds);
+		else
+			looseRounds.Remove(prefab);
+
+		return whole;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -169,6 +251,24 @@ class AROR_ResistanceStorageComponent : SCR_BaseGameModeComponent
 		}
 
 		Publish_S();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server only: replace loose magazine rounds from a save (used by the serializer). Not replicated.
+	void RestoreLooseRounds_S(notnull array<ResourceName> prefabs, notnull array<int> rounds)
+	{
+		if (!Replication.IsServer())
+			return;
+
+		m_mLooseRounds.Clear();
+		int count = Math.Min(prefabs.Count(), rounds.Count());
+		for (int i = 0; i < count; i++)
+		{
+			if (prefabs[i].IsEmpty() || rounds[i] <= 0)
+				continue;
+
+			m_mLooseRounds.Set(prefabs[i], rounds[i]);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
