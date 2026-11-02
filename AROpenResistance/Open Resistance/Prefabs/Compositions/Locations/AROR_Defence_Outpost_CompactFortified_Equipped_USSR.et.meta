@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{B2B81990B9C000BA}Prefabs/Compositions/Locations/AROR_Defence_Outpost_CompactFortified_Equipped_USSR.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass XBOX_ONE : PC {
+  }
+  EntityTemplateResourceClass XBOX_SERIES : PC {
+  }
+  EntityTemplateResourceClass PS4 : PC {
+  }
+  EntityTemplateResourceClass PS5 : PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

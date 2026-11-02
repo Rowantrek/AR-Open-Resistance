@@ -1,6 +1,6 @@
 //! A faction preset (see ARCHITECTURE.md -> Factions): everything an army makes available to the game, in fixed
-//! categories (AROR_EFactionPresetCategory), each entry with a base cost. A preset only lists what exists; garrisons,
-//! QRFs, shops and other systems decide what to use. One `.conf` per preset, listed in AROR_FactionPresetRegistry.
+//! categories (AROR_EFactionPresetCategory), each entry a prefab of a type. A preset only lists what exists; garrisons,
+//! QRFs, missions and other systems decide what to use. One `.conf` per preset, listed in AROR_FactionPresetRegistry.
 [BaseContainerProps(configRoot: true)]
 class AROR_FactionPreset
 {
@@ -17,6 +17,9 @@ class AROR_FactionPreset
 	[Attribute(desc: "AI units: at most one per unit type", category: "Units")]
 	protected ref array<ref AROR_FactionPresetUnit> m_aUnits;
 
+	[Attribute(desc: "Starting kit for players spawning in the role this preset serves (in practice the Resistance). Empty keeps the player character's own kit.", category: "Units")]
+	protected ref AROR_PlayerLoadout m_PlayerLoadout;
+
 	[Attribute(desc: "Empty vehicles (no crew)", category: "Vehicles")]
 	protected ref array<ref AROR_FactionPresetVehicle> m_aVehicles;
 
@@ -32,11 +35,8 @@ class AROR_FactionPreset
 	[Attribute(desc: "Weapon accessories", category: "Weapon accessories")]
 	protected ref array<ref AROR_FactionPresetWeaponAccessory> m_aWeaponAccessories;
 
-	[Attribute(desc: "Ammunition for hand-held weapons", category: "Ammunition")]
+	[Attribute(desc: "Ammunition, including rocket pods and other munitions loaded onto vehicles and aircraft", category: "Ammunition")]
 	protected ref array<ref AROR_FactionPresetAmmunition> m_aAmmunition;
-
-	[Attribute(desc: "Munitions loaded onto vehicles and aircraft as items (e.g. helicopter rocket pods)", category: "Vehicle ammunition")]
-	protected ref array<ref AROR_FactionPresetVehicleAmmunition> m_aVehicleAmmunition;
 
 	//------------------------------------------------------------------------------------------------
 	string GetId()
@@ -57,7 +57,7 @@ class AROR_FactionPreset
 	}
 
 	//------------------------------------------------------------------------------------------------
-	// Queries (entries with an unknown type are never returned)
+	// Queries (entries with an unknown type, or whose prefab no enabled content pack offers, are never returned)
 	//------------------------------------------------------------------------------------------------
 	//! The unit of this type, or null if the preset has none
 	AROR_FactionPresetUnit GetUnit(AROR_EUnitType type)
@@ -71,6 +71,13 @@ class AROR_FactionPreset
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! The starting kit for players, or null when the preset has none
+	AROR_PlayerLoadout GetPlayerLoadout()
+	{
+		return m_PlayerLoadout;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Adds the category's entries of one type (the int value of that category's type enum, e.g. AROR_EVehicleType.APC)
 	//! to outEntries; returns how many were added
 	int GetEntries(AROR_EFactionPresetCategory category, int type, notnull array<AROR_FactionPresetEntry> outEntries)
@@ -81,7 +88,7 @@ class AROR_FactionPreset
 		int added;
 		foreach (AROR_FactionPresetEntry entry : entries)
 		{
-			if (entry.IsKnownType() && entry.GetTypeValue() == type)
+			if (entry.IsKnownType() && entry.GetTypeValue() == type && IsOffered(entry))
 			{
 				outEntries.Insert(entry);
 				added++;
@@ -101,7 +108,7 @@ class AROR_FactionPreset
 		int added;
 		foreach (AROR_FactionPresetEntry entry : entries)
 		{
-			if (entry.IsKnownType())
+			if (entry.IsKnownType() && IsOffered(entry))
 			{
 				outEntries.Insert(entry);
 				added++;
@@ -112,7 +119,18 @@ class AROR_FactionPreset
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Logs configuration mistakes: missing ID or roles, unknown types, duplicate unit types, empty prefabs.
+	//! Units are always usable (content packs do not list units). Any other entry needs its prefab, after replacements,
+	//! in an enabled content pack; otherwise it is skipped and logged once.
+	protected bool IsOffered(notnull AROR_FactionPresetEntry entry)
+	{
+		if (entry.GetCategory() == AROR_EFactionPresetCategory.UNITS)
+			return true;
+
+		return AROR_ContentPacksComponent.IsOffered(entry.GetPrefab(), m_sId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Logs configuration mistakes: missing ID or roles, unknown types, duplicate unit types, empty prefabs, loadouts.
 	//! Returns false if the preset is unusable.
 	bool Validate(string source)
 	{
@@ -128,7 +146,7 @@ class AROR_FactionPreset
 		set<int> unitTypes = new set<int>();
 		int empty;
 
-		for (int category = 0; category <= AROR_EFactionPresetCategory.VEHICLE_AMMUNITION; category++)
+		for (int category = 0; category <= AROR_EFactionPresetCategory.AMMUNITION; category++)
 		{
 			string categoryName = typename.EnumToString(AROR_EFactionPresetCategory, category);
 
@@ -136,7 +154,8 @@ class AROR_FactionPreset
 			CollectEntries(category, entries);
 			foreach (AROR_FactionPresetEntry entry : entries)
 			{
-				if (entry.GetPrefab().IsEmpty())
+				// Units may leave the prefab empty to use the role default
+				if (entry.GetListedPrefab().IsEmpty() && category != AROR_EFactionPresetCategory.UNITS)
 					empty++;
 
 				if (!entry.IsKnownType())
@@ -145,13 +164,24 @@ class AROR_FactionPreset
 					continue;
 				}
 
-				if (category == AROR_EFactionPresetCategory.UNITS && !unitTypes.Insert(entry.GetTypeValue()))
-					Print(string.Format("[AROR] Faction preset '%1' lists unit type %2 more than once; only the first is used", m_sId, entry.GetTypeName()), LogLevel.WARNING);
+				if (category == AROR_EFactionPresetCategory.UNITS)
+				{
+					if (!unitTypes.Insert(entry.GetTypeValue()))
+						Print(string.Format("[AROR] Faction preset '%1' lists unit type %2 more than once; only the first is used", m_sId, entry.GetTypeName()), LogLevel.WARNING);
+
+					AROR_FactionPresetUnit.Cast(entry).ValidateLoadouts(m_sId);
+				}
 			}
 		}
 
 		if (empty > 0)
 			Print(string.Format("[AROR] Faction preset '%1' has %2 entries without a prefab", m_sId, empty), LogLevel.WARNING);
+
+		if (m_PlayerLoadout)
+			m_PlayerLoadout.Validate(string.Format("Faction preset '%1', player loadout", m_sId));
+		else if (IsUsableAs(AROR_EFactionRole.RESISTANCE))
+			// Players always join the Resistance and its character is gear-less, so they would spawn with nothing
+			Print(string.Format("[AROR] Faction preset '%1' can be used for the Resistance but has no player loadout; players would spawn with no gear", m_sId), LogLevel.ERROR);
 
 		return true;
 	}
@@ -235,17 +265,6 @@ class AROR_FactionPreset
 					{
 						if (ammunition)
 							outEntries.Insert(ammunition);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.VEHICLE_AMMUNITION:
-				if (m_aVehicleAmmunition)
-				{
-					foreach (AROR_FactionPresetVehicleAmmunition vehicleAmmunition : m_aVehicleAmmunition)
-					{
-						if (vehicleAmmunition)
-							outEntries.Insert(vehicleAmmunition);
 					}
 				}
 				break;

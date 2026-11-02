@@ -4,12 +4,12 @@
 function runCapturePlacementTests(sources) {
   let assertions=0;
   const check=(ok,msg)=>{assertions++;if(!ok)throw Error(msg);};
-  const env={Math:{Min:Math.min,Max:Math.max},vector:{DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])},
+  const env={LAST_RESORT_ROAD_RADIUS:600,Math:{Min:Math.min,Max:Math.max},vector:{DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])},
     AROR_GroundOperationForce:{Cast:x=>x},Print:()=>{},string:{Format:()=>''},LogLevel:{NORMAL:0,WARNING:1}};
   function compile(source,name,returnOutput=false){
     const m=source.match(new RegExp('^\\t[^\\r\\n]*\\b'+name+'\\(([^\\r\\n]*)\\)\\r?\\n\\t\\{([\\s\\S]*?)^\\t\\}', 'm'));
     if(!m)throw Error('Missing '+name);
-    const args=m[1].replace(/\bout\s+/g,'').replace(/\b(?:vector|float|int|AROR_\w+)\s+/g,'');
+    const args=m[1].replace(/\bout\s+/g,'').replace(/\b(?:vector|float|int|bool|AROR_\w+)\s+/g,'');
     let body=m[2].replace(/\bfloat\.MAX/g,'Number.MAX_VALUE')
       .replace(/vector (\w+)\[4\];/g,'let $1=[];').replace(/vector (\w+);/g,'let $1=[0,0,0];')
       .replace(/foreach \(\w+ (\w+) : ([^)]+)\)/g,'for(const $1 of $2)')

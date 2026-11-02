@@ -3,6 +3,9 @@ class AROR_OperationForce
 {
 	string m_sOperationId;
 	ref AROR_QRFFunding m_Funding;
+	int m_iPackageQuote;
+	bool m_bOwnsPackageQuote;
+	bool m_bPackageQueuesPreserved;
 	int m_iPersonnelLossValue;
 	int m_iVehicleLossValue;
 	string m_sFactionKey;
@@ -100,7 +103,7 @@ class AROR_OperationForce
 			int value = m_iPersonnelLossValue;
 			if (vehicle)
 				value = m_iVehicleLossValue;
-			m_Funding.Register_S(entity, value, vehicle, m_sFactionKey, m_sAssetFactionKey);
+			m_Funding.RegisterPackageAsset_S(entity, value, vehicle, m_sFactionKey, m_sAssetFactionKey, m_iPackageIndex);
 		}
 		foreach (AROR_OperationDamageObserver observer : m_aDamageObservers)
 		{
@@ -182,6 +185,8 @@ class AROR_OperationForce
 			// Preserve the group entity if a player has taken command during testing.
 			if (m_Group.GetPlayerCount() == 0)
 				SCR_EntityHelper.DeleteEntityAndChildren(m_Group);
+			else
+				m_bPackageQueuesPreserved = true;
 		}
 		foreach (IEntity member : m_aMembers)
 		{
@@ -193,5 +198,10 @@ class AROR_OperationForce
 		m_Group = null;
 		m_Waypoint = null;
 		m_aMembers.Clear();
+		if (m_Funding && m_bOwnsPackageQuote && !m_bPackageQueuesPreserved)
+		{
+			m_bOwnsPackageQuote = false;
+			m_Funding.ReleaseUnusedPackageQuote_S(m_iPackageIndex, m_iPackageQuote);
+		}
 	}
 }

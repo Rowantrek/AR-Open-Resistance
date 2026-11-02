@@ -28,7 +28,7 @@ class AROR_QRFMapIntel
 		Clear();
 		for (int index = 0; index < ids.Count(); index++)
 		{
-			if (kinds[index] < 0 || kinds[index] > 4 || ages[index] < 0 || ages[index] >= lifetime)
+			if (kinds[index] < 0 || kinds[index] > 5 || ages[index] < 0 || ages[index] >= lifetime)
 				continue;
 			if (sides[index] != AROR_EFactionRole.OCCUPIERS && sides[index] != AROR_EFactionRole.INVADERS)
 				continue;
@@ -49,6 +49,7 @@ class AROR_QRFMapIntel
 			case 2: return "ARMOURED VEHICLE";
 			case 3: return "TRANSPORT HELICOPTER";
 			case 4: return "GUNSHIP";
+			case 5: return "LIGHT ARMED VEHICLE";
 		}
 		return "TRANSPORT VEHICLE";
 	}

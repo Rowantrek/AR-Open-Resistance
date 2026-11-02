@@ -1,0 +1,637 @@
+GenericEntity : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
+ ID "087F86BBF3C49E09"
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sName "Outpost CheckpointFortified"
+   m_fRadius 100
+   m_bGroundOnInit 0
+  }
+  AROR_GarrisonComponent "{66D30571F98F4BE3}" {
+   m_iDefenceLevel 2
+   m_iStaticWeaponCountOverride 2
+   m_fDefenceHalfExtent 14
+   m_fMaxDefenceRelief 2
+   m_fDefenceHoldRadius 6
+  }
+ }
+ coords 0 0 0
+ {
+  GenericEntity {
+   ID "6AACA42C3DE4F4A5"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bAutoPlace 0
+    }
+    ActionsManagerComponent "{6AAE5E8DE935135E}" {
+     ActionContexts {
+      UserActionContext "{6AAE5E8DEECDFE8B}" {
+       Position PointInfo "{6AAE5E8DE4DBC0C4}" {
+        Offset 0 0.694054 0
+       }
+      }
+     }
+    }
+   }
+   coords 0 0.905946 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_0_0 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "519FA17A19A722D0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -12.833 0 14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_0_1 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "519FA27A19A72483"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -10.5 0 14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_0_2 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "519FA37A19A72636"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8.167 0 14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_0_3 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "519FA47A19A727E9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -5.833 0 14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_0_4 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "519FA57A19A7299C"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -3.5 0 14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_0_7 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "519FA87A19A72EB5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 3.5 0 14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_0_8 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "519FA97A19A73068"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 5.833 0 14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_0_9 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "519FAA7A19A7321B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 8.167 0 14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_0_10 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5965C87997035C29"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 10.5 0 14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_0_11 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5965C77997035A76"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 12.833 0 14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_1_0 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "47C40A7A13BADAFB"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14 0 -12.833
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_1_1 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "47C4097A13BAD948"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14 0 -10.5
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_1_2 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "47C40C7A13BADE61"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14 0 -8.167
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_1_3 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "47C40B7A13BADCAE"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14 0 -5.833
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_1_4 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "47C40E7A13BAE1C7"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14 0 -3.5
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_1_7 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "47C40F7A13BAE37A"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14 0 3.5
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_1_8 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "47C4027A13BACD63"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14 0 5.833
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_1_9 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "47C4017A13BACBB0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14 0 8.167
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_1_10 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "ACF5926F867F86E8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14 0 10.5
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_1_11 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "ACF5936F867F889B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 14 0 12.833
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_2_0 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "63A30F7A240CD7BA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -12.833 0 -14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_2_1 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "63A3107A240CD96D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -10.5 0 -14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_2_2 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "63A30D7A240CD454"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -8.167 0 -14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_2_3 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "63A30E7A240CD607"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -5.833 0 -14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_2_8 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "63A3077A240CCA22"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 5.833 0 -14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_2_9 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "63A3087A240CCBD5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 8.167 0 -14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_2_10 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5AEE5C8B41D55907"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 10.5 0 -14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_2_11 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "5AEE5B8B41D55754"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 12.833 0 -14
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_3_0 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "58EE587A1D6868C5"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14 0 -12.833
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_3_1 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "58EE577A1D686712"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14 0 -10.5
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_3_2 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "58EE567A1D68655F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14 0 -8.167
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_3_3 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "58EE557A1D6863AC"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14 0 -5.833
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_3_4 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "58EE547A1D6861F9"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14 0 -3.5
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_3_6 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "58EE527A1D685E93"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14 0 1.167
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_3_7 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "58EE517A1D685CE0"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14 0 3.5
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_3_8 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "58EE607A1D68765D"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14 0 5.833
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_3_9 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "58EE5F7A1D6874AA"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14 0 8.167
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_3_10 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "8565C67FF8673EC6"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14 0 10.5
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Perimeter_3_11 : "{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_burlap.et" {
+   ID "8565C77FF8674079"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -14 0 12.833
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Gun_0_Flank_L : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "B9A620C6961D97A8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords -3.5 0 12.5
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Gun_0_Flank_R : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "B9A60EC6961D7912"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 3.5 0 12.5
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Gun_1_Flank_L : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "7B2C72D4FD223A87"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 12.5 0 3.5
+   angles 0 180 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Gun_1_Flank_R : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
+   ID "7B2C58D4FD220E59"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 12.5 0 -3.5
+   angles 0 180 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Command_Desk : "{7762F50A860DD074}Prefabs/Props/Military/Furniture/TableMilitary_US_01.et" {
+   ID "E76625E7835DD48E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+   }
+   coords 6 0 -1
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Defence_0_0 {
+   ID "A8F3352A5FC9714E"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 0
+    }
+   }
+   coords -7 0 7
+   angles 0 315 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Defence_0_1 {
+   ID "A8F3362A5FC97301"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 1
+    }
+   }
+   coords 7 0 -7
+   angles 0 135 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Defence_0_2 {
+   ID "A8F3332A5FC96DE8"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 2
+    }
+   }
+   coords -7 0 -7
+   angles 0 225 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Defence_0_3 {
+   ID "A8F3342A5FC96F9B"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 0
+     m_iOrdinal 3
+    }
+   }
+   coords 7 0 7
+   angles 0 45 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Defence_1_0 {
+   ID "9FF0FE2A5A95BD59"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 1
+     m_iOrdinal 0
+    }
+   }
+   coords 0 0 10
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Defence_1_1 {
+   ID "9FF0FD2A5A95BBA6"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 1
+     m_iOrdinal 1
+    }
+   }
+   coords 10 0 0
+   angles 0 90 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Defence_4_4 {
+   ID "CB474D2A7323AC96"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 4
+     m_iOrdinal 4
+    }
+   }
+   coords -3 0 0
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Defence_4_5 {
+   ID "CB474E2A7323AE49"
+   components {
+    Hierarchy {
+    }
+    AROR_DefencePositionComponent {
+     m_iKind 4
+     m_iOrdinal 5
+    }
+   }
+   coords 3 0 -2
+   angles 0 0 0
+  }
+  GenericEntity AROR_Outpost_CheckpointFortified_Fort_Tower_0 : "{AB87B392A989CA95}Prefabs/Compositions/Slotted/SlotFlatSmall/GuardTower_S_US_01.et" {
+   ID "F3A694ECACF8037A"
+   components {
+    AROR_DefenceWallComponent {
+    }
+    AROR_SentryPostComponent {
+     m_fFloorHeight 3.5
+    }
+   }
+   coords 0 0 4
+  }
+ }
+}

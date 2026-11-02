@@ -2,6 +2,12 @@
 param([switch]$Apply)
 
 $ErrorActionPreference = 'Stop'
+
+# Fortified trials are authored world overrides, not accepted catalogue replacements.
+# Refuse destructive regeneration until they and the manually authored castle are reconciled.
+if ($Apply -and (Test-Path -LiteralPath (Join-Path $PSScriptRoot '../docs/FORTIFIED_OUTPOST_TRIALS.json'))) {
+	throw 'Chicken has authored fortified outpost trials. Reconcile their prefab bindings, native grounding and saved custom geometry before regenerating the campaign layers.'
+}
 $repoRoot = Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot 'CampaignGroundingData.ps1')
 $catalogPath = Join-Path $repoRoot 'docs/EVERON_CAMPAIGN_LOCATIONS.csv'

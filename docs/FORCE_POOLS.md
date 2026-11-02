@@ -1,20 +1,24 @@
 # Four-type attack and QRF force pools
 
-See [QRF tactical commander and staged waves](QRF_TACTICAL_COMMANDER.md) for the new shared BLUFOR/USSR execution policy, finite reserves, live limits, report-driven sectors and withdrawal/retention. It is enabled for Chicken's ground fixture; Invader dispatch remains disabled. New tactical behavior is not yet verified in Workbench.
+Ordinary campaign QRFs target a **30% airborne share per army**, measured over successful dispatches. Standalone airborne and joint air/ground responses count in the same bucket. The remaining share uses ground recipes; an eligible joint recipe no longer automatically wins every ordinary response. Selection follows the nearest attainable running proportion, not an independent random roll. The first response is ground; ten feasible successful dispatches contain three airborne/joint responses.
 
-The [USSR/Invader framework](INVADER_QRF_FRAMEWORK.md) is staged with levels 1-5 and operation admission disabled; the current US/Occupier test remains selected.
+Readiness, funding, capacity, launch origins, airspace and landing safety still apply. Air requests can fall back to ground before funding or construction; unavailable aircraft do not cause a free deployment or override limits. Failed preparation does not consume a dispatch. MARS, explicit-profile/recipe requests, attacks and scenario-funded stronghold responses are excluded. Aggregate per-army totals survive save/load through operation policy serializer version 4; versions 1–3 load with empty mix history and retain their existing campaign progress. `m_iAirborneQRFShare` exposes the percentage to scenarios/extenders. See [strategy and economy](QRF_STRATEGY_ECONOMY.md#airborne-response-share).
 
-**Current Chicken fixture:** strategic selection and payments are ON, initially war level 2, with five authored ground tiers per AI role. A normal response varies between the truck/IFV tier and one truck plus two IFVs; affordability can downgrade it. REAPER dispatch and Invader admission remain OFF. See [strategy and prices](QRF_STRATEGY_ECONOMY.md) and [FIA spotting](QRF_SPOTTING.md). To restore the exact truck/IFV regression fixture, disable `m_bQRFStrategicEconomy` and follow [these instructions](TRUCK_IFV_QRF_TEST.md). This supersedes older forced-profile/level-5 instructions below.
+See [QRF tactical commander and staged waves](QRF_TACTICAL_COMMANDER.md) for the new shared BLUFOR/USSR execution policy, finite reserves, live limits, report-driven sectors and withdrawal/retention. It is enabled for Chicken's ground fixture; Chicken now enables capture-driven Invader ground responses; native acceptance is pending. New tactical behavior is not yet verified in Workbench.
 
-The proposed [QRF response roster](QRF_RESPONSE_ROSTER.md) adds 40 authored responses across eight families and levels 1-5, including combined ground/air compositions. It defines future commander/resource selection; it does not change the current repeated-profile executor or Chicken test. A [CSV catalogue](QRF_RESPONSE_ROSTER.csv) provides stable recipe IDs and nominal accounting.
+The [USSR/Invader framework](INVADER_QRF_FRAMEWORK.md) has levels 1-5 and ground capture-response admission enabled in Chicken; other scenarios default off.
+
+**Current Chicken fixture:** [strategic selection](QRF_STRATEGY_ECONOMY.md) starts at readiness 1 and crackdown 20%. Readiness gates equipment; Crackdown requests response intensity 1–5. Capture responses are enabled for both AI roles, with tactical waves, spotting, Readiness-1 light airborne selections and joint recipes from Readiness 2. Combat-triggered dispatch and the blanket REAPER override remain off. The exact [truck/APC regression fixture](TRUCK_IFV_QRF_TEST.md) requires strategic economy off. Compile and reload before native acceptance.
+
+The proposed [QRF response roster](QRF_RESPONSE_ROSTER.md) adds 40 authored responses across eight families and levels 1-5, including combined ground/air compositions. It defines future commander/resource selection; it is separate from the executable Chicken catalogue. Chicken now has explicit one-air-package/ground joint recipes with optional escorts; see [release validation](QRF_RELEASE_VALIDATION.md). The broader design table is not fully executable. A [CSV catalogue](QRF_RESPONSE_ROSTER.csv) provides stable recipe IDs and nominal accounting.
 
 Response strength now has five independently weighted levels. Each deploys one to five complete packages of the chosen type; see [RESPONSE_SCALE.md](RESPONSE_SCALE.md). Flight/landing/escort findings and the proposed waypoint sequence are in [AIR_OPERATIONS_RESEARCH.md](AIR_OPERATIONS_RESEARCH.md).
 
-Force-profile configuration, weighted selection and ground execution are now implemented for Workbench verification. Chicken has eight prepared profiles with verified base-game resource references; see [the ready-to-run setup](FORCE_POOL_QUICKSTART.md). Motorized, mechanized and wheeled armour have execution paths. The [REAPER experiment](AIRBORNE_QRF_PROTOTYPE.md) now explicitly dispatches airborne packages at Workbench levels 1–5; Chicken currently selects level 5. Airborne profiles remain disabled/excluded from normal weighted selection; fleet behavior requires engine verification. An empty pool preserves the earlier infantry-only executor.
+Force-profile configuration, bounded execution and campaign selection are implemented for native verification. Chicken has 12 prepared profiles and 62 recipes using verified existing resource references. The native weighted ground pool excludes airborne profiles; explicit airborne and joint selections use the REAPER adapter. Light transport-only profiles unlock at Readiness 1, while escorted packages unlock at 5. An empty pool preserves the earlier infantry-only executor. See [release validation](QRF_RELEASE_VALIDATION.md) for current evidence and limitations.
 
 Ground QRFs now have a configurable [mounted town-search phase](QRF_TOWN_SEARCH.md): visit reachable road points in the attacked location, then resume deployment. This new phase still requires Workbench compilation and runtime verification.
 
-The intended force types are motorized, mechanized, armour and airborne. Airborne means helicopter insertion with one or more gunship escorts, per Jasper's request. Actual aircraft resources and their AI behaviour must be verified in the installed game; a prefab being available does not establish that AI can perform every required flight task.
+The force types are motorized, mechanized, armour and airborne. Airborne packages contain one transport, a fireteam and its pilot, with zero or one gunship escort. Actual aircraft resources and AI behavior require native verification; prefab availability does not establish reliable flight or landing.
 
 ## Force packages
 
@@ -27,11 +31,11 @@ Each pool entry should describe a complete force package, rather than just one g
 | Motorized | One infantry element, one truck/light transport, required crew | Board, drive to a dismount point, unload, infantry attacks or reinforces; transport waits/withdraws |
 | Mechanized | One infantry element, one APC/IFV, required crew | Mounted approach, dismount short of contact, infantry advances while vehicle supports |
 | Armour | One armoured fighting vehicle and required crew | Vehicle advances to a suitable fighting position and engages; no passenger infantry required |
-| Airborne | One infantry element, one transport helicopter, flight crew and one gunship with crew | Transport approaches an LZ, lands, unloads and departs; gunship escorts/provides bounded support, then withdraws |
+| Airborne | One infantry element, one transport/pilot and zero or one gunship/pilot | Transport approaches a safe LZ, lands, unloads and departs; an authored gunship provides bounded support and withdraws |
 
 These are package designs; they do not require a combined base-game group prefab. The executor assembles ground vehicles, separate crew groups and passenger infantry. Actual seating, driving and dismounting still need Workbench tests. Start with infantry that fits the transport's usable passenger seats after crew positions are filled.
 
-Later airborne variants can have multiple transports and gunships. Specify transport and escort counts separately: two gunships do not increase passenger capacity. A transport with a weapon does not automatically satisfy a separate escort requirement.
+Homogeneous airborne responses repeat their complete package 1–5 times. Joint recipes currently contain one airborne package plus ground elements. Independent transport/gunship counts and shared escorts remain planned; a transport weapon does not silently satisfy an authored escort requirement.
 
 ## Preparing additional profiles in Workbench
 
@@ -60,7 +64,7 @@ For airborne, test transport flight and landing independently before adding esco
 - Reserved personnel, vehicle and aircraft budgets; future military-resource cost and availability requirements.
 - Whether escorts are required for dispatch, their number, support duration and withdrawal policy.
 
-The earlier two infantry-group fields are used only when the profile array is empty. Entries can now be edited on the executor in Workbench. Airborne launch/LZ rules, multiple transports, military-resource costs and escort flight/support policy remain future work.
+The earlier infantry-group fields are used only when the profile array is empty. Entries are editable on the executor in Workbench. Airborne launch/LZ planning, staged packages and Economy collateral/loss accounting are implemented in source; physical military stock, broader independent H/G compositions and native acceptance remain unfinished.
 
 Changing a role's faction must select a matching pool. Resolve by campaign role, then faction configuration; never code OCCUPIERS as synonymous with US or INVADERS as synonymous with USSR. Validate infantry, crews, vehicles and aircraft together.
 
@@ -92,11 +96,11 @@ Treat insertion and escort as coordinated parts of one operation:
 6. Send transport home or to a holding area. Escorts support for a configured time/threat policy, then withdraw.
 7. Track losses separately: transport lost, infantry delivered, escort lost and ground objective resolved are different facts. A destroyed escort should not automatically erase surviving delivered infantry.
 
-For the first profile, use one transport and one required gunship. Add a second profile with two escorts when budgets and flight separation have been tested. The same framework can later support independently configured multiple transports. Crew, ammunition and fuel limitations must be reflected in execution/outcome handling rather than assuming unlimited support.
+Use zero escorts for a light transport-only profile or one required escort for a supported escorted profile. Two escorts per package and arbitrary transport/escort ratios are not implemented. Match reservations and replacement prices to the actual package, then verify native boarding, flight, landing and cleanup.
 
 ## Implementation and acceptance order
 
-1. Force-profile selection and reservations: test deterministic eligibility and logged selections for all four types, even while their physical adapters remain disabled.
+1. Force-profile selection and reservations: test deterministic eligibility and logged selections for all four types, including light and escorted airborne variants.
 2. Motorized: crew, board, drive, unload, ground orders and cleanup.
 3. Mechanized: dismount plus separate crew/vehicle support orders.
 4. Armour: vehicle-aware damage, mobility and combat outcomes; crew survival alone must not mean the armoured attack remains viable.
@@ -105,6 +109,6 @@ For the first profile, use one transport and one required gunship. Add a second 
 
 Enable each profile for random QRF selection only after its physical acceptance test passes for that faction. Keep the same profiles usable for scheduled attacks with separate selection weights.
 
-For every package, verify correct factions, exactly one package per operation, all crew/passenger seats assigned, objective approach, vehicle/crew losses, cancellation during spawning/transit/unloading, and complete tracked-entity/reservation cleanup. The current force record tracks infantry and a waypoint only; it must grow to track all vehicles, crews, passengers and aircraft before these profiles are enabled.
+For every package, verify correct factions, unique package indices, one activation per operation, all crew/passenger seats assigned, objective approach, vehicle/crew losses, cancellation during spawning/transit/unloading, and complete tracked-entity/reservation cleanup. Current force records track hulls, groups, crews, passengers, damage observers and package-attributed funding. Multiple packages can share one operation; native acceptance must verify the complete lead wave and staged reserves.
 
 Implementation status and first-run instructions are in [FORCE_POOL_QUICKSTART.md](FORCE_POOL_QUICKSTART.md). The earlier infantry setup remains documented in [OPERATION_EXECUTOR.md](OPERATION_EXECUTOR.md).

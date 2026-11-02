@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{8C8B4B981D4E6A11}UI/Layouts/Arsenal/AROR_ArsenalContainer.layout"
+ Configurations {
+  LayoutResourceClass PC {
+  }
+  LayoutResourceClass XBOX_ONE : PC {
+  }
+  LayoutResourceClass XBOX_SERIES : PC {
+  }
+  LayoutResourceClass PS4 : PC {
+  }
+  LayoutResourceClass PS5 : PC {
+  }
+  LayoutResourceClass HEADLESS : PC {
+  }
+ }
+}

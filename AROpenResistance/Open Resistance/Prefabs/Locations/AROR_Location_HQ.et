@@ -17,6 +17,11 @@ SCR_SpawnPoint : "{E7F4D5562F48DDE4}Prefabs/MP/Spawning/SpawnPoint_Base.et" {
  {
   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
    ID "6AACA42C184F38D6"
+   components {
+    AROR_CaptureFlagPlacementComponent "{F9A38254AA9B454D}" {
+     m_bAutoPlace 0
+    }
+   }
    coords 0 0 0
   }
  }

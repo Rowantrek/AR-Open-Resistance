@@ -1,10 +1,17 @@
 [BaseContainerProps()]
 class AROR_ForceProfile
 {
+	//! Attribute defaults belong to the resource container, not declaration initializers (which overwrite authored values).
 	[Attribute("", desc: "Unique stable profile ID")]
 	string m_sId;
 	[Attribute("1", desc: "Enable this profile for selection")]
 	bool m_bEnabled;
+	[Attribute("1", desc: "Minimum campaign readiness permitting this profile in a QRF recipe", params: "1 5 1")]
+	int m_iMinimumReadinessLevel;
+	[Attribute("0", desc: "Classify a mounted support vehicle as light armed transport in map intelligence. Passenger delivery can be enabled independently.")]
+	bool m_bLightVehicle;
+	[Attribute("0", desc: "Fill usable ground or transport-helicopter passenger seats with infantry, within the reserved personnel budget. Vehicle crew remain a separate group.")]
+	bool m_bFillPassengerSeats;
 	[Attribute("1", UIWidgets.ComboBox, desc: "Campaign role", enums: AROR_FactionRoles.MilitaryRoleParams())]
 	AROR_EFactionRole m_eRole;
 	[Attribute("AROR_OCCUPIERS", desc: "Required campaign faction key from AROR_FactionRolesComponent")]
@@ -25,20 +32,31 @@ class AROR_ForceProfile
 	int m_iCrewCount;
 	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Ground vehicle or transport helicopter prefab", params: "et")]
 	ResourceName m_sVehicle;
-	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Airborne escort gunship prefab", params: "et")]
+	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Optional airborne gunship prefab; required when escort count is one", params: "et")]
 	ResourceName m_sEscortVehicle;
-	[Attribute("1", desc: "Required gunship escort count for airborne profiles")]
+	[Attribute("1", desc: "Airborne gunship escorts: zero for light transport-only packages, one for escorted packages", params: "0 1 1")]
 	int m_iEscortCount;
 	[Attribute("12", desc: "Personnel reservation, including infantry and crew; must cover actual group slots")]
 	int m_iPersonnelBudget;
 	[Attribute("150", desc: "Ground dismount distance from objective centre, metres")]
 	float m_fDismountDistance;
 	[Attribute("25", desc: "Replacement value per confirmed lost soldier/crew member", params: "0 100000 1")]
-	int m_iPersonnelLossValue = 25;
+	int m_iPersonnelLossValue;
 	[Attribute("-1", desc: "Replacement value of the main vehicle; -1 uses the shared type price", params: "-1 100000 1")]
-	int m_iVehicleLossValue = -1;
+	int m_iVehicleLossValue;
 	[Attribute("2000", desc: "Replacement value of each airborne gunship", params: "0 100000 1")]
-	int m_iEscortLossValue = 2000;
+	int m_iEscortLossValue;
+
+	//! Preserve explicit Readiness/pricing defaults for script-created fixtures; caller fills required identity/assets.
+	static AROR_ForceProfile CreateForScript()
+	{
+		AROR_ForceProfile profile = new AROR_ForceProfile();
+		profile.m_iMinimumReadinessLevel = 1;
+		profile.m_iPersonnelLossValue = 25;
+		profile.m_iVehicleLossValue = -1;
+		profile.m_iEscortLossValue = 2000;
+		return profile;
+	}
 
 	int VehicleLossValue()
 	{
@@ -62,12 +80,29 @@ class AROR_ForceProfile
 			return m_iQRFWeight;
 		return m_iAttackWeight;
 	}
+	int GetSpottingKind()
+	{
+		if (m_bLightVehicle)
+			return 5;
+		return m_eType;
+	}
 
 	int GetGroupBudget()
 	{
-		if (m_eType == AROR_EForceType.INFANTRY || m_eType == AROR_EForceType.ARMOUR)
+		if (m_eType == AROR_EForceType.AIRBORNE)
+			return 2 + m_iEscortCount;
+		if (m_eType == AROR_EForceType.INFANTRY || (m_eType == AROR_EForceType.ARMOUR && !m_bFillPassengerSeats))
 			return 1;
 		return 2;
+	}
+
+	int GetVehicleBudget()
+	{
+		if (m_eType == AROR_EForceType.AIRBORNE)
+			return 1 + m_iEscortCount;
+		if (m_eType == AROR_EForceType.INFANTRY)
+			return 0;
+		return 1;
 	}
 
 	bool HasNativeExecutor()
@@ -78,6 +113,12 @@ class AROR_ForceProfile
 
 	bool IsValid()
 	{
+		if (m_bFillPassengerSeats && m_eType == AROR_EForceType.INFANTRY)
+			return false;
+		if (m_bLightVehicle && m_eType != AROR_EForceType.ARMOUR)
+			return false;
+		if (m_iMinimumReadinessLevel < 1 || m_iMinimumReadinessLevel > 5)
+			return false;
 		if (m_iPersonnelLossValue < 0 || m_iPersonnelLossValue > 100000)
 			return false;
 		if (m_iVehicleLossValue < -1 || m_iVehicleLossValue > 100000 || m_iEscortLossValue < 0 || m_iEscortLossValue > 100000)
@@ -90,12 +131,12 @@ class AROR_ForceProfile
 			return !m_sInfantryGroup.IsEmpty();
 		if (m_sVehicle.IsEmpty() || m_sCrewCharacter.IsEmpty() || m_iCrewCount < 1 || m_iCrewCount > 8 || m_iCrewCount > m_iPersonnelBudget)
 			return false;
-		if (m_eType == AROR_EForceType.ARMOUR)
+		if (m_eType == AROR_EForceType.ARMOUR && !m_bFillPassengerSeats)
 			return true;
 		if (m_sInfantryGroup.IsEmpty() || m_fDismountDistance < 20)
 			return false;
 		if (m_eType == AROR_EForceType.AIRBORNE)
-			return !m_sEscortVehicle.IsEmpty() && m_iEscortCount > 0 && m_iEscortCount <= 4;
-		return m_eType == AROR_EForceType.MOTORIZED || m_eType == AROR_EForceType.MECHANIZED;
+			return m_iEscortCount >= 0 && m_iEscortCount <= 1 && (m_iEscortCount == 0 || !m_sEscortVehicle.IsEmpty());
+		return m_eType == AROR_EForceType.MOTORIZED || m_eType == AROR_EForceType.MECHANIZED || (m_eType == AROR_EForceType.ARMOUR && m_bFillPassengerSeats);
 	}
 }

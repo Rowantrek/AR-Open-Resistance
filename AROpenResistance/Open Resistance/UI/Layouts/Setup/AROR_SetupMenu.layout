@@ -1,0 +1,11 @@
+FrameWidgetClass {
+ Name "AROR_SetupMenu"
+ {
+  ImageWidgetClass {
+   Name "SetupDim"
+   Slot FrameWidgetSlot {
+    Anchor 0 0 0 0
+   }
+  }
+ }
+}

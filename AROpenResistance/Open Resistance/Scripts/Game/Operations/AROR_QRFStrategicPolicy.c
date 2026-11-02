@@ -12,7 +12,7 @@ class AROR_QRFStrategicPolicy
 		}
 		return 0;
 	}
-	static int WarLevel(int pressure)
+	static int ReadinessLevel(int pressure)
 	{
 		for (int level = 5; level > 1; level--)
 		{
@@ -30,6 +30,7 @@ class AROR_QRFStrategicPolicy
 			case AROR_ELocationType.AIRPORT: return 180;
 			case AROR_ELocationType.MILITARY_BASE: return 160;
 			case AROR_ELocationType.PORT: return 160;
+			case AROR_ELocationType.HELIPORT: return 160;
 			case AROR_ELocationType.OUTPOST: return 130;
 			case AROR_ELocationType.RESOURCES: return 120;
 		}
@@ -44,15 +45,22 @@ class AROR_QRFStrategicPolicy
 		result += Math.Min(60, Math.Max(0, age) / 10);
 		return result;
 	}
-	static int DesiredTier(int warLevel, int reports, bool captured, int roll, int importance = 100)
+	//! Crackdown controls response size only. Readiness gates equipment separately.
+	static int ResponseLevel(int crackdown)
 	{
-		int maximum = Math.Clamp(warLevel, 1, 5);
-		if (captured || reports >= 3 || importance >= 160)
-			maximum = Math.Min(5, maximum + 1);
-		// 70% at the current ceiling; 30% one tier lighter. Roll is supplied once.
-		if (roll < 30)
-			return Math.Max(1, maximum - 1);
-		return maximum;
+		int bounded = Math.Clamp(crackdown, 0, 1000);
+		return Math.Min(5, 1 + Math.Floor(bounded / 200.0));
+	}
+	//! Compatibility seam for trusted callers. Threat context affects priority, not strength.
+	static int DesiredTier(int crackdownLevel, int reports, bool captured, int roll, int importance = 100)
+	{
+		return Math.Clamp(crackdownLevel, 1, 5);
+	}
+	static int LossCrackdown(int value)
+	{
+		if (value <= 0)
+			return 0;
+		return Math.Clamp(Math.Floor(value / 100.0), 1, 30);
 	}
 	static int VehicleValue(AROR_EForceType type)
 	{

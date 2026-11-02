@@ -1,0 +1,53 @@
+GenericEntity : "{54986385A6AF77B2}Prefabs/Props/Military/Arsenal/ArsenalBoxes/ArsenalBox_Base.et" {
+ ID "56F2C6D6F7C6DAFA"
+ components {
+  Persistence "{6AB47ED0C4F89A21}" {
+  }
+  AROR_ResistanceArsenalComponent "{6AB47ECFA824AB69}" {
+  }
+  ActionsManagerComponent "{56F2C6D1431ADB12}" {
+   additionalActions {
+    AROR_LoadLoadoutSlotAction "{6AB47EC63496A946}" {
+     ParentContextList {
+      "default"
+     }
+     "Sort Priority" 2
+    }
+    AROR_LoadLoadoutSlotAction "{6AB47EC60936DCA9}" {
+     ParentContextList {
+      "default"
+     }
+     "Sort Priority" 3
+     m_eSlotIndex SLOT_2
+    }
+    AROR_LoadLoadoutSlotAction "{6AB47EC603049DCF}" {
+     ParentContextList {
+      "default"
+     }
+     "Sort Priority" 4
+     m_eSlotIndex SLOT_3
+    }
+    AROR_SaveLoadoutSlotAction "{6AB47EC6076A31EA}" {
+     ParentContextList {
+      "default"
+     }
+     "Sort Priority" 5
+    }
+    AROR_SaveLoadoutSlotAction "{6AB47EC6062F324E}" {
+     ParentContextList {
+      "default"
+     }
+     "Sort Priority" 6
+     m_eSlotIndex SLOT_2
+    }
+    AROR_SaveLoadoutSlotAction "{6AB47EC604981FFB}" {
+     ParentContextList {
+      "default"
+     }
+     "Sort Priority" 7
+     m_eSlotIndex SLOT_3
+    }
+   }
+  }
+ }
+}

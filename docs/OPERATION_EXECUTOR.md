@@ -1,6 +1,6 @@
 # Infantry executor and QRF testing in Everon_Chicken
 
-**Current Chicken fixture:** [paid strategic selection](QRF_STRATEGY_ECONOMY.md) is enabled, initially war level 2, with five authored ground tiers per role and [FIA spotting markers](QRF_SPOTTING.md). Tactical coordination and finite waves are enabled. REAPER dispatch and Invader admission remain off. To restore the exact two-vehicle fixture, disable strategic economy and use the [Truck/IFV test](TRUCK_IFV_QRF_TEST.md). New strategy/marker/return behavior requires fresh compilation and Play verification.
+**Current Chicken fixture:** [strategic selection](QRF_STRATEGY_ECONOMY.md) starts at readiness 1 and crackdown 20%. Readiness gates equipment; Crackdown requests intensity 1–5. Ground/joint capture responses and explicit airborne selections are enabled for both AI roles, with tactical waves and spotting; combat-triggered dispatch and the blanket airborne override remain off. [Strongholds](STRONGHOLDS.md) use trusted scenario-funded responses through the same executor. The exact [truck/APC regression fixture](TRUCK_IFV_QRF_TEST.md) requires strategic economy off. Compile and reload before native acceptance.
 
 Chicken has preconfigured force pools and ground execution paths. The infantry-only instructions below apply when `m_aForceProfiles` is empty and strategic economy is disabled. The [REAPER airborne experiment](AIRBORNE_QRF_PROTOTYPE.md) is a separate explicit fixture; normal weighted airborne selection remains excluded.
 
@@ -13,7 +13,7 @@ The script default is disabled, but the prepared Chicken override now enables th
 1. Compile in Script Editor, then select `AROR_GameMode_Base1` in Chicken's Managers layer.
 2. Keep `m_bExecuteOperations` off on the executor and disable `m_bQRFStrategicEconomy` for this isolated immediate-scheduler test. Clear both automatic attack target IDs.
 3. On `AROR_OperationTestComponent`, set `m_sOccupiersQRFTestTargetId` to `everon_provins`. Keep the Invader target empty and its admission gate off. Leave `m_bRunSchedulerSmokeTests` off. The default report delay is 15 seconds after campaign readiness.
-4. Play and complete setup. Expect one Occupier `[AROR TEST] Simulated attack` ID, then SPAWNING and an eventual timeout with no executor. A dual-role scheduler test requires a separate explicit disposable configuration with valid Invader targets; normal Chicken keeps Invaders disabled.
+4. Play and complete setup. Expect one Occupier `[AROR TEST] Simulated attack` ID, then SPAWNING and an eventual timeout with no executor. A dual-role scheduler test requires a separate explicit disposable configuration with valid Invader targets; normal Chicken now admits Invader capture responses. Keep its Invader gate off only for this isolated Occupier-only scheduler test.
 
 These are simulated reports for isolated testing, not a claim that both factions own Provins. Firing without damaging an assigned defender does not generate a defense report. The component sends each configured report once per world run; clear the fields afterward. It runs only on the Workbench server and is inert in packaged builds.
 

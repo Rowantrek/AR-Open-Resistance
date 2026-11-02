@@ -1,0 +1,153 @@
+{
+  "Version": 2,
+  "Note": "Equipped compact footprint revision at existing Chicken locations. No location/flag move; Chotain castle and strategic installations preserved. Historical audits do not approve these replacements.",
+  "ExcludedLocationId": "everon_military_outpost_chotain",
+  "Bindings": [
+    {
+      "Id": "everon_outpost_farm",
+      "Preset": "Outpost_CompactFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 18
+    },
+    {
+      "Id": "everon_outpost_meaux_harbour",
+      "Preset": "Outpost_CompactFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 18
+    },
+    {
+      "Id": "everon_outpost_gorey",
+      "Preset": "Outpost_CompactFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 18
+    },
+    {
+      "Id": "everon_outpost_pinewood_lake",
+      "Preset": "Outpost_CompactFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: pad/arc clearance; ground and recheck; equipment changes need re-audit",
+      "HalfExtent": 18
+    },
+    {
+      "Id": "everon_outpost_levie_hillside",
+      "Preset": "Outpost_CompactFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: pad/arc clearance; ground and recheck; equipment changes need re-audit",
+      "HalfExtent": 18
+    },
+    {
+      "Id": "everon_outpost_durras_hill",
+      "Preset": "Outpost_CompactFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 18
+    },
+    {
+      "Id": "everon_outpost_sawmill",
+      "Preset": "Outpost_CompactFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 18
+    },
+    {
+      "Id": "everon_outpost_regina_south",
+      "Preset": "Outpost_CompactFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 18
+    },
+    {
+      "Id": "everon_outpost_chotain_industrial",
+      "Preset": "Outpost_CheckpointFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: pad/arc clearance; ground and recheck; equipment changes need re-audit",
+      "HalfExtent": 14
+    },
+    {
+      "Id": "everon_outpost_old_wood",
+      "Preset": "Outpost_CheckpointFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 14
+    },
+    {
+      "Id": "everon_outpost_morton_valley",
+      "Preset": "Outpost_CompactFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 18
+    },
+    {
+      "Id": "everon_outpost_laruns",
+      "Preset": "Outpost_CompactFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: pad/arc clearance; ground and recheck; equipment changes need re-audit",
+      "HalfExtent": 18
+    },
+    {
+      "Id": "everon_outpost_andres_beacon",
+      "Preset": "Outpost_CheckpointFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 14
+    },
+    {
+      "Id": "everon_military_outpost_levie",
+      "Preset": "MilitaryOutpost_CompactFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 24
+    },
+    {
+      "Id": "everon_military_outpost_morton",
+      "Preset": "MilitaryOutpost_CompactFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 24
+    },
+    {
+      "Id": "everon_military_outpost_hospital",
+      "Preset": "MilitaryOutpost_Equipped_US",
+      "NativeStatus": "Full-size equipped layout: initial pad/arc rejection still needs grounding and current-placement audit",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: pad/arc clearance; ground and recheck; equipment changes need re-audit",
+      "HalfExtent": 32
+    },
+    {
+      "Id": "everon_outpost_quarry",
+      "Preset": "Outpost_CheckpointFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 14
+    },
+    {
+      "Id": "everon_military_outpost_lamentin",
+      "Preset": "MilitaryOutpost_CoastalFortified_Equipped_US",
+      "NativeStatus": "Compact revision pending native grounding, current-placement audit and Play",
+      "Supplies": "US",
+      "PreviousAuditStatus": "Initial audit rejected: terrain exceeds limit; equipment changes need re-audit",
+      "HalfExtent": 20
+    }
+  ],
+  "LatestAudit": "EVERON_FORTIFIED_OUTPOST_AUDIT_INITIAL.json",
+  "GroundingStatus": "Not run before the initial audit; confirmed by user"
+}

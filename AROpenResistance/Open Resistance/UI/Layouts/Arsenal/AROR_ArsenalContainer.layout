@@ -1,0 +1,21 @@
+HorizontalLayoutWidgetClass "{6ABE96D1AA110001}" {
+ Name "ArsenalRoot"
+ {
+  SizeLayoutWidgetClass "{6ABE96D1AA110006}" {
+   Name "TabsSize"
+   Slot LayoutSlot "{6ABE96D1AA110003}" {
+   }
+   WidthOverride 140
+   {
+    VerticalLayoutWidgetClass "{6ABE96D1AA110002}" {
+     Name "Tabs"
+    }
+   }
+  }
+  OverlayWidgetClass "{6ABE96D1AA110004}" : "{5C4812D758C0EDB8}UI/layouts/Menus/Inventory/SupplyInventoryContainerGrid.layout" {
+   Name "ArsenalPanel"
+   Slot LayoutSlot "{6ABE96D1AA110005}" {
+   }
+  }
+ }
+}

@@ -28,7 +28,6 @@ class AROR_PresetImportResult
 	ref array<string> m_aWeapons = {};
 	ref array<string> m_aAccessories = {};
 	ref array<string> m_aAmmunition = {};
-	ref array<string> m_aVehicleAmmunition = {};
 	ref set<int> m_UnitTypesUsed = new set<int>();
 	ref array<string> m_aSkipped = {};
 }
@@ -37,8 +36,10 @@ class AROR_PresetImportResult
 //! (Configs/FactionPresets/BaseGame/*.conf). Reads each faction's entity catalogs through our faction manager prefab
 //! (which inherits the base-game factions), sorts every entry into the preset types using the base game's own tags
 //! (Game Master labels for characters and vehicles, arsenal item type/mode for items) plus a few file-name hints, and
-//! rewrites the preset files. Costs are written as 0. Anything that cannot be placed is listed in the log.
-//! Re-run after game updates; it overwrites the four base preset files.
+//! rewrites the preset files. Prices, readiness and import requirements live in the Base Game content pack, which this
+//! never touches; add new prefabs there by hand. Anything that cannot be placed is listed in the log.
+//! Re-run after game updates; it overwrites the four base preset files, except their units (hand-authored prefabs and
+//! loadouts) and player loadout, which are kept as they are. Units are generated only for a preset that has none.
 [WorkbenchPluginAttribute(name: "Import base faction presets", description: "Fill the base-game faction presets (US, USSR, FIA, CIV) from the game's faction catalogs.", wbModules: {"WorldEditor", "ResourceManager"}, category: "Open Resistance")]
 class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 {
@@ -136,7 +137,7 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 						AddVehicle(entry, result);
 						break;
 					case EEntityCatalogType.WEAPONS_TRIPOD:
-						AddEntry(result.m_aVehicles, "AROR_FactionPresetVehicle", AROR_EVehicleType, AROR_EVehicleType.STATIC_WEAPON, entry.GetPrefab());
+						AddEntry(result.m_aVehicles, "AROR_FactionPresetVehicle", AROR_EVehicleType, StaticType(LowerName(entry.GetPrefab())), entry.GetPrefab());
 						break;
 					case EEntityCatalogType.ITEM:
 						AddItem(entry, result);
@@ -227,6 +228,18 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Static weapons are told apart by name: mortars, the tall 6T7 tripod (high) and the rest (low)
+	protected int StaticType(string name)
+	{
+		if (name.Contains("mortar"))
+			return AROR_EVehicleType.STATIC_MORTAR;
+		if (name.Contains("6t7"))
+			return AROR_EVehicleType.STATIC_MG_HIGH;
+
+		return AROR_EVehicleType.STATIC_MG_LOW;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected int VehicleType(SCR_EntityCatalogEntry entry)
 	{
 		string name = LowerName(entry.GetPrefab());
@@ -235,7 +248,7 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 			return AROR_EVehicleType.BOAT;
 
 		if (entry.HasEditableEntityLabel(EEditableEntityLabel.VEHICLE_TURRET))
-			return AROR_EVehicleType.STATIC_WEAPON;
+			return StaticType(name);
 
 		if (entry.HasEditableEntityLabel(EEditableEntityLabel.VEHICLE_HELICOPTER))
 		{
@@ -259,6 +272,8 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 
 		if (entry.HasEditableEntityLabel(EEditableEntityLabel.VEHICLE_TRUCK))
 		{
+			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_ARMED))
+				return AROR_EVehicleType.ARMED_TRUCK;
 			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_REFUELING))
 				return AROR_EVehicleType.FUEL_TRUCK;
 			if (entry.HasEditableEntityLabel(EEditableEntityLabel.TRAIT_MEDICAL))
@@ -303,13 +318,13 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 		// Munitions loaded onto aircraft and vehicles as items (e.g. helicopter rocket pods)
 		if (itemMode == SCR_EArsenalItemMode.PYLON || itemType == SCR_EArsenalItemType.HELICOPTER || itemType == SCR_EArsenalItemType.VEHICLE)
 		{
-			int vehicleAmmunition = AROR_EVehicleAmmunitionType.ROCKET;
+			int vehicleAmmunition = AROR_EAmmunitionType.ROCKET;
 			if (name.Contains("missile") || name.Contains("atgm"))
-				vehicleAmmunition = AROR_EVehicleAmmunitionType.MISSILE;
+				vehicleAmmunition = AROR_EAmmunitionType.MISSILE;
 			else if (name.Contains("bomb"))
-				vehicleAmmunition = AROR_EVehicleAmmunitionType.BOMB;
+				vehicleAmmunition = AROR_EAmmunitionType.BOMB;
 
-			AddEntry(result.m_aVehicleAmmunition, "AROR_FactionPresetVehicleAmmunition", AROR_EVehicleAmmunitionType, vehicleAmmunition, prefab);
+			AddEntry(result.m_aAmmunition, "AROR_FactionPresetAmmunition", AROR_EAmmunitionType, vehicleAmmunition, prefab);
 			return;
 		}
 
@@ -331,7 +346,7 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 			return;
 		}
 
-		int weapon = WeaponType(itemType);
+		int weapon = WeaponType(itemType, name);
 		if (weapon >= 0)
 		{
 			AddEntry(result.m_aWeapons, "AROR_FactionPresetWeapon", AROR_EWeaponType, weapon, prefab);
@@ -356,14 +371,14 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected int WeaponType(SCR_EArsenalItemType itemType)
+	protected int WeaponType(SCR_EArsenalItemType itemType, string name)
 	{
 		switch (itemType)
 		{
 			case SCR_EArsenalItemType.PISTOL:
 				return AROR_EWeaponType.PISTOL;
 			case SCR_EArsenalItemType.RIFLE:
-				return AROR_EWeaponType.RIFLE;
+				return AROR_EWeaponType.ASSAULT_RIFLE;
 			case SCR_EArsenalItemType.MACHINE_GUN:
 				return AROR_EWeaponType.MACHINEGUN;
 			case SCR_EArsenalItemType.SNIPER_RIFLE:
@@ -372,7 +387,10 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 				return AROR_EWeaponType.LAUNCHER_AT;
 			case SCR_EArsenalItemType.LETHAL_THROWABLE:
 			case SCR_EArsenalItemType.NON_LETHAL_THROWABLE:
-				return AROR_EWeaponType.GRENADE;
+				if (name.Contains("smoke"))
+					return AROR_EWeaponType.SMOKE_GRENADE;
+
+				return AROR_EWeaponType.EXPLOSIVE_GRENADE;
 		}
 
 		return -1;
@@ -477,6 +495,24 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 	protected void WritePreset(AROR_BaseFactionImport factionImport, AROR_PresetImportResult result)
 	{
 		string path = OUTPUT_FOLDER + factionImport.m_sFile;
+
+		// Units carry hand-authored loadouts and prefab choices: keep the existing block, generate only when there is none
+		array<string> existingUnits = {};
+		if (ReadTopLevelList(path, "m_aUnits", existingUnits) > 0)
+		{
+			result.m_aUnits.Clear();
+			result.m_aUnits.InsertAll(existingUnits);
+			Print(string.Format("[AROR] Import base faction presets: %1 kept its existing units (and their loadouts)", factionImport.m_sPresetId), LogLevel.NORMAL);
+		}
+		else
+		{
+			Print(string.Format("[AROR] Import base faction presets: %1 had no units, so they were generated from the base game", factionImport.m_sPresetId), LogLevel.NORMAL);
+		}
+
+		// The player loadout is hand-authored too and has no base-game source: always keep it
+		array<string> playerLoadout = {};
+		ReadTopLevelBlock(path, "m_PlayerLoadout", playerLoadout);
+
 		FileHandle file = FileIO.OpenFile(path, FileMode.WRITE);
 		if (!file)
 		{
@@ -503,20 +539,24 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 		file.WriteLine(" }");
 
 		WriteList(file, "m_aUnits", result.m_aUnits);
+		foreach (string playerLine : playerLoadout)
+		{
+			file.WriteLine(playerLine);
+		}
+
 		WriteList(file, "m_aVehicles", result.m_aVehicles);
 		WriteList(file, "m_aGear", result.m_aGear);
 		WriteList(file, "m_aEquipment", result.m_aEquipment);
 		WriteList(file, "m_aWeapons", result.m_aWeapons);
 		WriteList(file, "m_aWeaponAccessories", result.m_aAccessories);
 		WriteList(file, "m_aAmmunition", result.m_aAmmunition);
-		WriteList(file, "m_aVehicleAmmunition", result.m_aVehicleAmmunition);
 		file.WriteLine("}");
 		file.Close();
 
 		Print(string.Format("[AROR] Import base faction presets: %1 (%2) -> %3: %4 units, %5 vehicles, %6 gear, %7 equipment, %8 weapons, %9 accessories",
 			factionImport.m_sPresetId, factionImport.m_sFactionKey, path, result.m_aUnits.Count(), result.m_aVehicles.Count(), result.m_aGear.Count(),
 			result.m_aEquipment.Count(), result.m_aWeapons.Count(), result.m_aAccessories.Count()), LogLevel.NORMAL);
-		Print(string.Format("[AROR] Import base faction presets: %1: %2 ammunition, %3 vehicle ammunition, %4 skipped", factionImport.m_sPresetId, result.m_aAmmunition.Count(), result.m_aVehicleAmmunition.Count(), result.m_aSkipped.Count()), LogLevel.NORMAL);
+		Print(string.Format("[AROR] Import base faction presets: %1: %2 ammunition, %3 skipped", factionImport.m_sPresetId, result.m_aAmmunition.Count(), result.m_aSkipped.Count()), LogLevel.NORMAL);
 
 		foreach (string skipped : result.m_aSkipped)
 		{
@@ -536,6 +576,77 @@ class AROR_ImportBaseFactionPresetsPlugin : WorkbenchPlugin
 			file.WriteLine(line);
 		}
 		file.WriteLine(" }");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Adds the lines inside a top-level list of an existing preset file (between " name {" and its closing " }", both
+	//! at one-space indent as Workbench and this plugin write them), verbatim. Returns how many lines were added; 0 when
+	//! the file or the list does not exist.
+	protected int ReadTopLevelList(string path, string listName, notnull array<string> outLines)
+	{
+		if (!FileIO.FileExists(path))
+			return 0;
+
+		FileHandle file = FileIO.OpenFile(path, FileMode.READ);
+		if (!file)
+			return 0;
+
+		string header = string.Format(" %1 {", listName);
+		bool inside;
+		string line;
+		while (file.ReadLine(line) >= 0)
+		{
+			// Lines may keep the carriage return of CRLF files
+			line.Replace("\r", string.Empty);
+
+			if (!inside)
+			{
+				inside = line == header;
+				continue;
+			}
+
+			if (line == " }")
+				break;
+
+			outLines.Insert(line);
+		}
+
+		file.Close();
+		return outLines.Count();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Adds a whole top-level object member of an existing preset file, verbatim: its " name Class {" line, its body and
+	//! its closing " }". Returns how many lines were added; 0 when the file or the member does not exist.
+	protected int ReadTopLevelBlock(string path, string memberName, notnull array<string> outLines)
+	{
+		if (!FileIO.FileExists(path))
+			return 0;
+
+		FileHandle file = FileIO.OpenFile(path, FileMode.READ);
+		if (!file)
+			return 0;
+
+		string prefix = string.Format(" %1 ", memberName);
+		bool inside;
+		string line;
+		while (file.ReadLine(line) >= 0)
+		{
+			line.Replace("\r", string.Empty);
+			if (!inside)
+			{
+				inside = line.IndexOf(prefix) == 0;
+				if (!inside)
+					continue;
+			}
+
+			outLines.Insert(line);
+			if (line == " }")
+				break;
+		}
+
+		file.Close();
+		return outLines.Count();
 	}
 
 	//------------------------------------------------------------------------------------------------

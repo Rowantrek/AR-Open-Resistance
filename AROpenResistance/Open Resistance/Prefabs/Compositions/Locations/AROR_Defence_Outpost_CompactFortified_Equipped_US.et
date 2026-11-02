@@ -1,0 +1,58 @@
+GenericEntity : "{465DC6BB1309889A}Prefabs/Compositions/Locations/AROR_Defence_Outpost_CompactFortified.et" {
+ ID "0DD6244DC415ACA5"
+ coords 0 0 0
+ {
+  GenericEntity AROR_Outpost_CompactFortified_Equipped_US_Loot_Weapons : "{5C9A089F424D8001}Prefabs/Props/Military/AmmoBoxes/US/EquipmentBoxWooden_Weapon_01_US.et" {
+   ID "E255539511674591"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+    AROR_OutpostSupplyComponent {
+     m_sCategory "Weapons"
+    }
+   }
+   coords -14 0 -15
+  }
+  GenericEntity AROR_Outpost_CompactFortified_Equipped_US_Loot_Ammunition : "{2C303FA30DF3D73F}Prefabs/Props/Military/AmmoBoxes/US/EquipmentBoxWooden_Ammunition_01_US.et" {
+   ID "C2B2E25E7363079F"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+    AROR_OutpostSupplyComponent {
+     m_sCategory "Ammunition"
+    }
+   }
+   coords -10 0 -15
+  }
+  GenericEntity AROR_Outpost_CompactFortified_Equipped_US_Loot_Equipment : "{59E846445A56B65C}Prefabs/Props/Military/AmmoBoxes/US/EquipmentBoxWooden_Equipment_01_US.et" {
+   ID "2F61F882ACA95E54"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+    AROR_OutpostSupplyComponent {
+     m_sCategory "Equipment"
+    }
+   }
+   coords -6 0 -15
+  }
+  GenericEntity AROR_Outpost_CompactFortified_Equipped_US_Loot_Medical : "{F0404B3895D3F80E}Prefabs/Props/Military/AmmoBoxes/US/EquipmentBoxWooden_Medical_01_US.et" {
+   ID "126D09C5B5D14953"
+   components {
+    Hierarchy {
+    }
+    AROR_DefenceWallComponent {
+    }
+    AROR_OutpostSupplyComponent {
+     m_sCategory "Medical"
+    }
+   }
+   coords -2 0 -15
+  }
+ }
+}

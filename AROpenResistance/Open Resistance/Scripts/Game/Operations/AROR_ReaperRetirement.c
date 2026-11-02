@@ -82,10 +82,10 @@ class AROR_ReaperRetirement
 			controller = AROR_ReaperAirForce.Controller(force.m_Escort.m_Vehicle);
 			if (controller)
 				controller.AROR_ConfigureQRF(force.m_sFactionKey, force.m_vTown, force.m_fTownRadius, 100, false);
-			if (!force.m_bEscortLost && force.m_Escort.m_CrewGroup && force.m_Escort.m_CrewGroup.GetPlayerCount() == 0)
+			if (force.m_bOrdersIssued && !force.m_bEscortLost && force.m_Escort.m_CrewGroup && force.m_Escort.m_CrewGroup.GetPlayerCount() == 0)
 				AROR_ReaperAirForce.SetFlightOrder_S(force.m_Escort, MovePrefab(), force.m_vEgress, 140, 120 + force.m_iPackageIndex * 15);
 		}
-		if (force.m_bDismounted && !force.m_bTransportLost && !force.m_bTransportRetired && force.m_CrewGroup && force.m_CrewGroup.GetPlayerCount() == 0)
+		if (force.m_bOrdersIssued && force.m_bDismounted && !force.m_bTransportLost && !force.m_bTransportRetired && force.m_CrewGroup && force.m_CrewGroup.GetPlayerCount() == 0)
 			AROR_ReaperAirForce.SetFlightOrder_S(force, MovePrefab(), force.m_vEgress, 140, 120 + force.m_iPackageIndex * 15);
 		if (s_aForces.Count() == 1)
 			GetGame().GetCallqueue().CallLater(Tick_S, 5000, true);
@@ -134,6 +134,9 @@ class AROR_ReaperRetirement
 		for (int index = s_aForces.Count() - 1; index >= 0; index--)
 		{
 			AROR_ReaperRetiredForce entry = s_aForces[index];
+			AROR_ReaperAirForce force = entry.m_Force;
+			if (force.m_bAircraftHeld && (AROR_ReaperAirForce.HasPlayerOccupant(force.m_Vehicle) || (force.m_Escort && AROR_ReaperAirForce.HasPlayerOccupant(force.m_Escort.m_Vehicle))))
+				force.ReleaseAircraft_S();
 			entry.m_iAge += 5;
 			if (entry.m_iAge < entry.m_Force.m_iRetainSeconds || ForceNearPlayers(entry.m_Force))
 				continue;

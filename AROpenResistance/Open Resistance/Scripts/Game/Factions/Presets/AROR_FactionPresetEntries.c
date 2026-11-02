@@ -1,24 +1,30 @@
-//! One thing a faction preset makes available: a prefab and its base cost (see AROR_FactionPreset).
-//! Each category below adds its own type. Presets only list what exists; the systems using them decide what to pick.
+//! One thing a faction preset makes available: a prefab of a type (see AROR_FactionPreset).
+//! Each category below adds its own type. Prices, readiness and import requirements are not here: they belong to
+//! content packs (see AROR_ContentPack). Presets only list what exists; the systems using them decide what to pick.
 [BaseContainerProps(insertable: false)]
 class AROR_FactionPresetEntry
 {
 	[Attribute("", UIWidgets.ResourcePickerThumbnail, desc: "Prefab", params: "et")]
 	protected ResourceName m_sPrefab;
 
-	[Attribute("0", desc: "Base cost in money", params: "0 inf")]
-	protected int m_iCost;
+	//------------------------------------------------------------------------------------------------
+	//! The prefab to use: the listed one, or its replacement from an enabled content pack (e.g. a weapon mod's variant)
+	ResourceName GetPrefab()
+	{
+		return AROR_ContentPacksComponent.Resolve(m_sPrefab);
+	}
 
 	//------------------------------------------------------------------------------------------------
-	ResourceName GetPrefab()
+	//! The prefab exactly as listed in the preset, ignoring content pack replacements
+	ResourceName GetListedPrefab()
 	{
 		return m_sPrefab;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	int GetCost()
+	AROR_EFactionPresetCategory GetCategory()
 	{
-		return m_iCost;
+		return -1;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -32,40 +38,82 @@ class AROR_FactionPresetEntry
 	//! False for types outside the core list (e.g. added by a modded enum); such entries are ignored
 	bool IsKnownType()
 	{
-		return false;
+		return AROR_PresetTypes.IsKnownType(GetCategory(), GetTypeValue());
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Type name for logs, e.g. "RIFLEMAN"
 	string GetTypeName()
 	{
-		return string.Empty;
+		return AROR_PresetTypes.GetTypeName(GetCategory(), GetTypeValue());
 	}
 }
 
-//! AI character. A preset has at most one unit per type.
+//! AI character. A preset has at most one unit per type. The prefab is optional: empty uses the role's default for the
+//! type (AROR_DefaultUnitPrefabs), so a preset can give a unit a loadout without naming a character. Loadouts are
+//! Readiness variants of the unit's kit; with none, the character keeps its prefab's own kit.
 [BaseContainerProps(), SCR_BaseContainerCustomTitleEnum(AROR_EUnitType, "m_eType")]
 class AROR_FactionPresetUnit : AROR_FactionPresetEntry
 {
 	[Attribute("0", UIWidgets.ComboBox, desc: "Unit type (one unit per type in a preset)", enums: ParamEnumArray.FromEnum(AROR_EUnitType))]
 	protected AROR_EUnitType m_eType;
 
+	[Attribute(desc: "Kit variants by Readiness. Empty keeps the character prefab's own kit; when set, use a character without gear (e.g. the role default).")]
+	protected ref array<ref AROR_UnitLoadout> m_aLoadouts;
+
+	//------------------------------------------------------------------------------------------------
+	//! True when the unit names its own character instead of the role default
+	bool HasPrefab()
+	{
+		return !m_sPrefab.IsEmpty();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	bool HasLoadouts()
+	{
+		return m_aLoadouts && !m_aLoadouts.IsEmpty();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The loadout to use at a readiness (see AROR_UnitLoadout.Pick), or null to keep the prefab's own kit
+	AROR_UnitLoadout PickLoadout(int readiness)
+	{
+		return AROR_UnitLoadout.Pick(m_aLoadouts, readiness);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Logs loadout mistakes; presetId names the preset in the log
+	void ValidateLoadouts(string presetId)
+	{
+		if (!m_aLoadouts)
+			return;
+
+		bool hasFirstTier;
+		foreach (int index, AROR_UnitLoadout loadout : m_aLoadouts)
+		{
+			if (!loadout)
+				continue;
+
+			if (loadout.GetMinimumReadiness() <= 1)
+				hasFirstTier = true;
+
+			loadout.Validate(string.Format("Faction preset '%1', %2 loadout %3", presetId, GetTypeName(), index + 1));
+		}
+
+		if (!hasFirstTier && !m_aLoadouts.IsEmpty())
+			Print(string.Format("[AROR] Faction preset '%1': %2 has no readiness 1 loadout; its lowest one is used below that", presetId, GetTypeName()), LogLevel.WARNING);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override AROR_EFactionPresetCategory GetCategory()
+	{
+		return AROR_EFactionPresetCategory.UNITS;
+	}
+
 	//------------------------------------------------------------------------------------------------
 	override int GetTypeValue()
 	{
 		return m_eType;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override bool IsKnownType()
-	{
-		return m_eType >= 0 && m_eType <= AROR_EUnitType.CIVILIAN;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override string GetTypeName()
-	{
-		return typename.EnumToString(AROR_EUnitType, m_eType);
 	}
 }
 
@@ -77,21 +125,15 @@ class AROR_FactionPresetVehicle : AROR_FactionPresetEntry
 	protected AROR_EVehicleType m_eType;
 
 	//------------------------------------------------------------------------------------------------
+	override AROR_EFactionPresetCategory GetCategory()
+	{
+		return AROR_EFactionPresetCategory.VEHICLES;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override int GetTypeValue()
 	{
 		return m_eType;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override bool IsKnownType()
-	{
-		return m_eType >= 0 && m_eType <= AROR_EVehicleType.STATIC_WEAPON;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override string GetTypeName()
-	{
-		return typename.EnumToString(AROR_EVehicleType, m_eType);
 	}
 }
 
@@ -103,21 +145,15 @@ class AROR_FactionPresetGear : AROR_FactionPresetEntry
 	protected AROR_EGearType m_eType;
 
 	//------------------------------------------------------------------------------------------------
+	override AROR_EFactionPresetCategory GetCategory()
+	{
+		return AROR_EFactionPresetCategory.GEAR;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override int GetTypeValue()
 	{
 		return m_eType;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override bool IsKnownType()
-	{
-		return m_eType >= 0 && m_eType <= AROR_EGearType.FACEWEAR;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override string GetTypeName()
-	{
-		return typename.EnumToString(AROR_EGearType, m_eType);
 	}
 }
 
@@ -129,21 +165,15 @@ class AROR_FactionPresetEquipment : AROR_FactionPresetEntry
 	protected AROR_EEquipmentType m_eType;
 
 	//------------------------------------------------------------------------------------------------
+	override AROR_EFactionPresetCategory GetCategory()
+	{
+		return AROR_EFactionPresetCategory.EQUIPMENT;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override int GetTypeValue()
 	{
 		return m_eType;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override bool IsKnownType()
-	{
-		return m_eType >= 0 && m_eType <= AROR_EEquipmentType.EXPLOSIVE;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override string GetTypeName()
-	{
-		return typename.EnumToString(AROR_EEquipmentType, m_eType);
 	}
 }
 
@@ -155,21 +185,15 @@ class AROR_FactionPresetWeapon : AROR_FactionPresetEntry
 	protected AROR_EWeaponType m_eType;
 
 	//------------------------------------------------------------------------------------------------
+	override AROR_EFactionPresetCategory GetCategory()
+	{
+		return AROR_EFactionPresetCategory.WEAPONS;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override int GetTypeValue()
 	{
 		return m_eType;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override bool IsKnownType()
-	{
-		return m_eType >= 0 && m_eType <= AROR_EWeaponType.GRENADE;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override string GetTypeName()
-	{
-		return typename.EnumToString(AROR_EWeaponType, m_eType);
 	}
 }
 
@@ -180,25 +204,19 @@ class AROR_FactionPresetWeaponAccessory : AROR_FactionPresetEntry
 	protected AROR_EWeaponAccessoryType m_eType;
 
 	//------------------------------------------------------------------------------------------------
+	override AROR_EFactionPresetCategory GetCategory()
+	{
+		return AROR_EFactionPresetCategory.WEAPON_ACCESSORIES;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override int GetTypeValue()
 	{
 		return m_eType;
 	}
-
-	//------------------------------------------------------------------------------------------------
-	override bool IsKnownType()
-	{
-		return m_eType >= 0 && m_eType <= AROR_EWeaponAccessoryType.LIGHT;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override string GetTypeName()
-	{
-		return typename.EnumToString(AROR_EWeaponAccessoryType, m_eType);
-	}
 }
 
-//! Ammunition for hand-held weapons
+//! Ammunition, including munitions loaded onto vehicles and aircraft as items (e.g. a helicopter rocket pod)
 [BaseContainerProps(), SCR_BaseContainerCustomTitleEnum(AROR_EAmmunitionType, "m_eType")]
 class AROR_FactionPresetAmmunition : AROR_FactionPresetEntry
 {
@@ -206,46 +224,14 @@ class AROR_FactionPresetAmmunition : AROR_FactionPresetEntry
 	protected AROR_EAmmunitionType m_eType;
 
 	//------------------------------------------------------------------------------------------------
-	override int GetTypeValue()
+	override AROR_EFactionPresetCategory GetCategory()
 	{
-		return m_eType;
+		return AROR_EFactionPresetCategory.AMMUNITION;
 	}
-
-	//------------------------------------------------------------------------------------------------
-	override bool IsKnownType()
-	{
-		return m_eType >= 0 && m_eType <= AROR_EAmmunitionType.GRENADE_ROUND;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override string GetTypeName()
-	{
-		return typename.EnumToString(AROR_EAmmunitionType, m_eType);
-	}
-}
-
-//! Munition loaded onto a vehicle or aircraft as an item (e.g. a helicopter rocket pod)
-[BaseContainerProps(), SCR_BaseContainerCustomTitleEnum(AROR_EVehicleAmmunitionType, "m_eType")]
-class AROR_FactionPresetVehicleAmmunition : AROR_FactionPresetEntry
-{
-	[Attribute("0", UIWidgets.ComboBox, desc: "Vehicle ammunition type", enums: ParamEnumArray.FromEnum(AROR_EVehicleAmmunitionType))]
-	protected AROR_EVehicleAmmunitionType m_eType;
 
 	//------------------------------------------------------------------------------------------------
 	override int GetTypeValue()
 	{
 		return m_eType;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override bool IsKnownType()
-	{
-		return m_eType >= 0 && m_eType <= AROR_EVehicleAmmunitionType.BOMB;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override string GetTypeName()
-	{
-		return typename.EnumToString(AROR_EVehicleAmmunitionType, m_eType);
 	}
 }

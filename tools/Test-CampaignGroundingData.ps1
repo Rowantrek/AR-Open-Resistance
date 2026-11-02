@@ -23,6 +23,12 @@ $grouped='$grp GenericEntity : "{ABCDEF0123456789}Prefabs/example.et" {'+"`n"+($
 $parsed=Read-CampaignLayerLocations $grouped
 Check ($parsed.Count -eq 1 -and $parsed.everon_fixture.Yaw -eq 315) 'Workbench grouped prefab syntax not read'
 Check ($parsed.everon_fixture.Children['0123456789ABCDEF'][2] -eq 2) 'Grouped saved child offset lost'
+$authored=$entity.Replace('  GenericEntity {', '  GenericEntity CustomCastle {').Replace('   ID "0123456789ABCDEF"', '   components { MeshObject { Object "{ABCDEF0123456789}Assets/Castle.xob" } }')
+$roots=Read-CampaignLayerLocations $authored -RootsOnly
+Check ($roots.Count -eq 1 -and $roots.everon_fixture.Origin[0] -eq 10 -and $roots.everon_fixture.Children.Count -eq 0) 'Read-only root audit must tolerate authored children without inventing grounding IDs'
+$renamed=$entity.Replace(' coords 10 20 30', " components {`n  AROR_LocationComponent {`n   m_sId `"everon_stable_id`"`n  }`n }`n coords 10 20 30")
+$identity=Read-CampaignLayerLocations $renamed -RootsOnly
+Check ($identity.ContainsKey('everon_stable_id') -and $identity.everon_stable_id.EntityName -eq 'everon_fixture') 'Saved campaign identity must use the component stable ID, not an editable entity name'
 foreach($bad in @(($entity+"`n"+$entity),($entity.Substring(0,$entity.LastIndexOf('}'))),($entity.Replace('angles 0 315 0','angles 5 315 0')))){
  $rejected=$false;try{$null=Read-CampaignLayerLocations $bad}catch{$rejected=$true}
  Check $rejected 'Ambiguous, incomplete or tilted saved geometry must be rejected'

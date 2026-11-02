@@ -12,7 +12,8 @@ class AROR_QRFThreat
 	bool m_bCaptured;
 	int m_iImportance;
 	int m_iDesiredTier;
-	int m_iTierRoll = -1;
+	int m_iPlanningRetries;
+	string m_sRejectedOrigins;
 
 	int Score(int now)
 	{

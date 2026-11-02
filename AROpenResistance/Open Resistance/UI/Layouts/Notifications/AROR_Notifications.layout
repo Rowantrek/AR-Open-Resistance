@@ -36,11 +36,77 @@ FrameWidgetClass {
      Slot FrameWidgetSlot "{6AB3D0E1F2A41106}" {
       Anchor 0 0 0 0
      }
+     FontProperties FontProperties "{6AB5C0E00000002F}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
     }
     ImageWidgetClass "{6AB3D0E1F2A41007}" {
      Name "HeadlineTimer"
      Slot FrameWidgetSlot "{6AB3D0E1F2A41107}" {
       Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DF00000040}" {
+     Name "HeadlineLineLeft"
+     Slot FrameWidgetSlot "{6AB5C0DF00000041}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DF00000042}" {
+     Name "HeadlineLineRight"
+     Slot FrameWidgetSlot "{6AB5C0DF00000043}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DF00000000}" {
+     Name "HeadlineHeader"
+     Slot FrameWidgetSlot "{6AB5C0DF00000001}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DF00000002}" {
+     Name "HeadlineSource"
+     Slot FrameWidgetSlot "{6AB5C0DF00000003}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DF00000004}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DF00000005}" {
+     Name "HeadlineDetail"
+     Slot FrameWidgetSlot "{6AB5C0DF00000006}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DF00000007}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DF00000060}" {
+     Name "HeadlineTime"
+     Slot FrameWidgetSlot "{6AB5C0DF00000061}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DF00000062}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DF00000063}" {
+     Name "HeadlineIntercept"
+     Slot FrameWidgetSlot "{6AB5C0DF00000064}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DF00000065}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DF00000066}" {
+     Name "HeadlineEffect"
+     Slot FrameWidgetSlot "{6AB5C0DF00000067}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DF00000068}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
      }
     }
    }
@@ -74,11 +140,17 @@ FrameWidgetClass {
      Slot FrameWidgetSlot "{6AB3D0E1F2A42105}" {
       Anchor 0 0 0 0
      }
+     FontProperties FontProperties "{6AB5C0E000000030}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
     }
     RichTextWidgetClass "{6AB3D0E1F2A42006}" {
      Name "CardText"
      Slot FrameWidgetSlot "{6AB3D0E1F2A42106}" {
       Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0E000000031}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
      }
     }
     ImageWidgetClass "{6AB3D0E1F2A42007}" {
@@ -142,10 +214,297 @@ FrameWidgetClass {
      Slot FrameWidgetSlot "{6AB3D0E1F2A4310A}" {
       Anchor 0 0 0 0
      }
+     FontProperties FontProperties "{6AB5C0E000000032}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
     }
     RichTextWidgetClass "{6AB3D0E1F2A43008}" {
      Name "HintText"
      Slot FrameWidgetSlot "{6AB3D0E1F2A43108}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0E000000033}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+   }
+  }
+  FrameWidgetClass "{6AB5C0DC00000057}" {
+   Name "Status"
+   Slot FrameWidgetSlot "{6AB5C0DC00000058}" {
+    Anchor 0 0 0 0
+   }
+   {
+    ImageWidgetClass "{6AB5C0DC00000000}" {
+     Name "StatusPlate"
+     Slot FrameWidgetSlot "{6AB5C0DC00000001}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DC00000002}" {
+     Name "StatusTitle"
+     Slot FrameWidgetSlot "{6AB5C0DC00000003}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DC00000004}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000005}" {
+     Name "StatusOccupiersStripe"
+     Slot FrameWidgetSlot "{6AB5C0DC00000006}" {
+      Anchor 0 0 0 0
+     }
+    }
+    CanvasWidgetClass "{6AB5C0D900000000}" {
+     Name "StatusOccupiersFlag"
+     Slot FrameWidgetSlot "{6AB5C0D900000001}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DC00000007}" {
+     Name "StatusOccupiersName"
+     Slot FrameWidgetSlot "{6AB5C0DC00000008}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DC00000009}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC0000000A}" {
+     Name "StatusOccupiersReadinessFlash"
+     Slot FrameWidgetSlot "{6AB5C0DC0000000B}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DC0000000C}" {
+     Name "StatusOccupiersReadinessKey"
+     Slot FrameWidgetSlot "{6AB5C0DC0000000D}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DC0000000E}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DC0000000F}" {
+     Name "StatusOccupiersReadinessValue"
+     Slot FrameWidgetSlot "{6AB5C0DC00000010}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DC00000011}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000012}" {
+     Name "StatusOccupiersReadinessMeter1"
+     Slot FrameWidgetSlot "{6AB5C0DC00000013}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000014}" {
+     Name "StatusOccupiersReadinessMeter2"
+     Slot FrameWidgetSlot "{6AB5C0DC00000015}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000016}" {
+     Name "StatusOccupiersReadinessMeter3"
+     Slot FrameWidgetSlot "{6AB5C0DC00000017}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000018}" {
+     Name "StatusOccupiersReadinessMeter4"
+     Slot FrameWidgetSlot "{6AB5C0DC00000019}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC0000001A}" {
+     Name "StatusOccupiersReadinessMeter5"
+     Slot FrameWidgetSlot "{6AB5C0DC0000001B}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC0000001C}" {
+     Name "StatusOccupiersCrackdownFlash"
+     Slot FrameWidgetSlot "{6AB5C0DC0000001D}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DC0000001E}" {
+     Name "StatusOccupiersCrackdownKey"
+     Slot FrameWidgetSlot "{6AB5C0DC0000001F}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DC00000020}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DC00000021}" {
+     Name "StatusOccupiersCrackdownValue"
+     Slot FrameWidgetSlot "{6AB5C0DC00000022}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DC00000023}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000024}" {
+     Name "StatusOccupiersCrackdownMeter1"
+     Slot FrameWidgetSlot "{6AB5C0DC00000025}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000026}" {
+     Name "StatusOccupiersCrackdownMeter2"
+     Slot FrameWidgetSlot "{6AB5C0DC00000027}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000028}" {
+     Name "StatusOccupiersCrackdownMeter3"
+     Slot FrameWidgetSlot "{6AB5C0DC00000029}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC0000002A}" {
+     Name "StatusOccupiersCrackdownMeter4"
+     Slot FrameWidgetSlot "{6AB5C0DC0000002B}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC0000002C}" {
+     Name "StatusOccupiersCrackdownMeter5"
+     Slot FrameWidgetSlot "{6AB5C0DC0000002D}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC0000002E}" {
+     Name "StatusInvadersStripe"
+     Slot FrameWidgetSlot "{6AB5C0DC0000002F}" {
+      Anchor 0 0 0 0
+     }
+    }
+    CanvasWidgetClass "{6AB5C0D900000002}" {
+     Name "StatusInvadersFlag"
+     Slot FrameWidgetSlot "{6AB5C0D900000003}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DC00000030}" {
+     Name "StatusInvadersName"
+     Slot FrameWidgetSlot "{6AB5C0DC00000031}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DC00000032}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000033}" {
+     Name "StatusInvadersReadinessFlash"
+     Slot FrameWidgetSlot "{6AB5C0DC00000034}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DC00000035}" {
+     Name "StatusInvadersReadinessKey"
+     Slot FrameWidgetSlot "{6AB5C0DC00000036}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DC00000037}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DC00000038}" {
+     Name "StatusInvadersReadinessValue"
+     Slot FrameWidgetSlot "{6AB5C0DC00000039}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DC0000003A}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC0000003B}" {
+     Name "StatusInvadersReadinessMeter1"
+     Slot FrameWidgetSlot "{6AB5C0DC0000003C}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC0000003D}" {
+     Name "StatusInvadersReadinessMeter2"
+     Slot FrameWidgetSlot "{6AB5C0DC0000003E}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC0000003F}" {
+     Name "StatusInvadersReadinessMeter3"
+     Slot FrameWidgetSlot "{6AB5C0DC00000040}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000041}" {
+     Name "StatusInvadersReadinessMeter4"
+     Slot FrameWidgetSlot "{6AB5C0DC00000042}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000043}" {
+     Name "StatusInvadersReadinessMeter5"
+     Slot FrameWidgetSlot "{6AB5C0DC00000044}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000045}" {
+     Name "StatusInvadersCrackdownFlash"
+     Slot FrameWidgetSlot "{6AB5C0DC00000046}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DC00000047}" {
+     Name "StatusInvadersCrackdownKey"
+     Slot FrameWidgetSlot "{6AB5C0DC00000048}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DC00000049}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass "{6AB5C0DC0000004A}" {
+     Name "StatusInvadersCrackdownValue"
+     Slot FrameWidgetSlot "{6AB5C0DC0000004B}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6AB5C0DC0000004C}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC0000004D}" {
+     Name "StatusInvadersCrackdownMeter1"
+     Slot FrameWidgetSlot "{6AB5C0DC0000004E}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC0000004F}" {
+     Name "StatusInvadersCrackdownMeter2"
+     Slot FrameWidgetSlot "{6AB5C0DC00000050}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000051}" {
+     Name "StatusInvadersCrackdownMeter3"
+     Slot FrameWidgetSlot "{6AB5C0DC00000052}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000053}" {
+     Name "StatusInvadersCrackdownMeter4"
+     Slot FrameWidgetSlot "{6AB5C0DC00000054}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6AB5C0DC00000055}" {
+     Name "StatusInvadersCrackdownMeter5"
+     Slot FrameWidgetSlot "{6AB5C0DC00000056}" {
       Anchor 0 0 0 0
      }
     }

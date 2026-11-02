@@ -10,11 +10,11 @@ class AROR_QRFStrategySmokeTests
 		for (int level = 1; level <= 5; level++)
 		{
 			int pressure = AROR_QRFStrategicPolicy.PressureForLevel(level);
-			passed = Check(AROR_QRFStrategicPolicy.WarLevel(pressure) == level, "War threshold") && passed;
-			passed = Check(AROR_QRFStrategicPolicy.DesiredTier(level, 0, false, 50) == level, "Normal response ceiling") && passed;
-			passed = Check(AROR_QRFStrategicPolicy.DesiredTier(level, 0, false, 0) == Math.Max(1, level - 1), "Lighter response variation") && passed;
+			passed = Check(AROR_QRFStrategicPolicy.ReadinessLevel(pressure) == level, "Readiness threshold") && passed;
+			passed = Check(AROR_QRFStrategicPolicy.ResponseLevel((level - 1) * 200) == level, "Independent crackdown response level") && passed;
+			passed = Check(AROR_QRFStrategicPolicy.DesiredTier(level, 6, true, 0, 180) == level, "Threat importance does not bypass crackdown") && passed;
 		}
-		passed = Check(AROR_QRFStrategicPolicy.DesiredTier(2, 3, false, 50) == 3, "Sustained threat escalation") && passed;
+		passed = Check(AROR_QRFStrategicPolicy.ResponseLevel(1000) == 5, "Maximum crackdown remains level five") && passed;
 		passed = Check(AROR_QRFStrategicPolicy.Priority(100, 1000, false, 10000) == 250, "Queue evidence and aging bounded") && passed;
 		AROR_QRFFunding account = new AROR_QRFFunding();
 		account.m_iQuote = 1450;
@@ -24,7 +24,7 @@ class AROR_QRFStrategySmokeTests
 		passed = Check(account.Reserved() == 1450, "Fee removed from collateral once charged") && passed;
 		account.m_bClosed = true;
 		passed = Check(account.Reserved() == 0, "Unspawned allocation releases on close") && passed;
-		AROR_ForceProfile profile = new AROR_ForceProfile();
+		AROR_ForceProfile profile = AROR_ForceProfile.CreateForScript();
 		profile.m_eType = AROR_EForceType.AIRBORNE;
 		profile.m_iPersonnelBudget = 20;
 		profile.m_iEscortCount = 1;

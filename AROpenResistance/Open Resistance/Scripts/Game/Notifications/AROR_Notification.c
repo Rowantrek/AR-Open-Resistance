@@ -8,6 +8,10 @@ class AROR_Notification : Managed
 	protected ref Color m_Color;
 	protected string m_sKicker;
 	protected string m_sSound;
+	protected string m_sDetail;
+	protected string m_sIntercept;
+	protected string m_sEffect;
+	protected float m_fDurationSeconds;
 
 	//------------------------------------------------------------------------------------------------
 	//! \param icon Texture (edds or imageset), white on transparent so it can be tinted; empty for none
@@ -58,5 +62,65 @@ class AROR_Notification : Managed
 	string GetSound()
 	{
 		return m_sSound;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void SetSound(string sound)
+	{
+		m_sSound = sound;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	// Headline extras: optional lines around the headline. Local notifications only; not sent by the server.
+	//------------------------------------------------------------------------------------------------
+	//! The where/what line under the headline
+	void SetDetail(string detail)
+	{
+		m_sDetail = detail;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	string GetDetail()
+	{
+		return m_sDetail;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Small line above the headline, e.g. "INTERCEPT · COMMAND NET"
+	void SetIntercept(string intercept)
+	{
+		m_sIntercept = intercept;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	string GetIntercept()
+	{
+		return m_sIntercept;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Sentence under the detail line: what this means for players
+	void SetEffect(string effect)
+	{
+		m_sEffect = effect;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	string GetEffect()
+	{
+		return m_sEffect;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Seconds on screen; 0 uses the manager's default for the type
+	void SetDurationSeconds(float seconds)
+	{
+		m_fDurationSeconds = seconds;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	float GetDurationSeconds()
+	{
+		return m_fDurationSeconds;
 	}
 }

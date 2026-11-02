@@ -56,7 +56,7 @@ class AROR_QRFTacticalSmokeTests
 		array<AROR_ForceProfile> elements = {};
 		for (int package = 0; package < 7; package++)
 		{
-			AROR_ForceProfile profile = new AROR_ForceProfile();
+			AROR_ForceProfile profile = AROR_ForceProfile.CreateForScript();
 			profile.m_eType = AROR_EForceType.MOTORIZED;
 			if (package >= 3)
 				profile.m_eType = AROR_EForceType.MECHANIZED;

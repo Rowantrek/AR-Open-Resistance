@@ -10,6 +10,7 @@ class AROR_GarrisonPolicy
 			case AROR_ELocationType.MILITARY_BASE: return 3;
 			case AROR_ELocationType.RESOURCES:
 			case AROR_ELocationType.FACTORY:
+			case AROR_ELocationType.HELIPORT:
 			case AROR_ELocationType.PORT: return 1 + Math.Clamp(roll, 0, 2);
 		}
 		return 0;

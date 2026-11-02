@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{BFF2CD0340A17AB0}Prefabs/Characters/Factions/BLUFOR/US_Army/AROR_Character_Occupiers_Autorifleman.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass XBOX_ONE : PC {
+  }
+  EntityTemplateResourceClass XBOX_SERIES : PC {
+  }
+  EntityTemplateResourceClass PS4 : PC {
+  }
+  EntityTemplateResourceClass PS5 : PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

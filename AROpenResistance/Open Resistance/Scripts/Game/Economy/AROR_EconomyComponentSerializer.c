@@ -20,14 +20,21 @@ class AROR_EconomyComponentSerializer : ScriptedComponentSerializer
 		array<int> playerBalances = {};
 		economy.GetPlayerMoneyEntries(playerKeys, playerBalances);
 
-		if (economy.HasStartingFactionFunds() && economy.HasStartingManpower() && playerKeys.IsEmpty())
+		// HICOMM squads are not saved: save funds and manpower as if every living squad had been refunded in full,
+		// so whichever save is loaded, the Resistance keeps what its squads cost
+		int refundFunds, refundManpower;
+		AROR_HighCommandComponent highCommand = AROR_HighCommandComponent.Cast(owner.FindComponent(AROR_HighCommandComponent));
+		if (highCommand)
+			highCommand.GetRefundValue_S(refundFunds, refundManpower);
+
+		if (economy.HasStartingFactionFunds() && economy.HasStartingManpower() && playerKeys.IsEmpty() && refundFunds == 0 && refundManpower == 0)
 			return ESerializeResult.DEFAULT;
 
 		context.WriteValue("version", VERSION);
-		context.WriteValue("resistance", economy.GetFactionFunds(AROR_EFactionRole.RESISTANCE));
+		context.WriteValue("resistance", economy.GetFactionFunds(AROR_EFactionRole.RESISTANCE) + refundFunds);
 		context.WriteValue("occupiers", economy.GetFactionFunds(AROR_EFactionRole.OCCUPIERS));
 		context.WriteValue("invaders", economy.GetFactionFunds(AROR_EFactionRole.INVADERS));
-		context.WriteValue("manpower", economy.GetManpower());
+		context.WriteValue("manpower", economy.GetManpower() + refundManpower);
 		context.WriteValue("playerKeys", playerKeys);
 		context.WriteValue("playerBalances", playerBalances);
 		return ESerializeResult.OK;

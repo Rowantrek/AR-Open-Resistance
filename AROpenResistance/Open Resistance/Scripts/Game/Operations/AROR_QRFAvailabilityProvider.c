@@ -1,0 +1,10 @@
+//! Extension seam for the military-resource owner. No default ledger, stock or production.
+//! Implementations must capture complete-package availability at a controlled origin.
+//! This planning interface does not authorize spending or dispatch.
+class AROR_QRFAvailabilityProvider
+{
+	AROR_QRFAvailabilitySnapshot CaptureAvailability_S(AROR_EFactionRole role, string factionKey, string targetLocationId, int now)
+	{
+		return null;
+	}
+}

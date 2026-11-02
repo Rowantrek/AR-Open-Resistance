@@ -10,19 +10,42 @@ class AROR_PhoneComponentClass : SCR_BaseGameModeComponentClass
 //! fire in Workbench testing (Ctrl+Y is also the editor's Redo shortcut).
 class AROR_PhoneComponent : SCR_BaseGameModeComponent
 {
-	protected static const string INPUT_CONTEXT = "AROR_PhoneContext";
+	protected static const string INPUT_CONTEXT = "AROR_Context";
 	protected static const string INPUT_ACTION = "AROR_OpenPhone";
 
 	//! Ignore a second toggle this soon after the last one (the action and the keyboard check can both fire)
 	protected static const int TOGGLE_COOLDOWN_MS = 250;
 
 	protected int m_iLastToggleMs = -TOGGLE_COOLDOWN_MS;
+	protected bool m_bActionDown;
+	protected bool m_bAltDown;
 
 	//------------------------------------------------------------------------------------------------
 	//! Every frame on the client
 	protected void Update()
 	{
-		GetGame().GetInputManager().ActivateContext(INPUT_CONTEXT);
+		InputManager inputManager = GetGame().GetInputManager();
+		inputManager.ActivateContext(INPUT_CONTEXT);
+
+		// Third route: poll the action's value in case the listener is never called
+		bool actionDown = inputManager.GetActionValue(INPUT_ACTION) > 0;
+		if (actionDown != m_bActionDown)
+		{
+			m_bActionDown = actionDown;
+			Print(string.Format("[AROR] Phone key action %1", actionDown), LogLevel.NORMAL);
+			if (actionDown)
+				TogglePhone();
+		}
+
+		// F9: same toggle without Ctrl, on a key the base game leaves free
+		bool altDown = inputManager.GetActionValue("AROR_OpenPhoneAlt") > 0;
+		if (altDown != m_bAltDown)
+		{
+			m_bAltDown = altDown;
+			Print(string.Format("[AROR] Phone F9 action %1", altDown), LogLevel.NORMAL);
+			if (altDown)
+				TogglePhone();
+		}
 
 		if (!Debug.KeyState(KeyCode.KC_Y))
 			return;
@@ -37,6 +60,7 @@ class AROR_PhoneComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	protected void OnPhoneAction(float value = 0.0, EActionTrigger reason = 0)
 	{
+		Print("[AROR] Phone listener fired", LogLevel.NORMAL);
 		TogglePhone();
 	}
 
@@ -87,6 +111,7 @@ class AROR_PhoneComponent : SCR_BaseGameModeComponent
 		if (!GetGame().InPlayMode() || RplSession.Mode() == RplMode.Dedicated)
 			return;
 
+		Print("[AROR] Phone hotkey ready (input action + polling)", LogLevel.NORMAL);
 		GetGame().GetInputManager().AddActionListener(INPUT_ACTION, EActionTrigger.DOWN, OnPhoneAction);
 		GetGame().GetCallqueue().CallLater(Update, 0, true);
 	}

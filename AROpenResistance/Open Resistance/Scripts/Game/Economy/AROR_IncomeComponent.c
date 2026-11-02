@@ -168,7 +168,11 @@ class AROR_IncomeComponent : SCR_BaseGameModeComponent
 			case AROR_EFactionRole.OCCUPIERS:
 				return m_iOccupiersExternalSupport;
 			case AROR_EFactionRole.INVADERS:
-				return m_iInvadersExternalSupport;
+				AROR_InvaderCampaignComponent campaign = AROR_InvaderCampaignComponent.GetInstance();
+				int bonus;
+				if (campaign)
+					bonus = campaign.GetExternalSupportBonus();
+				return m_iInvadersExternalSupport + bonus;
 		}
 
 		return 0;

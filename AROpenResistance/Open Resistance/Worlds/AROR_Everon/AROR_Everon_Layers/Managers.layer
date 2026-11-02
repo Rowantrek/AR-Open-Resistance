@@ -1,15 +1,1325 @@
+SCR_AIWorld AROR_AIWorld : "{70CCCF16487C927F}Prefabs/AI/SCR_AIWorld_Eden.et" {
+ components {
+  NavmeshWorldComponent "{5584F30E67F617AD}" {
+   NavmeshSettings NavmeshWorld "{50FC63BEBE3973C5}" {
+    NavmeshFilesConfig BaseNavmeshFilesConfig {
+     NavmeshFile "{AD5F99CD7C59D5E0}worlds/GameMaster/Navmeshes/GM_Eden.nmn"
+    }
+   }
+  }
+  NavmeshWorldComponent "{5584F30EEFEE1223}" {
+   NavmeshSettings ChimeraNavmeshWorld "{50FC63BEBE3973C5}" {
+    NavmeshFilesConfig BaseNavmeshFilesConfig {
+     NavmeshFile "{C35ECF3276824654}worlds/GameMaster/Navmeshes/GM_Eden_vehicles.nmn"
+    }
+   }
+  }
+  NavmeshWorldComponent "{5C8C9B750D124A63}" {
+   NavmeshSettings NavmeshWorld "{5C8C9B750B60C6E2}" {
+    NavmeshFilesConfig BaseNavmeshFilesConfig {
+     NavmeshFile "{5E19E60F26327356}worlds/MP/Navmeshes/LowResEden.nmn"
+    }
+   }
+  }
+ }
+}
+PerceptionManager AROR_PerceptionManager : "{028DAEAD63E056BE}Prefabs/World/Game/PerceptionManager.et" {
+}
 SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR_GameMode_Base.et" {
  components {
+  AROR_CommanderManagerComponent "{6AAE5D29CAEAAB97}" {
+   m_fEvaluationInterval 5
+  }
   AROR_GameFlowComponent "{6AAA8D6D8EB1E454}" {
    m_bWorkbenchAutoNewPlaythrough 0
    m_vWorkbenchHQPosition 6500 0 6075
   }
-  AROR_LocationMapIconsComponent "{6AAC8BBFBA047D89}" {
-   m_sSelectorLayout "{9B65C8ACFFEE4DD6}UI/Layouts/Map/AROR_MapIconSelector.layout"
+  AROR_GarrisonManagerComponent "{62D6819A8BBD4DAB}" {
+   m_bInfantryFallback 1
   }
-  SCR_RespawnSystemComponent "{56B2B4793051E7C9}" {
-   m_SpawnLogic AROR_ResistanceSpawnLogic "{5D36888CC966608A}" {
+  AROR_InvaderCampaignComponent "{9AB2CB63D7214001}" {
+   m_bInvaderCampaign 1
+  }
+  AROR_OperationExecutorComponent "{6ABAA3137D764283}" {
+   m_bAllowAirborneResponses 1
+   m_bQRFTacticalCommander 1
+   m_bQRFTwoWaves 1
+   m_iQRFSplitTier 3
+   m_iQRFReinforcementDelay 60
+   m_iQRFReserveWait 450
+   m_iQRFMaxLiveGround 6
+   m_iQRFMaxLiveAircraft 6
+   m_iQRFTacticalDuration 600
+   m_iQRFTownHoldDuration 900
+   m_iQRFOrderInterval 15
+   m_iQRFApproachAttempts 12
+   m_fQRFRoadLaunchRadius 300
+   m_fQRFVehicleArrivalTolerance 20
+   m_fQRFObjectiveDeliveryRadius 100
+   m_bQRFRequireFriendlyOrigin 1
+   m_iQRFIngressTimeout 600
+   m_iQRFDetourTimeout 90
+   m_iQRFExitTimeout 30
+   m_iQRFExitRetryLimit 2
+   m_iQRFInfantryLegTimeout 180
+   m_fQRFInfantryPlanningSpeed 1.5
+   m_fQRFRecoveryRadius 100
+   m_fQRFVehicleRecoveryRadius 125
+   m_fQRFThreatDismount 200
+   m_fQRFWithdrawFraction 0.4
+   m_fQRFLocalWithdrawFraction 0.5
+   m_iQRFGroundRetention 120
+   m_fQRFGroundCleanupDistance 1200
+   m_bExecuteOperations 1
+   m_sAttackWaypointPrefab "{1B0E3436C30FA211}Prefabs/AI/Waypoints/AIWaypoint_Attack.et"
+   m_sQRFWaypointPrefab "{93291E72AC23930F}Prefabs/AI/Waypoints/AIWaypoint_Defend.et"
+   m_vOccupiersSpawnPosition 5100 0 6080
+   m_vInvadersSpawnPosition 5950 0 6080
+   m_iMaxGroups 20
+   m_iMaxMembers 160
+   m_iQRFSeatRecoveryDelay 10
+   m_aForceProfiles {
+    AROR_ForceProfile "{6ABAA3137D76599E}" {
+     m_sId "us_motorized"
+     m_bEnabled 1
+     m_iMinimumReadinessLevel 1
+     m_bFillPassengerSeats 1
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_sAssetFactionKey "US"
+     m_eType MOTORIZED
+     m_iAttackWeight 40
+     m_iQRFWeight 40
+     m_sInfantryGroup "{84E5BBAB25EA23E5}Prefabs/Groups/BLUFOR/Group_US_FireTeam.et"
+     m_sCrewCharacter "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Crew.et"
+     m_iCrewCount 1
+     m_sVehicle "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et"
+     m_iPersonnelBudget 22
+     m_fDismountDistance 150
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 200
+     m_iEscortLossValue 2000
+    }
+    AROR_ForceProfile "{6ABAA3137D765952}" {
+     m_sId "us_mechanized"
+     m_bEnabled 1
+     m_iMinimumReadinessLevel 3
+     m_bFillPassengerSeats 1
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_sAssetFactionKey "US"
+     m_eType MECHANIZED
+     m_iAttackWeight 30
+     m_iQRFWeight 30
+     m_sInfantryGroup "{84E5BBAB25EA23E5}Prefabs/Groups/BLUFOR/Group_US_FireTeam.et"
+     m_sCrewCharacter "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Crew.et"
+     m_iCrewCount 3
+     m_sVehicle "{0FBF8F010F81A4E5}Prefabs/Vehicles/Wheeled/LAV25/LAV25.et"
+     m_iPersonnelBudget 12
+     m_fDismountDistance 150
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 800
+     m_iEscortLossValue 2000
+    }
+    AROR_ForceProfile "{6ABAA3137D765972}" {
+     m_sId "us_armour"
+     m_bEnabled 1
+     m_iMinimumReadinessLevel 5
+     m_bFillPassengerSeats 1
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_sAssetFactionKey "US"
+     m_eType ARMOUR
+     m_iAttackWeight 10
+     m_iQRFWeight 10
+     m_sInfantryGroup "{84E5BBAB25EA23E5}Prefabs/Groups/BLUFOR/Group_US_FireTeam.et"
+     m_sCrewCharacter "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Crew.et"
+     m_iCrewCount 3
+     m_sVehicle "{0FBF8F010F81A4E5}Prefabs/Vehicles/Wheeled/LAV25/LAV25.et"
+     m_iPersonnelBudget 12
+     m_fDismountDistance 150
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 800
+     m_iEscortLossValue 2000
+    }
+    AROR_ForceProfile "{6ABAA3137D765910}" {
+     m_sId "us_airborne"
+     m_bEnabled 1
+     m_iMinimumReadinessLevel 5
+     m_bFillPassengerSeats 1
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_sAssetFactionKey "US"
+     m_eType AIRBORNE
+     m_iAttackWeight 20
+     m_iQRFWeight 20
+     m_sInfantryGroup "{84E5BBAB25EA23E5}Prefabs/Groups/BLUFOR/Group_US_FireTeam.et"
+     m_sCrewCharacter "{42A502E3BB727CEB}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_HeliPilot.et"
+     m_iCrewCount 2
+     m_sVehicle "{70BAEEFC2D3FEE64}Prefabs/Vehicles/Helicopters/UH1H/UH1H.et"
+     m_sEscortVehicle "{21E9A875C0A3C409}Prefabs/Vehicles/Helicopters/UH1H/UH1H_armed_gunship_HE.et"
+     m_iEscortCount 1
+     m_iPersonnelBudget 32
+     m_fDismountDistance 150
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 1600
+     m_iEscortLossValue 2000
+    }
+    AROR_ForceProfile "{6ABAA3137D76592A}" {
+     m_sId "ussr_motorized"
+     m_bEnabled 1
+     m_iMinimumReadinessLevel 1
+     m_bFillPassengerSeats 1
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_sAssetFactionKey "USSR"
+     m_eType MOTORIZED
+     m_iAttackWeight 40
+     m_iQRFWeight 40
+     m_sInfantryGroup "{657590C1EC9E27D3}Prefabs/Groups/OPFOR/Group_USSR_LightFireTeam.et"
+     m_sCrewCharacter "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Crew.et"
+     m_iCrewCount 1
+     m_sVehicle "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et"
+     m_iPersonnelBudget 22
+     m_fDismountDistance 150
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 200
+     m_iEscortLossValue 2000
+    }
+    AROR_ForceProfile "{6ABAA3137D765AFB}" {
+     m_sId "ussr_mechanized"
+     m_bEnabled 1
+     m_iMinimumReadinessLevel 3
+     m_bFillPassengerSeats 1
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_sAssetFactionKey "USSR"
+     m_eType MECHANIZED
+     m_iAttackWeight 30
+     m_iQRFWeight 30
+     m_sInfantryGroup "{657590C1EC9E27D3}Prefabs/Groups/OPFOR/Group_USSR_LightFireTeam.et"
+     m_sCrewCharacter "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Crew.et"
+     m_iCrewCount 3
+     m_sVehicle "{C012BB3488BEA0C2}Prefabs/Vehicles/Wheeled/BTR70/BTR70.et"
+     m_iPersonnelBudget 12
+     m_fDismountDistance 150
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 700
+     m_iEscortLossValue 2000
+    }
+    AROR_ForceProfile "{6ABAA3137D765A98}" {
+     m_sId "ussr_armour"
+     m_bEnabled 1
+     m_iMinimumReadinessLevel 5
+     m_bFillPassengerSeats 1
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_sAssetFactionKey "USSR"
+     m_eType ARMOUR
+     m_iAttackWeight 10
+     m_iQRFWeight 10
+     m_sInfantryGroup "{657590C1EC9E27D3}Prefabs/Groups/OPFOR/Group_USSR_LightFireTeam.et"
+     m_sCrewCharacter "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Crew.et"
+     m_iCrewCount 2
+     m_sVehicle "{254289B9C09904AB}Prefabs/Vehicles/Wheeled/BRDM2/BRDM2.et"
+     m_iPersonnelBudget 8
+     m_fDismountDistance 150
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 450
+     m_iEscortLossValue 2000
+    }
+    AROR_ForceProfile "{6ABAA3137D765ABF}" {
+     m_sId "ussr_airborne"
+     m_bEnabled 1
+     m_iMinimumReadinessLevel 5
+     m_bFillPassengerSeats 1
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_sAssetFactionKey "USSR"
+     m_eType AIRBORNE
+     m_iAttackWeight 20
+     m_iQRFWeight 20
+     m_sInfantryGroup "{657590C1EC9E27D3}Prefabs/Groups/OPFOR/Group_USSR_LightFireTeam.et"
+     m_sCrewCharacter "{A62FA97C4EC64F14}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_HeliPilot.et"
+     m_iCrewCount 2
+     m_sVehicle "{DF5CCB7C0FF049F4}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et"
+     m_sEscortVehicle "{3C6B3ED0C3AC30D5}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_gunship_HE.et"
+     m_iEscortCount 1
+     m_iPersonnelBudget 32
+     m_fDismountDistance 150
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 1800
+     m_iEscortLossValue 2000
+    }
+    AROR_ForceProfile "{6ABAA3137D765A51}" {
+     m_sId "us_light_support"
+     m_bEnabled 1
+     m_iMinimumReadinessLevel 1
+     m_bLightVehicle 1
+     m_bFillPassengerSeats 1
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_sAssetFactionKey "US"
+     m_eType ARMOUR
+     m_iAttackWeight 0
+     m_iQRFWeight 10
+     m_sInfantryGroup "{84E5BBAB25EA23E5}Prefabs/Groups/BLUFOR/Group_US_FireTeam.et"
+     m_sCrewCharacter "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Crew.et"
+     m_iCrewCount 2
+     m_sVehicle "{3EA6F47D95867114}Prefabs/Vehicles/Wheeled/M998/M1025_armed_M2HB.et"
+     m_iPersonnelBudget 8
+     m_fDismountDistance 150
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 300
+     m_iEscortLossValue 2000
+    }
+    AROR_ForceProfile "{6ABAA3137D765A76}" {
+     m_sId "ussr_light_support"
+     m_bEnabled 1
+     m_iMinimumReadinessLevel 1
+     m_bLightVehicle 1
+     m_bFillPassengerSeats 1
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_sAssetFactionKey "USSR"
+     m_eType ARMOUR
+     m_iAttackWeight 0
+     m_iQRFWeight 10
+     m_sInfantryGroup "{657590C1EC9E27D3}Prefabs/Groups/OPFOR/Group_USSR_LightFireTeam.et"
+     m_sCrewCharacter "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Crew.et"
+     m_iCrewCount 2
+     m_sVehicle "{0B4DEA8078B78A9B}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_PKM.et"
+     m_iPersonnelBudget 8
+     m_fDismountDistance 150
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 200
+     m_iEscortLossValue 2000
+    }
+    AROR_ForceProfile "{6ABAA3137D765A12}" {
+     m_sId "us_airborne_light"
+     m_bEnabled 1
+     m_iMinimumReadinessLevel 1
+     m_bFillPassengerSeats 1
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_sAssetFactionKey "US"
+     m_eType AIRBORNE
+     m_iAttackWeight 20
+     m_iQRFWeight 20
+     m_sInfantryGroup "{84E5BBAB25EA23E5}Prefabs/Groups/BLUFOR/Group_US_FireTeam.et"
+     m_sCrewCharacter "{42A502E3BB727CEB}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_HeliPilot.et"
+     m_iCrewCount 1
+     m_sVehicle "{70BAEEFC2D3FEE64}Prefabs/Vehicles/Helicopters/UH1H/UH1H.et"
+     m_iEscortCount 0
+     m_iPersonnelBudget 32
+     m_fDismountDistance 150
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 1600
+     m_iEscortLossValue 2000
+    }
+    AROR_ForceProfile "{6ABAA3137D765A30}" {
+     m_sId "ussr_airborne_light"
+     m_bEnabled 1
+     m_iMinimumReadinessLevel 1
+     m_bFillPassengerSeats 1
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_sAssetFactionKey "USSR"
+     m_eType AIRBORNE
+     m_iAttackWeight 20
+     m_iQRFWeight 20
+     m_sInfantryGroup "{657590C1EC9E27D3}Prefabs/Groups/OPFOR/Group_USSR_LightFireTeam.et"
+     m_sCrewCharacter "{A62FA97C4EC64F14}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_HeliPilot.et"
+     m_iCrewCount 1
+     m_sVehicle "{DF5CCB7C0FF049F4}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et"
+     m_iEscortCount 0
+     m_iPersonnelBudget 32
+     m_fDismountDistance 150
+     m_iPersonnelLossValue 25
+     m_iVehicleLossValue 1800
+     m_iEscortLossValue 2000
+    }
    }
+   m_sGroundQRFRecipeId "combined_arms_l1"
+   m_sInvadersGroundQRFRecipeId "invader_ground_l1"
+   m_aGroundQRFRecipes {
+    AROR_GroundQRFRecipe "{6ABAA3137D764216}" {
+     m_sId "combined_arms_l1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764220}" {
+     m_sId "combined_arms_l1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7643D2}" {
+     m_sId "invader_ground_l1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7643C3}" {
+     m_sId "invader_ground_l2"
+     m_iLevel 2
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7643F0}" {
+     m_sId "invader_ground_l3"
+     m_iLevel 3
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_armour"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7643E3}" {
+     m_sId "invader_ground_l4"
+     m_iLevel 4
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_armour"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76438D}" {
+     m_sId "invader_ground_l5"
+     m_iLevel 5
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_armour"
+      "ussr_armour"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7643B9}" {
+     m_sId "occupier_ground_l1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7643AF}" {
+     m_sId "occupier_ground_l2"
+     m_iLevel 2
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76435C}" {
+     m_sId "occupier_ground_l3"
+     m_iLevel 3
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_armour"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764349}" {
+     m_sId "occupier_ground_l4"
+     m_iLevel 4
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_armour"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76437A}" {
+     m_sId "occupier_ground_l5"
+     m_iLevel 5
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_armour"
+      "us_armour"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764364}" {
+     m_sId "occupier_light_l1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76431B}" {
+     m_sId "occupier_light_l2"
+     m_iLevel 2
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764309}" {
+     m_sId "occupier_light_l3"
+     m_iLevel 3
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_motorized"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76433E}" {
+     m_sId "occupier_light_l4"
+     m_iLevel 4
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_motorized"
+      "us_light_support"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76432E}" {
+     m_sId "occupier_light_l5"
+     m_iLevel 5
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_motorized"
+      "us_motorized"
+      "us_light_support"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7644D7}" {
+     m_sId "occupier_mechanized_l1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7644CA}" {
+     m_sId "occupier_mechanized_l2"
+     m_iLevel 2
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7644E9}" {
+     m_sId "occupier_mechanized_l3"
+     m_iLevel 3
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_mechanized"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76449A}" {
+     m_sId "occupier_mechanized_l4"
+     m_iLevel 4
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76448A}" {
+     m_sId "occupier_mechanized_l5"
+     m_iLevel 5
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7644AF}" {
+     m_sId "invader_light_l1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7644A3}" {
+     m_sId "invader_light_l2"
+     m_iLevel 2
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764451}" {
+     m_sId "invader_light_l3"
+     m_iLevel 3
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764446}" {
+     m_sId "invader_light_l4"
+     m_iLevel 4
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_light_support"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764477}" {
+     m_sId "invader_light_l5"
+     m_iLevel 5
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_light_support"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764461}" {
+     m_sId "invader_mechanized_l1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764414}" {
+     m_sId "invader_mechanized_l2"
+     m_iLevel 2
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76440B}" {
+     m_sId "invader_mechanized_l3"
+     m_iLevel 3
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764439}" {
+     m_sId "invader_mechanized_l4"
+     m_iLevel 4
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764429}" {
+     m_sId "invader_mechanized_l5"
+     m_iLevel 5
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7645DB}" {
+     m_sId "occupier_joint_l1"
+     m_eResponseType AIR_GROUND
+     m_iLevel 1
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne"
+      "us_motorized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7645CB}" {
+     m_sId "occupier_joint_l2"
+     m_eResponseType AIR_GROUND
+     m_iLevel 2
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne"
+      "us_motorized"
+      "us_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7645FA}" {
+     m_sId "occupier_joint_l3"
+     m_eResponseType AIR_GROUND
+     m_iLevel 3
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne"
+      "us_motorized"
+      "us_mechanized"
+      "us_armour"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7645E2}" {
+     m_sId "occupier_joint_l4"
+     m_eResponseType AIR_GROUND
+     m_iLevel 4
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne"
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_armour"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764589}" {
+     m_sId "occupier_joint_l5"
+     m_eResponseType AIR_GROUND
+     m_iLevel 5
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne"
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_armour"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764654}" {
+     m_sId "invader_joint_l1"
+     m_eResponseType AIR_GROUND
+     m_iLevel 1
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne"
+      "ussr_motorized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764641}" {
+     m_sId "invader_joint_l2"
+     m_eResponseType AIR_GROUND
+     m_iLevel 2
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne"
+      "ussr_motorized"
+      "ussr_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764676}" {
+     m_sId "invader_joint_l3"
+     m_eResponseType AIR_GROUND
+     m_iLevel 3
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_armour"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76461D}" {
+     m_sId "invader_joint_l4"
+     m_eResponseType AIR_GROUND
+     m_iLevel 4
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_armour"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76460F}" {
+     m_sId "invader_joint_l5"
+     m_eResponseType AIR_GROUND
+     m_iLevel 5
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_armour"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76463B}" {
+     m_sId "occupier_joint_r2_l1"
+     m_eResponseType AIR_GROUND
+     m_iLevel 1
+     m_iMinimumReadinessLevel 2
+     m_iMaximumReadinessLevel 2
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne_light"
+      "us_motorized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764625}" {
+     m_sId "occupier_joint_r2_l2"
+     m_eResponseType AIR_GROUND
+     m_iLevel 2
+     m_iMinimumReadinessLevel 2
+     m_iMaximumReadinessLevel 2
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne_light"
+      "us_motorized"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7647DA}" {
+     m_sId "occupier_joint_r2_l3"
+     m_eResponseType AIR_GROUND
+     m_iLevel 3
+     m_iMinimumReadinessLevel 2
+     m_iMaximumReadinessLevel 2
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne_light"
+      "us_motorized"
+      "us_motorized"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7647C6}" {
+     m_sId "occupier_joint_r2_l4"
+     m_eResponseType AIR_GROUND
+     m_iLevel 4
+     m_iMinimumReadinessLevel 2
+     m_iMaximumReadinessLevel 2
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne_light"
+      "us_motorized"
+      "us_motorized"
+      "us_motorized"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7647F3}" {
+     m_sId "occupier_joint_r2_l5"
+     m_eResponseType AIR_GROUND
+     m_iLevel 5
+     m_iMinimumReadinessLevel 2
+     m_iMaximumReadinessLevel 2
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne_light"
+      "us_motorized"
+      "us_motorized"
+      "us_motorized"
+      "us_light_support"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76479C}" {
+     m_sId "occupier_joint_r3_l1"
+     m_eResponseType AIR_GROUND
+     m_iLevel 1
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne_light"
+      "us_motorized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76478D}" {
+     m_sId "occupier_joint_r3_l2"
+     m_eResponseType AIR_GROUND
+     m_iLevel 2
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne_light"
+      "us_motorized"
+      "us_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764782}" {
+     m_sId "occupier_joint_r3_l3"
+     m_eResponseType AIR_GROUND
+     m_iLevel 3
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne_light"
+      "us_motorized"
+      "us_mechanized"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7647B2}" {
+     m_sId "occupier_joint_r3_l4"
+     m_eResponseType AIR_GROUND
+     m_iLevel 4
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne_light"
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76475D}" {
+     m_sId "occupier_joint_r3_l5"
+     m_eResponseType AIR_GROUND
+     m_iLevel 5
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole OCCUPIERS
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne_light"
+      "us_motorized"
+      "us_motorized"
+      "us_mechanized"
+      "us_mechanized"
+      "us_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764749}" {
+     m_sId "invader_joint_r2_l1"
+     m_eResponseType AIR_GROUND
+     m_iLevel 1
+     m_iMinimumReadinessLevel 2
+     m_iMaximumReadinessLevel 2
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne_light"
+      "ussr_motorized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76477E}" {
+     m_sId "invader_joint_r2_l2"
+     m_eResponseType AIR_GROUND
+     m_iLevel 2
+     m_iMinimumReadinessLevel 2
+     m_iMaximumReadinessLevel 2
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne_light"
+      "ussr_motorized"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76476E}" {
+     m_sId "invader_joint_r2_l3"
+     m_eResponseType AIR_GROUND
+     m_iLevel 3
+     m_iMinimumReadinessLevel 2
+     m_iMaximumReadinessLevel 2
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne_light"
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764719}" {
+     m_sId "invader_joint_r2_l4"
+     m_eResponseType AIR_GROUND
+     m_iLevel 4
+     m_iMinimumReadinessLevel 2
+     m_iMaximumReadinessLevel 2
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne_light"
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76470B}" {
+     m_sId "invader_joint_r2_l5"
+     m_eResponseType AIR_GROUND
+     m_iLevel 5
+     m_iMinimumReadinessLevel 2
+     m_iMaximumReadinessLevel 2
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne_light"
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_light_support"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D764734}" {
+     m_sId "invader_joint_r3_l1"
+     m_eResponseType AIR_GROUND
+     m_iLevel 1
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne_light"
+      "ussr_motorized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D76472A}" {
+     m_sId "invader_joint_r3_l2"
+     m_eResponseType AIR_GROUND
+     m_iLevel 2
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne_light"
+      "ussr_motorized"
+      "ussr_mechanized"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7658DB}" {
+     m_sId "invader_joint_r3_l3"
+     m_eResponseType AIR_GROUND
+     m_iLevel 3
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne_light"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7658CB}" {
+     m_sId "invader_joint_r3_l4"
+     m_eResponseType AIR_GROUND
+     m_iLevel 4
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne_light"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_light_support"
+     }
+    }
+    AROR_GroundQRFRecipe "{6ABAA3137D7658F5}" {
+     m_sId "invader_joint_r3_l5"
+     m_eResponseType AIR_GROUND
+     m_iLevel 5
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole INVADERS
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne_light"
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_light_support"
+     }
+    }
+   }
+   m_iMaxVehicles 10
+   m_sCrewGroupPrefab "{000CD338713F2B5A}Prefabs/AI/Groups/Group_Base.et"
+   m_sMoveWaypointPrefab "{750A8D1695BD6998}Prefabs/AI/Waypoints/AIWaypoint_Move.et"
+   m_sWorkbenchForceProfileId ""
+   m_aResponseLevels {
+    AROR_ResponseLevel "{6ABAA3137D765861}" {
+     m_iLevel 1
+     m_iAttackWeight 20
+     m_iQRFWeight 20
+    }
+    AROR_ResponseLevel "{6ABAA3137D765808}" {
+     m_iLevel 2
+     m_iAttackWeight 20
+     m_iQRFWeight 20
+    }
+    AROR_ResponseLevel "{6ABAA3137D765806}" {
+     m_iLevel 3
+     m_iAttackWeight 20
+     m_iQRFWeight 20
+    }
+    AROR_ResponseLevel "{6ABAA3137D765835}" {
+     m_iLevel 4
+     m_iAttackWeight 20
+     m_iQRFWeight 20
+    }
+    AROR_ResponseLevel "{6ABAA3137D765833}" {
+     m_iLevel 5
+     m_iAttackWeight 20
+     m_iQRFWeight 20
+    }
+   }
+   m_iWorkbenchResponseLevel 1
+   m_fPackageSpacing 35
+   m_bQRFVehicleSearch 1
+   m_iQRFSearchDuration 180
+   m_iQRFSearchStops 6
+   m_iQRFSearchDwell 8
+   m_iQRFSearchLegTimeout 60
+   m_iQRFContactMaxAge 120
+   m_fQRFSearchMargin 150
+   m_fQRFSearchStopSpacing 50
+   m_bLogFriendlyDamage 1
+   m_bAllowJointResponses 1
+   m_bReaperQRFTest 0
+   m_vReaperLZOffset 0 0 0
+   m_fReaperTransportSpeed 160
+   m_fReaperTransportHeight 60
+   m_fReaperHoldingDistance 700
+   m_iReaperTouchdownTicks 2
+   m_fReaperDepartureSpeed 180
+   m_fReaperLZSearchRadius 400
+   m_fReaperLZFallbackRadius 1200
+   m_fReaperLZAdjustmentRadius 60
+   m_fReaperLandingSeparation 90
+   m_fReaperFormationSpacing 75
+   m_fReaperCleanupDistance 1500
+   m_iReaperRetainSeconds 600
+   m_fReaperGunshipRunHeight 110
+   m_fReaperGunshipRunBand 20
+   m_fReaperGunshipRunRadius 450
+  }
+  AROR_OperationManagerComponent "{6AAE5D29CAEAABAA}" {
+   m_bQRFStrategicEconomy 1
+   m_bMinimumCaptureQRF 1
+   m_bQRFSpotting 1
+   m_bQRFDebugMarkers 1
+   m_fQRFSpotGroundRange 800
+   m_fQRFSpotAirRange 1500
+   m_fQRFSpotMinimumDot 0.9
+   m_iQRFSpotTraceLimit 8
+   m_iQRFSpotLifetime 90
+   m_iStartingReadinessLevel 1
+   m_iAirborneQRFShare 30
+   m_iStartingCrackdown 0
+   m_iCaptureReadinessPressure 25
+   m_iCaptureCrackdown 50
+   m_iCrackdownQuietTime 600
+   m_iCrackdownDecay 20
+   m_iQRFBaseOverhead 50
+   m_iQRFTierOverhead 10
+   m_iQRFThreatLifetime 180
+   m_bInvaderOperationsEnabled 1
+   m_bTownCaptureQRFs 1
+   m_bOutpostCaptureQRFs 1
+   m_bCombatQRFs 0
+   m_sOccupiersAttackTargetId ""
+   m_sInvadersAttackTargetId ""
+   m_iAttackPreparation 60
+   m_iSpawnTimeout 90
+   m_bMarsEnabled 1
+   m_bTerritoryAttacksEnabled 1
+   m_iTerritoryAttackGrace 300
+   m_iTerritoryAttackAfterQRF 300
+   m_iTerritoryAttackRest 900
+  }
+  AROR_OperationTestComponent "{6ABAA3137D765BCD}" {
+   m_sOccupiersQRFTestTargetId ""
+   m_sInvadersQRFTestTargetId ""
+   m_iReportDelay 15
+  }
+  AROR_RegionalSupportComponent "{3E3586CD181A4E9A}" {
+   m_bRegionalSupport 1
   }
  }
  coords 451.826 62.247 784.105
@@ -20,11 +1330,20 @@ SCR_FactionManager AROR_FactionManager1 : "{906843134C8EF19C}Prefabs/Managers/AR
 SCR_SpawnPoint : "{95D749133F568A23}Prefabs/Gameflow/AROR_StagingSpawn.et" {
  coords 3412.831 20.149 1596.428
 }
-SCR_LoadoutManager : "{DB9B95B4E54CBE08}Prefabs/Managers/AROR_LoadoutManager.et" {
- coords 1065.152 533.487 1109.837
- m_aPlayerLoadouts {
-  SCR_FactionPlayerLoadout "{6AAC8BBB7DC34043}" {
-   m_sAffiliatedFaction "AROR_RESISTANCE"
+GenericEntity AROR_USSRSupportCorridor : "{D1387921EE9626CA}Prefabs/Locations/AROR_Location_Base.et" {
+ components {
+  AROR_LocationComponent "{6AA28237301A1CF9}" {
+   m_sId "everon_ussr_support_corridor"
+   m_sName "USSR SUPPORT CORRIDOR"
+   m_eType SUPPORT_CORRIDOR
+   m_fRadius 150
+   m_sMapIcon "{8EFE6E503C402610}UI/Textures/Map/military_base.edds"
+   m_eInitialControllingRole INVADERS
+   m_bControlFixed 1
   }
  }
+ coords 11600 0 800
+}
+SCR_LoadoutManager : "{DB9B95B4E54CBE08}Prefabs/Managers/AROR_LoadoutManager.et" {
+ coords 452.143 62.932 781.845
 }

@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{0D1174AC8BF56560}Prefabs/Characters/Factions/BLUFOR/US_Army/AROR_Character_Occupiers_Leader.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass XBOX_ONE : PC {
+  }
+  EntityTemplateResourceClass XBOX_SERIES : PC {
+  }
+  EntityTemplateResourceClass PS4 : PC {
+  }
+  EntityTemplateResourceClass PS5 : PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

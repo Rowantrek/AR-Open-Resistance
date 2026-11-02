@@ -32,291 +32,295 @@ $grp SCR_ChimeraCharacter : "{26A9756790131354}Prefabs/Characters/Factions/BLUFO
   coords 5489.166 95.901 6086.587
  }
 }
-GenericEntity AROR_Location_everon_saint_philippe : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_saint_philippe"
-   m_sName "Saint-Philippe"
-   m_eType CITY
-   m_fRadius 350
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
+$grp GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
+ AROR_Location_everon_entre_deux {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_entre_deux"
+    m_sName "Entre-Deux"
+    m_eType TOWN
+    m_fRadius 200
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+    m_iPopulation 35
+   }
   }
-  AROR_SettlementComponent "{6AAE72CBC3214551}" {
-   m_iPopulation 140
-  }
+  coords 5760.571 217.282 7061.821
  }
- coords 4500.872 12.8353 10776.053
+ AROR_Location_everon_meaux {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_meaux"
+    m_sName "Meaux"
+    m_eType TOWN
+    m_fRadius 220
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+    m_iPopulation 50
+   }
+  }
+  coords 4517.52 14.462 9467.668
+ }
+ AROR_Location_everon_figari {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_figari"
+    m_sName "Figari"
+    m_eType TOWN
+    m_fRadius 200
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+    m_iPopulation 40
+   }
+  }
+  coords 5256.366 62.647 5341.263
+ }
+ AROR_Location_everon_durras {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_durras"
+    m_sName "Durras"
+    m_eType TOWN
+    m_fRadius 200
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+    m_iPopulation 40
+   }
+  }
+  coords 8826.12 95.068 2746.123
+ }
+ AROR_Location_everon_camurac {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_camurac"
+    m_sName "Camurac"
+    m_eType TOWN
+    m_fRadius 180
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+    m_iPopulation 25
+   }
+  }
+  coords 6594.162 6.114 3116.684
+ }
+ AROR_Location_everon_provins {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_provins"
+    m_sName "Provins"
+    m_eType TOWN
+    m_fRadius 250
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+    m_iPopulation 45
+   }
+  }
+  coords 5503.833 96.354 6081.837
+ }
+ AROR_Location_everon_kermovan {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_kermovan"
+    m_sName "Kermovan"
+    m_eType TOWN
+    m_fRadius 220
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+    m_iPopulation 35
+   }
+  }
+  coords 6359.376 6.748 9668.684
+ }
+ AROR_Location_everon_gravette {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_gravette"
+    m_sName "Gravette"
+    m_eType TOWN
+    m_fRadius 220
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+    m_iPopulation 40
+   }
+  }
+  coords 4128.282 36.576 7792.364
+ }
+ AROR_Location_everon_regina {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_regina"
+    m_sName "Regina"
+    m_eType TOWN
+    m_fRadius 200
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+    m_iPopulation 40
+   }
+  }
+  coords 7188.38 137.478 2312.382
+ }
+ AROR_Location_everon_villeneuve {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_villeneuve"
+    m_sName "Villeneuve"
+    m_eType TOWN
+    m_fRadius 200
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+    m_iPopulation 35
+   }
+  }
+  coords 2847.008 86.844 6339.848
+ }
+ AROR_Location_everon_tyrone {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_tyrone"
+    m_sName "Tyrone"
+    m_eType TOWN
+    m_fRadius 180
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBD95477C1}" {
+    m_iPopulation 25
+   }
+  }
+  coords 4948.837 38.124 9075.68
+ }
 }
-GenericEntity AROR_Location_everon_montignac : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_montignac"
-   m_sName "Montignac"
-   m_eType CITY
-   m_fRadius 350
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
+$grp GenericEntity : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et" {
+ AROR_Location_everon_saint_philippe {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_saint_philippe"
+    m_sName "Saint-Philippe"
+    m_eType CITY
+    m_fRadius 350
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBC3214551}" {
+    m_iPopulation 140
+   }
   }
-  AROR_SettlementComponent "{6AAE72CBC3214551}" {
-   m_iPopulation 160
-  }
+  coords 4500.872 12.835 10776.053
  }
- coords 4775.641 164.054 7086.945
-}
-GenericEntity AROR_Location_everon_entre_deux : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_entre_deux"
-   m_sName "Entre-Deux"
-   m_eType TOWN
-   m_fRadius 200
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
+ AROR_Location_everon_montignac {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_montignac"
+    m_sName "Montignac"
+    m_eType CITY
+    m_fRadius 350
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBC3214551}" {
+    m_iPopulation 160
+   }
   }
-  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
-   m_iPopulation 35
-  }
+  coords 4775.641 164.054 7086.945
  }
- coords 5760.571 217.282 7061.821
-}
-GenericEntity AROR_Location_everon_meaux : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_meaux"
-   m_sName "Meaux"
-   m_eType TOWN
-   m_fRadius 220
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
+ AROR_Location_everon_saint_pierre {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_saint_pierre"
+    m_sName "Saint-Pierre"
+    m_eType CITY
+    m_fRadius 300
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBC3214551}" {
+    m_iPopulation 100
+   }
   }
-  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
-   m_iPopulation 50
-  }
+  coords 9689.432 12.569 1558.166
  }
- coords 4517.52 14.4622 9467.668
-}
-GenericEntity AROR_Location_everon_saint_pierre : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_saint_pierre"
-   m_sName "Saint-Pierre"
-   m_eType CITY
-   m_fRadius 300
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
+ AROR_Location_everon_morton_town {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_morton_town"
+    m_sName "Morton"
+    m_eType CITY
+    m_fRadius 300
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBC3214551}" {
+    m_iPopulation 100
+   }
   }
-  AROR_SettlementComponent "{6AAE72CBC3214551}" {
-   m_iPopulation 100
-  }
+  coords 5132.015 16.575 4008.557
  }
- coords 9689.432 12.5688 1558.166
-}
-GenericEntity AROR_Location_everon_morton_town : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_morton_town"
-   m_sName "Morton"
-   m_eType CITY
-   m_fRadius 300
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
+ AROR_Location_everon_lamentin_town {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_lamentin_town"
+    m_sName "Lamentin"
+    m_eType CITY
+    m_fRadius 300
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBC3214551}" {
+    m_iPopulation 100
+   }
   }
-  AROR_SettlementComponent "{6AAE72CBC3214551}" {
-   m_iPopulation 100
-  }
+  coords 1308.509 38.292 5985.583
  }
- coords 5132.015 16.575 4008.557
-}
-GenericEntity AROR_Location_everon_figari : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_figari"
-   m_sName "Figari"
-   m_eType TOWN
-   m_fRadius 200
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
+ AROR_Location_everon_chotain {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_chotain"
+    m_sName "Chotain"
+    m_eType CITY
+    m_fRadius 300
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBC3214551}" {
+    m_iPopulation 100
+   }
   }
-  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
-   m_iPopulation 40
-  }
+  coords 7087.74 118.867 6011.904
  }
- coords 5256.366 62.6466 5341.263
-}
-GenericEntity AROR_Location_everon_lamentin_town : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_lamentin_town"
-   m_sName "Lamentin"
-   m_eType CITY
-   m_fRadius 300
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
+ AROR_Location_everon_levie {
+  components {
+   AROR_LocationComponent "{6AA28237301A1CF9}" {
+    m_sId "everon_levie"
+    m_sName "Levie"
+    m_eType CITY
+    m_fRadius 300
+    m_bGroundOnInit 0
+    m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SettlementComponent "{6AAE72CBC3214551}" {
+    m_iPopulation 120
+   }
   }
-  AROR_SettlementComponent "{6AAE72CBC3214551}" {
-   m_iPopulation 100
-  }
+  coords 7456.592 137.273 4737.094
  }
- coords 1308.509 38.292 5985.583
-}
-GenericEntity AROR_Location_everon_chotain : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_chotain"
-   m_sName "Chotain"
-   m_eType CITY
-   m_fRadius 300
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
-  }
-  AROR_SettlementComponent "{6AAE72CBC3214551}" {
-   m_iPopulation 100
-  }
- }
- coords 7087.74 118.867 6011.904
-}
-GenericEntity AROR_Location_everon_levie : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_levie"
-   m_sName "Levie"
-   m_eType CITY
-   m_fRadius 300
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
-  }
-  AROR_SettlementComponent "{6AAE72CBC3214551}" {
-   m_iPopulation 120
-  }
- }
- coords 7456.592 137.273 4737.094
-}
-GenericEntity AROR_Location_everon_durras : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_durras"
-   m_sName "Durras"
-   m_eType TOWN
-   m_fRadius 200
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
-  }
-  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
-   m_iPopulation 40
-  }
- }
- coords 8826.12 95.0682 2746.123
-}
-GenericEntity AROR_Location_everon_camurac : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_camurac"
-   m_sName "Camurac"
-   m_eType TOWN
-   m_fRadius 180
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
-  }
-  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
-   m_iPopulation 25
-  }
- }
- coords 6594.162 6.11406 3116.684
-}
-GenericEntity AROR_Location_everon_provins : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_provins"
-   m_sName "Provins"
-   m_eType TOWN
-   m_fRadius 250
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
-  }
-  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
-   m_iPopulation 45
-  }
- }
- coords 5503.833 96.354 6081.837
-}
-GenericEntity AROR_Location_everon_kermovan : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_kermovan"
-   m_sName "Kermovan"
-   m_eType TOWN
-   m_fRadius 220
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
-  }
-  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
-   m_iPopulation 35
-  }
- }
- coords 6359.376 6.74846 9668.684
-}
-GenericEntity AROR_Location_everon_gravette : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_gravette"
-   m_sName "Gravette"
-   m_eType TOWN
-   m_fRadius 220
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
-  }
-  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
-   m_iPopulation 40
-  }
- }
- coords 4128.282 36.5755 7792.364
-}
-GenericEntity AROR_Location_everon_regina : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_regina"
-   m_sName "Regina"
-   m_eType TOWN
-   m_fRadius 200
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
-  }
-  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
-   m_iPopulation 40
-  }
- }
- coords 7188.38 137.478 2312.382
-}
-GenericEntity AROR_Location_everon_villeneuve : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_villeneuve"
-   m_sName "Villeneuve"
-   m_eType TOWN
-   m_fRadius 200
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
-  }
-  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
-   m_iPopulation 35
-  }
- }
- coords 2847.008 86.8441 6339.848
-}
-GenericEntity AROR_Location_everon_tyrone : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et" {
- components {
-  AROR_LocationComponent "{6AA28237301A1CF9}" {
-   m_sId "everon_tyrone"
-   m_sName "Tyrone"
-   m_eType TOWN
-   m_fRadius 180
-   m_eInitialControllingRole OCCUPIERS
-   m_bGroundOnInit 0
-  }
-  AROR_SettlementComponent "{6AAE72CBD95477C1}" {
-   m_iPopulation 25
-  }
- }
- coords 4948.837 38.1244 9075.68
 }

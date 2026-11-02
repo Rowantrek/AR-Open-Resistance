@@ -8,6 +8,5 @@ enum AROR_EFactionPresetCategory
 	EQUIPMENT,			//!< Medical, binoculars, radios... (AROR_EEquipmentType)
 	WEAPONS,			//!< Hand-held weapons (AROR_EWeaponType)
 	WEAPON_ACCESSORIES,	//!< Optics, suppressors... (AROR_EWeaponAccessoryType)
-	AMMUNITION,			//!< Ammunition for hand-held weapons (AROR_EAmmunitionType)
-	VEHICLE_AMMUNITION	//!< Loadable vehicle and aircraft munitions (AROR_EVehicleAmmunitionType)
+	AMMUNITION			//!< Ammunition, including rocket pods and other munitions loaded onto vehicles and aircraft (AROR_EAmmunitionType)
 }

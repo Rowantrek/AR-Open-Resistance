@@ -17,7 +17,7 @@ class AROR_QRFSelectionSmokeTests
 		recipes.Insert(Recipe("l1", 1, tierOne));
 		recipes.Insert(Recipe("l2", 2, tierTwo));
 		recipes.Insert(Recipe("l3", 3, tierThree));
-		AROR_QRFReadinessSnapshot ready = new AROR_QRFReadinessSnapshot();
+		AROR_QRFAvailabilitySnapshot ready = new AROR_QRFAvailabilitySnapshot();
 		ready.m_eRole = AROR_EFactionRole.INVADERS;
 		ready.m_sFactionKey = "AROR_INVADERS";
 		ready.m_sOriginLocationId = "test_outpost";
@@ -49,7 +49,7 @@ class AROR_QRFSelectionSmokeTests
 		passed = Check(decision.m_Recipe == recipes[0], "Location ceiling") && passed;
 		context.m_iLocationTierCeiling = 5;
 		decision = AROR_QRFSelectionPolicy.Select(recipes, profiles, ready.m_eRole, ready.m_sFactionKey, context, ready, 131);
-		passed = Check(!decision.m_Recipe, "Stale readiness rejected") && passed;
+		passed = Check(!decision.m_Recipe, "Stale availability rejected") && passed;
 		ready.m_bGroundRouteReady = false;
 		decision = AROR_QRFSelectionPolicy.Select(recipes, profiles, ready.m_eRole, ready.m_sFactionKey, context, ready, 100);
 		passed = Check(!decision.m_Recipe, "No route rejected") && passed;
@@ -58,7 +58,7 @@ class AROR_QRFSelectionSmokeTests
 		decision = AROR_QRFSelectionPolicy.Select(recipes, profiles, ready.m_eRole, ready.m_sFactionKey, context, ready, 100);
 		passed = Check(!decision.m_Recipe, "Late arrival rejected") && passed;
 		ready.m_iArrivalSeconds = 60;
-		AROR_QRFReadinessSnapshot limited = ready.WithRuntimeCapacity(3, 128, 10);
+		AROR_QRFAvailabilitySnapshot limited = ready.WithRuntimeCapacity(3, 128, 10);
 		decision = AROR_QRFSelectionPolicy.Select(recipes, profiles, ready.m_eRole, ready.m_sFactionKey, context, limited, 100);
 		passed = Check(!decision.m_Recipe && ready.m_iFreeGroups == 20, "Runtime limits without mutating provider snapshot") && passed;
 		passed = Check(limited.m_aStock.Count() == ready.m_aStock.Count(), "Runtime snapshot retains all stock entries") && passed;
@@ -83,7 +83,7 @@ class AROR_QRFSelectionSmokeTests
 	}
 	protected static AROR_GroundQRFRecipe Recipe(string id, int tier, array<string> elements)
 	{
-		AROR_GroundQRFRecipe recipe = new AROR_GroundQRFRecipe();
+		AROR_GroundQRFRecipe recipe = AROR_GroundQRFRecipe.CreateForScript();
 		recipe.m_sId = id;
 		recipe.m_iLevel = tier;
 		recipe.m_eRole = AROR_EFactionRole.INVADERS;
@@ -94,7 +94,7 @@ class AROR_QRFSelectionSmokeTests
 	}
 	protected static AROR_ForceProfile Profile(string id, AROR_EForceType type, int budget)
 	{
-		AROR_ForceProfile profile = new AROR_ForceProfile();
+		AROR_ForceProfile profile = AROR_ForceProfile.CreateForScript();
 		profile.m_sId = id;
 		profile.m_eType = type;
 		profile.m_eRole = AROR_EFactionRole.INVADERS;

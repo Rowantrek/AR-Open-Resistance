@@ -76,17 +76,20 @@ class AROR_DefenceLayout
 		return ordinal * 45;
 	}
 	//! A point check is insufficient: sample the complete prospective wall/defence footprint.
-	static bool TerrainFits(BaseWorld world, vector center, float halfExtent, float maxRelief, out float relief, float yaw = 0)
+	//! A positive halfDepth makes the footprint rectangular (local front-to-back), otherwise it is square.
+	static bool TerrainFits(BaseWorld world, vector center, float halfExtent, float maxRelief, out float relief, float yaw = 0, float halfDepth = 0)
 	{
 		float low = float.MAX;
 		float high = -float.MAX;
 		float angle = yaw * Math.DEG2RAD;
+		if (halfDepth <= 0)
+			halfDepth = halfExtent;
 		for (int x = -3; x <= 3; x++)
 		{
 			for (int z = -3; z <= 3; z++)
 			{
 				float dx = x * halfExtent / 3;
-				float dz = z * halfExtent / 3;
+				float dz = z * halfDepth / 3;
 				float px = center[0] + dx * Math.Cos(angle) + dz * Math.Sin(angle);
 				float pz = center[2] - dx * Math.Sin(angle) + dz * Math.Cos(angle);
 				float height = world.GetSurfaceY(px, pz);
@@ -107,23 +110,35 @@ class AROR_DefenceLayout
 	{
 		if (attempt == 0)
 			return vector.Zero;
-		float angle = (attempt - 1) * 45 * Math.DEG2RAD;
-		return Vector(Math.Sin(angle) * 1.5, 0, Math.Cos(angle) * 1.5);
+		float angle = Math.Mod(attempt - 1, 8) * 45 * Math.DEG2RAD;
+		int ring = Math.Min(3, (attempt - 1) / 8 + 1);
+		return Vector(Math.Sin(angle) * ring * 1.5, 0, Math.Cos(angle) * ring * 1.5);
 	}
 	static bool ClearMGArc(BaseWorld world, vector point, float yaw)
 	{
 		for (int ray = 0; ray < 3; ray++)
 		{
 			float angle = (yaw + (ray - 1) * 15) * Math.DEG2RAD;
+			vector direction = Vector(Math.Sin(angle), 0, Math.Cos(angle));
 			TraceParam trace = new TraceParam();
 			trace.Start = point + Vector(0, 1.4, 0);
-			trace.End = trace.Start + Vector(Math.Sin(angle), 0, Math.Cos(angle)) * 20;
+			trace.End = trace.Start + direction * 20;
 			trace.Flags = TraceFlags.WORLD | TraceFlags.ENTS | TraceFlags.VISIBILITY;
 			if (world.TraceMove(trace, null) < 1)
+				return false;
+			// Tripod guns fire from about half a metre: even low sandbags right in front block them. Props only,
+			// so rising terrain further out does not reject an otherwise usable pit.
+			TraceParam low = new TraceParam();
+			low.Start = point + Vector(0, TRIPOD_HEIGHT, 0);
+			low.End = low.Start + direction * TRIPOD_CHECK_DISTANCE;
+			low.Flags = TraceFlags.ENTS | TraceFlags.VISIBILITY;
+			if (world.TraceMove(low, null) < 1)
 				return false;
 		}
 		return true;
 	}
+	static const float TRIPOD_HEIGHT = 0.6;			//!< Approximate muzzle height of a tripod static gun
+	static const float TRIPOD_CHECK_DISTANCE = 8;	//!< Covers the gun pit and its perimeter wall
 	//! Read-only editor relocation search: sixteen 25m rings, eight bearings per ring.
 	static vector SiteSearchOffset(int candidate)
 	{

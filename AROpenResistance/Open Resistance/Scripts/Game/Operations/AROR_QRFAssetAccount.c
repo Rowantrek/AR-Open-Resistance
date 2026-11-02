@@ -3,6 +3,7 @@ class AROR_QRFAssetAccount
 {
 	IEntity m_Entity;
 	int m_iValue;
+	int m_iPackageIndex = -1;
 	bool m_bVehicle;
 	bool m_bSettled;
 	string m_sFaction;

@@ -33,6 +33,10 @@ class AROR_QRFSpotting
 	{
 		return distance > 1 && distance <= range && alignment >= minimumDot;
 	}
+	static bool IsAircraftKind(int kind)
+	{
+		return kind == 3 || kind == 4;
+	}
 	protected AROR_QRFSighting Find(IEntity entity)
 	{
 		foreach (AROR_QRFSighting report : m_aSightings)
@@ -163,7 +167,7 @@ class AROR_QRFSpotting
 			direction.Normalize();
 			delta.Normalize();
 			float range = groundRange;
-			if (kinds[vehicleIndex] >= 3)
+			if (IsAircraftKind(kinds[vehicleIndex]))
 				range = airRange;
 			if (!InView(distance, vector.Dot(direction, delta), range, minimumDot))
 				continue;

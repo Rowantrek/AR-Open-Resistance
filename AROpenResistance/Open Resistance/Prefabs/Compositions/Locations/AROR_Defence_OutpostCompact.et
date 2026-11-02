@@ -67,86 +67,6 @@ GenericEntity : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
    }
    coords -5.833333 0 14
   }
-  GenericEntity AROR_OutpostCompact_Wall_0_4 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
-   ID "6D6793B21E747981"
-   components {
-    Hierarchy {
-    }
-    AROR_DefenceWallComponent {
-    }
-   }
-   coords -3.5 0 14
-  }
-  GenericEntity AROR_OutpostCompact_Wall_0_5 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
-   ID "D63472290E5B1FCF"
-   components {
-    Hierarchy {
-    }
-    AROR_DefenceWallComponent {
-    }
-   }
-   coords -1.166667 0 14
-  }
-  GenericEntity AROR_OutpostCompact_Wall_0_6 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
-   ID "A000BB4F10773B28"
-   components {
-    Hierarchy {
-    }
-    AROR_DefenceWallComponent {
-    }
-   }
-   coords 1.166667 0 14
-  }
-  GenericEntity AROR_OutpostCompact_Wall_0_7 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
-   ID "8FC52135D54EC0C0"
-   components {
-    Hierarchy {
-    }
-    AROR_DefenceWallComponent {
-    }
-   }
-   coords 3.5 0 14
-  }
-  GenericEntity AROR_OutpostCompact_Wall_0_8 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
-   ID "64BE795F82673764"
-   components {
-    Hierarchy {
-    }
-    AROR_DefenceWallComponent {
-    }
-   }
-   coords 5.833333 0 14
-  }
-  GenericEntity AROR_OutpostCompact_Wall_0_9 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
-   ID "1D7A08D5382F1B0F"
-   components {
-    Hierarchy {
-    }
-    AROR_DefenceWallComponent {
-    }
-   }
-   coords 8.166667 0 14
-  }
-  GenericEntity AROR_OutpostCompact_Wall_0_10 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
-   ID "893380314CE7C91C"
-   components {
-    Hierarchy {
-    }
-    AROR_DefenceWallComponent {
-    }
-   }
-   coords 10.5 0 14
-  }
-  GenericEntity AROR_OutpostCompact_Wall_0_11 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
-   ID "9CB6F398F78BF66B"
-   components {
-    Hierarchy {
-    }
-    AROR_DefenceWallComponent {
-    }
-   }
-   coords 12.833333 0 14
-  }
   GenericEntity AROR_OutpostCompact_Wall_1_0 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
    ID "5767F1CCE3576263"
    components {
@@ -255,28 +175,6 @@ GenericEntity : "{3D1925CD1FA54115}Prefabs/Locations/AROR_Location_Outpost.et" {
     }
    }
    coords 14 0 8.166667
-   angles 0 90 0
-  }
-  GenericEntity AROR_OutpostCompact_Wall_1_10 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
-   ID "68B64CC9C31F3F52"
-   components {
-    Hierarchy {
-    }
-    AROR_DefenceWallComponent {
-    }
-   }
-   coords 14 0 10.5
-   angles 0 90 0
-  }
-  GenericEntity AROR_OutpostCompact_Wall_1_11 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
-   ID "AE211E1E68140B11"
-   components {
-    Hierarchy {
-    }
-    AROR_DefenceWallComponent {
-    }
-   }
-   coords 14 0 12.833333
    angles 0 90 0
   }
   GenericEntity AROR_OutpostCompact_Wall_2_0 : "{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et" {
