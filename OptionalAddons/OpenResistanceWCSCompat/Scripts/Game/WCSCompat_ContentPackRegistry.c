@@ -9,6 +9,6 @@ modded class AROR_ContentPackRegistry
 	{
 		super.GetExtraPackPaths(outPacks);
 
-		outPacks.Insert("{C24A4FD0486704D7}Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf");
+		outPacks.Insert("{6EA21AC0A21CF36C}Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf");
 	}
 }
