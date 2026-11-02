@@ -33,6 +33,8 @@ class AROR_SetupApp : AROR_PhonePooledApp
 	protected static const float EXPAND_WIDTH = 220;
 	protected static const int PACK_VISIBLE_ROWS = 5;
 	protected static const float PACK_ROW_HEIGHT = 52;
+	protected static const float DROPDOWN_TEXT_SIZE = 19;
+	protected static const float DROPDOWN_LINE_HEIGHT = 25;
 	protected static const float PACK_SCROLLBAR_WIDTH = 44;
 	protected static const int SETTING_ROWS = 7;
 
@@ -598,7 +600,15 @@ class AROR_SetupApp : AROR_PhonePooledApp
 				fieldBorder = AROR_UIColors.REBEL;
 
 			CardColoured(x + 24, y + 90, cardWidth - 48, 56, fieldBorder, AROR_UIColors.SURFACE);
-			Text(x + 44, y + 103, cardWidth - 120, 32, 22, Upper(rolePresets[current].GetName()), C(AROR_UIColors.REBEL), true);
+			// A long army name wraps onto two smaller lines, centred in the field
+			string armyName = Upper(rolePresets[current].GetName());
+			float nameWidth = cardWidth - 120;
+			float nameSize = 22;
+			if (LineCount(armyName, nameWidth, nameSize) > 1)
+				nameSize = 16;
+
+			float nameHeight = LineCount(armyName, nameWidth, nameSize) * nameSize * 1.25;
+			Text(x + 44, y + 90 + (56 - nameHeight) * 0.5, nameWidth, nameHeight, nameSize, armyName, C(AROR_UIColors.REBEL), true);
 			TextRight(x + cardWidth - 44, y + 104, 20, "V", C(AROR_UIColors.TEXT_MUTED), true);
 			HitArea(x + 24, y + 90, cardWidth - 48, 56, "dropdown:" + role);
 
@@ -644,9 +654,18 @@ class AROR_SetupApp : AROR_PhonePooledApp
 		float listX = LEFT + roleIndex * (cardWidth + 20) + 24;
 		float listY = CONTENT_TOP + 28 + 90 + 58;
 		float listWidth = cardWidth - 48;
-		float rowHeight = 50;
+		float labelWidth = listWidth - 40;
 		string chosen = draft.GetPresetId(m_iOpenRole);
-		Button(listX - 1, listY - 1, listWidth + 2, rolePresets.Count() * rowHeight + 1, string.Empty, string.Empty, C(AROR_UIColors.LINE_STRONG), C(AROR_UIColors.LINE_STRONG), 10);
+
+		float totalHeight;
+		foreach (AROR_FactionPreset preset : rolePresets)
+		{
+			totalHeight += GetDropdownRowHeight(Upper(preset.GetName()), labelWidth);
+		}
+
+		Button(listX - 1, listY - 1, listWidth + 2, totalHeight + 1, string.Empty, string.Empty, C(AROR_UIColors.LINE_STRONG), C(AROR_UIColors.LINE_STRONG), 10);
+
+		float rowY = listY;
 		foreach (int i, AROR_FactionPreset preset : rolePresets)
 		{
 			int fill = AROR_UIColors.SURFACE_RAISED;
@@ -657,8 +676,28 @@ class AROR_SetupApp : AROR_PhonePooledApp
 				text = AROR_UIColors.REBEL;
 			}
 
-			Button(listX, listY + i * rowHeight, listWidth, rowHeight - 1, Upper(preset.GetName()), "pickpreset:" + m_iOpenRole + ":" + i, C(fill), C(text), 19, false);
+			string label = Upper(preset.GetName());
+			float rowHeight = GetDropdownRowHeight(label, labelWidth);
+			Button(listX, rowY, listWidth, rowHeight - 1, string.Empty, "pickpreset:" + m_iOpenRole + ":" + i, C(fill), C(text), DROPDOWN_TEXT_SIZE, false);
+
+			// Button labels are one line, so a name that wraps is drawn as one label-only button per line over the row
+			array<string> lines = {};
+			Wrap(label, labelWidth, DROPDOWN_TEXT_SIZE).Split("\n", lines, false);
+			float lineY = rowY + (rowHeight - 1 - lines.Count() * DROPDOWN_LINE_HEIGHT) * 0.5;
+			foreach (int l, string line : lines)
+			{
+				Button(listX, lineY + l * DROPDOWN_LINE_HEIGHT, listWidth, DROPDOWN_LINE_HEIGHT, line, string.Empty, Color.FromRGBA(0, 0, 0, 0), C(text), DROPDOWN_TEXT_SIZE, false);
+			}
+
+			rowY += rowHeight;
 		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A dropdown row is 50 high, taller when its name wraps onto more lines
+	protected float GetDropdownRowHeight(string label, float labelWidth)
+	{
+		return Math.Max(50, LineCount(label, labelWidth, DROPDOWN_TEXT_SIZE) * DROPDOWN_LINE_HEIGHT + 20);
 	}
 
 	//------------------------------------------------------------------------------------------------
