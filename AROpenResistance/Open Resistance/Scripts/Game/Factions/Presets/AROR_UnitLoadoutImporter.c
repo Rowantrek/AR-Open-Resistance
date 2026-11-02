@@ -65,6 +65,7 @@ class AROR_LoadoutImportUnit
 	string m_sPresetId;
 	AROR_EUnitType m_eType;
 	ResourceName m_sPrefab;
+	bool m_bAlternate;	//!< An extra kit for a type that has a main one (see GetAlternateUnitPrefabs)
 	IEntity m_Entity;
 	ref array<ref AROR_LoadoutImportClothing> m_aClothing = {};
 	ref array<ref AROR_LoadoutImportWeapon> m_aWeapons = {};
@@ -195,6 +196,15 @@ class AROR_UnitLoadoutImporter
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Extension point for extender mods (inside #ifdef WORKBENCH): override, call super, then add one entry to each
+	//! list for every alternate kit of one of your presets: the unit type and the character to read it from. Each is
+	//! written as another readiness 1 loadout of that type's unit (equal weight), so the unit is picked among them at
+	//! random. A type can have several alternates; the unit itself still comes from the preset (or GetExtraUnitPrefabs).
+	protected void GetAlternateUnitPrefabs(string presetId, notnull array<AROR_EUnitType> outTypes, notnull array<ResourceName> outPrefabs)
+	{
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! The unit types this importer handles: infantry, crew and pilots
 	protected static void GetInfantryTypes(notnull array<AROR_EUnitType> outTypes)
 	{
@@ -249,25 +259,41 @@ class AROR_UnitLoadoutImporter
 				if (prefab.IsEmpty())
 					continue;
 
-				string typeName = typename.EnumToString(AROR_EUnitType, type);
-				IEntity entity = SpawnOutOfTheWay(prefab);
-				if (!entity)
-				{
-					Print(string.Format("[AROR] Import unit loadouts: %1 %2 could not be spawned from %3", presetId, typeName, prefab), LogLevel.WARNING);
-					continue;
-				}
+				SpawnImportUnit(presetId, type, prefab, false);
+			}
 
-				AROR_LoadoutImportUnit importUnit = new AROR_LoadoutImportUnit();
-				importUnit.m_sPresetId = presetId;
-				importUnit.m_eType = type;
-				importUnit.m_sPrefab = prefab;
-				importUnit.m_Entity = entity;
-				m_aUnits.Insert(importUnit);
+			array<AROR_EUnitType> alternateTypes = {};
+			array<ResourceName> alternatePrefabs = {};
+			GetAlternateUnitPrefabs(presetId, alternateTypes, alternatePrefabs);
+			foreach (int index, AROR_EUnitType alternateType : alternateTypes)
+			{
+				if (index < alternatePrefabs.Count() && !alternatePrefabs[index].IsEmpty())
+					SpawnImportUnit(presetId, alternateType, alternatePrefabs[index], true);
 			}
 		}
 
 		Print(string.Format("[AROR] Import unit loadouts: spawned %1 characters; reading their kit shortly", m_aUnits.Count()), LogLevel.NORMAL);
 		GetGame().GetCallqueue().CallLater(ReadUnits, SETTLE_DELAY_MS);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Spawns the character and queues it to be read; a character that cannot be spawned is skipped
+	protected void SpawnImportUnit(string presetId, AROR_EUnitType type, ResourceName prefab, bool alternate)
+	{
+		IEntity entity = SpawnOutOfTheWay(prefab);
+		if (!entity)
+		{
+			Print(string.Format("[AROR] Import unit loadouts: %1 %2 could not be spawned from %3", presetId, typename.EnumToString(AROR_EUnitType, type), prefab), LogLevel.WARNING);
+			return;
+		}
+
+		AROR_LoadoutImportUnit importUnit = new AROR_LoadoutImportUnit();
+		importUnit.m_sPresetId = presetId;
+		importUnit.m_eType = type;
+		importUnit.m_sPrefab = prefab;
+		importUnit.m_bAlternate = alternate;
+		importUnit.m_Entity = entity;
+		m_aUnits.Insert(importUnit);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -573,8 +599,7 @@ class AROR_UnitLoadoutImporter
 				}
 				else if (unit)
 				{
-					AppendLoadout(unit, output);
-					written++;
+					written += AppendLoadouts(unit, output);
 				}
 			}
 
@@ -599,7 +624,7 @@ class AROR_UnitLoadoutImporter
 	{
 		foreach (AROR_LoadoutImportUnit unit : m_aUnits)
 		{
-			if (unit.m_sPresetId == presetId && unit.m_eType == type)
+			if (unit.m_sPresetId == presetId && unit.m_eType == type && !unit.m_bAlternate)
 				return unit;
 		}
 
@@ -614,13 +639,13 @@ class AROR_UnitLoadoutImporter
 		int added;
 		foreach (AROR_LoadoutImportUnit unit : m_aUnits)
 		{
-			if (unit.m_sPresetId != presetId || listedTypes.Contains(unit.m_eType))
+			if (unit.m_bAlternate || unit.m_sPresetId != presetId || listedTypes.Contains(unit.m_eType))
 				continue;
 
 			output.Insert("  AROR_FactionPresetUnit {");
 			output.Insert(string.Format("   m_sPrefab \"%1\"", unit.m_sPrefab));
 			output.Insert("   m_eType " + typename.EnumToString(AROR_EUnitType, unit.m_eType));
-			AppendLoadout(unit, output);
+			AppendLoadouts(unit, output);
 			output.Insert("  }");
 			listedTypes.Insert(unit.m_eType);
 			added++;
@@ -630,10 +655,31 @@ class AROR_UnitLoadoutImporter
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Adds the unit's readiness 1 loadout as .conf text, indented to sit inside its unit block
-	protected void AppendLoadout(AROR_LoadoutImportUnit unit, notnull array<string> output)
+	//! Adds the unit's loadouts block: its readiness 1 loadout, then one more for each alternate of the same preset and
+	//! type (all at readiness 1 and the default weight, so they are equally likely). Returns how many loadouts it wrote.
+	protected int AppendLoadouts(AROR_LoadoutImportUnit unit, notnull array<string> output)
 	{
 		output.Insert("   m_aLoadouts {");
+		AppendLoadout(unit, output);
+		int count = 1;
+
+		foreach (AROR_LoadoutImportUnit alternate : m_aUnits)
+		{
+			if (alternate.m_bAlternate && alternate.m_sPresetId == unit.m_sPresetId && alternate.m_eType == unit.m_eType)
+			{
+				AppendLoadout(alternate, output);
+				count++;
+			}
+		}
+
+		output.Insert("   }");
+		return count;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Adds one readiness 1 loadout as .conf text, indented to sit inside a unit's m_aLoadouts
+	protected void AppendLoadout(AROR_LoadoutImportUnit unit, notnull array<string> output)
+	{
 		output.Insert("    AROR_UnitLoadout {");
 
 		if (!unit.m_aClothing.IsEmpty())
@@ -677,7 +723,6 @@ class AROR_UnitLoadoutImporter
 		AppendItems("     ", "m_aItems", unit.m_aItems, output);
 
 		output.Insert("    }");
-		output.Insert("   }");
 	}
 
 	//------------------------------------------------------------------------------------------------
