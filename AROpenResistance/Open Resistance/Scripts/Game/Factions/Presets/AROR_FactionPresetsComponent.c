@@ -524,12 +524,47 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 
 		Print(string.Format("[AROR] Loaded %1 faction presets", m_aPresets.Count()), LogLevel.NORMAL);
 
+		LoadAdditions(registry);
+
 		m_RoleBases = AROR_RoleBaseCharacters.Cast(LoadConfig(m_sRoleBaseCharacters));
 		if (!m_RoleBases)
 			Print(string.Format("[AROR] Role base characters '%1' could not be loaded; AI falls back to preset unit prefabs", m_sRoleBaseCharacters), LogLevel.ERROR);
 
 		CheckUnits();
 		CheckRoleBases();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Attaches the extra units and vehicles other addons registered to the presets they target. An addition whose
+	//! preset is not loaded (its addon is not in the game) is skipped.
+	protected void LoadAdditions(notnull AROR_FactionPresetRegistry registry)
+	{
+		array<ResourceName> paths = {};
+		registry.GetAdditionPaths(paths);
+
+		int added;
+		foreach (ResourceName path : paths)
+		{
+			AROR_FactionPresetAddition addition = AROR_FactionPresetAddition.Cast(LoadConfig(path));
+			if (!addition)
+			{
+				Print(string.Format("[AROR] Faction preset addition '%1' could not be loaded", path), LogLevel.ERROR);
+				continue;
+			}
+
+			AROR_FactionPreset target = FindPreset(addition.GetPresetId());
+			if (!target)
+			{
+				Print(string.Format("[AROR] Faction preset addition '%1' targets preset '%2', which is not loaded; skipped", path, addition.GetPresetId()), LogLevel.NORMAL);
+				continue;
+			}
+
+			target.AddAddition(addition, path);
+			added++;
+		}
+
+		if (!paths.IsEmpty())
+			Print(string.Format("[AROR] Applied %1 of %2 faction preset additions", added, paths.Count()), LogLevel.NORMAL);
 	}
 
 	//------------------------------------------------------------------------------------------------

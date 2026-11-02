@@ -24,6 +24,9 @@ class AROR_FactionPreset
 	[Attribute(desc: "Empty vehicles (no crew)", category: "Vehicles")]
 	protected ref array<ref AROR_FactionPresetVehicle> m_aVehicles;
 
+	//! Entries other addons add to this preset (see AROR_FactionPresetAddition), in registration order; not part of the config
+	protected ref array<ref AROR_FactionPresetAddition> m_aAdditions = {};
+
 	//------------------------------------------------------------------------------------------------
 	string GetId()
 	{
@@ -116,6 +119,24 @@ class AROR_FactionPreset
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Adds another addon's extra units and vehicles to this preset (source names the addition in logs). The preset's own
+	//! entries and earlier additions win: a unit type this preset already has is logged and the new unit never used.
+	void AddAddition(notnull AROR_FactionPresetAddition addition, string source)
+	{
+		addition.Validate(source);
+
+		array<AROR_FactionPresetEntry> units = {};
+		addition.CollectEntries(AROR_EFactionPresetCategory.UNITS, units);
+		foreach (AROR_FactionPresetEntry entry : units)
+		{
+			if (entry.IsKnownType() && GetUnit(entry.GetTypeValue()))
+				Print(string.Format("[AROR] Faction preset '%1': addition '%2' lists unit type %3, which the preset already has; the existing unit is used", m_sId, source, entry.GetTypeName()), LogLevel.WARNING);
+		}
+
+		m_aAdditions.Insert(addition);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Logs configuration mistakes: missing ID or roles, unknown types, duplicate unit types, empty prefabs, loadouts.
 	//! Returns false if the preset is unusable.
 	bool Validate(string source)
@@ -173,8 +194,20 @@ class AROR_FactionPreset
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The one place that maps a category to its list; everything else works on the shared entry type
+	//! The one place that maps a category to its list; everything else works on the shared entry type. The preset's own
+	//! entries come first, then those of its additions in order.
 	protected void CollectEntries(AROR_EFactionPresetCategory category, notnull array<AROR_FactionPresetEntry> outEntries)
+	{
+		CollectOwnEntries(category, outEntries);
+
+		foreach (AROR_FactionPresetAddition addition : m_aAdditions)
+		{
+			addition.CollectEntries(category, outEntries);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void CollectOwnEntries(AROR_EFactionPresetCategory category, notnull array<AROR_FactionPresetEntry> outEntries)
 	{
 		switch (category)
 		{

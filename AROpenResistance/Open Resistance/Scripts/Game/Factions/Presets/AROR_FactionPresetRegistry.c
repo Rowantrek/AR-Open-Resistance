@@ -16,6 +16,28 @@ class AROR_FactionPresetRegistry
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Extension point for extender mods: override, call super, then Insert each addition config path into outAdditions
+	//! (e.g. outAdditions.Insert("{GUID}Configs/FactionPresets/MyAddition.conf")). An addition (AROR_FactionPresetAddition)
+	//! adds units and vehicles to a preset that another addon owns; any number of addons can add to the same preset.
+	void GetExtraAdditionPaths(notnull array<ResourceName> outAdditions)
+	{
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Adds the addition config paths to outAdditions, each once, in the order extender mods registered them
+	void GetAdditionPaths(notnull array<ResourceName> outAdditions)
+	{
+		array<ResourceName> paths = {};
+		GetExtraAdditionPaths(paths);
+
+		foreach (ResourceName path : paths)
+		{
+			if (!path.IsEmpty() && !outAdditions.Contains(path))
+				outAdditions.Insert(path);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Adds the preset config paths to outPresets, each once: the config list, then the presets extender mods registered
 	void GetPresetPaths(notnull array<ResourceName> outPresets)
 	{

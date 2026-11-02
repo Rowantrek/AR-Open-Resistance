@@ -74,6 +74,32 @@ AROR_FactionPreset {
 }
 ```
 
+## Adding to another addon's preset
+
+To give a preset someone else made extra units or vehicles (say, pilots for an army that has none), don't copy the preset or override its config. Write an **addition**: a small config that names the preset's ID and lists only what you add. Any number of addons can each add to the same preset.
+
+1. **Create the config.** Right-click a folder in the Resource Browser → **Create → Config File**, pick the class `AROR_FactionPresetAddition`, and name it e.g. `MyMod_RHSAddition.conf`.
+2. **Set the preset ID** to the target's ID (e.g. `RHS_USAF_FORECON`) and add units and vehicles exactly as in a preset. Units need [loadouts](#unit-loadouts) like any unit.
+3. **Register it** from script, like a preset:
+   ```
+   [BaseContainerProps(configRoot: true)]
+   modded class AROR_FactionPresetRegistry
+   {
+   	override void GetExtraAdditionPaths(notnull array<ResourceName> outAdditions)
+   	{
+   		super.GetExtraAdditionPaths(outAdditions);
+
+   		outAdditions.Insert("{GUID}Configs/FactionPresets/MyMod_RHSAddition.conf");
+   	}
+   }
+   ```
+
+How additions combine:
+
+- **The preset's own entries come first, then additions in registration order.** A preset has at most one unit per type, so an addition cannot replace a unit the preset (or an earlier addition) already has. The log warns and the existing unit is used. Vehicles just add up.
+- **Skipped when the preset isn't loaded.** If the target's addon isn't in the game, the addition is skipped with a log line, so it is safe to ship alongside an optional mod.
+- **Items stay in content packs.** An addition's vehicles still need an enabled [content pack](Content-Packs) that offers them. To swap a prefab the preset already lists, use a pack's replacements instead.
+
 ## Unit characters
 
 Every AI soldier spawns as its **role's base character**, a gear-less character, and is then dressed from its unit's [loadout](#unit-loadouts). This happens in garrisons, QRFs and attacks, missions and High Command squads. Those systems ask your preset for a unit **type** (RIFLEMAN, CREW…), never for a character prefab. So:

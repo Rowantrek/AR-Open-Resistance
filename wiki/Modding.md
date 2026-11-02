@@ -24,5 +24,6 @@ The two work together. A **faction preset** says *which units and vehicles an ar
 Both systems have a registry in the core (`Configs/FactionPresets/AROR_FactionPresetRegistry.conf` and `Configs/ContentPacks/AROR_ContentPackRegistry.conf`) that lists the core's own presets and packs. Do **not** override these configs to add yours: when several addons override the same file, only one of them wins. Instead, register from script. Scripts from all addons combine, so any number of addons can each add any number of presets and packs:
 
 - Presets: `modded class AROR_FactionPresetRegistry`, overriding `GetExtraPresetPaths` (see [Faction Presets](Faction-Presets#making-a-preset))
+- Additions to another addon's preset: the same registry, overriding `GetExtraAdditionPaths` (see [Faction Presets](Faction-Presets#adding-to-another-addons-preset))
 - Content packs: `modded class AROR_ContentPackRegistry`, overriding `GetExtraPackPaths` (see [Content Packs](Content-Packs#making-a-pack))
 

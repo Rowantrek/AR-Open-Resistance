@@ -197,6 +197,7 @@ Core factions live in `AROR_FactionManager.et`. The three military factions are 
 - Planned: garrisons and QRFs read their vehicles and static weapons from presets instead of their own lists. Outpost stores were stocked from the preset's items and are now unstocked until they get a new item source (Content Packs or the army's loadouts).
 
 - `AROR_LoadoutManager.et` offers only Resistance loadouts; `AROR_Character_Resistance_Base.et` is the player character.
+- **Preset additions** (`AROR_FactionPresetAddition`): an extender mod can add units and vehicles to a preset another addon owns, with a small config naming the target preset ID, registered from script by overriding `GetExtraAdditionPaths` on the registry. Any number of addons can add to the same preset. The preset applies them on load: its own entries come first, then additions in registration order, so a unit type the preset already has is never replaced (logged). An addition whose target preset is not loaded is skipped.
 - Extension points: extender mods add presets (new `.conf` files registered from script by overriding `GetExtraPresetPaths` on the registry in a `modded class`, so several addons can each add several without sharing a config), give units loadouts in their own presets, and override the default unit characters config. The categories and their types are a fixed core list; entries with any other type are ignored. Server admins or extenders point a role at another faction key without touching core code.
 
 ### Content Packs — In progress
