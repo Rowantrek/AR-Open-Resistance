@@ -10,5 +10,6 @@ modded class AROR_FactionPresetRegistry
 		super.GetExtraPresetPaths(outPresets);
 
 		outPresets.Insert("{0B9D15CDFDB3EDDF}Configs/FactionPresets/AROR_Preset_RHS_USAF_FORECON.conf");
+		outPresets.Insert("{264C9015AB136907}Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf");
 	}
 }
