@@ -20,7 +20,9 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		string faction;
 		if (roles)
 			faction = roles.GetFactionKey(role);
-		return AROR_ResponsePolicy.Select(m_aForceProfiles, m_aGroundQRFRecipes, role, faction, type, readiness, crackdown, m_bAllowAirborneResponses);
+		array<ref AROR_ForceProfile> availableProfiles = {};
+		GetAvailableProfiles(availableProfiles);
+		return AROR_ResponsePolicy.Select(availableProfiles, m_aGroundQRFRecipes, role, faction, type, readiness, crackdown, m_bAllowAirborneResponses);
 	}
 
 	//! Every machine reads the same authored catalogue. Debug selections ignore campaign
@@ -32,12 +34,14 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		if (!roles || !m_aForceProfiles || tier < 1 || tier > 5)
 			return;
 		string faction = roles.GetFactionKey(role);
+		array<ref AROR_ForceProfile> availableProfiles = {};
+		GetAvailableProfiles(availableProfiles);
 		if (m_aGroundQRFRecipes)
 		{
 			foreach (AROR_GroundQRFRecipe recipe : m_aGroundQRFRecipes)
 			{
 				array<AROR_ForceProfile> elements = {};
-				if (!recipe || (recipe.m_eResponseType == AROR_EResponseType.AIR_GROUND && (!m_bAllowJointResponses || !m_bAllowAirborneResponses || !m_bQRFTacticalCommander)) || !recipe.Resolve(m_aForceProfiles, role, faction, elements, recipe.m_iMaximumReadinessLevel))
+				if (!recipe || (recipe.m_eResponseType == AROR_EResponseType.AIR_GROUND && (!m_bAllowJointResponses || !m_bAllowAirborneResponses || !m_bQRFTacticalCommander)) || !recipe.Resolve(availableProfiles, role, faction, elements, recipe.m_iMaximumReadinessLevel))
 					continue;
 				AROR_MarsEntry ground = new AROR_MarsEntry();
 				ground.m_sKey = "recipe:" + recipe.m_sId;
@@ -51,7 +55,7 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			return;
 		foreach (AROR_ForceProfile profile : m_aForceProfiles)
 		{
-			if (!profile || !profile.m_bEnabled || !profile.IsValid() || profile.m_eRole != role || profile.m_sFactionKey != faction)
+			if (!profile || !profile.m_bEnabled || !profile.IsValid() || !profile.HasPresetVehicles() || profile.m_eRole != role || profile.m_sFactionKey != faction)
 				continue;
 			if (profile.m_iQRFWeight <= 0 || (!profile.HasNativeExecutor() && !(m_bAllowAirborneResponses && profile.m_eType == AROR_EForceType.AIRBORNE)))
 				continue;
@@ -274,7 +278,9 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		if (origin.GetControllingRole() != AROR_EFactionRole.INVADERS || !IsLaunchPositionSafe(origin.GetCenter(), target.GetCenter()))
 			return rejected;
 		AROR_QRFAvailabilitySnapshot limited = snapshot.WithRuntimeCapacity(m_iMaxGroups - GetReservedGroups(), m_iMaxMembers - GetReservedMembers(), m_iMaxVehicles - GetReservedVehicles());
-		return AROR_QRFSelectionPolicy.Select(m_aGroundQRFRecipes, m_aForceProfiles, AROR_EFactionRole.INVADERS, commander.GetFactionKey(), context, limited, now);
+		array<ref AROR_ForceProfile> availableProfiles = {};
+		GetAvailableProfiles(availableProfiles);
+		return AROR_QRFSelectionPolicy.Select(m_aGroundQRFRecipes, availableProfiles, AROR_EFactionRole.INVADERS, commander.GetFactionKey(), context, limited, now);
 	}
 	[Attribute("4", desc: "Maximum reserved ground vehicles across both roles")]
 	protected int m_iMaxVehicles;
@@ -710,13 +716,26 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			reservation.m_iReservedVehicles--;
 	}
 
+	//! Filter current campaign equipment here; the weighted/recipe policy helpers remain pure.
+	protected void GetAvailableProfiles(notnull array<ref AROR_ForceProfile> available)
+	{
+		available.Clear();
+		if (!m_aForceProfiles)
+			return;
+		foreach (AROR_ForceProfile profile : m_aForceProfiles)
+		{
+			if (profile && profile.HasPresetVehicles())
+				available.Insert(profile);
+		}
+	}
+
 	protected AROR_ForceProfile SelectProfile(AROR_Operation operation, AROR_Commander commander)
 	{
 		if (!operation.m_sRequestedProfileId.IsEmpty())
 		{
 			foreach (AROR_ForceProfile requested : m_aForceProfiles)
 			{
-				if (!requested || requested.m_sId != operation.m_sRequestedProfileId)
+				if (!requested || !requested.HasPresetVehicles() || requested.m_sId != operation.m_sRequestedProfileId)
 					continue;
 				if (operation.m_bUseResponseMetrics && !AROR_ResponsePolicy.IsProfileUnlocked(requested, operation.m_iPoolReadinessLevel))
 					continue;
@@ -731,7 +750,7 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		{
 			foreach (AROR_ForceProfile bound : m_aForceProfiles)
 			{
-				if (bound && bound.m_sId == operation.GetForceProfileId() && AROR_ForcePool.GetEligibleWeight(bound, commander.GetRole(), commander.GetFactionKey(), operation.GetType(), m_iMaxGroups - GetReservedGroups(), m_iMaxMembers - GetReservedMembers(), m_iMaxVehicles - GetReservedVehicles(), operation.GetResponseLevel()) > 0)
+				if (bound && bound.HasPresetVehicles() && bound.m_sId == operation.GetForceProfileId() && AROR_ForcePool.GetEligibleWeight(bound, commander.GetRole(), commander.GetFactionKey(), operation.GetType(), m_iMaxGroups - GetReservedGroups(), m_iMaxMembers - GetReservedMembers(), m_iMaxVehicles - GetReservedVehicles(), operation.GetResponseLevel()) > 0)
 					return bound;
 			}
 			return null;
@@ -742,7 +761,7 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		{
 			foreach (AROR_ForceProfile forced : m_aForceProfiles)
 			{
-				if (forced && forced.m_sId == m_sWorkbenchForceProfileId && forced.m_eRole == commander.GetRole())
+				if (forced && forced.HasPresetVehicles() && forced.m_sId == m_sWorkbenchForceProfileId && forced.m_eRole == commander.GetRole())
 				{
 					candidates.Insert(forced);
 					break;
@@ -752,8 +771,7 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 #endif
 		if (candidates.Count() == 0)
 		{
-			foreach (AROR_ForceProfile candidate : m_aForceProfiles)
-				candidates.Insert(candidate);
+			GetAvailableProfiles(candidates);
 		}
 		int freeGroups = m_iMaxGroups - GetReservedGroups();
 		int freeMembers = m_iMaxMembers - GetReservedMembers();
@@ -872,7 +890,9 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			poolWar = recipe.m_iMaximumReadinessLevel;
 		if (operation.m_bUseResponseMetrics)
 			poolWar = operation.m_iPoolReadinessLevel;
-		if (!recipe || !recipe.Resolve(m_aForceProfiles, operation.GetRole(), commander.GetFactionKey(), elements, poolWar))
+		array<ref AROR_ForceProfile> availableProfiles = {};
+		GetAvailableProfiles(availableProfiles);
+		if (!recipe || !recipe.Resolve(availableProfiles, operation.GetRole(), commander.GetFactionKey(), elements, poolWar))
 		{
 			FailOperation(operation, "Ground QRF recipe missing, disabled, unsupported or faction-incompatible");
 			return;
@@ -1129,7 +1149,10 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		force.m_vApproachPosition = approach;
 		ConvertReservation(reservation, profile);
 		m_aForces.Insert(force);
-		Resource vehicleResource = Resource.Load(profile.m_sVehicle);
+		ResourceName vehiclePrefab = profile.PickPresetVehicle();
+		Resource vehicleResource;
+		if (!vehiclePrefab.IsEmpty())
+			vehicleResource = Resource.Load(vehiclePrefab);
 		if (vehicleResource && vehicleResource.IsValid())
 			force.m_Vehicle = SpawnGroundVehicle(vehicleResource, launchPosition, target.GetCenter());
 		if (!force.m_Vehicle)
@@ -1137,8 +1160,12 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			FailOperation(operation, "Ground-force vehicle resource failed");
 			return;
 		}
-		// Assets and campaign factions are distinct; accept only the profile's declared source.
-		if (!force.InitializeSpawnFaction_S(force.m_Vehicle))
+		// The selected preset, rather than the profile's old native army, authorizes this newly spawned hull.
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		FactionAffiliationComponent nativeAffiliation = FactionAffiliationComponent.Cast(force.m_Vehicle.FindComponent(FactionAffiliationComponent));
+		if (nativeAffiliation)
+			force.m_sAssetFactionKey = nativeAffiliation.GetAffiliatedFactionKey();
+		if (!presets || !presets.InitializeVehicleFaction_S(force.m_Vehicle, profile.m_eRole))
 		{
 			FailOperation(operation, "Ground-force vehicle faction mismatch");
 			return;
@@ -2132,6 +2159,8 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		int available = m_Operations.GetQRFFinance().Available(role);
 		if (!minimumCapture && m_Operations.GetQRFFinance().Debt(role) > 0)
 			return null;
+		array<ref AROR_ForceProfile> availableProfiles = {};
+		GetAvailableProfiles(availableProfiles);
 		foreach (AROR_GroundQRFRecipe recipe : m_aGroundQRFRecipes)
 		{
 			bool joint = recipe && recipe.m_eResponseType == AROR_EResponseType.AIR_GROUND;
@@ -2144,7 +2173,7 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			if (minimumCapture && recipe.m_iLevel != 1)
 				continue;
 			array<AROR_ForceProfile> elements = {};
-			if (!recipe.Resolve(m_aForceProfiles, role, faction, elements, readinessLevel))
+			if (!recipe.Resolve(availableProfiles, role, faction, elements, readinessLevel))
 				continue;
 			int quote = m_Operations.QRFOverhead(recipe.m_iLevel);
 			int groups;

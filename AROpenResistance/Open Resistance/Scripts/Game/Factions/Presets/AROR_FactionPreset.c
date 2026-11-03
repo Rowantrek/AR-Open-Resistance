@@ -48,6 +48,22 @@ class AROR_FactionPreset
 	//------------------------------------------------------------------------------------------------
 	// Queries (entries with an unknown type, or whose prefab no enabled content pack offers, are never returned)
 	//------------------------------------------------------------------------------------------------
+	//! Compatibility for authored vehicle recipes: the old prefab identifies a type, never a spawn fallback.
+	//! Inspect unfiltered entries so disabling the source pack does not erase a recipe's requested type.
+	int FindVehicleType(ResourceName prefab)
+	{
+		if (prefab.IsEmpty())
+			return -1;
+		array<AROR_FactionPresetEntry> entries = {};
+		CollectEntries(AROR_EFactionPresetCategory.VEHICLES, entries);
+		foreach (AROR_FactionPresetEntry entry : entries)
+		{
+			if (entry.IsKnownType() && (entry.GetListedPrefab() == prefab || entry.GetPrefab() == prefab))
+				return entry.GetTypeValue();
+		}
+		return -1;
+	}
+
 	//! The unit of this type, or null if the preset has none
 	AROR_FactionPresetUnit GetUnit(AROR_EUnitType type)
 	{

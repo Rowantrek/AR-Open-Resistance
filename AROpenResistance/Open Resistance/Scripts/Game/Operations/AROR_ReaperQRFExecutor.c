@@ -83,7 +83,7 @@ modded class AROR_OperationExecutorComponent
 		{
 			if (!profile || profile.m_eType != AROR_EForceType.AIRBORNE || profile.m_eRole != role)
 				continue;
-			if (!profile.m_bEnabled || !profile.IsValid() || profile.GetWeight(AROR_EOperationType.QRF) <= 0 || profile.m_sFactionKey != roles.GetFactionKey(role))
+			if (!profile.m_bEnabled || !profile.IsValid() || !profile.HasPresetVehicles() || profile.GetWeight(AROR_EOperationType.QRF) <= 0 || profile.m_sFactionKey != roles.GetFactionKey(role))
 				continue;
 			if (AffordableReaperTier(profile, desired) > 0)
 				return true;
@@ -233,7 +233,7 @@ modded class AROR_OperationExecutorComponent
 				}
 				foreach (AROR_ForceProfile profile : m_aForceProfiles)
 				{
-					if (!profile || !profile.m_bEnabled || !profile.IsValid() || profile.m_eType != AROR_EForceType.AIRBORNE || profile.m_eRole != operation.GetRole() || profile.m_sFactionKey != commander.GetFactionKey())
+					if (!profile || !profile.m_bEnabled || !profile.IsValid() || !profile.HasPresetVehicles() || profile.m_eType != AROR_EForceType.AIRBORNE || profile.m_eRole != operation.GetRole() || profile.m_sFactionKey != commander.GetFactionKey())
 						continue;
 					if (profile.GetWeight(AROR_EOperationType.QRF) > 0 && AffordableReaperTier(profile, operation.m_iRequestedTier, readiness) > 0)
 					{
@@ -313,7 +313,7 @@ modded class AROR_OperationExecutorComponent
 		AROR_ForceProfile fallback;
 		foreach (AROR_ForceProfile candidate : m_aForceProfiles)
 		{
-			if (!candidate || !candidate.m_bEnabled || !candidate.IsValid() || candidate.m_eType != AROR_EForceType.AIRBORNE)
+			if (!candidate || !candidate.m_bEnabled || !candidate.IsValid() || !candidate.HasPresetVehicles() || candidate.m_eType != AROR_EForceType.AIRBORNE)
 				continue;
 			if (!operation.m_sRequestedProfileId.IsEmpty() && candidate.m_sId != operation.m_sRequestedProfileId)
 				continue;
@@ -332,7 +332,7 @@ modded class AROR_OperationExecutorComponent
 		}
 		if (!profile)
 			profile = fallback;
-		if (!profile || !profile.m_bEnabled || !profile.IsValid())
+		if (!profile || !profile.m_bEnabled || !profile.IsValid() || !profile.HasPresetVehicles())
 		{
 			FailOperation(operation, "REAPER response requires a valid airborne profile with zero or one escort");
 			return;
@@ -595,14 +595,23 @@ modded class AROR_OperationExecutorComponent
 			return false;
 		if (!force.m_bUnescorted && (!IsLaunchPositionSafe(force.m_vEscortLaunch, force.m_vTown) || !AROR_ReaperFlightGeometry.IsAirspaceClear(force.m_vEscortLaunch, ReaperGunshipHeight(force), 14)))
 			return false;
-		Resource transport = Resource.Load(force.m_Profile.m_sVehicle);
+		ResourceName transportPrefab = force.m_Profile.PickPresetVehicle();
+		ResourceName escortPrefab;
+		if (!force.m_bUnescorted)
+			escortPrefab = force.m_Profile.PickPresetVehicle(true);
+		if (transportPrefab.IsEmpty() || (!force.m_bUnescorted && escortPrefab.IsEmpty()))
+			return false;
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		if (!presets)
+			return false;
+		Resource transport = Resource.Load(transportPrefab);
 		if (!transport || !transport.IsValid())
 			return false;
 		force.m_Vehicle = SpawnReaperAircraft(transport, force.m_vLaunch, m_fReaperInsertionHeight + force.m_iPackageIndex * 15);
 		// Own and hold the hull before any later faction/resource failure can abort construction.
 		force.m_bAircraftHeld = true;
 		force.HoldAircraft_S();
-		if (!force.InitializeSpawnFaction_S(force.m_Vehicle) || !force.m_Vehicle.GetPhysics())
+		if (!presets.InitializeVehicleFaction_S(force.m_Vehicle, force.m_Profile.m_eRole) || !force.m_Vehicle.GetPhysics())
 			return false;
 		force.TrackDamage_S(force.m_Vehicle);
 		if (!force.m_bUnescorted)
@@ -616,12 +625,12 @@ modded class AROR_OperationExecutorComponent
 			ConfigureForceFunding(force.m_Escort, operation, force.m_Profile);
 			force.m_Escort.m_bOwnsPackageQuote = false; // Parent releases the shared air-package margin after both groups are cancelled.
 			force.m_Escort.m_iVehicleLossValue = force.m_Profile.m_iEscortLossValue;
-			Resource gunship = Resource.Load(force.m_Profile.m_sEscortVehicle);
+			Resource gunship = Resource.Load(escortPrefab);
 			if (!gunship || !gunship.IsValid())
 				return false;
 			force.m_Escort.m_Vehicle = SpawnReaperAircraft(gunship, force.m_vEscortLaunch, ReaperGunshipHeight(force));
 			force.HoldAircraft_S();
-			if (!force.m_Escort.InitializeSpawnFaction_S(force.m_Escort.m_Vehicle) || !force.m_Escort.m_Vehicle.GetPhysics())
+			if (!presets.InitializeVehicleFaction_S(force.m_Escort.m_Vehicle, force.m_Profile.m_eRole) || !force.m_Escort.m_Vehicle.GetPhysics())
 				return false;
 			force.m_Escort.TrackDamage_S(force.m_Escort.m_Vehicle);
 		}

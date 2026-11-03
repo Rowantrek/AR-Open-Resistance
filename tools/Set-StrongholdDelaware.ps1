@@ -29,7 +29,6 @@ $high = '{BE16EE8FAA315FE2}Prefabs/Props/Military/Sandbags/Sandbag_01_long_high_
 $low = '{21D83950DF36F250}Prefabs/Props/Military/Sandbags/Sandbag_01_long_burlap.et'
 $hedgehog = '{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgehog_01_rusty.et'
 $wire = '{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et'
-$helicopter = '{70BAEEFC2D3FEE64}Prefabs/Vehicles/Helicopters/UH1H/UH1H.et'
 $helipad = '{A13F6A7F82DF031C}Prefabs/Compositions/Slotted/SlotFlatLarge/Helipad_L_Conflict_US_01.et'
 # Corner bastions in the outer band (the airbase's inherited inner wall cannot be opened from here); the inherited
 # airbase guns 0-3 face out from each side, and every gun needs an embrasure through the outer ring
@@ -67,8 +66,8 @@ $lines.Add(' components {')
 $lines.Add('  AROR_GarrisonComponent "{66D30571F98F4BE3}" {')
 $lines.Add('   m_iStaticWeaponCountOverride 6')
 $lines.Add('   m_iExtraInfantryTeams 4')
-$lines.Add('   m_aExtraParkedVehicles {')
-foreach ($pad in $pads) { $lines.Add(('    "{0}"' -f $helicopter)) }
+$lines.Add('   m_aExtraParkedVehicleTypes {')
+foreach ($pad in $pads) { $lines.Add('    HELI_TRANSPORT') }
 $lines.Add('   }')
 $lines.Add(('   m_fDefenceHalfExtent {0}' -f $outer))
 $lines.Add('   m_fMaxDefenceRelief 3')

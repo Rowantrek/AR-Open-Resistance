@@ -83,6 +83,68 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 		return FindPreset(GetPresetId(role));
 	}
 
+	//! Resolve a legacy recipe's prefab to its vehicle type. Only type information crosses army boundaries.
+	int GetVehicleType(ResourceName prefab)
+	{
+		foreach (AROR_FactionPreset preset : m_aPresets)
+		{
+			int type = preset.FindVehicleType(prefab);
+			if (type >= 0)
+				return type;
+		}
+		return -1;
+	}
+
+	//! Available vehicles already obey enabled content packs and replacements. No other army fallback.
+	ResourceName PickVehicle(AROR_EFactionRole role, int type, int choice = -1)
+	{
+		AROR_FactionPreset preset = GetPreset(role);
+		if (!preset || type < 0)
+			return string.Empty;
+		array<AROR_FactionPresetEntry> entries = {};
+		preset.GetEntries(AROR_EFactionPresetCategory.VEHICLES, type, entries);
+		if (entries.IsEmpty())
+			return string.Empty;
+		if (choice < 0)
+			choice = Math.RandomInt(0, entries.Count());
+		return entries[Math.Mod(choice, entries.Count())].GetPrefab();
+	}
+
+	//! Garrison recipes retain their saved variant ordinals; their old asset paths now only request a type.
+	ResourceName ResolveVehicle(AROR_EFactionRole role, ResourceName recipePrefab, int choice = 0)
+	{
+		return PickVehicle(role, GetVehicleType(recipePrefab), choice);
+	}
+
+	//! Only call immediately after spawning a hull selected from this role's preset. Re-check membership before
+	//! adopting its native faction; later capture/faction changes are never repaired by this method.
+	bool InitializeVehicleFaction_S(IEntity entity, AROR_EFactionRole role)
+	{
+		if (!Replication.IsServer() || !entity)
+			return false;
+		AROR_FactionPreset preset = GetPreset(role);
+		AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
+		if (!preset || !roles)
+			return false;
+		ResourceName prefab = SCR_ResourceNameUtils.GetPrefabName(entity);
+		array<AROR_FactionPresetEntry> entries = {};
+		preset.GetAllEntries(AROR_EFactionPresetCategory.VEHICLES, entries);
+		bool offered;
+		foreach (AROR_FactionPresetEntry entry : entries)
+		{
+			if (entry.GetPrefab() == prefab)
+				offered = true;
+		}
+		if (!offered)
+			return false;
+		FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(entity.FindComponent(FactionAffiliationComponent));
+		string key = roles.GetFactionKey(role);
+		if (!affiliation || key.IsEmpty())
+			return false;
+		affiliation.SetAffiliatedFactionByKey(key);
+		return affiliation.GetAffiliatedFactionKey() == key;
+	}
+
 	//------------------------------------------------------------------------------------------------
 	string GetPresetId(AROR_EFactionRole role)
 	{
