@@ -221,6 +221,8 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 	protected int m_iWakeRetryInterval;
 	[Attribute("10", desc: "Seconds of incomplete initial ground boarding before retries may interrupt a stuck native get-in queue for this package's unseated AI", params: "5 60 1")]
 	protected int m_iQRFSeatRecoveryDelay;
+	[Attribute("90", desc: "Maximum seconds for an existing ground roster to board; failed requests never spawn replacement soldiers", params: "15 300 1")]
+	protected int m_iQRFBoardingTimeout;
 	[Attribute("", desc: "Optional force pool. Empty retains the existing infantry-only configuration.")]
 	protected ref array<ref AROR_ForceProfile> m_aForceProfiles;
 	[Attribute("", desc: "Optional explicit ground QRF recipe ID; empty restores existing profile/level selection. Same ID can have one entry per role.")]
@@ -1510,6 +1512,8 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 				FailOperation(operation, "Ground-force group faction mismatch");
 				return;
 			}
+			if (!force.PrepareBoarding_S())
+				return;
 			if (!force.m_bMountRequested && !force.Mount_S())
 			{
 				FailOperation(operation, "Vehicle is not AI-drivable or crew/passenger seating failed");
@@ -1520,15 +1524,15 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 				ReportPackageProgress(force, "Waiting for actual driver, crew and passenger seat occupancy after direct placement");
 				// Seat teleports can be dropped silently; re-request the missing seats like garrison crews do
 				force.m_iMountWaitTicks++;
+				if (force.m_iMountWaitTicks >= m_iQRFBoardingTimeout)
+				{
+					FailPackage(force, operation, "Ground boarding timed out: " + force.GetMountRejection());
+					return;
+				}
 				if (Math.Mod(force.m_iMountWaitTicks, m_iWakeRetryInterval) == 0)
 				{
-					// Still refused after the recovery delay twice over: spawn the missing people straight into their seats
-					if (force.m_iMountWaitTicks >= m_iQRFSeatRecoveryDelay * 2)
-					{
-						int replaced = force.ReplaceUnseated_S();
-						if (replaced > 0)
-							Print(string.Format("[AROR] %1 package=%2 spawned %3 replacement(s) straight into their seats after %4 s of refused seating", operation.GetId(), force.m_iPackageIndex + 1, replaced, force.m_iMountWaitTicks), LogLevel.WARNING);
-					}
+					// Renew the wake lease; the same soldiers are re-seated, never replaced
+					force.PrepareBoarding_S(true);
 					Print(string.Format("[AROR] %1 package=%2 seating retry after %3 s: %4", operation.GetId(), force.m_iPackageIndex + 1, force.m_iMountWaitTicks, force.ReseatMissing_S(force.m_iMountWaitTicks >= m_iQRFSeatRecoveryDelay)), LogLevel.WARNING);
 				}
 				return;
@@ -1793,6 +1797,11 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			Print("[AROR] Initial boarding recovery delay must be between 5 and 60 seconds", LogLevel.ERROR);
 			return;
 		}
+		if (m_iQRFBoardingTimeout < 15 || m_iQRFBoardingTimeout > 300)
+		{
+			Print("[AROR] Ground boarding timeout must be between 15 and 300 seconds", LogLevel.ERROR);
+			return;
+		}
 		// Attribute containers are populated from the prefab/world. Declaration initializers
 		// overwrite that source data; create only missing containers after deserialization.
 		if (!m_aForceProfiles)
@@ -1841,7 +1850,21 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		Print("[AROR] Operation force executor enabled", LogLevel.NORMAL);
 		if (m_bQRFVehicleSearch)
 			Print("[AROR] QRF search policy: coordinated contact investigation and sector patrol", LogLevel.NORMAL);
+		CheckInfantryRosters();
 		Print(string.Format("[AROR] Executor configuration: profiles=%1 levels=%2 budgets groups=%3 members=%4 vehicles=%5", m_aForceProfiles.Count(), m_aResponseLevels.Count(), m_iMaxGroups, m_iMaxMembers, m_iMaxVehicles), LogLevel.NORMAL);
+	}
+
+	//! Warns for infantry-carrying profiles with no authored roster: they quietly field the default fire team, which
+	//! undoes any tuning that was meant to apply (e.g. when the authored list was lost from a world layer)
+	protected void CheckInfantryRosters()
+	{
+		foreach (AROR_ForceProfile profile : m_aForceProfiles)
+		{
+			if (!profile || profile.m_eType == AROR_EForceType.ARMOUR)
+				continue;
+			if (!profile.m_aInfantryUnits || profile.m_aInfantryUnits.IsEmpty())
+				Print(string.Format("[AROR] Force profile '%1' has no infantry unit types; it fields the default four-man fire team", profile.m_sId), LogLevel.WARNING);
+		}
 	}
 
 	//! Every rejection names its reason: one failure disables all QRFs, so the log must say which
