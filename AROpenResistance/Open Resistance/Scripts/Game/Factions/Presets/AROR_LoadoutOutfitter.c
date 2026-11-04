@@ -1,6 +1,6 @@
 //! Dresses a character from a loadout (see AROR_UnitLoadout.c): clothing with its contents, then weapons with their
 //! attachments and magazine, then loose items. Server only. Meant for gear-less characters; listed contents are
-//! complete, so each container's own default contents are removed before it is filled. Anything that cannot be placed
+//! complete, so a container keeps only the defaults its listed contents match and the rest are removed. Anything that cannot be placed
 //! is deleted and logged, so a partly broken kit still spawns what it can.
 class AROR_LoadoutOutfitter
 {
@@ -94,32 +94,91 @@ class AROR_LoadoutOutfitter
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Empties the container's own default contents, then puts each listed item (and its contents) inside it
+	//! Makes the container hold exactly the listed items (and their contents). What it spawned with is kept where it
+	//! matches a listed prefab: pre-attached parts (a vest's pouches, a flare's round) cannot be taken off and put back,
+	//! and a container read by the importer usually lists its own defaults. Unlisted defaults are removed first, then
+	//! the listed items still missing are spawned and put in.
 	protected static int Fill(InventoryStorageManagerComponent inventory, IEntity container, array<AROR_LoadoutItem> contents)
 	{
 		array<BaseInventoryStorageComponent> storages = {};
 		GetStorages(container, storages);
-		ClearContents(storages);
 
-		int failed;
+		array<IEntity> existing = {};
+		array<BaseInventoryStorageComponent> existingStorages = {};
+		foreach (BaseInventoryStorageComponent storage : storages)
+		{
+			array<IEntity> items = {};
+			storage.GetAll(items, false);
+			foreach (IEntity item : items)
+			{
+				if (!item)
+					continue;
+
+				existing.Insert(item);
+				existingStorages.Insert(storage);
+			}
+		}
+
+		// Pair every listed copy with a matching default, if any
+		array<AROR_LoadoutItem> wanted = {};
+		array<IEntity> kept = {};
 		foreach (AROR_LoadoutItem item : contents)
 		{
 			for (int copy = 0; copy < item.GetCount(); copy++)
 			{
-				IEntity child = SpawnNear(item.GetPrefab(), container);
-				if (!child || !InsertInAny(inventory, child, storages))
+				IEntity match = null;
+				int index = FindByPrefab(existing, item.GetPrefab());
+				if (index >= 0)
 				{
-					failed += Fail(child, item.GetPrefab(), "contents");
-					continue;
+					match = existing[index];
+					existing.Remove(index);
+					existingStorages.Remove(index);
 				}
 
-				array<AROR_LoadoutItem> nested = {};
-				item.GetContents(nested);
-				failed += Fill(inventory, child, nested);
+				wanted.Insert(item);
+				kept.Insert(match);
 			}
 		}
 
+		foreach (int leftover, IEntity unlisted : existing)
+		{
+			inventory.TryRemoveItemFromStorage(unlisted, existingStorages[leftover]);
+			SCR_EntityHelper.DeleteEntityAndChildren(unlisted);
+		}
+
+		int failed;
+		foreach (int slot, AROR_LoadoutItem listed : wanted)
+		{
+			IEntity child = kept[slot];
+			if (!child)
+			{
+				child = SpawnNear(listed.GetPrefab(), container);
+				if (!child || !InsertInAny(inventory, child, storages))
+				{
+					failed += Fail(child, listed.GetPrefab(), "contents");
+					continue;
+				}
+			}
+
+			array<AROR_LoadoutItem> nested = {};
+			listed.GetContents(nested);
+			failed += Fill(inventory, child, nested);
+		}
+
 		return failed;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Index of the first entity spawned from the prefab, or -1
+	protected static int FindByPrefab(array<IEntity> entities, ResourceName prefab)
+	{
+		foreach (int index, IEntity entity : entities)
+		{
+			if (entity && SCR_ResourceNameUtils.GetPrefabName(entity) == prefab)
+				return index;
+		}
+
+		return -1;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -193,21 +252,6 @@ class AROR_LoadoutOutfitter
 		}
 	}
 
-	//------------------------------------------------------------------------------------------------
-	//! Deletes every item a container spawned with
-	protected static void ClearContents(array<BaseInventoryStorageComponent> storages)
-	{
-		foreach (BaseInventoryStorageComponent storage : storages)
-		{
-			array<IEntity> items = {};
-			storage.GetAll(items, false);
-			foreach (IEntity item : items)
-			{
-				if (item)
-					SCR_EntityHelper.DeleteEntityAndChildren(item);
-			}
-		}
-	}
 
 	//------------------------------------------------------------------------------------------------
 	protected static IEntity SpawnNear(ResourceName prefab, IEntity anchor)

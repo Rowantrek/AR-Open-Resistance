@@ -60,8 +60,6 @@ class AROR_GroundQRFRecipeSmokeTests
 		profile.m_iPersonnelBudget = 10;
 		profile.m_iCrewCount = 1;
 		profile.m_sVehicle = "test_vehicle.et";
-		profile.m_sCrewCharacter = "test_crew.et";
-		profile.m_sInfantryGroup = "test_team.et";
 		profile.m_fDismountDistance = 100;
 		return profile;
 	}

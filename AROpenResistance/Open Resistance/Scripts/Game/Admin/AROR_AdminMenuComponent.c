@@ -24,6 +24,9 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 	//! A map click captures the nearest location only if it is this close (metres) or inside the location's radius
 	protected static const float CAPTURE_PICK_DISTANCE = 300;
 
+	//! How many of each content pack item the admin Fill action adds to Resistance Storage
+	protected static const int FILL_STOCK_AMOUNT = 10;
+
 	protected static const int PICK_NONE = 0;
 	protected static const int PICK_TELEPORT = 1;
 	protected static const int PICK_CAPTURE = 2;
@@ -173,51 +176,58 @@ class AROR_AdminMenuComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Server: add one of every Resistance preset item (gear, equipment, weapons, accessories,
-	//! ammunition, vehicle ammunition — not units or vehicles) to Resistance Storage
+	//! Server: add FILL_STOCK_AMOUNT of every enabled content pack item (gear, equipment, weapons, accessories,
+	//! ammunition — not vehicles) to Resistance Storage
 	void FillResistanceStock_S(int playerId)
 	{
 		if (!Replication.IsServer() || !m_bMenuAvailable || !AROR_AdminAccess.IsAdministrator(playerId))
 			return;
 
-		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		AROR_ContentPacksComponent packs = AROR_ContentPacksComponent.GetInstance();
 		AROR_ResistanceStorageComponent storage = AROR_ResistanceStorageComponent.GetInstance();
-		if (!presets || !storage)
+		if (!packs || !storage)
 		{
-			Print("[AROR] Admin: cannot fill Resistance stock (missing presets or storage)", LogLevel.WARNING);
-			return;
-		}
-
-		AROR_FactionPreset preset = presets.GetPreset(AROR_EFactionRole.RESISTANCE);
-		if (!preset)
-		{
-			Print("[AROR] Admin: Resistance has no faction preset", LogLevel.WARNING);
+			Print("[AROR] Admin: cannot fill Resistance stock (missing content packs or storage)", LogLevel.WARNING);
 			return;
 		}
 
 		array<ResourceName> prefabs = {};
-		CollectResistanceStockPrefabs(preset, prefabs);
-		storage.AddMany_S(prefabs, 1);
-		Print(string.Format("[AROR] Admin: player %1 filled Resistance stock from preset '%2' (%3 prefabs)", playerId, preset.GetId(), prefabs.Count()), LogLevel.NORMAL);
+		CollectResistanceStockPrefabs(packs, prefabs);
+		storage.AddMany_S(prefabs, FILL_STOCK_AMOUNT);
+		Print(string.Format("[AROR] Admin: player %1 filled Resistance stock with %2 of each of %3 prefabs from the enabled content packs", playerId, FILL_STOCK_AMOUNT, prefabs.Count()), LogLevel.NORMAL);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Item categories only (excludes units and vehicles)
-	protected static void CollectResistanceStockPrefabs(notnull AROR_FactionPreset preset, notnull array<ResourceName> outPrefabs)
+	//! Server: write the kit the administrator's character carries to a named file (Workbench only, see AROR_LoadoutCapture)
+	void CaptureLoadout_S(int playerId, string name)
 	{
-		CollectCategoryPrefabs(preset, AROR_EFactionPresetCategory.GEAR, outPrefabs);
-		CollectCategoryPrefabs(preset, AROR_EFactionPresetCategory.EQUIPMENT, outPrefabs);
-		CollectCategoryPrefabs(preset, AROR_EFactionPresetCategory.WEAPONS, outPrefabs);
-		CollectCategoryPrefabs(preset, AROR_EFactionPresetCategory.WEAPON_ACCESSORIES, outPrefabs);
-		CollectCategoryPrefabs(preset, AROR_EFactionPresetCategory.AMMUNITION, outPrefabs);
+		if (!Replication.IsServer() || !m_bMenuAvailable || !AROR_AdminAccess.IsAdministrator(playerId))
+			return;
+
+#ifdef WORKBENCH
+		AROR_LoadoutCapture.Capture(playerId, GetGame().GetPlayerManager().GetPlayerControlledEntity(playerId), name);
+#else
+		AROR_NotificationManagerComponent.SendHint_S(playerId, "Capture loadout only works in Workbench.");
+#endif
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected static void CollectCategoryPrefabs(notnull AROR_FactionPreset preset, AROR_EFactionPresetCategory category, notnull array<ResourceName> outPrefabs)
+	//! Item categories only (excludes vehicles)
+	protected static void CollectResistanceStockPrefabs(notnull AROR_ContentPacksComponent packs, notnull array<ResourceName> outPrefabs)
 	{
-		array<AROR_FactionPresetEntry> entries = {};
-		preset.GetAllEntries(category, entries);
-		foreach (AROR_FactionPresetEntry entry : entries)
+		CollectCategoryPrefabs(packs, AROR_EFactionPresetCategory.GEAR, outPrefabs);
+		CollectCategoryPrefabs(packs, AROR_EFactionPresetCategory.EQUIPMENT, outPrefabs);
+		CollectCategoryPrefabs(packs, AROR_EFactionPresetCategory.WEAPONS, outPrefabs);
+		CollectCategoryPrefabs(packs, AROR_EFactionPresetCategory.WEAPON_ACCESSORIES, outPrefabs);
+		CollectCategoryPrefabs(packs, AROR_EFactionPresetCategory.AMMUNITION, outPrefabs);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static void CollectCategoryPrefabs(notnull AROR_ContentPacksComponent packs, AROR_EFactionPresetCategory category, notnull array<ResourceName> outPrefabs)
+	{
+		array<AROR_ContentPackEntry> entries = {};
+		packs.GetEnabledEntries(category, entries);
+		foreach (AROR_ContentPackEntry entry : entries)
 		{
 			ResourceName prefab = entry.GetPrefab();
 			if (!prefab.IsEmpty())

@@ -13,9 +13,10 @@ enum AROR_EUnitType
 	AA,
 	ENGINEER,
 	RADIO_OPERATOR,
-	LEADER,
+	TEAMLEADER,
 	CREW,
 	PILOT,
-	OFFICER,
-	CIVILIAN
+	SQUADLEADER,
+	CIVILIAN,
+	LAT	//!< Light anti-tank (disposable or short-range launcher); AT is the heavier launcher
 }

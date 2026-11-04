@@ -20,8 +20,7 @@ class AROR_PrisonerRescueMission : AROR_Mission
 	//------------------------------------------------------------------------------------------------
 	override bool Plan_S(AROR_MissionBoardComponent board)
 	{
-		ResourceName prisoner = board.GetUnitPrefab_S(AROR_EFactionRole.CIVILIANS, AROR_EUnitType.CIVILIAN);
-		if (prisoner.IsEmpty())
+		if (!board.HasUnit_S(AROR_EFactionRole.CIVILIANS, AROR_EUnitType.CIVILIAN))
 			return false;
 
 		AROR_LocationComponent site = board.PickEnemyLocation_S(SITE_TYPES);
@@ -44,14 +43,13 @@ class AROR_PrisonerRescueMission : AROR_Mission
 		if (!site)
 			return false;
 
-		if (!board.FindClearPosition_S(site.GetCenter(), 35, 2, m_vHoldSpot))
+		if (!AROR_ForceSpawner.FindClearPosition(site.GetCenter(), 35, 2, m_vHoldSpot))
 			return false;
 
-		array<ResourceName> members = {};
-		ResourceName prisoner = board.GetUnitPrefab_S(AROR_EFactionRole.CIVILIANS, AROR_EUnitType.CIVILIAN);
+		array<AROR_EUnitType> members = {};
 		for (int i = 0; i < PRISONERS; i++)
 		{
-			members.Insert(prisoner);
+			members.Insert(AROR_EUnitType.CIVILIAN);
 		}
 
 		m_Prisoners = AddGroup_S(board, AROR_EFactionRole.CIVILIANS, members, m_vHoldSpot);
@@ -76,7 +74,7 @@ class AROR_PrisonerRescueMission : AROR_Mission
 		UpdateGroups_S(board, m_eEnemyRole);
 
 		array<IEntity> prisoners = {};
-		int alive = AROR_MissionBoardComponent.CountLiving(m_Prisoners, prisoners);
+		int alive = AROR_ForceSpawner.CountLiving(m_Prisoners, prisoners);
 		array<AIAgent> agents = {};
 		if (m_Prisoners)
 			m_Prisoners.GetAgents(agents);
@@ -156,7 +154,7 @@ class AROR_PrisonerRescueMission : AROR_Mission
 				continue;
 
 			array<IEntity> guards = {};
-			AROR_MissionBoardComponent.CountLiving(group, guards);
+			AROR_ForceSpawner.CountLiving(group, guards);
 			foreach (IEntity guard : guards)
 			{
 				if (vector.DistanceXZ(guard.GetOrigin(), position) <= GUARD_CLEAR)
@@ -171,7 +169,7 @@ class AROR_PrisonerRescueMission : AROR_Mission
 	//! The prisoners join the Resistance and head for the nearest friendly location
 	protected void Free_S(AROR_MissionBoardComponent board, array<IEntity> prisoners)
 	{
-		string resistanceKey = board.GetFactionKey(AROR_EFactionRole.RESISTANCE);
+		string resistanceKey = AROR_ForceSpawner.FactionKey(AROR_EFactionRole.RESISTANCE);
 		Faction resistance = GetGame().GetFactionManager().GetFactionByKey(resistanceKey);
 		if (resistance)
 			m_Prisoners.SetFaction(resistance);

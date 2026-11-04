@@ -1,4 +1,5 @@
-//! The categories of a faction preset (see AROR_FactionPreset).
+//! The categories of things the game fields or sells. Faction presets (AROR_FactionPreset) only use UNITS and VEHICLES;
+//! content packs (AROR_ContentPack) use every category except UNITS.
 //! Fixed list used by the core: do not extend.
 enum AROR_EFactionPresetCategory
 {

@@ -5,7 +5,7 @@ const root=path.join(__dirname,'../AROpenResistance/Open Resistance/Scripts/Game
 const src=Object.fromEntries(['AROR_QRFResponseMix','AROR_Operation','AROR_OperationManagerComponent','AROR_OperationManagerComponentSerializer','AROR_OperationExecutorComponent','AROR_ReaperQRFExecutor'].map(n=>[n,fs.readFileSync(path.join(root,n+'.c'),'utf8')]));
 let assertions=0,server=true;
 const check=(ok,label)=>{assertions++;if(!ok)throw Error(label)};
-for(const[n,fn]of Object.entries({Count(){return this.length},Insert(x){this.push(x)},IsEmpty(){return !this.length},Contains(x){return this.includes(x)}}))Object.defineProperty(Array.prototype,n,{value:fn,configurable:true});
+for(const[n,fn]of Object.entries({Clear(){this.length=0},Count(){return this.length},Insert(x){this.push(x)},IsEmpty(){return !this.length},Contains(x){return this.includes(x)}}))Object.defineProperty(Array.prototype,n,{value:fn,configurable:true});
 Object.defineProperty(String.prototype,'IsEmpty',{value(){return !this.length},configurable:true});
 const env={Math:{Round:Math.round,Max:Math.max,Min:Math.min},Replication:{IsServer:()=>server},Print(){},LogLevel:{NORMAL:0},
  AROR_EOperationState:{PLANNED:0,SPAWNING:1,ACTIVE:2,SUCCEEDED:3,FAILED:4,CANCELLED:5},AROR_EOperationType:{ATTACK:0,QRF:1},
@@ -79,7 +79,7 @@ const route=compile(reaperFile,'StartMixedCampaignQRF'),fallback=compile(reaperF
 function router(preferAir){
  const calls=[];const ctx={m_Operations:{PreferAirQRF:()=>preferAir,GetCrackdownLevel:()=>2,GetReadinessLevel:()=>2},m_aForces:[],m_bAllowAirborneResponses:true,
   m_sReaperPlanningOperation:'',FindForce:()=>null,ReaperSettingsValid:()=>true,HasMarsOrigin_S:()=>true,QRFPoolReadinessLevel:compile(executorFile,'QRFPoolReadinessLevel'),
-  m_aForceProfiles:[{m_bEnabled:true,m_eType:3,m_eRole:1,m_sFactionKey:'ARMY',IsValid:()=>true,GetWeight:()=>1}],
+  m_aForceProfiles:[{m_bEnabled:true,m_eType:3,m_eRole:1,m_sFactionKey:'ARMY',IsValid:()=>true,HasPresetVehicles:()=>true,GetWeight:()=>1}],
   FindStrategicGroundRecipe:()=>({}),AffordableReaperTier:()=>2,FallbackMixedQRFToGround:fallback,ReportSpawnWait(){},
   StartGroundQRFRecipe:o=>calls.push(o.m_iResponseMixBucket===1?'joint':'ground'),StartReaperQRF:()=>calls.push('air'),BaseStartForce:()=>calls.push('ground')};
  return {ctx,calls};
@@ -109,9 +109,10 @@ for(const [label,prefer,change,expected]of [
 {
  env.AROR_ResponsePolicy={IsRecipeEligible:r=>!!r};
  const ground={m_iLevel:2,m_eResponseType:5,Resolve:(p,r,f,out)=>{out.push(profile);return true;}},joint={...ground,m_eResponseType:7};
- const profile={ReplacementQuote:()=>100,GetGroupBudget:()=>2,GetVehicleBudget:()=>1,m_iPersonnelBudget:8};
+ const profile={HasPresetVehicles:()=>true,ReplacementQuote:()=>100,GetGroupBudget:()=>2,GetVehicleBudget:()=>1,m_iPersonnelBudget:8};
  const ctx={m_aGroundQRFRecipes:[ground,joint],m_aForceProfiles:[profile],m_bAllowJointResponses:true,m_bAllowAirborneResponses:true,m_bQRFTacticalCommander:true,
   m_Operations:{GetReadinessLevel:()=>2,GetQRFFinance:()=>({Available:()=>10000,Debt:()=>0}),QRFOverhead:()=>60},GetReservedGroups:()=>0,GetReservedMembers:()=>0,GetReservedVehicles:()=>0,m_iMaxGroups:20,m_iMaxMembers:160,m_iMaxVehicles:10};
+ ctx.GetAvailableProfiles=compile(executorFile,'GetAvailableProfiles');
  const find=compile(executorFile,'FindStrategicGroundRecipe');
  check(find.call(ctx,1,'ARMY',2,false,2,0)===ground,'ground bucket cannot inherit unconditional joint preference');
  check(find.call(ctx,1,'ARMY',2,false,2,1)===joint,'air bucket can use a funded joint recipe');

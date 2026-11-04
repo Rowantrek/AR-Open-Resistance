@@ -4,10 +4,10 @@ GenericEntity : "{37786477B1914A61}Prefabs/Compositions/Locations/AROR_Defence_A
   AROR_GarrisonComponent "{66D30571F98F4BE3}" {
    m_iStaticWeaponCountOverride 6
    m_iExtraInfantryTeams 4
-   m_aExtraParkedVehicles {
-    "{70BAEEFC2D3FEE64}Prefabs/Vehicles/Helicopters/UH1H/UH1H.et"
-    "{70BAEEFC2D3FEE64}Prefabs/Vehicles/Helicopters/UH1H/UH1H.et"
-    "{70BAEEFC2D3FEE64}Prefabs/Vehicles/Helicopters/UH1H/UH1H.et"
+   m_aExtraParkedVehicleTypes {
+    HELI_TRANSPORT
+    HELI_TRANSPORT
+    HELI_TRANSPORT
    }
    m_fDefenceHalfExtent 64
    m_fMaxDefenceRelief 3

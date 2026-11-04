@@ -13,6 +13,14 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
      m_eRole OCCUPIERS
      m_sFactionKey "AROR_OCCUPIERS"
      m_sAssetFactionKey "US"
+     m_eStaticWeaponType STATIC_MG_LOW
+     m_aStaticWeaponTypes {
+      STATIC_MG_LOW STATIC_MG_LOW
+     }
+     m_eParkedVehicleType APC
+     m_aMannedVehicleTypes {
+      APC ARMED_CAR
+     }
      m_aStaticVariants {
       "{887DB60486A18575}Prefabs/Weapons/Tripods/Tripod_M122_MG_M60.et"
       "{917E25C4E19000D0}Prefabs/Weapons/Tripods/Tripod_M3_M2HB_APIT.et"
@@ -31,6 +39,14 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
      m_eRole INVADERS
      m_sFactionKey "AROR_INVADERS"
      m_sAssetFactionKey "USSR"
+     m_eStaticWeaponType STATIC_MG_HIGH
+     m_aStaticWeaponTypes {
+      STATIC_MG_LOW STATIC_MG_HIGH
+     }
+     m_eParkedVehicleType APC
+     m_aMannedVehicleTypes {
+      APC APC
+     }
      m_sInfantry "{DCB41B3746FDD1BE}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Rifleman.et"
      m_aInfantryVariants {
       "{23ADBBC31B6A3DC6}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_AR.et"

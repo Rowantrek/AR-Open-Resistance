@@ -1,6 +1,7 @@
-//! A faction preset (see ARCHITECTURE.md -> Factions): everything an army makes available to the game, in fixed
-//! categories (AROR_EFactionPresetCategory), each entry a prefab of a type. A preset only lists what exists; garrisons,
-//! QRFs, missions and other systems decide what to use. One `.conf` per preset, listed in AROR_FactionPresetRegistry.
+//! A faction preset (see ARCHITECTURE.md -> Factions): the AI units an army fields (with their loadouts), the player
+//! loadout and the army's empty vehicles. Items (gear, weapons, ammunition...) live in content packs. A preset only
+//! lists what exists; garrisons, QRFs, missions and other systems decide what to use. One `.conf` per preset, listed
+//! in AROR_FactionPresetRegistry.
 [BaseContainerProps(configRoot: true)]
 class AROR_FactionPreset
 {
@@ -23,20 +24,8 @@ class AROR_FactionPreset
 	[Attribute(desc: "Empty vehicles (no crew)", category: "Vehicles")]
 	protected ref array<ref AROR_FactionPresetVehicle> m_aVehicles;
 
-	[Attribute(desc: "Clothing and carried kit", category: "Gear")]
-	protected ref array<ref AROR_FactionPresetGear> m_aGear;
-
-	[Attribute(desc: "Medical supplies, binoculars, radios and other equipment", category: "Equipment")]
-	protected ref array<ref AROR_FactionPresetEquipment> m_aEquipment;
-
-	[Attribute(desc: "Hand-held weapons", category: "Weapons")]
-	protected ref array<ref AROR_FactionPresetWeapon> m_aWeapons;
-
-	[Attribute(desc: "Weapon accessories", category: "Weapon accessories")]
-	protected ref array<ref AROR_FactionPresetWeaponAccessory> m_aWeaponAccessories;
-
-	[Attribute(desc: "Ammunition, including rocket pods and other munitions loaded onto vehicles and aircraft", category: "Ammunition")]
-	protected ref array<ref AROR_FactionPresetAmmunition> m_aAmmunition;
+	//! Entries other addons add to this preset (see AROR_FactionPresetAddition), in registration order; not part of the config
+	protected ref array<ref AROR_FactionPresetAddition> m_aAdditions = {};
 
 	//------------------------------------------------------------------------------------------------
 	string GetId()
@@ -59,6 +48,22 @@ class AROR_FactionPreset
 	//------------------------------------------------------------------------------------------------
 	// Queries (entries with an unknown type, or whose prefab no enabled content pack offers, are never returned)
 	//------------------------------------------------------------------------------------------------
+	//! Compatibility for authored vehicle recipes: the old prefab identifies a type, never a spawn fallback.
+	//! Inspect unfiltered entries so disabling the source pack does not erase a recipe's requested type.
+	int FindVehicleType(ResourceName prefab)
+	{
+		if (prefab.IsEmpty())
+			return -1;
+		array<AROR_FactionPresetEntry> entries = {};
+		CollectEntries(AROR_EFactionPresetCategory.VEHICLES, entries);
+		foreach (AROR_FactionPresetEntry entry : entries)
+		{
+			if (entry.IsKnownType() && (entry.GetListedPrefab() == prefab || entry.GetPrefab() == prefab))
+				return entry.GetTypeValue();
+		}
+		return -1;
+	}
+
 	//! The unit of this type, or null if the preset has none
 	AROR_FactionPresetUnit GetUnit(AROR_EUnitType type)
 	{
@@ -130,6 +135,24 @@ class AROR_FactionPreset
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Adds another addon's extra units and vehicles to this preset (source names the addition in logs). The preset's own
+	//! entries and earlier additions win: a unit type this preset already has is logged and the new unit never used.
+	void AddAddition(notnull AROR_FactionPresetAddition addition, string source)
+	{
+		addition.Validate(source);
+
+		array<AROR_FactionPresetEntry> units = {};
+		addition.CollectEntries(AROR_EFactionPresetCategory.UNITS, units);
+		foreach (AROR_FactionPresetEntry entry : units)
+		{
+			if (entry.IsKnownType() && GetUnit(entry.GetTypeValue()))
+				Print(string.Format("[AROR] Faction preset '%1': addition '%2' lists unit type %3, which the preset already has; the existing unit is used", m_sId, source, entry.GetTypeName()), LogLevel.WARNING);
+		}
+
+		m_aAdditions.Insert(addition);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Logs configuration mistakes: missing ID or roles, unknown types, duplicate unit types, empty prefabs, loadouts.
 	//! Returns false if the preset is unusable.
 	bool Validate(string source)
@@ -146,7 +169,7 @@ class AROR_FactionPreset
 		set<int> unitTypes = new set<int>();
 		int empty;
 
-		for (int category = 0; category <= AROR_EFactionPresetCategory.AMMUNITION; category++)
+		for (int category = 0; category <= AROR_EFactionPresetCategory.VEHICLES; category++)
 		{
 			string categoryName = typename.EnumToString(AROR_EFactionPresetCategory, category);
 
@@ -187,8 +210,20 @@ class AROR_FactionPreset
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The one place that maps a category to its list; everything else works on the shared entry type
+	//! The one place that maps a category to its list; everything else works on the shared entry type. The preset's own
+	//! entries come first, then those of its additions in order.
 	protected void CollectEntries(AROR_EFactionPresetCategory category, notnull array<AROR_FactionPresetEntry> outEntries)
+	{
+		CollectOwnEntries(category, outEntries);
+
+		foreach (AROR_FactionPresetAddition addition : m_aAdditions)
+		{
+			addition.CollectEntries(category, outEntries);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void CollectOwnEntries(AROR_EFactionPresetCategory category, notnull array<AROR_FactionPresetEntry> outEntries)
 	{
 		switch (category)
 		{
@@ -210,61 +245,6 @@ class AROR_FactionPreset
 					{
 						if (vehicle)
 							outEntries.Insert(vehicle);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.GEAR:
-				if (m_aGear)
-				{
-					foreach (AROR_FactionPresetGear gear : m_aGear)
-					{
-						if (gear)
-							outEntries.Insert(gear);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.EQUIPMENT:
-				if (m_aEquipment)
-				{
-					foreach (AROR_FactionPresetEquipment equipment : m_aEquipment)
-					{
-						if (equipment)
-							outEntries.Insert(equipment);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.WEAPONS:
-				if (m_aWeapons)
-				{
-					foreach (AROR_FactionPresetWeapon weapon : m_aWeapons)
-					{
-						if (weapon)
-							outEntries.Insert(weapon);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.WEAPON_ACCESSORIES:
-				if (m_aWeaponAccessories)
-				{
-					foreach (AROR_FactionPresetWeaponAccessory accessory : m_aWeaponAccessories)
-					{
-						if (accessory)
-							outEntries.Insert(accessory);
-					}
-				}
-				break;
-
-			case AROR_EFactionPresetCategory.AMMUNITION:
-				if (m_aAmmunition)
-				{
-					foreach (AROR_FactionPresetAmmunition ammunition : m_aAmmunition)
-					{
-						if (ammunition)
-							outEntries.Insert(ammunition);
 					}
 				}
 				break;

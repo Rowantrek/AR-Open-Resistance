@@ -9,8 +9,8 @@ class AROR_HighCommandSquadType
 	[Attribute("Rifle Squad", desc: "Name shown in Unit Management")]
 	string m_sName;
 
-	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Character prefab for each member, in order (the first one leads)", params: "et")]
-	ref array<ResourceName> m_aMembers;
+	[Attribute("", UIWidgets.ComboBox, desc: "Unit type of each member, in order (the first one leads). Each spawns as the Resistance base character dressed from its Resistance preset loadout.", enums: ParamEnumArray.FromEnum(AROR_EUnitType))]
+	ref array<AROR_EUnitType> m_aUnits;
 
 	[Attribute("2000", desc: "Resistance funds taken when the squad is raised", params: "0 inf")]
 	int m_iFundsCost;
@@ -21,9 +21,9 @@ class AROR_HighCommandSquadType
 	//------------------------------------------------------------------------------------------------
 	int GetSize()
 	{
-		if (!m_aMembers)
+		if (!m_aUnits)
 			return 0;
 
-		return m_aMembers.Count();
+		return m_aUnits.Count();
 	}
 }

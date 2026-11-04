@@ -31,7 +31,6 @@ $hedgehog = '{AE28D47CF26E91EA}Prefabs/Props/Military/Fortification/CzechHedgeho
 $wire = '{BE7B5BAFE1A16A50}Prefabs/Props/Military/Fortification/BarbedTape_Coil.et'
 $tower = '{DFBF655559915333}Prefabs/Compositions/Slotted/SlotFlatSmall/GuardTower_S_USSR_01.et'
 $helipad = '{525C793E1943EA06}Prefabs/Compositions/Slotted/SlotFlatLarge/Helipad_L_Conflict_USSR_01.et'
-$helicopter = '{DF5CCB7C0FF049F4}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et'
 $stores = @(
  @('Weapons','{8C7C140EEB0ECF36}Prefabs/Props/Military/AmmoBoxes/USSR/EquipmentBoxWooden_Weapon_01_USSR.et'),
  @('Ammunition','{A48EDE9CBA71B5A3}Prefabs/Props/Military/AmmoBoxes/USSR/EquipmentBoxWooden_Ammunition_01_USSR.et'),
@@ -83,8 +82,8 @@ $lines.Add('  }')
 $lines.Add('  AROR_GarrisonComponent "{66D30571F98F4BE3}" {')
 $lines.Add('   m_iDefenceLevel 4')
 $lines.Add('   m_iStaticWeaponCountOverride 6')
-$lines.Add('   m_aExtraParkedVehicles {')
-foreach ($pad in $pads) { $lines.Add(('    "{0}"' -f $helicopter)) }
+$lines.Add('   m_aExtraParkedVehicleTypes {')
+foreach ($pad in $pads) { $lines.Add('    HELI_TRANSPORT') }
 $lines.Add('   }')
 $lines.Add(('   m_fDefenceHalfExtent {0}' -f $halfWidth))
 $lines.Add(('   m_fDefenceHalfDepth {0}' -f $halfDepth))

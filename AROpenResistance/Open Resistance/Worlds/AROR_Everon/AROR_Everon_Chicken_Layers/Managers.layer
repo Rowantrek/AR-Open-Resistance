@@ -1031,6 +1031,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Crew.et"
      m_iCrewCount 1
      m_sVehicle "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et"
+     m_eVehicleType SUPPLY_TRUCK
      m_iPersonnelBudget 22
      m_fDismountDistance 150
     }
@@ -1052,6 +1053,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Crew.et"
      m_iCrewCount 3
      m_sVehicle "{0FBF8F010F81A4E5}Prefabs/Vehicles/Wheeled/LAV25/LAV25.et"
+     m_eVehicleType APC
      m_iPersonnelBudget 12
      m_fDismountDistance 150
     }
@@ -1073,6 +1075,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Crew.et"
      m_iCrewCount 3
      m_sVehicle "{0FBF8F010F81A4E5}Prefabs/Vehicles/Wheeled/LAV25/LAV25.et"
+     m_eVehicleType APC
      m_iPersonnelBudget 12
      m_fDismountDistance 150
     }
@@ -1094,7 +1097,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{42A502E3BB727CEB}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_HeliPilot.et"
      m_iCrewCount 2
      m_sVehicle "{70BAEEFC2D3FEE64}Prefabs/Vehicles/Helicopters/UH1H/UH1H.et"
+     m_eVehicleType HELI_TRANSPORT
      m_sEscortVehicle "{21E9A875C0A3C409}Prefabs/Vehicles/Helicopters/UH1H/UH1H_armed_gunship_HE.et"
+     m_eEscortVehicleType HELI_ATTACK
      m_iEscortCount 1
      m_iPersonnelBudget 32
      m_fDismountDistance 150
@@ -1117,6 +1122,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Crew.et"
      m_iCrewCount 1
      m_sVehicle "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et"
+     m_eVehicleType SUPPLY_TRUCK
      m_iPersonnelBudget 22
      m_fDismountDistance 150
     }
@@ -1138,6 +1144,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Crew.et"
      m_iCrewCount 3
      m_sVehicle "{C012BB3488BEA0C2}Prefabs/Vehicles/Wheeled/BTR70/BTR70.et"
+     m_eVehicleType APC
      m_iPersonnelBudget 12
      m_fDismountDistance 150
     }
@@ -1159,6 +1166,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Crew.et"
      m_iCrewCount 2
      m_sVehicle "{254289B9C09904AB}Prefabs/Vehicles/Wheeled/BRDM2/BRDM2.et"
+     m_eVehicleType APC
      m_iPersonnelBudget 8
      m_fDismountDistance 150
     }
@@ -1180,7 +1188,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{A62FA97C4EC64F14}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_HeliPilot.et"
      m_iCrewCount 2
      m_sVehicle "{DF5CCB7C0FF049F4}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et"
+     m_eVehicleType HELI_TRANSPORT
      m_sEscortVehicle "{3C6B3ED0C3AC30D5}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_gunship_HE.et"
+     m_eEscortVehicleType HELI_ATTACK
      m_iEscortCount 1
      m_iPersonnelBudget 32
      m_fDismountDistance 150
@@ -1204,6 +1214,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Crew.et"
      m_iCrewCount 2
      m_sVehicle "{3EA6F47D95867114}Prefabs/Vehicles/Wheeled/M998/M1025_armed_M2HB.et"
+     m_eVehicleType ARMED_CAR
      m_iPersonnelBudget 8
      m_fDismountDistance 150
     }
@@ -1226,6 +1237,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Crew.et"
      m_iCrewCount 2
      m_sVehicle "{0B4DEA8078B78A9B}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_PKM.et"
+     m_eVehicleType ARMED_CAR
      m_iPersonnelBudget 8
      m_fDismountDistance 150
     }
@@ -1247,6 +1259,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{42A502E3BB727CEB}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_HeliPilot.et"
      m_iCrewCount 1
      m_sVehicle "{70BAEEFC2D3FEE64}Prefabs/Vehicles/Helicopters/UH1H/UH1H.et"
+     m_eVehicleType HELI_TRANSPORT
      m_iEscortCount 0
      m_iPersonnelBudget 32
      m_fDismountDistance 150
@@ -1269,6 +1282,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{A62FA97C4EC64F14}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_HeliPilot.et"
      m_iCrewCount 1
      m_sVehicle "{DF5CCB7C0FF049F4}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et"
+     m_eVehicleType HELI_TRANSPORT
      m_iEscortCount 0
      m_iPersonnelBudget 32
      m_fDismountDistance 150
@@ -1295,13 +1309,13 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_iTerritoryAttackRest 900
    m_bMinimumCaptureQRF 1
    m_bQRFStrategicEconomy 1
-   m_iStartingReadinessLevel 1
+   m_iStartingReadinessLevel 2
    m_iAirborneQRFShare 30
-   m_iStartingCrackdown 0
-   m_iCaptureReadinessPressure 25
-   m_iCaptureCrackdown 50
+   m_iStartingCrackdown 20
+   m_iCaptureReadinessPressure 50
+   m_iCaptureCrackdown 100
    m_iCrackdownQuietTime 600
-   m_iCrackdownDecay 20
+   m_iCrackdownDecay 0
    m_iQRFBaseOverhead 50
    m_iQRFTierOverhead 10
    m_iQRFThreatLifetime 180

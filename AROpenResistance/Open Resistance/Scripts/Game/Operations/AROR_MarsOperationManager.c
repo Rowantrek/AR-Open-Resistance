@@ -23,14 +23,28 @@ modded class AROR_OperationManagerComponent
 	}
 
 	//! Password checking is repeated here even if a caller bypasses the phone UI.
+	//! Every rejection answers the player (hint and the MARS app), so a request never fails silently.
 	void RequestMars_S(int playerId, string credential, AROR_EFactionRole role, string selection, int tier, int readinessLevel = 0)
 	{
-		if (!Replication.IsServer() || !m_bMarsEnabled || !IsReady() || playerId <= 0)
+		if (!Replication.IsServer() || playerId <= 0)
 			return;
+		if (!m_bMarsEnabled)
+		{
+			MarsReply(playerId, "MARS is disabled in this scenario");
+			return;
+		}
+		if (!IsReady())
+		{
+			MarsReply(playerId, "No campaign is running yet");
+			return;
+		}
 		int next;
 		m_mMarsNextRequest.Find(playerId, next);
 		if (m_iClock < next)
+		{
+			MarsReply(playerId, "Wait a few seconds between requests");
 			return;
+		}
 		m_mMarsNextRequest.Set(playerId, m_iClock + 5);
 		if (!AROR_MarsAccess.CanRequest_S(playerId))
 		{
@@ -43,7 +57,10 @@ modded class AROR_OperationManagerComponent
 			return;
 		}
 		if (!IsEnemyRole(role) || tier < 1 || tier > 5 || selection.Length() > 128)
+		{
+			MarsReply(playerId, "Invalid request");
 			return;
+		}
 		// "attack:<type>" launches the same response as a territory attack (staging, then assault), skipping the
 		// campaign timers. Workbench builds only; real attacks keep their normal admission rules.
 		bool asAttack;
@@ -66,7 +83,10 @@ modded class AROR_OperationManagerComponent
 		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
 		AROR_OperationExecutorComponent executor = AROR_OperationExecutorComponent.Cast(GetOwner().FindComponent(AROR_OperationExecutorComponent));
 		if (!locations || !executor)
+		{
+			MarsReply(playerId, "Operations are unavailable on this server");
 			return;
+		}
 		AROR_LocationComponent target = AROR_MarsTargets.NearestRebelTerritory(locations, player.GetOrigin());
 		if (!target)
 		{
@@ -81,7 +101,10 @@ modded class AROR_OperationManagerComponent
 		{
 			int type = selection.Substring(5, selection.Length() - 5).ToInt();
 			if (selection != "type:" + type.ToString() || readinessLevel < 1 || readinessLevel > 5)
+			{
+				MarsReply(playerId, "Invalid request");
 				return;
+			}
 			AROR_ResponseSelection preview = executor.GetResponsePreview(role, type, readinessLevel, tier);
 			if (!preview.IsAvailable())
 			{
@@ -153,5 +176,8 @@ modded class AROR_OperationManagerComponent
 	{
 		Print("[AROR MARS] " + message, LogLevel.NORMAL);
 		AROR_NotificationManagerComponent.SendHint_S(playerId, "MARS: " + message);
+		SCR_PlayerController controller = SCR_PlayerController.Cast(GetGame().GetPlayerManager().GetPlayerController(playerId));
+		if (controller)
+			controller.AROR_SendMarsReply_S(message);
 	}
 }

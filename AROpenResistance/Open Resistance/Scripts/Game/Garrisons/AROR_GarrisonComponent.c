@@ -13,7 +13,9 @@ class AROR_GarrisonComponent : ScriptComponent
 	protected bool m_bOmitParkedArmour;
 	[Attribute("0", desc: "Infantry teams added to the defence-level recipe (strongholds). Each needs an authored position.", params: "0 8 1")]
 	protected int m_iExtraInfantryTeams;
-	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Extra unmanned vehicles parked after the spare armour hull, e.g. helicopters on pads. Not for outposts. Each needs an authored parked position.", params: "et")]
+	[Attribute("", UIWidgets.ComboBox, desc: "Extra unmanned vehicle types from the faction preset, after spare armour. Not for outposts. Each needs an authored parked position.", enums: ParamEnumArray.FromEnum(AROR_EVehicleType))]
+	protected ref array<AROR_EVehicleType> m_aExtraParkedVehicleTypes;
+	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Legacy extra parked vehicle type hints; only used when Extra Parked Vehicle Types is empty. These prefabs are never spawned directly.", params: "et")]
 	protected ref array<ResourceName> m_aExtraParkedVehicles;
 	[Attribute("", desc: "Optional authored world-space positions for statics/vehicles. Otherwise use bounded clear terrain search.")]
 	protected ref array<vector> m_aDefencePositions;
@@ -101,6 +103,8 @@ class AROR_GarrisonComponent : ScriptComponent
 	int GetExtraInfantryTeams() { return Math.Clamp(m_iExtraInfantryTeams, 0, 8); }
 	int GetExtraParkedCount()
 	{
+		if (m_aExtraParkedVehicleTypes && !m_aExtraParkedVehicleTypes.IsEmpty())
+			return m_aExtraParkedVehicleTypes.Count();
 		if (!m_aExtraParkedVehicles)
 			return 0;
 		return m_aExtraParkedVehicles.Count();
@@ -494,14 +498,12 @@ class AROR_GarrisonComponent : ScriptComponent
 		{
 			for (int member = 0; member < 4; member++)
 			{
-				int infantry = AddSlot(InfantryPrefab(faction, member), 0, group);
+				int infantry = AddSlot(CharacterPrefab(InfantryType(member)), 0, group);
 				m_aSlots[infantry].m_iVariant = member;
 			}
 			group++;
 		}
-		int staticVariants = 1;
-		if (faction.m_aStaticVariants)
-			staticVariants += faction.m_aStaticVariants.Count();
+		int staticVariants = faction.StaticVariantCount();
 		for (int mg = 0; mg < GetStaticWeaponCount(m_iLevel); mg++)
 		{
 			int staticVariant = Math.Mod(mg, staticVariants);
@@ -511,19 +513,19 @@ class AROR_GarrisonComponent : ScriptComponent
 		if (m_Location.GetLocationType() != AROR_ELocationType.OUTPOST)
 		{
 			if (m_iLevel >= 3 && !m_bOmitParkedArmour)
-				AddSlot(faction.m_sParkedArmour, 2);
+				AddSlot(ParkedPrefab(faction, 0), 2);
 			// Variant k identifies extra vehicle k-1, so a reload re-binds the same vehicle rather than armour
 			for (int extra = 0; extra < GetExtraParkedCount(); extra++)
 			{
-				int parked = AddSlot(m_aExtraParkedVehicles[extra], 2);
+				int parked = AddSlot(ParkedPrefab(faction, extra + 1), 2);
 				m_aSlots[parked].m_iVariant = extra + 1;
 			}
 			for (int hull = 0; hull < AROR_GarrisonPolicy.MannedCount(m_iLevel); hull++)
 			{
-				if (!faction.m_aMannedVehicles || faction.m_aMannedVehicles.IsEmpty())
+				if (faction.MannedVariantCount() == 0)
 					break;
-				int variant = Math.RandomInt(0, faction.m_aMannedVehicles.Count());
-				int hullSlot = AddSlot(faction.m_aMannedVehicles[variant], 3, group++);
+				int variant = Math.RandomInt(0, faction.MannedVariantCount());
+				int hullSlot = AddSlot(MannedPrefab(faction, variant), 3, group++);
 				m_aSlots[hullSlot].m_iVariant = variant;
 			}
 		}
@@ -531,7 +533,7 @@ class AROR_GarrisonComponent : ScriptComponent
 		// ordinals are unchanged. The variant records which post he holds.
 		for (int post = 0; post < SentryPosts().Count(); post++)
 		{
-			int sentry = AddSlot(InfantryPrefab(faction, SENTRY_VARIANT + post), 0, group++);
+			int sentry = AddSlot(CharacterPrefab(InfantryType(SENTRY_VARIANT + post)), 0, group++);
 			m_aSlots[sentry].m_iVariant = SENTRY_VARIANT + post;
 		}
 		// Crew slots are added from each actual hull's seat list on first activation.
@@ -543,20 +545,51 @@ class AROR_GarrisonComponent : ScriptComponent
 	}
 	protected ResourceName StaticPrefab(AROR_GarrisonFaction faction, int variant)
 	{
+		if (variant > 0 && faction.m_aStaticWeaponTypes && variant <= faction.m_aStaticWeaponTypes.Count())
+			return PresetVehicleOfType(faction.m_aStaticWeaponTypes[variant - 1], variant);
+		if (faction.m_eStaticWeaponType >= 0)
+			return PresetVehicleOfType(faction.m_eStaticWeaponType, variant);
 		if (variant > 0 && faction.m_aStaticVariants && variant <= faction.m_aStaticVariants.Count())
 		{
 			ResourceName weapon = faction.m_aStaticVariants[variant - 1];
 			if (!weapon.IsEmpty())
-				return weapon;
+				return PresetVehicle(weapon, variant);
 		}
-		return faction.m_sStaticMG;
+		return PresetVehicle(faction.m_sStaticMG, variant);
 	}
 	//! Variant 0 is the role's spare armour; higher variants are this site's extra parked vehicles
 	protected ResourceName ParkedPrefab(AROR_GarrisonFaction faction, int variant)
 	{
+		if (variant > 0 && m_aExtraParkedVehicleTypes && variant <= m_aExtraParkedVehicleTypes.Count())
+			return PresetVehicleOfType(m_aExtraParkedVehicleTypes[variant - 1], variant);
 		if (variant > 0 && variant <= GetExtraParkedCount())
-			return m_aExtraParkedVehicles[variant - 1];
-		return faction.m_sParkedArmour;
+			return PresetVehicle(m_aExtraParkedVehicles[variant - 1], variant);
+		if (faction.m_eParkedVehicleType >= 0)
+			return PresetVehicleOfType(faction.m_eParkedVehicleType, variant);
+		return PresetVehicle(faction.m_sParkedArmour, variant);
+	}
+	protected ResourceName MannedPrefab(AROR_GarrisonFaction faction, int variant)
+	{
+		if (faction.m_aMannedVehicleTypes && variant < faction.m_aMannedVehicleTypes.Count())
+			return PresetVehicleOfType(faction.m_aMannedVehicleTypes[variant], variant);
+		if (faction.m_aMannedVehicles && variant < faction.m_aMannedVehicles.Count())
+			return PresetVehicle(faction.m_aMannedVehicles[variant], variant);
+		return string.Empty;
+	}
+	protected ResourceName PresetVehicleOfType(int type, int choice)
+	{
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		if (!presets)
+			return string.Empty;
+		return presets.PickVehicle(m_eRosterRole, type, choice);
+	}
+	//! Authored assets describe the recipe's types; only the roster role's preset supplies actual hulls/weapons.
+	protected ResourceName PresetVehicle(ResourceName recipePrefab, int choice = 0)
+	{
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		if (!presets)
+			return string.Empty;
+		return presets.ResolveVehicle(m_eRosterRole, recipePrefab, choice);
 	}
 	//! Stock every store (AROR_OutpostSupplyComponent) in the composition from the roster army's faction preset
 	protected void StockStores_S(IEntity entity, int depth)
@@ -611,21 +644,38 @@ class AROR_GarrisonComponent : ScriptComponent
 		return FindDefencePosition(slot.m_iKind, PositionOrdinal(index));
 	}
 
-	protected ResourceName InfantryPrefab(AROR_GarrisonFaction faction, int variant)
+	//! The preset unit type behind a saved infantry variant: team members 0-3 are rifleman, automatic rifleman,
+	//! grenadier and team leader, 4 and 5 the anti-tank and anti-air specialists; tower sentries are marksmen
+	protected static AROR_EUnitType InfantryType(int variant)
 	{
 		if (variant >= SENTRY_VARIANT)
+			return AROR_EUnitType.MARKSMAN;
+		switch (variant)
 		{
-			if (!faction.m_sMarksman.IsEmpty())
-				return faction.m_sMarksman;
-			return faction.m_sInfantry;
+			case 1: return AROR_EUnitType.AUTORIFLEMAN;
+			case 2: return AROR_EUnitType.GRENADIER;
+			case 3: return AROR_EUnitType.TEAMLEADER;
+			case 4: return AROR_EUnitType.AT;
+			case 5: return AROR_EUnitType.AA;
 		}
-		if (variant > 0 && faction.m_aInfantryVariants && variant <= faction.m_aInfantryVariants.Count())
-		{
-			ResourceName specialist = faction.m_aInfantryVariants[variant - 1];
-			if (!specialist.IsEmpty())
-				return specialist;
-		}
-		return faction.m_sInfantry;
+		return AROR_EUnitType.RIFLEMAN;
+	}
+
+	//! The preset unit type of a team or crew slot
+	protected static AROR_EUnitType SlotUnitType(AROR_GarrisonSlot slot)
+	{
+		if (slot.m_iKind == 4)
+			return AROR_EUnitType.CREW;
+		return InfantryType(slot.m_iVariant);
+	}
+
+	//! The character a roster unit spawns as (the role's base character, dressed from its preset loadout)
+	protected ResourceName CharacterPrefab(AROR_EUnitType type)
+	{
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		if (!presets)
+			return string.Empty;
+		return presets.GetSpawnPrefab(m_eRosterRole, type);
 	}
 
 	protected bool InitializeFaction(IEntity entity)
@@ -1082,6 +1132,18 @@ class AROR_GarrisonComponent : ScriptComponent
 			if (crewReservation > personnelAvailable)
 				continue;
 			m_iNextAsset = index + 1;
+			if (slot.m_sPrefab.IsEmpty())
+			{
+				// Missing preset equipment is an unavailable defence, never a casualty or another army's asset.
+				slot.m_bPlacementUnavailable = true;
+				foreach (AROR_GarrisonSlot crewSlot : m_aSlots)
+				{
+					if (crewSlot.m_iVehicle == index)
+						crewSlot.m_bPlacementUnavailable = true;
+				}
+				ReportFailure(string.Format("slot=%1 has no vehicle of its requested type in the roster faction preset/content packs", index));
+				return false;
+			}
 			if (!PlaceSlot(index, exclusion))
 			{
 				ReportPlacementFailure(index, "no clear asset pad (terrain, spacing, player clearance, navigation or obstruction)");
@@ -1093,7 +1155,8 @@ class AROR_GarrisonComponent : ScriptComponent
 				ReportPlacementFailure(index, "asset resource failed: " + slot.m_sPrefab);
 				return false;
 			}
-			if (!InitializeFaction(entity))
+			AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+			if (!presets || !presets.InitializeVehicleFaction_S(entity, m_eRosterRole))
 			{
 				SCR_EntityHelper.DeleteEntityAndChildren(entity);
 				ReportPlacementFailure(index, "asset faction binding failed: " + slot.m_sPrefab);
@@ -1165,7 +1228,7 @@ class AROR_GarrisonComponent : ScriptComponent
 		}
 		for (int extra = previous.Count(); extra < usable.Count(); extra++)
 		{
-			int added = AddSlot(faction.m_sCrew, 4, m_aSlots[vehicleIndex].m_iGroup, vehicleIndex, usable[extra]);
+			int added = AddSlot(CharacterPrefab(AROR_EUnitType.CREW), 4, m_aSlots[vehicleIndex].m_iGroup, vehicleIndex, usable[extra]);
 			if (!previous.IsEmpty() || m_aSlots[vehicleIndex].m_bCrewRecorded)
 				m_aSlots[added].m_bLost = true; // A changed catalogue cannot grant replacement personnel.
 		}
@@ -1265,11 +1328,17 @@ class AROR_GarrisonComponent : ScriptComponent
 				return false;
 			}
 			first.m_iPlacementFailureSince = -1;
-			if (!group.m_aUnitPrefabSlots)
-				group.m_aUnitPrefabSlots = {};
-			group.m_aUnitPrefabSlots.Clear();
+			// Members spawn as the role's base character and are dressed from their preset loadout at current Readiness
+			array<AROR_EUnitType> types = {};
 			foreach (int slotIndex : indices)
-				group.m_aUnitPrefabSlots.Insert(m_aSlots[slotIndex].m_sPrefab);
+				types.Insert(SlotUnitType(m_aSlots[slotIndex]));
+			AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+			if (!presets || presets.FillGroup_S(group, m_eRosterRole, types) != indices.Count())
+			{
+				SCR_EntityHelper.DeleteEntityAndChildren(group);
+				ReportPlacementFailure(indices[0], "role has no character for a roster unit (faction presets)");
+				return false;
+			}
 			AROR_GarrisonGroup pending = new AROR_GarrisonGroup();
 			pending.m_iId = groupId;
 			pending.m_Group = group;
@@ -1611,7 +1680,7 @@ class AROR_GarrisonComponent : ScriptComponent
 	//! Never delete a stolen/foreign-occupied asset or a player-controlled soldier.
 	protected bool IsPlayerOrForeignAsset(IEntity entity)
 	{
-		if (GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(entity) > 0)
+		if (GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(entity) > 0 || AROR_ResistanceFleet.IsClaimed(entity))
 			return true;
 		FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(entity.FindComponent(FactionAffiliationComponent));
 		if (affiliation && !affiliation.GetAffiliatedFactionKey().IsEmpty() && affiliation.GetAffiliatedFactionKey() != m_sFactionKey)
@@ -1769,21 +1838,21 @@ class AROR_GarrisonComponent : ScriptComponent
 		{
 			switch (slot.m_iKind)
 			{
-				case 0: slot.m_sPrefab = InfantryPrefab(faction, slot.m_iVariant); break;
+				case 0: slot.m_sPrefab = CharacterPrefab(InfantryType(slot.m_iVariant)); break;
 				case 1: slot.m_sPrefab = StaticPrefab(faction, slot.m_iVariant); break;
 				case 2: slot.m_sPrefab = ParkedPrefab(faction, slot.m_iVariant); break;
-				case 4: slot.m_sPrefab = faction.m_sCrew; break;
+				case 4: slot.m_sPrefab = CharacterPrefab(AROR_EUnitType.CREW); break;
 				case 3:
 				{
-					if (!faction.m_aMannedVehicles || faction.m_aMannedVehicles.IsEmpty())
+					if (faction.MannedVariantCount() == 0)
 						slot.m_sPrefab = string.Empty;
 					else
 					{
 						// Legacy saves may identify an unchanged choice by its old prefab.
-						if (slot.m_bLegacyAsset && faction.m_aMannedVehicles.Contains(slot.m_sPrefab))
+						if (slot.m_bLegacyAsset && faction.m_aMannedVehicles && faction.m_aMannedVehicles.Contains(slot.m_sPrefab))
 							slot.m_iVariant = faction.m_aMannedVehicles.Find(slot.m_sPrefab);
-						slot.m_iVariant = Math.Clamp(slot.m_iVariant, 0, faction.m_aMannedVehicles.Count() - 1);
-						slot.m_sPrefab = faction.m_aMannedVehicles[slot.m_iVariant];
+						slot.m_iVariant = Math.Clamp(slot.m_iVariant, 0, faction.MannedVariantCount() - 1);
+						slot.m_sPrefab = MannedPrefab(faction, slot.m_iVariant);
 					}
 					break;
 				}

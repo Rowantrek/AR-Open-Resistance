@@ -33,7 +33,13 @@ class AROR_ResistanceGarageComponent : SCR_BaseGameModeComponent
 	[Attribute("50", desc: "Player must be within this distance (m) of a Resistance HQ or capturable site to store", params: "5 200", category: "Store")]
 	protected float m_fStoreSiteRadius;
 
+	[Attribute("2", desc: "Seconds between checks for vehicles Resistance players have boarded (claimed for the Resistance fleet)", params: "1 30", category: "Fleet")]
+	protected int m_iFleetScanSeconds;
+
 	protected static AROR_ResistanceGarageComponent s_Instance;
+
+	//! Vehicles out in the world that Resistance players have taken; saved with the garage
+	protected ref AROR_ResistanceFleet m_Fleet = new AROR_ResistanceFleet();
 
 	//! Server: full unique entries (cargo trees included)
 	protected ref array<ref AROR_GarageVehicleEntry> m_aEntries = {};
@@ -59,6 +65,12 @@ class AROR_ResistanceGarageComponent : SCR_BaseGameModeComponent
 	protected ref ScriptInvokerBase<AROR_OnResistanceGarageChanged> m_OnGarageChanged = new ScriptInvokerBase<AROR_OnResistanceGarageChanged>();
 
 	protected bool m_bListeningToLocations;
+
+	//------------------------------------------------------------------------------------------------
+	AROR_ResistanceFleet GetFleet()
+	{
+		return m_Fleet;
+	}
 
 	//------------------------------------------------------------------------------------------------
 	static AROR_ResistanceGarageComponent GetInstance()
@@ -725,12 +737,15 @@ class AROR_ResistanceGarageComponent : SCR_BaseGameModeComponent
 		s_Instance = this;
 		// Location manager may init in the same frame; defer the bind slightly
 		GetGame().GetCallqueue().CallLater(BindLocationListeners, 0, false);
+		GetGame().GetCallqueue().CallLater(m_Fleet.Scan_S, m_iFleetScanSeconds * 1000, true);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	override void OnDelete(IEntity owner)
 	{
 		GetGame().GetCallqueue().Remove(BindLocationListeners);
+		GetGame().GetCallqueue().Remove(m_Fleet.Scan_S);
+		m_Fleet.Stop();
 		UnbindLocationListeners();
 
 		if (s_Instance == this)

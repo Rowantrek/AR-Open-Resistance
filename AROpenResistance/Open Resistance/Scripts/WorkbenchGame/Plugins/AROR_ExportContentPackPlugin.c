@@ -43,7 +43,7 @@ class AROR_ExportContentPackPlugin : AROR_ImportBaseFactionPresetsPlugin
 	[Attribute("AROR_ContentPack_WCS.conf", desc: "File name written to the profile folder")]
 	protected string m_sFileName;
 
-	[Attribute("$AROR_WCSCompat:Configs/ContentPacks/AROR_ContentPack_WCS.conf", desc: "Existing pack whose prefabs are skipped, so only new entries are exported. Ignored when the file does not exist.")]
+	[Attribute("$OpenResistanceWCSCompat:Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf", desc: "Existing pack whose prefabs are skipped, so only new entries are exported. Ignored when the file does not exist.")]
 	protected string m_sExistingPack;
 
 	protected ref array<ResourceName> m_aConfs = {};
@@ -188,7 +188,7 @@ class AROR_ExportContentPackPlugin : AROR_ImportBaseFactionPresetsPlugin
 			return true;
 
 		string id = GameProject.GetAddonID(guid);
-		return id == "ArmaReforger" || id == "OpenResistance" || id == "AROR_WCSCompat";
+		return id == "ArmaReforger" || id == "OpenResistance" || id == "OpenResistanceWCSCompat";
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -461,6 +461,29 @@ class AROR_ExportContentPackPlugin : AROR_ImportBaseFactionPresetsPlugin
 		{
 			AddEntry(result.m_aAccessories, "AROR_FactionPresetWeaponAccessory", AROR_EWeaponAccessoryType, AROR_EWeaponAccessoryType.UNDERBARREL, prefab);
 			return;
+		}
+
+		// Items the catalog lists without arsenal data (vest pouches, headgear and weapon variants) are placed by
+		// their folder (the full path; `name` is only the file name) instead, so players can still take them from the arsenal
+		if (!arsenal)
+		{
+			string folder = prefab;
+			folder.ToLower();
+			if (folder.Contains("/headgear/"))
+			{
+				AddEntry(result.m_aGear, "AROR_FactionPresetGear", AROR_EGearType, GearType(SCR_EArsenalItemType.HEADWEAR, name), prefab);
+				return;
+			}
+			if (folder.Contains("/vests/"))
+			{
+				AddEntry(result.m_aGear, "AROR_FactionPresetGear", AROR_EGearType, AROR_EGearType.OTHER, prefab);
+				return;
+			}
+			if (folder.Contains("/weapons/rifles/"))
+			{
+				AddEntry(result.m_aWeapons, "AROR_FactionPresetWeapon", AROR_EWeaponType, AROR_EWeaponType.ASSAULT_RIFLE, prefab);
+				return;
+			}
 		}
 
 		// Mortar rounds and their ammo boxes are ammunition; the ballistic tables fall through to equipment

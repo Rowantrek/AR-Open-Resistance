@@ -15,6 +15,10 @@ class AROR_AdminAccess
 		if (players.HasPlayerRole(playerId, EPlayerRole.ADMINISTRATOR) || players.HasPlayerRole(playerId, EPlayerRole.SESSION_ADMINISTRATOR))
 			return true;
 
+		// Single player has no network session (RplMode.None) and no one to grant roles: the only player is in charge
+		if (RplSession.Mode() == RplMode.None)
+			return true;
+
 		// The player hosting a listen server always has admin rights over their own session. Only the host's own
 		// machine reports RplMode.Listen, and there the local player is the host, so other clients never qualify.
 		if (RplSession.Mode() != RplMode.Listen)

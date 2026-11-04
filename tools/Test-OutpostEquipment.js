@@ -59,26 +59,25 @@ function runOutpostEquipmentTests(source) {
  logs=[];owner={GetParent:()=>cycle,FindComponent:()=>null,GetChildren:()=>null,FindComponents:storing(inventory)};inspect.call(component);
  check(parentQueries===16&&logs[0].message.includes('site=unregistered'),'unexpected parent hierarchies are bounded');
 
- // Stocking once from the army's faction preset
- const entry=(prefab,type)=>({GetPrefab:()=>prefab,GetTypeValue:()=>type});
- const lists={[categories.WEAPONS]:[entry('{A}Rifle.et',0),entry('{B}MG.et',1)],[categories.AMMUNITION]:[entry('{C}Mag.et',0)],
-  [categories.EQUIPMENT]:[entry('{D}Bandage.et',0),entry('{E}Radio.et',2),entry('',1)]};
- preset={role:1,GetId:()=>'US_ARMY',GetAllEntries:(category,out)=>out.push(...(lists[category]||[])),
-  GetEntries:(category,type,out)=>out.push(...(lists[category]||[]).filter(e=>e.GetTypeValue()===type))};
- const pool=category=>{const out=[];component.m_sCategory=category;component.StockPool(preset,out);return out;};
- check(pool('Weapons').join()==='{A}Rifle.et,{B}MG.et','weapons store draws from the preset weapons');
- check(pool('Ammunition').join()==='{C}Mag.et','ammunition store draws from preset ammunition');
- check(pool('Medical').join()==='{D}Bandage.et','medical store takes only medical equipment');
- check(pool('Equipment').join()==='{E}Radio.et','equipment store takes the other equipment, never medical or empty prefabs');
- check(!pool('Unknown').length,'unknown categories stock nothing');
+ // Stocking once for the army. Presets no longer list items, so the real pool is empty until outposts get an item source
+ preset={role:1,GetId:()=>'US_ARMY'};
+ for(const category of ['Weapons','Ammunition','Medical','Equipment','Unknown']){
+  const out=[];component.m_sCategory=category;component.StockPool(preset,1,out);
+  check(!out.length,category+' store has no item source yet');
+ }
+ logs=[];check(component.Stock_S(1)===0&&logs.some(l=>l.level===1&&l.message.includes('no item source')),'an unstocked store says so instead of failing');
+ // Stocking mechanics, with a stubbed pool standing in for the future item source
+ const stubPool=['{A}Rifle.et','{B}MG.et'];
+ component.StockPool=(p,role,out)=>{if(component.m_sCategory==='Weapons')out.push(...stubPool);};
+ component.m_sCategory='Weapons';
  let accepted=[];const manager={TryInsertItem:item=>{if(item.prefab.includes('MG'))return false;accepted.push(item);return true;}};
  owner={GetParent:()=>parent,GetChildren:()=>null,FindComponent:()=>manager,GetWorldTransform:()=>{}};
- component.m_sCategory='Weapons';logs=[];roll=0;
+ logs=[];roll=0;
  const placed=component.Stock_S(1);
  check(spawned.length===6&&placed===3&&accepted.length===3,'stocks the configured number of picks and counts only inserted items');
  check(deleted.length===3&&deleted.every(item=>item.prefab.includes('MG')),'items the container refuses are deleted, never left on the ground');
  check(logs.some(l=>l.message.includes('stocked 3 of 6')&&l.message.includes('US_ARMY')),'stocking logs the result and the preset used');
- logs=[];check(component.Stock_S(2)===0&&logs.some(l=>l.level===1&&l.message.includes('no matching items')),'an army without matching preset items stocks nothing, visibly');
+ component.m_sCategory='Ammunition';logs=[];check(component.Stock_S(2)===0&&logs.some(l=>l.level===1&&l.message.includes('no item source')),'a category without items stocks nothing, visibly');component.m_sCategory='Weapons';
  owner.FindComponent=()=>null;logs=[];spawned=[];
  check(component.Stock_S(1)===0&&!spawned.length&&logs.some(l=>l.level===2&&l.message.includes('no inventory manager')),'a decorative prop is reported, nothing is spawned');
  const part={FindComponent:()=>manager,GetSibling:()=>null};owner.GetChildren=()=>part;accepted=[];

@@ -1,8 +1,10 @@
-//! Saves Resistance Garage unique vehicle snapshots (AROR_ResistanceGarageComponent on the game mode).
-//! Full cargo trees and weapon ammo are flattened to parallel arrays. Nothing is written while empty.
+//! Saves Resistance Garage unique vehicle snapshots (AROR_ResistanceGarageComponent on the game mode), and since
+//! version 4 the Resistance fleet (AROR_ResistanceFleet): claimed world vehicles, snapshotted into the same arrays
+//! under ids past the garage's next id, plus their position and yaw/pitch/roll.
+//! Full cargo trees and weapon ammo are flattened to parallel arrays. Nothing is written while both are empty.
 class AROR_ResistanceGarageComponentSerializer : ScriptedComponentSerializer
 {
-	protected static const int VERSION = 3;
+	protected static const int VERSION = 4;
 
 	//------------------------------------------------------------------------------------------------
 	override static typename GetTargetType()
@@ -14,11 +16,43 @@ class AROR_ResistanceGarageComponentSerializer : ScriptedComponentSerializer
 	override protected ESerializeResult Serialize(notnull IEntity owner, notnull GenericComponent component, notnull SaveContext context)
 	{
 		const AROR_ResistanceGarageComponent garage = AROR_ResistanceGarageComponent.Cast(component);
-		if (garage.IsEmpty())
+
+		array<ref AROR_GarageVehicleEntry> fleetEntries = {};
+		array<vector> fleetPositions = {};
+		array<vector> fleetAngles = {};
+		if (garage.GetFleet())
+			garage.GetFleet().CaptureForSave_S(fleetEntries, fleetPositions, fleetAngles);
+
+		if (garage.IsEmpty() && fleetEntries.IsEmpty())
 			return ESerializeResult.DEFAULT;
 
 		array<ref AROR_GarageVehicleEntry> entries = {};
 		garage.GetFullEntries_S(entries);
+
+		// Fleet vehicles share the snapshot arrays; their ids only need to be unique within this save
+		array<int> fleetIds = {};
+		array<float> fleetPositionX = {};
+		array<float> fleetPositionY = {};
+		array<float> fleetPositionZ = {};
+		array<float> fleetYaw = {};
+		array<float> fleetPitch = {};
+		array<float> fleetRoll = {};
+		int fleetId = garage.GetNextId_S();
+		foreach (int fleetIndex, AROR_GarageVehicleEntry fleetEntry : fleetEntries)
+		{
+			fleetEntry.m_iId = fleetId;
+			fleetId++;
+			entries.Insert(fleetEntry);
+			fleetIds.Insert(fleetEntry.m_iId);
+			vector position = fleetPositions[fleetIndex];
+			vector angles = fleetAngles[fleetIndex];
+			fleetPositionX.Insert(position[0]);
+			fleetPositionY.Insert(position[1]);
+			fleetPositionZ.Insert(position[2]);
+			fleetYaw.Insert(angles[0]);
+			fleetPitch.Insert(angles[1]);
+			fleetRoll.Insert(angles[2]);
+		}
 
 		array<int> entryIds = {};
 		array<ResourceName> prefabs = {};
@@ -121,6 +155,13 @@ class AROR_ResistanceGarageComponentSerializer : ScriptedComponentSerializer
 		context.WriteValue("itemAmmoCounts", itemAmmoCounts);
 		context.WriteValue("itemHealths", itemHealths);
 		context.WriteValue("factoryNewIds", factoryNewIds);
+		context.WriteValue("fleetIds", fleetIds);
+		context.WriteValue("fleetPositionX", fleetPositionX);
+		context.WriteValue("fleetPositionY", fleetPositionY);
+		context.WriteValue("fleetPositionZ", fleetPositionZ);
+		context.WriteValue("fleetYaw", fleetYaw);
+		context.WriteValue("fleetPitch", fleetPitch);
+		context.WriteValue("fleetRoll", fleetRoll);
 		return ESerializeResult.OK;
 	}
 
@@ -264,7 +305,47 @@ class AROR_ResistanceGarageComponentSerializer : ScriptedComponentSerializer
 			}
 		}
 
+		// Version 4: split the fleet's world vehicles back out of the shared entries
+		array<ref AROR_GarageVehicleEntry> fleetEntries = {};
+		array<vector> fleetPositions = {};
+		array<vector> fleetAngles = {};
+		if (version >= 4)
+		{
+			array<int> fleetIds = {};
+			array<float> fleetPositionX = {};
+			array<float> fleetPositionY = {};
+			array<float> fleetPositionZ = {};
+			array<float> fleetYaw = {};
+			array<float> fleetPitch = {};
+			array<float> fleetRoll = {};
+			context.ReadValue("fleetIds", fleetIds);
+			context.ReadValue("fleetPositionX", fleetPositionX);
+			context.ReadValue("fleetPositionY", fleetPositionY);
+			context.ReadValue("fleetPositionZ", fleetPositionZ);
+			context.ReadValue("fleetYaw", fleetYaw);
+			context.ReadValue("fleetPitch", fleetPitch);
+			context.ReadValue("fleetRoll", fleetRoll);
+
+			int fleetCount = Math.Min(fleetIds.Count(), Math.Min(fleetPositionX.Count(), Math.Min(fleetPositionY.Count(), fleetPositionZ.Count())));
+			fleetCount = Math.Min(fleetCount, Math.Min(fleetYaw.Count(), Math.Min(fleetPitch.Count(), fleetRoll.Count())));
+			for (int i = 0; i < fleetCount; i++)
+			{
+				AROR_GarageVehicleEntry fleetEntry;
+				if (!byId.Find(fleetIds[i], fleetEntry) || !fleetEntry)
+					continue;
+
+				int entryIndex = entries.Find(fleetEntry);
+				if (entryIndex >= 0)
+					entries.RemoveOrdered(entryIndex);
+				fleetEntries.Insert(fleetEntry);
+				fleetPositions.Insert(Vector(fleetPositionX[i], fleetPositionY[i], fleetPositionZ[i]));
+				fleetAngles.Insert(Vector(fleetYaw[i], fleetPitch[i], fleetRoll[i]));
+			}
+		}
+
 		garage.RestoreEntries_S(entries, nextId);
+		if (garage.GetFleet() && !fleetEntries.IsEmpty())
+			garage.GetFleet().RestoreFromSave_S(fleetEntries, fleetPositions, fleetAngles);
 		return true;
 	}
 

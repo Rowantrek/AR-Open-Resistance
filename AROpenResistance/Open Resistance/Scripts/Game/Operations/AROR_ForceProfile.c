@@ -24,16 +24,20 @@ class AROR_ForceProfile
 	int m_iAttackWeight;
 	[Attribute("1", desc: "QRF selection weight; zero disables QRFs")]
 	int m_iQRFWeight;
-	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Infantry group prefab; unused by armour", params: "et")]
-	ResourceName m_sInfantryGroup;
-	[Attribute("", UIWidgets.ResourceNamePicker, desc: "One crew character prefab repeated for required vehicle crew", params: "et")]
-	ResourceName m_sCrewCharacter;
+	[Attribute("", UIWidgets.ComboBox, desc: "Infantry unit types, in order (the first leads); each spawns as the role's base character dressed from its faction preset loadout. Empty uses a fire team (team leader, automatic rifleman, grenadier, rifleman). Unused by armour.", enums: ParamEnumArray.FromEnum(AROR_EUnitType))]
+	ref array<AROR_EUnitType> m_aInfantryUnits;
+	[Attribute("12", UIWidgets.ComboBox, desc: "Unit type repeated for the required ground vehicle crew (airborne pilots are REAPER's own)", enums: ParamEnumArray.FromEnum(AROR_EUnitType))]
+	AROR_EUnitType m_eCrewType;
 	[Attribute("1", desc: "Required crew count, including driver and gunner(s)")]
 	int m_iCrewCount;
-	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Ground vehicle or transport helicopter prefab", params: "et")]
+	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Legacy vehicle type hint only; never spawned directly. Prefer Vehicle Type.", params: "et")]
 	ResourceName m_sVehicle;
-	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Optional airborne gunship prefab; required when escort count is one", params: "et")]
+	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Legacy escort type hint only; never spawned directly. Prefer Escort Vehicle Type.", params: "et")]
 	ResourceName m_sEscortVehicle;
+	[Attribute("-1", UIWidgets.ComboBox, desc: "Vehicle type requested from the role's selected faction preset; -1 derives the type from the legacy vehicle hint", enums: ParamEnumArray.FromEnum(AROR_EVehicleType))]
+	AROR_EVehicleType m_eVehicleType;
+	[Attribute("-1", UIWidgets.ComboBox, desc: "Escort type requested from the role's selected faction preset; -1 derives the type from the legacy escort hint", enums: ParamEnumArray.FromEnum(AROR_EVehicleType))]
+	AROR_EVehicleType m_eEscortVehicleType;
 	[Attribute("1", desc: "Airborne gunship escorts: zero for light transport-only packages, one for escorted packages", params: "0 1 1")]
 	int m_iEscortCount;
 	[Attribute("12", desc: "Personnel reservation, including infantry and crew; must cover actual group slots")]
@@ -47,10 +51,62 @@ class AROR_ForceProfile
 	[Attribute("2000", desc: "Replacement value of each airborne gunship", params: "0 100000 1")]
 	int m_iEscortLossValue;
 
+	ResourceName PickPresetVehicle(bool escort = false, int choice = -1)
+	{
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		if (!presets)
+			return string.Empty;
+		int type = m_eVehicleType;
+		ResourceName hint = m_sVehicle;
+		if (escort)
+		{
+			type = m_eEscortVehicleType;
+			hint = m_sEscortVehicle;
+		}
+		if (type < 0)
+			type = presets.GetVehicleType(hint);
+		return presets.PickVehicle(m_eRole, type, choice);
+	}
+
+	//! Non-random availability probe, shared by planning and execution.
+	bool HasPresetVehicles()
+	{
+		if (m_eType == AROR_EForceType.INFANTRY)
+			return true;
+		if (PickPresetVehicle(false, 0).IsEmpty())
+			return false;
+		return m_eType != AROR_EForceType.AIRBORNE || m_iEscortCount == 0 || !PickPresetVehicle(true, 0).IsEmpty();
+	}
+
+	//! The infantry unit types to field, in order: the authored list, else a default fire team
+	void GetInfantryUnits(notnull array<AROR_EUnitType> outUnits)
+	{
+		outUnits.Clear();
+		if (m_aInfantryUnits && !m_aInfantryUnits.IsEmpty())
+		{
+			outUnits.Copy(m_aInfantryUnits);
+			return;
+		}
+		GetDefaultFireTeam(outUnits);
+	}
+
+	//! Team leader, automatic rifleman, grenadier and rifleman
+	static void GetDefaultFireTeam(notnull array<AROR_EUnitType> outUnits)
+	{
+		outUnits.Clear();
+		outUnits.Insert(AROR_EUnitType.TEAMLEADER);
+		outUnits.Insert(AROR_EUnitType.AUTORIFLEMAN);
+		outUnits.Insert(AROR_EUnitType.GRENADIER);
+		outUnits.Insert(AROR_EUnitType.RIFLEMAN);
+	}
+
 	//! Preserve explicit Readiness/pricing defaults for script-created fixtures; caller fills required identity/assets.
 	static AROR_ForceProfile CreateForScript()
 	{
 		AROR_ForceProfile profile = new AROR_ForceProfile();
+		profile.m_eVehicleType = -1;
+		profile.m_eEscortVehicleType = -1;
+		profile.m_eCrewType = AROR_EUnitType.CREW;
 		profile.m_iMinimumReadinessLevel = 1;
 		profile.m_iPersonnelLossValue = 25;
 		profile.m_iVehicleLossValue = -1;
@@ -128,15 +184,15 @@ class AROR_ForceProfile
 		if (m_eRole != AROR_EFactionRole.OCCUPIERS && m_eRole != AROR_EFactionRole.INVADERS)
 			return false;
 		if (m_eType == AROR_EForceType.INFANTRY)
-			return !m_sInfantryGroup.IsEmpty();
-		if (m_sVehicle.IsEmpty() || m_sCrewCharacter.IsEmpty() || m_iCrewCount < 1 || m_iCrewCount > 8 || m_iCrewCount > m_iPersonnelBudget)
+			return true;
+		if ((m_eVehicleType < 0 && m_sVehicle.IsEmpty()) || m_iCrewCount < 1 || m_iCrewCount > 8 || m_iCrewCount > m_iPersonnelBudget)
 			return false;
 		if (m_eType == AROR_EForceType.ARMOUR && !m_bFillPassengerSeats)
 			return true;
-		if (m_sInfantryGroup.IsEmpty() || m_fDismountDistance < 20)
+		if (m_fDismountDistance < 20)
 			return false;
 		if (m_eType == AROR_EForceType.AIRBORNE)
-			return m_iEscortCount >= 0 && m_iEscortCount <= 1 && (m_iEscortCount == 0 || !m_sEscortVehicle.IsEmpty());
+			return m_iEscortCount >= 0 && m_iEscortCount <= 1 && (m_iEscortCount == 0 || m_eEscortVehicleType >= 0 || !m_sEscortVehicle.IsEmpty());
 		return m_eType == AROR_EForceType.MOTORIZED || m_eType == AROR_EForceType.MECHANIZED || (m_eType == AROR_EForceType.ARMOUR && m_bFillPassengerSeats);
 	}
 }

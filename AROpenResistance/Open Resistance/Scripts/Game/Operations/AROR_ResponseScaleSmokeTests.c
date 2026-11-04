@@ -9,8 +9,6 @@ class AROR_ResponseScaleSmokeTests
 		profile.m_eRole = AROR_EFactionRole.OCCUPIERS;
 		profile.m_sFactionKey = "US";
 		profile.m_eType = AROR_EForceType.MOTORIZED;
-		profile.m_sInfantryGroup = "test_infantry.et";
-		profile.m_sCrewCharacter = "test_crew.et";
 		profile.m_sVehicle = "test_vehicle.et";
 		profile.m_iCrewCount = 1;
 		profile.m_iPersonnelBudget = 8;

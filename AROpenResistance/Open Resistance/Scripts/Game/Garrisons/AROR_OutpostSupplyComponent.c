@@ -1,4 +1,4 @@
-[ComponentEditorProps(category: "OpenResistance/Garrisons", description: "An outpost store: stocked once from the owning army's faction preset when the garrison is first raised, then a finite container that is never refilled. Reports its physical inventory once after startup.")]
+[ComponentEditorProps(category: "OpenResistance/Garrisons", description: "An outpost store: stocked once for the owning army when the garrison is first raised, then a finite container that is never refilled. Reports its physical inventory once after startup.")]
 class AROR_OutpostSupplyComponentClass : ScriptComponentClass {}
 
 //! Inventory belongs to the container prefab the store is placed on, which must be a real (openable) container with
@@ -6,14 +6,14 @@ class AROR_OutpostSupplyComponentClass : ScriptComponentClass {}
 //! with the garrison, so a loaded campaign never restocks a looted store.
 class AROR_OutpostSupplyComponent : ScriptComponent
 {
-	[Attribute("Equipment", desc: "Store category: Weapons, Ammunition, Equipment (non-medical) or Medical. Picks the faction preset list it is stocked from.")]
+	[Attribute("Equipment", desc: "Store category: Weapons, Ammunition, Equipment (non-medical) or Medical. Picks the kind of item it is stocked with.")]
 	protected string m_sCategory;
 
-	[Attribute("6", desc: "Items placed in the store, once, when its garrison is first raised; picked at random from the category's preset list", params: "0 50 1")]
+	[Attribute("6", desc: "Items placed in the store, once, when its garrison is first raised; picked at random from the category's items", params: "0 50 1")]
 	protected int m_iStockCount;
 
 	//------------------------------------------------------------------------------------------------
-	//! Fill the store from the army's faction preset. Returns the number of items placed.
+	//! Fill the store for the army (currently nothing: see StockPool). Returns the number of items placed.
 	int Stock_S(AROR_EFactionRole role)
 	{
 		if (!Replication.IsServer() || m_iStockCount <= 0)
@@ -28,7 +28,7 @@ class AROR_OutpostSupplyComponent : ScriptComponent
 			StockPool(preset, role, pool);
 		if (pool.IsEmpty())
 		{
-			Print(string.Format("[AROR OUTPOST STORE] site=%1 category=%2 not stocked: no matching items in the army's faction preset", LocationId(), m_sCategory), LogLevel.WARNING);
+			Print(string.Format("[AROR OUTPOST STORE] site=%1 category=%2 not stocked: no item source for outpost stores yet", LocationId(), m_sCategory), LogLevel.WARNING);
 			return 0;
 		}
 		InventoryStorageManagerComponent inventory = FindInventory(owner);
@@ -59,32 +59,11 @@ class AROR_OutpostSupplyComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The preset items this store's category draws from that the army's readiness allows
+	//! The items this store's category draws from that the army's readiness allows.
+	//! TODO: faction presets no longer list items, so the pool is empty and stores stay unstocked until this draws from
+	//! content packs (or the army's unit loadouts).
 	protected void StockPool(notnull AROR_FactionPreset preset, AROR_EFactionRole role, notnull array<ResourceName> pool)
 	{
-		array<AROR_FactionPresetEntry> entries = {};
-		if (m_sCategory == "Weapons")
-			preset.GetAllEntries(AROR_EFactionPresetCategory.WEAPONS, entries);
-		else if (m_sCategory == "Ammunition")
-			preset.GetAllEntries(AROR_EFactionPresetCategory.AMMUNITION, entries);
-		else if (m_sCategory == "Medical")
-			preset.GetEntries(AROR_EFactionPresetCategory.EQUIPMENT, AROR_EEquipmentType.MEDICAL, entries);
-		else if (m_sCategory == "Equipment")
-		{
-			array<AROR_FactionPresetEntry> equipment = {};
-			preset.GetAllEntries(AROR_EFactionPresetCategory.EQUIPMENT, equipment);
-			foreach (AROR_FactionPresetEntry candidate : equipment)
-			{
-				if (candidate.GetTypeValue() != AROR_EEquipmentType.MEDICAL)
-					entries.Insert(candidate);
-			}
-		}
-		foreach (AROR_FactionPresetEntry entry : entries)
-		{
-			ResourceName prefab = entry.GetPrefab();
-			if (!prefab.IsEmpty() && AROR_ContentPacksComponent.IsAvailableAtReadiness(prefab, role))
-				pool.Insert(prefab);
-		}
 	}
 
 	//------------------------------------------------------------------------------------------------

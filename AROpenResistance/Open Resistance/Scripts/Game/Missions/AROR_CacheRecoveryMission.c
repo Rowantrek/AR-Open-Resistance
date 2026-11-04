@@ -69,10 +69,10 @@ class AROR_CacheRecoveryMission : AROR_Mission
 	override bool Deploy_S(AROR_MissionBoardComponent board)
 	{
 		vector spot;
-		if (!board.FindClearPosition_S(m_vPosition, SEARCH_RADIUS * 0.8, 1.5, spot))
+		if (!AROR_ForceSpawner.FindClearPosition(m_vPosition, SEARCH_RADIUS * 0.8, 1.5, spot))
 			return false;
 
-		m_Crate = board.SpawnPrefab_S(board.GetCachePrefab(), spot, Math.RandomFloat(0, 360));
+		m_Crate = AROR_ForceSpawner.SpawnPrefab(board.GetCachePrefab(), spot, Math.RandomFloat(0, 360));
 		if (!m_Crate)
 			return false;
 
@@ -81,7 +81,7 @@ class AROR_CacheRecoveryMission : AROR_Mission
 		{
 			vector patrolSpot = spot;
 			vector found;
-			if (board.FindClearPosition_S(spot, 40, 1, found))
+			if (AROR_ForceSpawner.FindClearPosition(spot, 40, 1, found))
 				patrolSpot = found;
 
 			SpawnGuards_S(board, patrolSpot, m_iGuards, 60);

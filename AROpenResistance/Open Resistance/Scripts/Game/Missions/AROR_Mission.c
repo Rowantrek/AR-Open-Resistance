@@ -126,9 +126,9 @@ class AROR_Mission
 	// Shared helpers
 	//------------------------------------------------------------------------------------------------
 	//! Spawns a group of the role and tracks it for affiliation and cleanup
-	protected SCR_AIGroup AddGroup_S(AROR_MissionBoardComponent board, AROR_EFactionRole role, notnull array<ResourceName> members, vector position)
+	protected SCR_AIGroup AddGroup_S(AROR_MissionBoardComponent board, AROR_EFactionRole role, notnull array<AROR_EUnitType> members, vector position)
 	{
-		SCR_AIGroup group = board.SpawnGroup_S(role, members, position);
+		SCR_AIGroup group = AROR_ForceSpawner.SpawnGroup(board.GetGroupPrefab(), role, members, position);
 		if (group)
 		{
 			m_aGroups.Insert(group);
@@ -145,12 +145,12 @@ class AROR_Mission
 		if (count <= 0)
 			return null;
 
-		array<ResourceName> members = {};
-		board.BuildGuardTeam_S(m_eEnemyRole, count, members);
+		array<AROR_EUnitType> members = {};
+		board.BuildGuardTeam_S(count, members);
 
 		vector spot = centre;
 		vector found;
-		if (board.FindClearPosition_S(centre, 20, 1, found))
+		if (AROR_ForceSpawner.FindClearPosition(centre, 20, 1, found))
 			spot = found;
 
 		SCR_AIGroup group = AddGroup_S(board, m_eEnemyRole, members, spot);
@@ -167,7 +167,7 @@ class AROR_Mission
 		int alive;
 		foreach (int i, SCR_AIGroup group : m_aGroups)
 		{
-			int count = board.CountAlive_S(group, m_aGroupRoles[i], m_aAffiliated);
+			int count = AROR_ForceSpawner.CountAlive(group, m_aGroupRoles[i], m_aAffiliated);
 			if (m_aGroupRoles[i] == role)
 				alive += count;
 		}

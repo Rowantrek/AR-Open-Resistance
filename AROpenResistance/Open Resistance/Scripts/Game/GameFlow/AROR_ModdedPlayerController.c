@@ -175,6 +175,25 @@ modded class SCR_PlayerController
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Admin menu: save the kit this character carries under a name (Workbench only)
+	void AROR_RequestAdminCaptureLoadout(string name)
+	{
+		if (Replication.IsServer())
+			AROR_RpcAsk_AdminCaptureLoadout(name);
+		else
+			Rpc(AROR_RpcAsk_AdminCaptureLoadout, name);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void AROR_RpcAsk_AdminCaptureLoadout(string name)
+	{
+		AROR_AdminMenuComponent adminMenu = AROR_AdminMenuComponent.GetInstance();
+		if (adminMenu)
+			adminMenu.CaptureLoadout_S(GetPlayerId(), name);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
 	protected void AROR_RpcAsk_AdminPayIncome()
 	{
