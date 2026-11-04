@@ -34,7 +34,7 @@ class AROR_AssassinationMission : AROR_Mission
 			return false;
 
 		vector spot;
-		if (!board.FindClearPosition_S(site.GetCenter(), 40, 2, spot))
+		if (!AROR_ForceSpawner.FindClearPosition(site.GetCenter(), 40, 2, spot))
 			return false;
 
 		// The officer is alone in his group, so his death is unambiguous
@@ -64,7 +64,7 @@ class AROR_AssassinationMission : AROR_Mission
 		UpdateGroups_S(board, m_eEnemyRole);
 
 		array<IEntity> officer = {};
-		int alive = AROR_MissionBoardComponent.CountLiving(m_Officer, officer);
+		int alive = AROR_ForceSpawner.CountLiving(m_Officer, officer);
 		if (alive > 0)
 			m_bOfficerSeen = true;
 

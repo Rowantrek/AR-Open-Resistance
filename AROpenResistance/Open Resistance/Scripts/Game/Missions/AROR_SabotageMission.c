@@ -36,7 +36,7 @@ class AROR_SabotageMission : AROR_Mission
 			return false;
 
 		vector first;
-		if (!board.FindClearPosition_S(site.GetCenter(), 45, 6, first))
+		if (!AROR_ForceSpawner.FindClearPosition(site.GetCenter(), 45, 6, first))
 			return false;
 
 		float yaw = Math.RandomFloat(0, 360);
@@ -50,7 +50,7 @@ class AROR_SabotageMission : AROR_Mission
 				bool placed;
 				for (int attempt = 0; attempt < 5; attempt++)
 				{
-					if (board.FindClearPosition_S(first, 25, 6, found) && vector.DistanceXZ(found, first) >= 9)
+					if (AROR_ForceSpawner.FindClearPosition(first, 25, 6, found) && vector.DistanceXZ(found, first) >= 9)
 					{
 						spot = found;
 						placed = true;
@@ -63,7 +63,7 @@ class AROR_SabotageMission : AROR_Mission
 			}
 
 			ResourceName prefab = board.GetVehiclePrefab_S(m_eEnemyRole, AROR_EVehicleType.SUPPLY_TRUCK);
-			IEntity truck = board.SpawnVehicle_S(m_eEnemyRole, prefab, spot, yaw);
+			IEntity truck = AROR_ForceSpawner.SpawnVehicle(m_eEnemyRole, prefab, spot, yaw);
 			if (!truck)
 				return false;
 
@@ -86,7 +86,7 @@ class AROR_SabotageMission : AROR_Mission
 		int destroyed;
 		foreach (IEntity target : m_aTargets)
 		{
-			if (AROR_MissionBoardComponent.IsDestroyed(target))
+			if (AROR_ForceSpawner.IsDestroyed(target))
 				destroyed++;
 		}
 

@@ -86,7 +86,7 @@ class AROR_ConvoyAmbushMission : AROR_Mission
 			return false;
 
 		vector start;
-		if (!board.FindRoadPosition_S(origin.GetCenter(), origin.GetCenter(), start))
+		if (!AROR_ForceSpawner.FindRoadPosition(origin.GetCenter(), origin.GetCenter(), start))
 			return false;
 
 		vector heading = m_vDestination - start;
@@ -97,7 +97,7 @@ class AROR_ConvoyAmbushMission : AROR_Mission
 		// Escort in front (towards the destination), cargo truck behind
 		vector escortSpot = start;
 		vector found;
-		if (board.FindRoadPosition_S(start + heading * 25, start + heading * 25, found))
+		if (AROR_ForceSpawner.FindRoadPosition(start + heading * 25, start + heading * 25, found))
 			escortSpot = found;
 
 		ResourceName escortPrefab = board.GetVehiclePrefab_S(m_eEnemyRole, AROR_EVehicleType.ARMED_CAR);
@@ -123,7 +123,7 @@ class AROR_ConvoyAmbushMission : AROR_Mission
 	//! One vehicle with a crew for its driver and turret seats, plus passengers
 	protected bool AddVehicle_S(AROR_MissionBoardComponent board, ResourceName prefab, vector position, float yaw, int passengers)
 	{
-		IEntity vehicle = board.SpawnVehicle_S(m_eEnemyRole, prefab, position, yaw);
+		IEntity vehicle = AROR_ForceSpawner.SpawnVehicle(m_eEnemyRole, prefab, position, yaw);
 		if (!vehicle)
 			return false;
 
@@ -148,7 +148,7 @@ class AROR_ConvoyAmbushMission : AROR_Mission
 
 		vector side = position;
 		vector found;
-		if (board.FindClearPosition_S(position, 12, 1, found))
+		if (AROR_ForceSpawner.FindClearPosition(position, 12, 1, found))
 			side = found;
 
 		SCR_AIGroup group = AddGroup_S(board, m_eEnemyRole, members, side);
@@ -175,7 +175,7 @@ class AROR_ConvoyAmbushMission : AROR_Mission
 		bool seated = true;
 		foreach (int i, IEntity vehicle : m_aVehicles)
 		{
-			if (AROR_MissionBoardComponent.IsDestroyed(vehicle))
+			if (AROR_ForceSpawner.IsDestroyed(vehicle))
 				continue;
 
 			array<AIAgent> agents = {};
@@ -198,7 +198,7 @@ class AROR_ConvoyAmbushMission : AROR_Mission
 				pendingCrew = true;
 
 			array<IEntity> living = {};
-			int alive = AROR_MissionBoardComponent.CountLiving(m_aCrews[i], living);
+			int alive = AROR_ForceSpawner.CountLiving(m_aCrews[i], living);
 			if (alive == 0)
 				continue;
 
@@ -224,7 +224,7 @@ class AROR_ConvoyAmbushMission : AROR_Mission
 
 			vector goal = m_vDestination;
 			vector found;
-			if (board.FindRoadPosition_S(m_vDestination, m_vDestination, found))
+			if (AROR_ForceSpawner.FindRoadPosition(m_vDestination, m_vDestination, found))
 				goal = found;
 
 			foreach (SCR_AIGroup crew : m_aCrews)
@@ -241,11 +241,11 @@ class AROR_ConvoyAmbushMission : AROR_Mission
 		IEntity lead;
 		foreach (int v, IEntity vehicle : m_aVehicles)
 		{
-			if (AROR_MissionBoardComponent.IsDestroyed(vehicle))
+			if (AROR_ForceSpawner.IsDestroyed(vehicle))
 				continue;
 
 			array<IEntity> crew = {};
-			if (AROR_MissionBoardComponent.CountLiving(m_aCrews[v], crew) == 0)
+			if (AROR_ForceSpawner.CountLiving(m_aCrews[v], crew) == 0)
 				continue;
 
 			moving = true;

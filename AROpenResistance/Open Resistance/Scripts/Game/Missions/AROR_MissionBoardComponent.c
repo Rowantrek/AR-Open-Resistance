@@ -376,16 +376,6 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	string GetFactionKey(AROR_EFactionRole role)
-	{
-		AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
-		if (!roles)
-			return string.Empty;
-
-		return roles.GetFactionKey(role);
-	}
-
-	//------------------------------------------------------------------------------------------------
 	//! True when the role can field the unit type (from its faction preset or the base-game preset it falls back to)
 	bool HasUnit_S(AROR_EFactionRole role, AROR_EUnitType type)
 	{
@@ -445,102 +435,6 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! An AI group of the role with one member per unit type, each spawned as the role's base character and dressed
-	//! from its preset loadout at the role's current Readiness (through the engine's queue, not all this frame)
-	SCR_AIGroup SpawnGroup_S(AROR_EFactionRole role, notnull array<AROR_EUnitType> members, vector position)
-	{
-		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
-		if (members.IsEmpty() || !presets)
-			return null;
-
-		string factionKey = GetFactionKey(role);
-		Faction faction = GetGame().GetFactionManager().GetFactionByKey(factionKey);
-		if (!faction)
-			return null;
-
-		SCR_AIGroup.IgnoreSpawning(true);
-		IEntity entity = SpawnPrefab_S(m_sGroupPrefab, position, 0);
-		SCR_AIGroup.IgnoreSpawning(false);
-
-		SCR_AIGroup group = SCR_AIGroup.Cast(entity);
-		if (!group)
-		{
-			if (entity)
-				SCR_EntityHelper.DeleteEntityAndChildren(entity);
-
-			return null;
-		}
-
-		bool assigned;
-		if (!group.GetFaction())
-			assigned = group.InitFactionKey(factionKey);
-		else
-			assigned = group.SetFaction(faction);
-
-		if (!assigned)
-		{
-			SCR_EntityHelper.DeleteEntityAndChildren(group);
-			return null;
-		}
-
-		group.SetCanDeleteIfNoPlayer(false);
-		group.SetPrivate(true);
-		group.SetPrivacyChangeable(false);
-		group.SetLifecyclePolicy(SCR_EAIGroupLifecyclePolicy.Manual);
-
-		int slots = presets.FillGroup_S(group, role, members);
-		if (slots < 1)
-		{
-			SCR_EntityHelper.DeleteEntityAndChildren(group);
-			return null;
-		}
-
-		group.RequestSpawn(slots);
-		return group;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! A vehicle affiliated with the role (yaw in degrees)
-	IEntity SpawnVehicle_S(AROR_EFactionRole role, ResourceName prefab, vector position, float yaw)
-	{
-		IEntity vehicle = SpawnPrefab_S(prefab, position, yaw);
-		if (!vehicle)
-			return null;
-
-		FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(vehicle.FindComponent(FactionAffiliationComponent));
-		string factionKey = GetFactionKey(role);
-		if (affiliation && !factionKey.IsEmpty())
-			affiliation.SetAffiliatedFactionByKey(factionKey);
-
-		return vehicle;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Spawns a prefab on the terrain surface (yaw in degrees)
-	IEntity SpawnPrefab_S(ResourceName prefab, vector position, float yaw)
-	{
-		if (prefab.IsEmpty())
-			return null;
-
-		Resource resource = Resource.Load(prefab);
-		if (!resource || !resource.IsValid())
-			return null;
-
-		BaseWorld world = GetGame().GetWorld();
-		position[1] = world.GetSurfaceY(position[0], position[2]);
-
-		EntitySpawnParams params = new EntitySpawnParams();
-		params.TransformMode = ETransformMode.WORLD;
-		vector rotation[3];
-		Math3D.AnglesToMatrix(Vector(yaw, 0, 0), rotation);
-		params.Transform[0] = rotation[0];
-		params.Transform[1] = rotation[1];
-		params.Transform[2] = rotation[2];
-		params.Transform[3] = position;
-		return GetGame().SpawnEntityPrefab(resource, world, params);
-	}
-
-	//------------------------------------------------------------------------------------------------
 	//! Gives the group a defend or move waypoint; the waypoint is added to entities for cleanup
 	AIWaypoint AddWaypoint_S(SCR_AIGroup group, bool defend, vector position, float radius, notnull array<IEntity> entities)
 	{
@@ -551,55 +445,24 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 		if (defend)
 			prefab = m_sDefendWaypointPrefab;
 
-		AIWaypoint waypoint = AIWaypoint.Cast(SpawnPrefab_S(prefab, position, 0));
+		AIWaypoint waypoint = AROR_ForceSpawner.AddWaypoint(group, prefab, position, radius);
 		if (!waypoint)
 			return null;
 
-		waypoint.SetCompletionRadius(radius);
-		group.AddWaypoint(waypoint);
 		entities.Insert(waypoint);
 		return waypoint;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	ResourceName GetGroupPrefab()
+	{
+		return m_sGroupPrefab;
 	}
 
 	//------------------------------------------------------------------------------------------------
 	ResourceName GetCachePrefab()
 	{
 		return m_sCachePrefab;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! A clear spot on dry land within radius of centre with room for an object of the clearance radius
-	bool FindClearPosition_S(vector centre, float radius, float clearance, out vector position)
-	{
-		BaseWorld world = GetGame().GetWorld();
-		for (int attempt = 0; attempt < 6; attempt++)
-		{
-			vector found;
-			if (!SCR_WorldTools.FindEmptyTerrainPosition(found, centre, radius, clearance, 3))
-				continue;
-
-			if (world.GetSurfaceY(found[0], found[2]) <= world.GetOceanHeight(found[0], found[2]) + 0.5)
-				continue;
-
-			position = found;
-			return true;
-		}
-
-		return false;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! A reachable road point near a position (searching towards goal)
-	bool FindRoadPosition_S(vector near, vector goal, out vector position)
-	{
-		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
-		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
-			return false;
-
-		BaseWorld world = GetGame().GetWorld();
-		near[1] = world.GetSurfaceY(near[0], near[2]);
-		goal[1] = world.GetSurfaceY(goal[0], goal[2]);
-		return aiWorld.GetRoadNetworkManager().GetReachableWaypointInRoad(near, goal, 150, position);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -628,85 +491,6 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Living members of a group; new members are given the role's campaign faction once (presets spawn with their
-	//! native faction)
-	int CountAlive_S(SCR_AIGroup group, AROR_EFactionRole role, notnull array<IEntity> affiliated)
-	{
-		if (!group)
-			return 0;
-
-		string factionKey = GetFactionKey(role);
-		array<AIAgent> agents = {};
-		group.GetAgents(agents);
-		int alive;
-		foreach (AIAgent agent : agents)
-		{
-			if (!agent)
-				continue;
-
-			IEntity entity = agent.GetControlledEntity();
-			if (!IsAlive(entity))
-				continue;
-
-			alive++;
-			if (affiliated.Contains(entity))
-				continue;
-
-			affiliated.Insert(entity);
-			FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(entity.FindComponent(FactionAffiliationComponent));
-			if (affiliation && !factionKey.IsEmpty() && affiliation.GetAffiliatedFactionKey() != factionKey)
-				affiliation.SetAffiliatedFactionByKey(factionKey);
-		}
-
-		return alive;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Living members of a group (no affiliation changes)
-	static int CountLiving(SCR_AIGroup group, notnull array<IEntity> outMembers)
-	{
-		outMembers.Clear();
-		if (!group)
-			return 0;
-
-		array<AIAgent> agents = {};
-		group.GetAgents(agents);
-		foreach (AIAgent agent : agents)
-		{
-			if (!agent)
-				continue;
-
-			IEntity entity = agent.GetControlledEntity();
-			if (IsAlive(entity))
-				outMembers.Insert(entity);
-		}
-
-		return outMembers.Count();
-	}
-
-	//------------------------------------------------------------------------------------------------
-	static bool IsAlive(IEntity entity)
-	{
-		ChimeraCharacter character = ChimeraCharacter.Cast(entity);
-		if (!character)
-			return false;
-
-		CharacterControllerComponent controller = character.GetCharacterController();
-		return controller && !controller.IsDead();
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Gone or wrecked
-	static bool IsDestroyed(IEntity entity)
-	{
-		if (!entity)
-			return true;
-
-		DamageManagerComponent damage = DamageManagerComponent.Cast(entity.FindComponent(DamageManagerComponent));
-		return damage && damage.IsDestroyed();
-	}
-
-	//------------------------------------------------------------------------------------------------
 	//! Seats a group's members in a vehicle (driver first, then turrets, then cargo), teleporting them in. Called
 	//! every update until it returns true: seat requests can be dropped, and members spawn over several frames.
 	bool SeatGroup_S(SCR_AIGroup group, IEntity vehicle, int expectedMembers)
@@ -720,7 +504,7 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 			return false;
 
 		array<IEntity> members = {};
-		CountLiving(group, members);
+		AROR_ForceSpawner.CountLiving(group, members);
 		if (members.Count() < expectedMembers)
 			return false;
 
@@ -789,7 +573,7 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 				continue;
 
 			array<IEntity> members = {};
-			CountLiving(group, members);
+			AROR_ForceSpawner.CountLiving(group, members);
 			foreach (IEntity member : members)
 			{
 				cleanup.m_aEntities.Insert(member);
@@ -1319,7 +1103,7 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 		foreach (int playerId : playerIds)
 		{
 			IEntity controlled = playerManager.GetPlayerControlledEntity(playerId);
-			if (IsAlive(controlled))
+			if (AROR_ForceSpawner.IsAlive(controlled))
 				m_aPlayerPositions.Insert(controlled.GetOrigin());
 		}
 	}
