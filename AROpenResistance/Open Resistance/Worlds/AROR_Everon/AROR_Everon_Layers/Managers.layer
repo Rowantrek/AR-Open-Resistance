@@ -91,7 +91,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iAttackWeight 40
      m_iQRFWeight 40
      m_iCrewCount 1
-     m_sVehicle "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et"
+     m_sVehicle "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_Transport.et"
      m_eVehicleType SUPPLY_TRUCK
      m_iPersonnelBudget 22
      m_fDismountDistance 150
@@ -152,8 +152,8 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iQRFWeight 20
      m_iCrewCount 2
      m_sVehicle "{70BAEEFC2D3FEE64}Prefabs/Vehicles/Helicopters/UH1H/UH1H.et"
-     m_eVehicleType HELI_TRANSPORT
      m_sEscortVehicle "{21E9A875C0A3C409}Prefabs/Vehicles/Helicopters/UH1H/UH1H_armed_gunship_HE.et"
+     m_eVehicleType HELI_TRANSPORT
      m_eEscortVehicleType HELI_ATTACK
      m_iEscortCount 1
      m_iPersonnelBudget 32
@@ -174,7 +174,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iAttackWeight 40
      m_iQRFWeight 40
      m_iCrewCount 1
-     m_sVehicle "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et"
+     m_sVehicle "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_Transport.et"
      m_eVehicleType SUPPLY_TRUCK
      m_iPersonnelBudget 22
      m_fDismountDistance 150
@@ -235,8 +235,8 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iQRFWeight 20
      m_iCrewCount 2
      m_sVehicle "{DF5CCB7C0FF049F4}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et"
-     m_eVehicleType HELI_TRANSPORT
      m_sEscortVehicle "{3C6B3ED0C3AC30D5}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_gunship_HE.et"
+     m_eVehicleType HELI_TRANSPORT
      m_eEscortVehicleType HELI_ATTACK
      m_iEscortCount 1
      m_iPersonnelBudget 32
@@ -258,7 +258,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iAttackWeight 0
      m_iQRFWeight 10
      m_iCrewCount 2
-     m_sVehicle "{3EA6F47D95867114}Prefabs/Vehicles/Wheeled/M998/M1025_armed_M2HB.et"
+     m_sVehicle "{3EA6F47D95867114}Prefabs/Vehicles/Wheeled/M998/M1025_Armed_M2HB.et"
      m_eVehicleType ARMED_CAR
      m_iPersonnelBudget 8
      m_fDismountDistance 150
@@ -1279,7 +1279,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_fQRFSpotMinimumDot 0.9
    m_iQRFSpotTraceLimit 8
    m_iQRFSpotLifetime 90
-   m_iStartingReadinessLevel 1
+   m_iStartingReadinessLevel 2
    m_iAirborneQRFShare 30
    m_iStartingCrackdown 0
    m_iCaptureReadinessPressure 25

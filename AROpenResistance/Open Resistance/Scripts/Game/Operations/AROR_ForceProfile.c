@@ -24,7 +24,9 @@ class AROR_ForceProfile
 	int m_iAttackWeight;
 	[Attribute("1", desc: "QRF selection weight; zero disables QRFs")]
 	int m_iQRFWeight;
-	[Attribute("", UIWidgets.ComboBox, desc: "Infantry unit types, in order (the first leads); each spawns as the role's base character dressed from its faction preset loadout. Empty uses a fire team (team leader, automatic rifleman, grenadier, rifleman). Unused by armour.", enums: ParamEnumArray.FromEnum(AROR_EUnitType))]
+	[Attribute("", UIWidgets.ComboBox, desc: "Infantry formations, in order (the first leads); expanded into their unit types. Passenger seats take them in order and repeat them while seats are spare, so a vehicle too small for them drops the end. Empty uses a rifle squad. Ignored when Infantry Units is set. Unused by armour.", enums: ParamEnumArray.FromEnum(AROR_EFormation))]
+	ref array<AROR_EFormation> m_aFormations;
+	[Attribute("", UIWidgets.ComboBox, desc: "Explicit infantry unit types, in order (the first leads); each spawns as the role's base character dressed from its faction preset loadout. Overrides Infantry Formations. Unused by armour.", enums: ParamEnumArray.FromEnum(AROR_EUnitType))]
 	ref array<AROR_EUnitType> m_aInfantryUnits;
 	[Attribute("12", UIWidgets.ComboBox, desc: "Unit type repeated for the required ground vehicle crew (airborne pilots are REAPER's own)", enums: ParamEnumArray.FromEnum(AROR_EUnitType))]
 	AROR_EUnitType m_eCrewType;
@@ -78,7 +80,8 @@ class AROR_ForceProfile
 		return m_eType != AROR_EForceType.AIRBORNE || m_iEscortCount == 0 || !PickPresetVehicle(true, 0).IsEmpty();
 	}
 
-	//! The infantry unit types to field, in order: the authored list, else a default fire team
+	//! The infantry unit types to field, in order: the explicit list, else the expanded formations (a rifle squad when
+	//! none are set)
 	void GetInfantryUnits(notnull array<AROR_EUnitType> outUnits)
 	{
 		outUnits.Clear();
@@ -87,17 +90,7 @@ class AROR_ForceProfile
 			outUnits.Copy(m_aInfantryUnits);
 			return;
 		}
-		GetDefaultFireTeam(outUnits);
-	}
-
-	//! Team leader, automatic rifleman, grenadier and rifleman
-	static void GetDefaultFireTeam(notnull array<AROR_EUnitType> outUnits)
-	{
-		outUnits.Clear();
-		outUnits.Insert(AROR_EUnitType.TEAMLEADER);
-		outUnits.Insert(AROR_EUnitType.AUTORIFLEMAN);
-		outUnits.Insert(AROR_EUnitType.GRENADIER);
-		outUnits.Insert(AROR_EUnitType.RIFLEMAN);
+		AROR_Formations.Expand(m_aFormations, outUnits);
 	}
 
 	//! Preserve explicit Readiness/pricing defaults for script-created fixtures; caller fills required identity/assets.
