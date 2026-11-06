@@ -55,7 +55,7 @@ class AROR_GroupOutfitter
 
 		if (!AROR_LoadoutOutfitter.IsUndressed(character))
 		{
-			Print(string.Format("[AROR] Group outfitter: %1 joined already wearing clothing, so it keeps its own kit", SCR_ResourceNameUtils.GetPrefabName(character)), LogLevel.WARNING);
+			Print(string.Format("[AROR] Group outfitter: %1 joined already wearing clothing, so it keeps its own kit: %2", SCR_ResourceNameUtils.GetPrefabName(character), AROR_LoadoutOutfitter.DescribeWorn(character)), LogLevel.WARNING);
 			return;
 		}
 
