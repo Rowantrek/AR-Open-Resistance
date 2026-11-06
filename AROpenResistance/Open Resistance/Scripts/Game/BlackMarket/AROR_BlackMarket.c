@@ -73,7 +73,8 @@ class AROR_BlackMarket
 			packs.GetEnabledEntries(GetPresetCategory(category), entries);
 			foreach (AROR_ContentPackEntry entry : entries)
 			{
-				outOffers.Insert(AROR_ImportShop.CreateOffer(entry, category, false));
+				if (entry.CanResistancePurchase())
+					outOffers.Insert(AROR_ImportShop.CreateOffer(entry, category, false));
 			}
 		}
 	}

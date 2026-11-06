@@ -1,0 +1,22 @@
+GameProject {
+ ID "OpenResistanceRHSCompat"
+ GUID "6AC238614411B347"
+ TITLE "Open Resistance - RHS Compat"
+ Dependencies {
+  "6AA282336705EED2" "1337C0DE5DABBEEF" "BADC0DEDABBEDA5E" "58D0FB3206B6F859" "595F2BF2F44836FB"
+ }
+ Configurations {
+  GameProjectConfig PC {
+  }
+  GameProjectConfig XBOX_ONE {
+  }
+  GameProjectConfig XBOX_SERIES {
+  }
+  GameProjectConfig PS4 {
+  }
+  GameProjectConfig PS5 {
+  }
+  GameProjectConfig HEADLESS {
+  }
+ }
+}

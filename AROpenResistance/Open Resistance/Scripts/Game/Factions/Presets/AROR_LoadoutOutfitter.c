@@ -1,6 +1,6 @@
 //! Dresses a character from a loadout (see AROR_UnitLoadout.c): clothing with its contents, then weapons with their
 //! attachments and magazine, then loose items. Server only. Meant for gear-less characters; listed contents are
-//! complete, so each container's own default contents are removed before it is filled. Anything that cannot be placed
+//! complete, so a container keeps only the defaults its listed contents match and the rest are removed. Anything that cannot be placed
 //! is deleted and logged, so a partly broken kit still spawns what it can.
 class AROR_LoadoutOutfitter
 {
@@ -22,6 +22,8 @@ class AROR_LoadoutOutfitter
 
 		// Clothing first: it provides the storages the rest goes into
 		BaseInventoryStorageComponent clothingStorage = BaseInventoryStorageComponent.Cast(character.FindComponent(SCR_CharacterInventoryStorageComponent));
+		RemoveDefaultBackpack(inventory, clothingStorage);
+
 		array<AROR_LoadoutClothing> clothing = {};
 		loadout.GetClothing(clothing);
 		foreach (AROR_LoadoutClothing piece : clothing)
@@ -90,36 +92,159 @@ class AROR_LoadoutOutfitter
 
 		array<IEntity> worn = {};
 		clothingStorage.GetAll(worn, false);
-		return worn.IsEmpty();
+		foreach (IEntity piece : worn)
+		{
+			if (piece && !IsBackpack(piece))
+				return false;
+		}
+
+		return true;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Empties the container's own default contents, then puts each listed item (and its contents) inside it
+	//! Worn pieces with their area type, for diagnostics
+	static string DescribeWorn(IEntity character)
+	{
+		string result;
+		BaseInventoryStorageComponent clothingStorage = BaseInventoryStorageComponent.Cast(character.FindComponent(SCR_CharacterInventoryStorageComponent));
+		if (!clothingStorage)
+			return result;
+
+		array<IEntity> worn = {};
+		clothingStorage.GetAll(worn, false);
+		foreach (IEntity piece : worn)
+		{
+			if (!piece)
+				continue;
+
+			string area = "no cloth component";
+			BaseLoadoutClothComponent cloth = BaseLoadoutClothComponent.Cast(piece.FindComponent(BaseLoadoutClothComponent));
+			if (cloth && cloth.GetAreaType())
+				area = cloth.GetAreaType().Type().ToString();
+
+			result += string.Format("[%1 area=%2] ", SCR_ResourceNameUtils.GetPrefabName(piece), area);
+		}
+
+		return result;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The base character prefabs spawn with a default backpack that the gear-less overrides do not clear; it is not
+	//! a kit, so it neither counts as dressed nor survives dressing
+	protected static bool IsBackpack(IEntity piece)
+	{
+		BaseLoadoutClothComponent cloth = BaseLoadoutClothComponent.Cast(piece.FindComponent(BaseLoadoutClothComponent));
+		if (!cloth)
+			return false;
+
+		LoadoutAreaType area = cloth.GetAreaType();
+		return area && area.Type() == LoadoutBackpackArea;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static void RemoveDefaultBackpack(InventoryStorageManagerComponent inventory, BaseInventoryStorageComponent clothingStorage)
+	{
+		if (!clothingStorage)
+			return;
+
+		array<IEntity> worn = {};
+		clothingStorage.GetAll(worn, false);
+		foreach (IEntity piece : worn)
+		{
+			if (!piece || !IsBackpack(piece))
+				continue;
+
+			inventory.TryRemoveItemFromStorage(piece, clothingStorage);
+			SCR_EntityHelper.DeleteEntityAndChildren(piece);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Makes the container hold exactly the listed items (and their contents). What it spawned with is kept where it
+	//! matches a listed prefab: pre-attached parts (a vest's pouches, a flare's round) cannot be taken off and put back,
+	//! and a container read by the importer usually lists its own defaults. Unlisted defaults are removed first, then
+	//! the listed items still missing are spawned and put in.
 	protected static int Fill(InventoryStorageManagerComponent inventory, IEntity container, array<AROR_LoadoutItem> contents)
 	{
 		array<BaseInventoryStorageComponent> storages = {};
 		GetStorages(container, storages);
-		ClearContents(storages);
 
-		int failed;
+		array<IEntity> existing = {};
+		array<BaseInventoryStorageComponent> existingStorages = {};
+		foreach (BaseInventoryStorageComponent storage : storages)
+		{
+			array<IEntity> items = {};
+			storage.GetAll(items, false);
+			foreach (IEntity item : items)
+			{
+				if (!item)
+					continue;
+
+				existing.Insert(item);
+				existingStorages.Insert(storage);
+			}
+		}
+
+		// Pair every listed copy with a matching default, if any
+		array<AROR_LoadoutItem> wanted = {};
+		array<IEntity> kept = {};
 		foreach (AROR_LoadoutItem item : contents)
 		{
 			for (int copy = 0; copy < item.GetCount(); copy++)
 			{
-				IEntity child = SpawnNear(item.GetPrefab(), container);
-				if (!child || !InsertInAny(inventory, child, storages))
+				IEntity match = null;
+				int index = FindByPrefab(existing, item.GetPrefab());
+				if (index >= 0)
 				{
-					failed += Fail(child, item.GetPrefab(), "contents");
-					continue;
+					match = existing[index];
+					existing.Remove(index);
+					existingStorages.Remove(index);
 				}
 
-				array<AROR_LoadoutItem> nested = {};
-				item.GetContents(nested);
-				failed += Fill(inventory, child, nested);
+				wanted.Insert(item);
+				kept.Insert(match);
 			}
 		}
 
+		foreach (int leftover, IEntity unlisted : existing)
+		{
+			inventory.TryRemoveItemFromStorage(unlisted, existingStorages[leftover]);
+			SCR_EntityHelper.DeleteEntityAndChildren(unlisted);
+		}
+
+		int failed;
+		foreach (int slot, AROR_LoadoutItem listed : wanted)
+		{
+			IEntity child = kept[slot];
+			if (!child)
+			{
+				child = SpawnNear(listed.GetPrefab(), container);
+				if (!child || !InsertInAny(inventory, child, storages))
+				{
+					failed += Fail(child, listed.GetPrefab(), "contents");
+					continue;
+				}
+			}
+
+			array<AROR_LoadoutItem> nested = {};
+			listed.GetContents(nested);
+			failed += Fill(inventory, child, nested);
+		}
+
 		return failed;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Index of the first entity spawned from the prefab, or -1
+	protected static int FindByPrefab(array<IEntity> entities, ResourceName prefab)
+	{
+		foreach (int index, IEntity entity : entities)
+		{
+			if (entity && SCR_ResourceNameUtils.GetPrefabName(entity) == prefab)
+				return index;
+		}
+
+		return -1;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -193,21 +318,6 @@ class AROR_LoadoutOutfitter
 		}
 	}
 
-	//------------------------------------------------------------------------------------------------
-	//! Deletes every item a container spawned with
-	protected static void ClearContents(array<BaseInventoryStorageComponent> storages)
-	{
-		foreach (BaseInventoryStorageComponent storage : storages)
-		{
-			array<IEntity> items = {};
-			storage.GetAll(items, false);
-			foreach (IEntity item : items)
-			{
-				if (item)
-					SCR_EntityHelper.DeleteEntityAndChildren(item);
-			}
-		}
-	}
 
 	//------------------------------------------------------------------------------------------------
 	protected static IEntity SpawnNear(ResourceName prefab, IEntity anchor)

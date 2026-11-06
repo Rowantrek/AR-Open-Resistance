@@ -15,8 +15,7 @@ class AROR_AssassinationMission : AROR_Mission
 			return false;
 
 		m_eEnemyRole = site.GetControllingRole();
-		ResourceName officer = board.GetUnitPrefab_S(m_eEnemyRole, AROR_EUnitType.OFFICER);
-		if (officer.IsEmpty())
+		if (!board.HasUnit_S(m_eEnemyRole, AROR_EUnitType.SQUADLEADER))
 			return false;
 
 		m_sLocationId = site.GetId();
@@ -35,19 +34,18 @@ class AROR_AssassinationMission : AROR_Mission
 			return false;
 
 		vector spot;
-		if (!board.FindClearPosition_S(site.GetCenter(), 40, 2, spot))
+		if (!AROR_ForceSpawner.FindClearPosition(site.GetCenter(), 40, 2, spot))
 			return false;
 
 		// The officer is alone in his group, so his death is unambiguous
-		array<ResourceName> officer = {board.GetUnitPrefab_S(m_eEnemyRole, AROR_EUnitType.OFFICER)};
+		array<AROR_EUnitType> officer = {AROR_EUnitType.SQUADLEADER};
 		m_Officer = AddGroup_S(board, m_eEnemyRole, officer, spot);
 		if (!m_Officer)
 			return false;
 
 		board.AddWaypoint_S(m_Officer, true, spot, 8, m_aEntities);
 
-		ResourceName rifleman = board.GetUnitPrefab_S(m_eEnemyRole, AROR_EUnitType.RIFLEMAN);
-		array<ResourceName> bodyguards = {rifleman, rifleman};
+		array<AROR_EUnitType> bodyguards = {AROR_EUnitType.RIFLEMAN, AROR_EUnitType.RIFLEMAN};
 		SCR_AIGroup close = AddGroup_S(board, m_eEnemyRole, bodyguards, spot);
 		if (close)
 			board.AddWaypoint_S(close, true, spot, 12, m_aEntities);
@@ -66,7 +64,7 @@ class AROR_AssassinationMission : AROR_Mission
 		UpdateGroups_S(board, m_eEnemyRole);
 
 		array<IEntity> officer = {};
-		int alive = AROR_MissionBoardComponent.CountLiving(m_Officer, officer);
+		int alive = AROR_ForceSpawner.CountLiving(m_Officer, officer);
 		if (alive > 0)
 			m_bOfficerSeen = true;
 

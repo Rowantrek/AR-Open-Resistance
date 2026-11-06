@@ -11,8 +11,6 @@ class AROR_ForcePoolSmokeTests
 		profile.m_eType = type;
 		profile.m_iAttackWeight = weight;
 		profile.m_iQRFWeight = weight;
-		profile.m_sInfantryGroup = "test_infantry.et";
-		profile.m_sCrewCharacter = "test_crew.et";
 		profile.m_sVehicle = "test_vehicle.et";
 		profile.m_sEscortVehicle = "test_gunship.et";
 		profile.m_iCrewCount = 1;

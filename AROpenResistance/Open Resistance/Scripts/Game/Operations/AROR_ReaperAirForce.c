@@ -4,6 +4,9 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 	ref AROR_GroundOperationForce m_Escort;
 	int m_iPreparationDeadline;
 	bool m_bUnescorted;
+	string m_sAirOriginId;	//!< The owned site the aircraft launch from; empty when they use the ground or a fixed origin
+	bool m_bEnforceLaunchClearance;
+	int m_iLaunchWaitDeadline = -1;
 	int m_iPackageCount = 1;
 	vector m_vLaunch;
 	vector m_vEscortLaunch;
@@ -167,7 +170,8 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 			SCR_EntityHelper.DeleteEntityAndChildren(m_CrewWaypoint);
 		if (m_CrewGroup)
 			SCR_EntityHelper.DeleteEntityAndChildren(m_CrewGroup);
-		if (m_Vehicle)
+		// An aircraft the Resistance has taken is theirs: it stays, lost to the operation
+		if (m_Vehicle && !AROR_ResistanceFleet.IsClaimed(m_Vehicle))
 		{
 			if (m_Funding)
 				m_Funding.Retire_S(m_Vehicle);

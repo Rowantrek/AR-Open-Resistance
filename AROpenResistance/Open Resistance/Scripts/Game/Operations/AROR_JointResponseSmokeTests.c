@@ -20,8 +20,6 @@ class AROR_JointResponseSmokeTests
 		profile.m_iMinimumReadinessLevel = 5;
 		profile.m_iAttackWeight = 1;
 		profile.m_iQRFWeight = 1;
-		profile.m_sInfantryGroup = "joint_test_infantry";
-		profile.m_sCrewCharacter = "joint_test_crew";
 		profile.m_sVehicle = "joint_test_vehicle";
 		profile.m_sEscortVehicle = "joint_test_escort";
 		profile.m_iEscortCount = 1;

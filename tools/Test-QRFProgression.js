@@ -17,7 +17,7 @@ function runQRFProgressionTests(sources) {
   const names=['PressureForLevel','ReadinessLevel','ResponseLevel','Importance','GetReadinessPressure','GetReadinessLevel','GetCrackdown','GetCrackdownLevel','GetCrackdownPercent','HasThreatState',
     'IsEnemyRole','GetQRFDispatchCount','RestoreQRFResponseMix_S','SetReadinessPressure_S','SetReadinessLevel_S','SetCrackdown_S','RestoreQRFStrategy_S','RecordStrategicEvidence','RecordCaptureEscalation_S','UpdateCrackdown_S','GetCrackdownForSave',
     'IsValid','AllowsReadinessLevel','HasNativeExecutor','GetWeight','GetGroupBudget','GetVehicleBudget','VehicleLossValue','ReplacementQuote','IsReady','HasLocation','Resolve',
-    'FindStrategicGroundRecipe','QRFPoolReadinessLevel','GetReservedGroups','GetReservedMembers','GetReservedVehicles','GetSpottingKind'];
+    'GetAvailableProfiles','FindStrategicGroundRecipe','QRFPoolReadinessLevel','GetReservedGroups','GetReservedMembers','GetReservedVehicles','GetSpottingKind'];
   function compile(source,name){
     const match=source.match(new RegExp('^\\t[^\\r\\n]*\\b'+name+'\\(([^\\r\\n]*)\\)\\r?\\n\\t\\{([\\s\\S]*?)^\\t\\}','m'));
     if(!match)throw Error('Missing production method '+name);
@@ -127,6 +127,7 @@ function runQRFProgressionTests(sources) {
   function fields(block){const result={};for(const m of block.matchAll(/^\s+(m_\w+)\s+(?:"([^"\r\n]*)"|(-?[\d.]+))\s*$/gm))result[m[1]]=m[2]??Number(m[3]);return result;}
   const profiles=[...sources.layer.matchAll(/^ {4}AROR_ForceProfile \{\r?\n([\s\S]*?)^ {4}\}/gm)].map(m=>{
     const p={m_iMinimumReadinessLevel:1,m_iEscortCount:1,m_iEscortLossValue:2000,m_iPersonnelLossValue:25,...fields(m[1])};
+    p.HasPresetVehicles=()=>true;
     for(const n of ['IsValid','HasNativeExecutor','GetWeight','GetGroupBudget','GetVehicleBudget','VehicleLossValue','ReplacementQuote','GetSpottingKind'])p[n]=compile(sources.profile,n);return p;
   });
   const recipes=[...sources.layer.matchAll(/^ {4}AROR_GroundQRFRecipe \{\r?\n([\s\S]*?)^ {4}\}/gm)].map(m=>{
@@ -154,6 +155,7 @@ function runQRFProgressionTests(sources) {
   const context={m_aGroundQRFRecipes:recipes,m_aForceProfiles:profiles,m_iMaxGroups:20,m_iMaxMembers:Number(sources.layer.match(/m_iMaxMembers (\d+)/)[1]),m_iMaxVehicles:10,
     m_Operations:{GetReadinessLevel:()=>1,GetCrackdownLevel:()=>5,GetQRFFinance:()=>({Available:()=>funds,Debt:()=>debt}),QRFOverhead:t=>50+t*10,AllowsMinimumCaptureQRF:()=>true},
     GetReservedGroups:()=>0,GetReservedMembers:()=>0,GetReservedVehicles:()=>0};
+  context.GetAvailableProfiles=compile(sources.executor,'GetAvailableProfiles');
   context.FindStrategicGroundRecipe=compile(sources.executor,'FindStrategicGroundRecipe');context.QRFPoolReadinessLevel=compile(sources.executor,'QRFPoolReadinessLevel');
   const select=compile(sources.executor,'SelectStrategicGroundRecipe');
   for(const role of [1,2])for(let readinessLevel=1;readinessLevel<=5;readinessLevel++)for(let intensity=1;intensity<=5;intensity++){

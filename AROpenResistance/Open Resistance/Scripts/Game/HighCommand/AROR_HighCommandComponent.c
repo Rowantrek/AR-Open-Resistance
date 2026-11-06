@@ -687,53 +687,11 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 		position[0] = position[0] + Math.Cos(angle) * distance;
 		position[2] = position[2] + Math.Sin(angle) * distance;
 
-		SCR_AIGroup.IgnoreSpawning(true);
-		IEntity entity = SpawnPrefab(m_sGroupPrefab, position);
-		SCR_AIGroup.IgnoreSpawning(false);
-
-		SCR_AIGroup group = SCR_AIGroup.Cast(entity);
-		if (!group)
-		{
-			if (entity)
-				SCR_EntityHelper.DeleteEntityAndChildren(entity);
-
+		if (!type.m_aUnits)
 			return null;
-		}
 
-		string factionKey = GetResistanceFactionKey();
-		Faction faction = GetGame().GetFactionManager().GetFactionByKey(factionKey);
-		bool assigned;
-		if (faction)
-		{
-			if (!group.GetFaction())
-				assigned = group.InitFactionKey(factionKey);
-			else
-				assigned = group.SetFaction(faction);
-		}
-
-		if (!assigned)
-		{
-			SCR_EntityHelper.DeleteEntityAndChildren(group);
-			return null;
-		}
-
-		group.SetCanDeleteIfNoPlayer(false);
-		group.SetPrivate(true);
-		group.SetPrivacyChangeable(false);
-		group.SetLifecyclePolicy(SCR_EAIGroupLifecyclePolicy.Manual);
-
-		if (!group.m_aUnitPrefabSlots)
-			group.m_aUnitPrefabSlots = {};
-
-		group.m_aUnitPrefabSlots.Clear();
-		foreach (ResourceName member : type.m_aMembers)
-		{
-			group.m_aUnitPrefabSlots.Insert(member);
-		}
-
-		// Members spawn through the engine's shared AI queue, not all in this frame
-		group.RequestSpawn(type.GetSize());
-		return group;
+		// Each member spawns as the Resistance base character and is dressed from its preset unit loadout
+		return AROR_ForceSpawner.SpawnGroup(m_sGroupPrefab, AROR_EFactionRole.RESISTANCE, type.m_aUnits, position);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1089,7 +1047,23 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 		if (!Replication.IsServer())
 			return;
 
+		CheckSquadTypes();
 		GetGame().GetCallqueue().CallLater(Update_S, m_iUpdateInterval * 1000, true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Warns for squad types with no units: they could be bought but would field nobody (e.g. when the authored
+	//! unit list was lost from the world layer)
+	protected void CheckSquadTypes()
+	{
+		if (!m_aSquadTypes)
+			return;
+
+		foreach (AROR_HighCommandSquadType type : m_aSquadTypes)
+		{
+			if (type && type.GetSize() == 0)
+				Print(string.Format("[AROR] High Command squad type '%1' (%2) has no units; it would field nobody", type.m_sName, type.m_sCallsign), LogLevel.WARNING);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------

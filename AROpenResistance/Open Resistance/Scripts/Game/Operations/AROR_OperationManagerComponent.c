@@ -30,7 +30,7 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("90", desc: "Seconds before unrefreshed last-seen QRF markers expire", params: "15 300 5")]
 	protected int m_iQRFSpotLifetime;
 	protected ref AROR_QRFSpotting m_QRFSpotting = new AROR_QRFSpotting();
-	[Attribute("1", desc: "Initial equipment-pool readiness for each AI role; saved capture progress drives levels 1-5", params: "1 5 1")]
+	[Attribute("2", desc: "Initial equipment-pool readiness for each AI role; saved capture progress drives levels 1-5", params: "1 5 1")]
 	protected int m_iStartingReadinessLevel;
 	[Attribute("30", desc: "Target percentage of ordinary dispatched QRFs containing airborne forces, separately per army. Counts standalone air and joint responses; funding and launch safety still apply.", params: "0 100 1")]
 	protected int m_iAirborneQRFShare;
@@ -101,15 +101,15 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 		}
 		Print(string.Format("[AROR MIX] role=%1 dispatched=%2 airborneOrJoint=%3 targetPercent=%4", operation.GetRole(), total, air, m_iAirborneQRFShare), LogLevel.NORMAL);
 	}
-	[Attribute("0", desc: "Initial crackdown percentage for each AI role; start new campaigns at response tier 1", params: "0 100 1")]
+	[Attribute("20", desc: "Initial crackdown percentage for each AI role; 20 starts new campaigns at response tier 2 (each tier is 20)", params: "0 100 1")]
 	protected int m_iStartingCrackdown;
-	[Attribute("25", desc: "Long-term readiness progress per newly recorded capture loss. Combat and quiet time do not change this progress.", params: "0 100 1")]
+	[Attribute("50", desc: "Long-term readiness progress per newly recorded capture loss. Combat and quiet time do not change this progress.", params: "0 100 1")]
 	protected int m_iCaptureReadinessPressure;
-	[Attribute("50", desc: "Crackdown points per newly recorded capture loss, on a 0-1000 scale; 50 gives four capture losses per response tier before other evidence/cooling", params: "0 1000 5")]
+	[Attribute("100", desc: "Crackdown points per newly recorded capture loss, on a 0-1000 scale; 100 gives two capture losses per response tier", params: "0 1000 5")]
 	protected int m_iCaptureCrackdown;
 	[Attribute("600", desc: "Seconds without validated evidence or confirmed QRF losses before crackdown starts cooling", params: "60 3600 30")]
 	protected int m_iCrackdownQuietTime;
-	[Attribute("20", desc: "Crackdown points removed each quiet minute, on a 0-1000 scale. Equipment readiness progress is retained.", params: "0 1000 1")]
+	[Attribute("0", desc: "Crackdown points removed each quiet minute, on a 0-1000 scale; 0 turns cooling off. Equipment readiness progress is retained.", params: "0 1000 1")]
 	protected int m_iCrackdownDecay;
 	[Attribute("50", desc: "Fixed QRF deployment overhead, charged once when ACTIVE", params: "0 100000 1")]
 	protected int m_iQRFBaseOverhead;

@@ -39,10 +39,10 @@ class AROR_SupplyTheftMission : AROR_Mission
 
 		ResourceName prefab = board.GetVehiclePrefab_S(m_eEnemyRole, AROR_EVehicleType.SUPPLY_TRUCK);
 		vector spot;
-		if (!board.FindClearPosition_S(site.GetCenter(), 45, 6, spot))
+		if (!AROR_ForceSpawner.FindClearPosition(site.GetCenter(), 45, 6, spot))
 			return false;
 
-		m_Truck = board.SpawnVehicle_S(m_eEnemyRole, prefab, spot, Math.RandomFloat(0, 360));
+		m_Truck = AROR_ForceSpawner.SpawnVehicle(m_eEnemyRole, prefab, spot, Math.RandomFloat(0, 360));
 		if (!m_Truck)
 			return false;
 
@@ -59,7 +59,7 @@ class AROR_SupplyTheftMission : AROR_Mission
 	override AROR_EMissionResult Update_S(AROR_MissionBoardComponent board)
 	{
 		UpdateGroups_S(board, m_eEnemyRole);
-		if (AROR_MissionBoardComponent.IsDestroyed(m_Truck))
+		if (AROR_ForceSpawner.IsDestroyed(m_Truck))
 		{
 			m_sOutcome = "the truck was destroyed";
 			return AROR_EMissionResult.FAILED;

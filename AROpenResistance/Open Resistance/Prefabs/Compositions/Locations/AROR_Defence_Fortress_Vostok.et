@@ -9,9 +9,9 @@ GenericEntity : "{118F89378FB3D213}Prefabs/Locations/AROR_Location_MilitaryBase.
   AROR_GarrisonComponent "{66D30571F98F4BE3}" {
    m_iDefenceLevel 4
    m_iStaticWeaponCountOverride 6
-   m_aExtraParkedVehicles {
-    "{DF5CCB7C0FF049F4}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et"
-    "{DF5CCB7C0FF049F4}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et"
+   m_aExtraParkedVehicleTypes {
+    HELI_TRANSPORT
+    HELI_TRANSPORT
    }
    m_fDefenceHalfExtent 40
    m_fDefenceHalfDepth 23

@@ -77,7 +77,7 @@ class AROR_Imports
 		foreach (AROR_ContentPackEntry entry : entries)
 		{
 			int category = GetCategoryOf(entry.GetTypeValue());
-			if (category >= 0)
+			if (category >= 0 && entry.CanResistancePurchase())
 				outOffers.Insert(AROR_ImportShop.CreateOffer(entry, category, true));
 		}
 	}
