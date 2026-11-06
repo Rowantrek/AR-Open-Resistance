@@ -1279,7 +1279,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_fQRFSpotMinimumDot 0.9
    m_iQRFSpotTraceLimit 8
    m_iQRFSpotLifetime 90
-   m_iStartingReadinessLevel 1
+   m_iStartingReadinessLevel 2
    m_iAirborneQRFShare 30
    m_iStartingCrackdown 0
    m_iCaptureReadinessPressure 25
