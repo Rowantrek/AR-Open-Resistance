@@ -53,11 +53,11 @@ modded class AROR_OperationExecutorComponent
 		return super.ResolveQRFOrigin(operation, target, fallback, logOrigin);
 	}
 
-	override protected bool ReserveQRFFunding(AROR_Operation operation, array<AROR_ForceProfile> elements, int tier)
+	override protected bool ReserveQRFFunding(AROR_Operation operation, array<AROR_ForceProfile> elements, int tier, int extraQuote = 0)
 	{
 		if (operation.m_bFundingWaived)
 			return true;
-		return super.ReserveQRFFunding(operation, elements, tier);
+		return super.ReserveQRFFunding(operation, elements, tier, extraQuote);
 	}
 
 	//! A fixed origin has no site to lose; the launch safety check still runs for every package.

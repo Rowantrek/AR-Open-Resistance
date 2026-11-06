@@ -2220,13 +2220,13 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		}
 		return best;
 	}
-	protected bool ReserveQRFFunding(AROR_Operation operation, array<AROR_ForceProfile> elements, int tier)
+	protected bool ReserveQRFFunding(AROR_Operation operation, array<AROR_ForceProfile> elements, int tier, int extraQuote = 0)
 	{
 		if (operation.m_bDebugRequest || !m_Operations.IsQRFStrategyEnabled() || !operation.UsesTacticalResponse())
 			return true;
 		if (operation.m_Funding)
 			return true;
-		int quote;
+		int quote = extraQuote;
 		bool groundOnly = true;
 		foreach (AROR_ForceProfile profile : elements)
 		{

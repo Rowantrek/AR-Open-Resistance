@@ -14,7 +14,7 @@ modded class AROR_OperationExecutorComponent
 	protected float m_fReaperInsertionHeight;
 	[Attribute("3000", desc: "Airborne packages launch from the nearest usable owned origin at least this far from the target (else the farthest usable one), so aircraft fly in instead of appearing near the fight. Ground elements keep the normal origin.", params: "0 8000 100", category: "Airborne launch")]
 	protected float m_fReaperMinLaunchDistance;
-	[Attribute("1500", desc: "Aircraft are built and boarded hovering at their launch point, so it moves back over land, away from the target, until every player is at least this far away", params: "0 4000 100", category: "Airborne launch")]
+	[Attribute("1500", desc: "Aircraft are built and boarded hovering at their launch point, so it moves back over land, away from the target, until every player is at least this far away. Enforced on each aircraft: a response without a clear launch point falls back to ground or waits. Fixed origins and MARS requests are exempt. Distance only; no line-of-sight test", params: "0 4000 100", category: "Airborne launch")]
 	protected float m_fReaperLaunchPlayerClearance;
 	[Attribute("160", desc: "Transport ingress/landing waypoint maximum speed, km/h; REAPER controls final braking", params: "100 200 1")]
 	protected float m_fReaperTransportSpeed;
@@ -92,8 +92,81 @@ modded class AROR_OperationExecutorComponent
 		}
 
 		vector launch = OutOfPlayerSight(origin, target.GetCenter());
+		if (!IsLaunchClear(launch))
+		{
+			AROR_LocationComponent clearSite;
+			vector clearLaunch = ClearLaunchFromAnySite(operation, target, clearSite);
+			if (clearSite)
+			{
+				outSite = clearSite;
+				siteName = clearSite.GetId();
+				launch = clearLaunch;
+			}
+		}
 		Print(string.Format("[AROR REAPER] QRF %1 air launch site=%2 distance=%3m nearestPlayer=%4m", operation.GetId(), siteName, Math.Round(vector.DistanceXZ(launch, target.GetCenter())), Math.Round(NearestPlayerDistance(launch))), LogLevel.NORMAL);
 		return launch;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The usable origin nearest the target, beyond m_fReaperMinLaunchDistance where possible, whose launch point is
+	//! clear of every player. outSite is null when none is.
+	protected vector ClearLaunchFromAnySite(AROR_Operation operation, AROR_LocationComponent target, out AROR_LocationComponent outSite)
+	{
+		outSite = null;
+		vector best;
+		float bestDistance = float.MAX;
+		bool bestIsFar;
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
+		if (!locations)
+			return best;
+
+		array<AROR_LocationComponent> sites = {};
+		locations.GetLocations(sites);
+		foreach (AROR_LocationComponent site : sites)
+		{
+			if (!IsUsableOrigin(site, operation.GetRole(), target, operation))
+				continue;
+
+			vector candidate = OutOfPlayerSight(site.GetCenter(), target.GetCenter());
+			if (!IsLaunchClear(candidate))
+				continue;
+
+			float distance = vector.DistanceXZ(site.GetCenter(), target.GetCenter());
+			bool isFar = distance >= m_fReaperMinLaunchDistance;
+			if (outSite && (bestIsFar && !isFar))
+				continue;
+
+			if (!outSite || (isFar && !bestIsFar) || distance < bestDistance)
+			{
+				outSite = site;
+				best = candidate;
+				bestDistance = distance;
+				bestIsFar = isFar;
+			}
+		}
+
+		return best;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool IsLaunchClear(vector position)
+	{
+		return NearestPlayerDistance(position) >= m_fReaperLaunchPlayerClearance;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The site the package's aircraft launch from is still its role's, and is not being fought over
+	protected bool AirOriginAvailable(AROR_ReaperAirForce force, AROR_Operation operation)
+	{
+		if (force.m_sAirOriginId.IsEmpty())
+			return true;
+
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
+		AROR_LocationComponent origin;
+		if (locations)
+			origin = locations.GetLocationById(force.m_sAirOriginId);
+
+		return origin && AROR_QRFOriginPolicy.IsOriginType(origin.GetLocationType()) && origin.GetControllingRole() == operation.GetRole() && !AROR_RecaptureComponent.IsContested(origin.GetId());
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -500,7 +573,7 @@ modded class AROR_OperationExecutorComponent
 		int airGroups = profile.GetGroupBudget() * level;
 		if (jointRecipe)
 		{
-			level = 1 + JointExtraTransports(operation, profile, jointElements, jointGroups, jointMembers, jointVehicles);
+			level = 1 + JointExtraTransports(operation, profile, jointElements, jointRecipe.m_iLevel, jointGroups, jointMembers, jointVehicles);
 			airVehicles = profile.GetVehicleBudget() + level - 1;
 			airGroups = profile.GetGroupBudget() + (level - 1) * (profile.GetGroupBudget() - profile.m_iEscortCount);
 		}
@@ -536,6 +609,7 @@ modded class AROR_OperationExecutorComponent
 		vector commonHeading = AROR_ReaperFlightGeometry.Direction(airHome, target.GetCenter());
 		vector right = Vector(commonHeading[2], 0, -commonHeading[0]);
 		array<ref AROR_ReaperAirForce> prepared = {};
+		bool enforceClearance = !operation.m_bHasOriginOverride && !operation.m_bDebugRequest;
 		for (int index = 0; index < level; index++)
 		{
 			// Reuse a pad only when fewer safe sites exist than transports; those users queue.
@@ -546,6 +620,13 @@ modded class AROR_OperationExecutorComponent
 			vector escortLaunch = AROR_ReaperFlightGeometry.FormationPoint(launch, heading, m_fReaperFormationSpacing);
 			// A joint response escorts only its first transport
 			bool escorted = profile.m_iEscortCount > 0 && (!jointRecipe || index == 0);
+			if (enforceClearance && (!IsLaunchClear(launch) || (escorted && !IsLaunchClear(escortLaunch))))
+			{
+				if (FallbackMixedQRFToGround(operation, "No air launch point is clear of players"))
+					return;
+				ReportSpawnWait(operation, "Waiting for an air launch point clear of players");
+				return;
+			}
 			if (!IsLaunchPositionSafe(launch, target.GetCenter()) || (escorted && !IsLaunchPositionSafe(escortLaunch, target.GetCenter())))
 			{
 				if (FallbackMixedQRFToGround(operation, "Air insertion lane fails clearance"))
@@ -578,6 +659,9 @@ modded class AROR_OperationExecutorComponent
 			force.m_bConstructionPending = true;
 			force.m_sPilotPrefab = pilot;
 			force.m_bUnescorted = !escorted;
+			force.m_bEnforceLaunchClearance = enforceClearance;
+			if (airSite)
+				force.m_sAirOriginId = airSite.GetId();
 			force.m_iReservedGroups = profile.GetGroupBudget();
 			force.m_iReservedMembers = profile.m_iPersonnelBudget;
 			force.m_iReservedVehicles = profile.GetVehicleBudget();
@@ -605,17 +689,21 @@ modded class AROR_OperationExecutorComponent
 			financialElements.Insert(profile);
 		int tier = level;
 		int totalPackages = level;
+		int extraQuote;
 		if (jointRecipe)
 		{
-			financialElements = {};
-			financialElements.Copy(jointElements);
-			for (int extra = 1; extra < level; extra++)
-				financialElements.Insert(profile);
+			financialElements = jointElements;
+			extraQuote = (level - 1) * profile.TransportQuote();
 			tier = jointRecipe.m_iLevel;
 			totalPackages = jointElements.Count() + level - 1;
 		}
-		if (!ReserveQRFFunding(operation, financialElements, tier))
+		if (!ReserveQRFFunding(operation, financialElements, tier, extraQuote))
+		{
+			// Funds may have fallen since the extras were decided; decide again on the next attempt
+			if (jointRecipe)
+				operation.m_iJointExtraTransports = -1;
 			return;
+		}
 		if (jointRecipe)
 		{
 			if (!operation.BindGroundRecipe_S(jointRecipe.m_sId, tier, totalPackages))
@@ -657,6 +745,8 @@ modded class AROR_OperationExecutorComponent
 		foreach (AROR_ReaperAirForce packageForce : prepared)
 		{
 			ConfigureForceFunding(packageForce, operation, profile);
+			if (jointRecipe && packageForce.m_iPackageIndex > 0)
+				packageForce.m_iPackageQuote = profile.TransportQuote();
 			packageForce.m_bTacticalControlled = operation.m_TacticalCommander != null;
 			reservation.m_iReservedGroups -= packageForce.m_iReservedGroups;
 			reservation.m_iReservedMembers -= packageForce.m_iReservedMembers;
@@ -690,7 +780,7 @@ modded class AROR_OperationExecutorComponent
 	//! Unescorted transports added beside a joint response's airborne pair: m_iJointTransportPercent of its ground
 	//! elements, rounded up, and fewer when they would not fit the limits or funds, so they never hold the response back.
 	//! Decided once per operation, because the landing search and the funding both depend on it.
-	protected int JointExtraTransports(AROR_Operation operation, AROR_ForceProfile profile, array<AROR_ForceProfile> elements, int groups, int members, int vehicles)
+	protected int JointExtraTransports(AROR_Operation operation, AROR_ForceProfile profile, array<AROR_ForceProfile> elements, int tier, int groups, int members, int vehicles)
 	{
 		if (operation.m_iJointExtraTransports >= 0)
 			return operation.m_iJointExtraTransports;
@@ -702,7 +792,7 @@ modded class AROR_OperationExecutorComponent
 			funds = m_Operations.GetQRFFinance().Available(operation.GetRole());
 			foreach (AROR_ForceProfile element : elements)
 				funds -= element.ReplacementQuote();
-			funds -= m_Operations.QRFOverhead(operation.m_iRequestedTier);
+			funds -= m_Operations.QRFOverhead(tier);
 			funds = Math.Max(funds, 0);
 		}
 		while (extras > 0)
@@ -712,7 +802,7 @@ modded class AROR_OperationExecutorComponent
 				&& GetReservedGroups() + profile.GetGroupBudget() + extras * (profile.GetGroupBudget() - profile.m_iEscortCount) + groups <= m_iMaxGroups
 				&& GetReservedMembers() + profile.m_iPersonnelBudget * (1 + extras) + members <= m_iMaxMembers
 				&& GetReservedVehicles() + profile.GetVehicleBudget() + extras + vehicles <= m_iMaxVehicles;
-			if (fits && (funds < 0 || profile.ReplacementQuote() * extras <= funds))
+			if (fits && (funds < 0 || profile.TransportQuote() * extras <= funds))
 				break;
 			extras--;
 		}
@@ -1543,6 +1633,11 @@ modded class AROR_OperationExecutorComponent
 				FailReaperPackage(force, operation, "Committed airborne launch site lost or contested before construction");
 				return;
 			}
+			if (!AirOriginAvailable(force, operation))
+			{
+				FailReaperPackage(force, operation, "Air launch site lost or contested before construction");
+				return;
+			}
 			if (tactical && tactical.ReserveExpired(m_iExecutorClock))
 			{
 				ReleaseForce(force);
@@ -1551,7 +1646,19 @@ modded class AROR_OperationExecutorComponent
 					FailOperation(operation, "Air reserve expired without surviving elements");
 				return;
 			}
-			if (tactical && !tactical.CanConstruct(force.m_iPackageIndex, m_iExecutorClock, LiveTacticalAircraftCount(), m_iQRFMaxLiveAircraft, force.m_Profile.GetVehicleBudget()))
+			if (force.m_bEnforceLaunchClearance && (!IsLaunchClear(force.m_vLaunch) || (!force.m_bUnescorted && !IsLaunchClear(force.m_vEscortLaunch))))
+			{
+				if (force.m_iLaunchWaitDeadline < 0)
+					force.m_iLaunchWaitDeadline = m_iExecutorClock + m_iReaperPreparationTimeout;
+				if (m_iExecutorClock >= force.m_iLaunchWaitDeadline)
+					FailReaperPackage(force, operation, "Air launch point stayed within sight of players");
+				return;
+			}
+			force.m_iLaunchWaitDeadline = -1;
+			int aircraft = 1;
+			if (!force.m_bUnescorted)
+				aircraft += force.m_Profile.m_iEscortCount;
+			if (tactical && !tactical.CanConstruct(force.m_iPackageIndex, m_iExecutorClock, LiveTacticalAircraftCount(), m_iQRFMaxLiveAircraft, aircraft))
 				return;
 			if (tactical && m_iLastQRFConstructionTick == m_iExecutorClock)
 				return;
