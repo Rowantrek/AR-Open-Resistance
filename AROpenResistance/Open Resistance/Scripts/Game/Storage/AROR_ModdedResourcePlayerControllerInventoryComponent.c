@@ -75,7 +75,7 @@ modded class SCR_ResourcePlayerControllerInventoryComponent
 		if (vector.DistanceSq(resourcesOwner.GetOrigin(), storagePosition) > MAX_REFUNDING_DISTANCE_SQ)
 			return true;
 
-		if (!inventoryManagerComponent.ValidateStorageRequest(resourcesOwner))
+		if (!inventoryManagerComponent.ValidateItemRequest(resourcesOwner))
 			return true;
 
 		SCR_ArsenalComponent arsenalComponent = SCR_ArsenalComponent.FindArsenalComponent(resourcesOwner);
@@ -177,7 +177,7 @@ modded class SCR_ResourcePlayerControllerInventoryComponent
 			return true;
 
 		InventoryStorageManagerComponent sellerInventoryManagerComponent = seller.GetCharacterController().GetInventoryStorageManager();
-		if (!sellerInventoryManagerComponent || !sellerInventoryManagerComponent.ValidateStorageRequest(resourcesOwner))
+		if (!sellerInventoryManagerComponent || !sellerInventoryManagerComponent.ValidateItemRequest(resourcesOwner))
 			return true;
 
 		if (vector.DistanceSq(resourcesOwner.GetOrigin(), itemPosition) > MAX_REFUNDING_DISTANCE_SQ)
