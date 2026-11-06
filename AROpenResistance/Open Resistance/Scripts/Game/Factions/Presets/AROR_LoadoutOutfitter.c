@@ -22,6 +22,8 @@ class AROR_LoadoutOutfitter
 
 		// Clothing first: it provides the storages the rest goes into
 		BaseInventoryStorageComponent clothingStorage = BaseInventoryStorageComponent.Cast(character.FindComponent(SCR_CharacterInventoryStorageComponent));
+		RemoveDefaultBackpack(inventory, clothingStorage);
+
 		array<AROR_LoadoutClothing> clothing = {};
 		loadout.GetClothing(clothing);
 		foreach (AROR_LoadoutClothing piece : clothing)
@@ -90,7 +92,71 @@ class AROR_LoadoutOutfitter
 
 		array<IEntity> worn = {};
 		clothingStorage.GetAll(worn, false);
-		return worn.IsEmpty();
+		foreach (IEntity piece : worn)
+		{
+			if (piece && !IsBackpack(piece))
+				return false;
+		}
+
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Worn pieces with their area type, for diagnostics
+	static string DescribeWorn(IEntity character)
+	{
+		string result;
+		BaseInventoryStorageComponent clothingStorage = BaseInventoryStorageComponent.Cast(character.FindComponent(SCR_CharacterInventoryStorageComponent));
+		if (!clothingStorage)
+			return result;
+
+		array<IEntity> worn = {};
+		clothingStorage.GetAll(worn, false);
+		foreach (IEntity piece : worn)
+		{
+			if (!piece)
+				continue;
+
+			string area = "no cloth component";
+			BaseLoadoutClothComponent cloth = BaseLoadoutClothComponent.Cast(piece.FindComponent(BaseLoadoutClothComponent));
+			if (cloth && cloth.GetAreaType())
+				area = cloth.GetAreaType().Type().ToString();
+
+			result += string.Format("[%1 area=%2] ", SCR_ResourceNameUtils.GetPrefabName(piece), area);
+		}
+
+		return result;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The base character prefabs spawn with a default backpack that the gear-less overrides do not clear; it is not
+	//! a kit, so it neither counts as dressed nor survives dressing
+	protected static bool IsBackpack(IEntity piece)
+	{
+		BaseLoadoutClothComponent cloth = BaseLoadoutClothComponent.Cast(piece.FindComponent(BaseLoadoutClothComponent));
+		if (!cloth)
+			return false;
+
+		LoadoutAreaType area = cloth.GetAreaType();
+		return area && area.Type() == LoadoutBackpackArea;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static void RemoveDefaultBackpack(InventoryStorageManagerComponent inventory, BaseInventoryStorageComponent clothingStorage)
+	{
+		if (!clothingStorage)
+			return;
+
+		array<IEntity> worn = {};
+		clothingStorage.GetAll(worn, false);
+		foreach (IEntity piece : worn)
+		{
+			if (!piece || !IsBackpack(piece))
+				continue;
+
+			inventory.TryRemoveItemFromStorage(piece, clothingStorage);
+			SCR_EntityHelper.DeleteEntityAndChildren(piece);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
