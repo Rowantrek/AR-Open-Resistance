@@ -136,7 +136,11 @@ modded class AROR_OperationExecutorComponent
 			if (outSite && (bestIsFar && !isFar))
 				continue;
 
-			if (!outSite || (isFar && !bestIsFar) || distance < bestDistance)
+			// Beyond the minimum distance the nearest site wins; short of it, the farthest does
+			bool closer = distance < bestDistance;
+			if (!isFar)
+				closer = distance > bestDistance;
+			if (!outSite || (isFar && !bestIsFar) || closer)
 			{
 				outSite = site;
 				best = candidate;
@@ -579,16 +583,23 @@ modded class AROR_OperationExecutorComponent
 		}
 		if (GetReservedGroups() + airGroups + jointGroups > m_iMaxGroups)
 		{
+			// The extras were sized against capacity that is gone; decide again on the next attempt
+			if (jointRecipe)
+				operation.m_iJointExtraTransports = -1;
 			ReportSpawnWait(operation, "Full airborne response exceeds remaining group capacity");
 			return;
 		}
 		if (GetReservedMembers() + profile.m_iPersonnelBudget * level + jointMembers > m_iMaxMembers)
 		{
+			if (jointRecipe)
+				operation.m_iJointExtraTransports = -1;
 			ReportSpawnWait(operation, "Full airborne response exceeds remaining personnel capacity");
 			return;
 		}
 		if (GetReservedVehicles() + airVehicles + jointVehicles > m_iMaxVehicles)
 		{
+			if (jointRecipe)
+				operation.m_iJointExtraTransports = -1;
 			ReportSpawnWait(operation, "Full airborne response exceeds remaining aircraft capacity");
 			return;
 		}
@@ -1013,8 +1024,8 @@ modded class AROR_OperationExecutorComponent
 		force.m_bOrdersIssued = true;
 		force.m_iFlightStage = 1;
 		// Plus the time to cover the inbound leg at half the commanded speed, as launches can be far out
-		float inboundSeconds = vector.DistanceXZ(force.m_vLaunch, force.m_vAirApproach) * 2 / (m_fReaperTransportSpeed / 3.6);
-		force.m_iFlightDeadline = m_iExecutorClock + m_iReaperFlightTimeout * force.m_iPackageCount + Math.Round(inboundSeconds);
+		int inboundSeconds = Math.Round(vector.DistanceXZ(force.m_vLaunch, force.m_vAirApproach) * 2 / (m_fReaperTransportSpeed / 3.6));
+		force.m_iFlightDeadline = m_iExecutorClock + m_iReaperFlightTimeout * force.m_iPackageCount + inboundSeconds;
 		force.m_iEscortDeadline = force.m_iFlightDeadline;
 		return true;
 	}
