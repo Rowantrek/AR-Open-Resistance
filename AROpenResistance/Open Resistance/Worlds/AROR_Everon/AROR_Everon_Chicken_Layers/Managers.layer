@@ -44,6 +44,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_bReaperQRFTest 0
    m_bAllowAirborneResponses 1
    m_bAllowJointResponses 1
+   m_iJointTransportPercent 50
    m_bQRFTacticalCommander 1
    m_bQRFTwoWaves 1
    m_iQRFSplitTier 5
@@ -1020,9 +1021,9 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_sCrewGroupPrefab "{000CD338713F2B5A}Prefabs/AI/Groups/Group_Base.et"
    m_vOccupiersSpawnPosition 5100 0 6080
    m_vInvadersSpawnPosition 5950 0 6080
-   m_iMaxGroups 20
-   m_iMaxMembers 160
-   m_iMaxVehicles 10
+   m_iMaxGroups 24
+   m_iMaxMembers 220
+   m_iMaxVehicles 12
    m_sWorkbenchForceProfileId ""
    m_iWorkbenchResponseLevel 1
    m_fPackageSpacing 35

@@ -2174,6 +2174,8 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 	}
 	[Attribute("0", desc: "Allow authored joint airborne/ground responses in campaign selection and MARS. Requires airborne execution and tactical coordination.")]
 	protected bool m_bAllowJointResponses;
+	[Attribute("0", desc: "Unescorted transport helicopters added to a joint response, as a percentage of its ground elements (rounded up), beside its airborne pair. Fewer are sent when limits or funds run short.", params: "0 100 1")]
+	protected int m_iJointTransportPercent;
 
 	protected AROR_GroundQRFRecipe FindStrategicGroundRecipe(AROR_EFactionRole role, string faction, int desired, bool minimumCapture = false, int readinessLevel = 0, int airBucket = -1)
 	{

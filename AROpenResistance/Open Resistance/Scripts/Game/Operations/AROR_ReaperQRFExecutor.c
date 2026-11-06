@@ -496,7 +496,15 @@ modded class AROR_OperationExecutorComponent
 				jointVehicles += jointElements[groundIndex].GetVehicleBudget();
 			}
 		}
-		if (GetReservedGroups() + profile.GetGroupBudget() * level + jointGroups > m_iMaxGroups)
+		int airVehicles = profile.GetVehicleBudget() * level;
+		int airGroups = profile.GetGroupBudget() * level;
+		if (jointRecipe)
+		{
+			level = 1 + JointExtraTransports(operation, profile, jointElements, jointGroups, jointMembers, jointVehicles);
+			airVehicles = profile.GetVehicleBudget() + level - 1;
+			airGroups = profile.GetGroupBudget() + (level - 1) * (profile.GetGroupBudget() - profile.m_iEscortCount);
+		}
+		if (GetReservedGroups() + airGroups + jointGroups > m_iMaxGroups)
 		{
 			ReportSpawnWait(operation, "Full airborne response exceeds remaining group capacity");
 			return;
@@ -506,7 +514,7 @@ modded class AROR_OperationExecutorComponent
 			ReportSpawnWait(operation, "Full airborne response exceeds remaining personnel capacity");
 			return;
 		}
-		if (GetReservedVehicles() + profile.GetVehicleBudget() * level + jointVehicles > m_iMaxVehicles)
+		if (GetReservedVehicles() + airVehicles + jointVehicles > m_iMaxVehicles)
 		{
 			ReportSpawnWait(operation, "Full airborne response exceeds remaining aircraft capacity");
 			return;
@@ -536,7 +544,9 @@ modded class AROR_OperationExecutorComponent
 			vector launch = airHome + right * ((index - (level - 1) * 0.5) * 200);
 			vector heading = AROR_ReaperFlightGeometry.Direction(launch, landing);
 			vector escortLaunch = AROR_ReaperFlightGeometry.FormationPoint(launch, heading, m_fReaperFormationSpacing);
-			if (!IsLaunchPositionSafe(launch, target.GetCenter()) || (profile.m_iEscortCount > 0 && !IsLaunchPositionSafe(escortLaunch, target.GetCenter())))
+			// A joint response escorts only its first transport
+			bool escorted = profile.m_iEscortCount > 0 && (!jointRecipe || index == 0);
+			if (!IsLaunchPositionSafe(launch, target.GetCenter()) || (escorted && !IsLaunchPositionSafe(escortLaunch, target.GetCenter())))
 			{
 				if (FallbackMixedQRFToGround(operation, "Air insertion lane fails clearance"))
 					return;
@@ -551,7 +561,7 @@ modded class AROR_OperationExecutorComponent
 				FailOperation(operation, "Transport air insertion volume obstructed; adjust role launch origin");
 				return;
 			}
-			if (profile.m_iEscortCount > 0 && !AROR_ReaperFlightGeometry.IsAirspaceClear(escortLaunch, m_fReaperGunshipHeight + index * m_fReaperGunshipBand, 14))
+			if (escorted && !AROR_ReaperFlightGeometry.IsAirspaceClear(escortLaunch, m_fReaperGunshipHeight + index * m_fReaperGunshipBand, 14))
 			{
 				if (FallbackMixedQRFToGround(operation, "Escort insertion volume is obstructed"))
 					return;
@@ -567,10 +577,14 @@ modded class AROR_OperationExecutorComponent
 			force.m_iPackageCount = level;
 			force.m_bConstructionPending = true;
 			force.m_sPilotPrefab = pilot;
-			force.m_bUnescorted = profile.m_iEscortCount == 0;
+			force.m_bUnescorted = !escorted;
 			force.m_iReservedGroups = profile.GetGroupBudget();
 			force.m_iReservedMembers = profile.m_iPersonnelBudget;
 			force.m_iReservedVehicles = profile.GetVehicleBudget();
+			if (jointRecipe && index > 0)
+				force.m_iReservedVehicles = 1;
+			if (jointRecipe && index > 0)
+				force.m_iReservedGroups = profile.GetGroupBudget() - profile.m_iEscortCount;
 			force.m_bLogFriendlyDamage = m_bLogFriendlyDamage;
 			force.m_vTown = target.GetCenter();
 			force.m_fTownRadius = target.GetRadius();
@@ -593,9 +607,12 @@ modded class AROR_OperationExecutorComponent
 		int totalPackages = level;
 		if (jointRecipe)
 		{
-			financialElements = jointElements;
+			financialElements = {};
+			financialElements.Copy(jointElements);
+			for (int extra = 1; extra < level; extra++)
+				financialElements.Insert(profile);
 			tier = jointRecipe.m_iLevel;
-			totalPackages = jointElements.Count();
+			totalPackages = jointElements.Count() + level - 1;
 		}
 		if (!ReserveQRFFunding(operation, financialElements, tier))
 			return;
@@ -613,7 +630,7 @@ modded class AROR_OperationExecutorComponent
 			m_mOriginLaunchedAt.Set(airSite.GetId(), m_iExecutorClock);
 		if (jointRecipe && operation.m_TacticalCommander)
 			operation.m_TacticalCommander.m_bJointResponse = true;
-		if (jointRecipe && operation.m_TacticalCommander && operation.m_TacticalCommander.m_iFirstWaveCount - 1 > m_iQRFMaxLiveGround)
+		if (jointRecipe && operation.m_TacticalCommander && operation.m_TacticalCommander.m_iFirstWaveCount - level > m_iQRFMaxLiveGround)
 		{
 			FailOperation(operation, "Joint lead wave exceeds live ground capacity");
 			return;
@@ -621,7 +638,10 @@ modded class AROR_OperationExecutorComponent
 		int leadAir = level;
 		if (!jointRecipe && operation.m_TacticalCommander)
 			leadAir = operation.m_TacticalCommander.m_iFirstWaveCount;
-		if (leadAir * profile.GetVehicleBudget() > m_iQRFMaxLiveAircraft)
+		int leadAircraft = leadAir * profile.GetVehicleBudget();
+		if (jointRecipe)
+			leadAircraft = airVehicles;
+		if (leadAircraft > m_iQRFMaxLiveAircraft)
 		{
 			FailOperation(operation, "QRF lead air wave exceeds live-aircraft limit; enable waves or raise configured limit");
 			return;
@@ -630,9 +650,9 @@ modded class AROR_OperationExecutorComponent
 		AROR_OperationForce reservation = new AROR_OperationForce();
 		reservation.m_sOperationId = operation.GetId();
 		reservation.m_bReservation = true;
-		reservation.m_iReservedGroups = profile.GetGroupBudget() * level + jointGroups;
+		reservation.m_iReservedGroups = airGroups + jointGroups;
 		reservation.m_iReservedMembers = profile.m_iPersonnelBudget * level + jointMembers;
-		reservation.m_iReservedVehicles = profile.GetVehicleBudget() * level + jointVehicles;
+		reservation.m_iReservedVehicles = airVehicles + jointVehicles;
 		m_aForces.Insert(reservation);
 		foreach (AROR_ReaperAirForce packageForce : prepared)
 		{
@@ -649,7 +669,7 @@ modded class AROR_OperationExecutorComponent
 			{
 				AROR_QRFDeferredForce pending = new AROR_QRFDeferredForce();
 				pending.m_sOperationId = operation.GetId();
-				pending.m_iPackageIndex = pendingIndex;
+				pending.m_iPackageIndex = pendingIndex + level - 1;	// Transports hold the indices before the ground elements
 				pending.m_bReservation = true;
 				pending.m_Profile = jointElements[pendingIndex];
 				ConfigureForceFunding(pending, operation, pending.m_Profile);
@@ -661,10 +681,43 @@ modded class AROR_OperationExecutorComponent
 				reservation.m_iReservedVehicles -= pending.m_iReservedVehicles;
 				m_aForces.Insert(pending);
 			}
-			Print(string.Format("[AROR JOINT] %1 recipe=%2 airPackages=1 escorts=%3 groundElements=%4; full force reserved under one tactical command", operation.GetId(), jointRecipe.m_sId, profile.m_iEscortCount, jointElements.Count() - 1), LogLevel.NORMAL);
+			Print(string.Format("[AROR JOINT] %1 recipe=%2 airPackages=%5 escorts=%3 groundElements=%4; full force reserved under one tactical command", operation.GetId(), jointRecipe.m_sId, profile.m_iEscortCount, jointElements.Count() - 1, level), LogLevel.NORMAL);
 		}
 		ReleaseForce(reservation);
 		Print(string.Format("[AROR REAPER] QRF %1 tier=%2 queued airPackages=%3 totalPackages=%4; full force reserved, one construction per executor tick", operation.GetId(), tier, level, totalPackages), LogLevel.NORMAL);
+	}
+
+	//! Unescorted transports added beside a joint response's airborne pair: m_iJointTransportPercent of its ground
+	//! elements, rounded up, and fewer when they would not fit the limits or funds, so they never hold the response back.
+	//! Decided once per operation, because the landing search and the funding both depend on it.
+	protected int JointExtraTransports(AROR_Operation operation, AROR_ForceProfile profile, array<AROR_ForceProfile> elements, int groups, int members, int vehicles)
+	{
+		if (operation.m_iJointExtraTransports >= 0)
+			return operation.m_iJointExtraTransports;
+
+		int extras = ((elements.Count() - 1) * m_iJointTransportPercent + 99) / 100;
+		int funds = -1;
+		if (!operation.m_bDebugRequest && !operation.m_bFundingWaived && m_Operations.IsQRFStrategyEnabled())
+		{
+			funds = m_Operations.GetQRFFinance().Available(operation.GetRole());
+			foreach (AROR_ForceProfile element : elements)
+				funds -= element.ReplacementQuote();
+			funds -= m_Operations.QRFOverhead(operation.m_iRequestedTier);
+			funds = Math.Max(funds, 0);
+		}
+		while (extras > 0)
+		{
+			bool fits = elements.Count() + extras <= 10
+				&& profile.GetVehicleBudget() + extras <= m_iQRFMaxLiveAircraft
+				&& GetReservedGroups() + profile.GetGroupBudget() + extras * (profile.GetGroupBudget() - profile.m_iEscortCount) + groups <= m_iMaxGroups
+				&& GetReservedMembers() + profile.m_iPersonnelBudget * (1 + extras) + members <= m_iMaxMembers
+				&& GetReservedVehicles() + profile.GetVehicleBudget() + extras + vehicles <= m_iMaxVehicles;
+			if (fits && (funds < 0 || profile.ReplacementQuote() * extras <= funds))
+				break;
+			extras--;
+		}
+		operation.m_iJointExtraTransports = extras;
+		return extras;
 	}
 
 	//! Cache progress between retry calls. Advance itself rejects duplicate calls in one tick.
