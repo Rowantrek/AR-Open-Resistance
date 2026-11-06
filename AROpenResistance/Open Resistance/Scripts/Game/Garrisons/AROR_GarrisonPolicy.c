@@ -19,6 +19,19 @@ class AROR_GarrisonPolicy
 	{
 		return Math.Clamp(level, 1, 4) * 2;
 	}
+	//! The formation of the site's team at this index (0-based): mostly rifle teams, with the launcher teams spread
+	//! through the sequence so small sites get one AT and only larger ones gain AA
+	static AROR_EFormation TeamFormation(int team)
+	{
+		switch (Math.Mod(team, 8))
+		{
+			case 1:
+			case 7: return AROR_EFormation.WEAPONS_FIRE_TEAM;
+			case 3: return AROR_EFormation.AT_FIRE_TEAM;
+			case 5: return AROR_EFormation.AA_FIRE_TEAM;
+		}
+		return AROR_EFormation.RIFLE_FIRE_TEAM;
+	}
 	static int StaticCount(int level)
 	{
 		return Math.Clamp(level, 1, 4);

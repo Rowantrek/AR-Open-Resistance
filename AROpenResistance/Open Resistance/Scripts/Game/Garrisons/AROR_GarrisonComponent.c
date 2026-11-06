@@ -496,10 +496,12 @@ class AROR_GarrisonComponent : ScriptComponent
 		int group;
 		for (int team = 0; team < AROR_GarrisonPolicy.InfantryTeams(m_iLevel) + GetExtraInfantryTeams(); team++)
 		{
-			for (int member = 0; member < 4; member++)
+			array<AROR_EUnitType> teamUnits = {};
+			AROR_Formations.GetUnits(AROR_GarrisonPolicy.TeamFormation(team), teamUnits);
+			foreach (AROR_EUnitType unitType : teamUnits)
 			{
-				int infantry = AddSlot(CharacterPrefab(InfantryType(member)), 0, group);
-				m_aSlots[infantry].m_iVariant = member;
+				int infantry = AddSlot(CharacterPrefab(unitType), 0, group);
+				m_aSlots[infantry].m_iVariant = unitType;
 			}
 			group++;
 		}
@@ -644,21 +646,13 @@ class AROR_GarrisonComponent : ScriptComponent
 		return FindDefencePosition(slot.m_iKind, PositionOrdinal(index));
 	}
 
-	//! The preset unit type behind a saved infantry variant: team members 0-3 are rifleman, automatic rifleman,
-	//! grenadier and team leader, 4 and 5 the anti-tank and anti-air specialists; tower sentries are marksmen
+	//! The preset unit type behind a saved infantry variant: a team member's variant is its unit type (the team's
+	//! formation decides which, see AROR_GarrisonPolicy.TeamFormation); tower sentries are marksmen
 	protected static AROR_EUnitType InfantryType(int variant)
 	{
 		if (variant >= SENTRY_VARIANT)
 			return AROR_EUnitType.MARKSMAN;
-		switch (variant)
-		{
-			case 1: return AROR_EUnitType.AUTORIFLEMAN;
-			case 2: return AROR_EUnitType.GRENADIER;
-			case 3: return AROR_EUnitType.TEAMLEADER;
-			case 4: return AROR_EUnitType.AT;
-			case 5: return AROR_EUnitType.AA;
-		}
-		return AROR_EUnitType.RIFLEMAN;
+		return variant;
 	}
 
 	//! The preset unit type of a team or crew slot

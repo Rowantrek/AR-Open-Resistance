@@ -146,7 +146,7 @@ class AROR_Mission
 			return null;
 
 		array<AROR_EUnitType> members = {};
-		board.BuildGuardTeam_S(count, members);
+		board.BuildGuardTeam_S(count, members, m_eType);
 
 		vector spot = centre;
 		vector found;

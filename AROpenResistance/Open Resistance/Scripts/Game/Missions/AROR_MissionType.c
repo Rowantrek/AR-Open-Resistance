@@ -21,6 +21,9 @@ class AROR_MissionType
 	[Attribute("4", desc: "Enemy soldiers guarding the objective (escort crews for convoys)", params: "0 12 1")]
 	int m_iGuards;
 
+	[Attribute("", UIWidgets.ComboBox, desc: "Formations the guards and convoy passengers are drawn from, in order (the first leads); repeated over the guard count, the end cut off. Empty uses a rifle fire team.", enums: ParamEnumArray.FromEnum(AROR_EFormation))]
+	ref array<AROR_EFormation> m_aFormations;
+
 	//------------------------------------------------------------------------------------------------
 	//! Built-in settings for a type (used when the board lists none for it)
 	static AROR_MissionType CreateDefault(AROR_EMissionType type)

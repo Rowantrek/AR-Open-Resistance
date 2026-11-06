@@ -416,22 +416,23 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! A guard team for the role: a leader and riflemen with an automatic rifleman and a machine gunner mixed in
-	void BuildGuardTeam_S(int count, notnull array<AROR_EUnitType> outMembers)
+	//! A guard team of count members from the mission type's formations (see AROR_MissionType.m_aFormations): the
+	//! formations repeated while there are places, the end cut off when there are too many
+	void BuildGuardTeam_S(int count, notnull array<AROR_EUnitType> outMembers, AROR_EMissionType type = -1)
 	{
 		outMembers.Clear();
-		for (int i = 0; i < count; i++)
-		{
-			AROR_EUnitType type = AROR_EUnitType.RIFLEMAN;
-			if (i == 0)
-				type = AROR_EUnitType.TEAMLEADER;
-			else if (i == 2)
-				type = AROR_EUnitType.AUTORIFLEMAN;
-			else if (i == 4)
-				type = AROR_EUnitType.MACHINEGUNNER;
+		array<AROR_EUnitType> pattern = {};
+		array<AROR_EFormation> formations;
+		if (type != -1)
+			formations = GetSettings(type).m_aFormations;
 
-			outMembers.Insert(type);
-		}
+		if (formations && !formations.IsEmpty())
+			AROR_Formations.Expand(formations, pattern);
+		else
+			AROR_Formations.GetUnits(AROR_EFormation.RIFLE_FIRE_TEAM, pattern);
+
+		for (int i = 0; i < count; i++)
+			outMembers.Insert(pattern[i % pattern.Count()]);
 	}
 
 	//------------------------------------------------------------------------------------------------

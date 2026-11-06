@@ -1292,7 +1292,7 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		else if (m_aLegacyInfantryUnits && !m_aLegacyInfantryUnits.IsEmpty())
 			infantryTypes.Copy(m_aLegacyInfantryUnits);
 		else
-			AROR_ForceProfile.GetDefaultFireTeam(infantryTypes);
+			AROR_Formations.Expand(null, infantryTypes);
 		if (operation.m_TacticalCommander)
 			launchPosition = TacticalLaunchPoint(operation.m_TacticalCommander, packageIndex);
 		else
@@ -1862,8 +1862,8 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		{
 			if (!profile || profile.m_eType == AROR_EForceType.ARMOUR)
 				continue;
-			if (!profile.m_aInfantryUnits || profile.m_aInfantryUnits.IsEmpty())
-				Print(string.Format("[AROR] Force profile '%1' has no infantry unit types; it fields the default four-man fire team", profile.m_sId), LogLevel.WARNING);
+			if ((!profile.m_aInfantryUnits || profile.m_aInfantryUnits.IsEmpty()) && (!profile.m_aFormations || profile.m_aFormations.IsEmpty()))
+				Print(string.Format("[AROR] Force profile '%1' has no infantry formations or unit types; it fields the default rifle squad", profile.m_sId), LogLevel.WARNING);
 		}
 	}
 

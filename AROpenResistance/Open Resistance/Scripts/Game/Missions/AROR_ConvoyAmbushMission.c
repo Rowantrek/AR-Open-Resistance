@@ -138,10 +138,9 @@ class AROR_ConvoyAmbushMission : AROR_Mission
 			members.Insert(AROR_EUnitType.CREW);
 		}
 
-		for (int p = 0; p < passengers; p++)
-		{
-			members.Insert(AROR_EUnitType.RIFLEMAN);
-		}
+		array<AROR_EUnitType> riders = {};
+		board.BuildGuardTeam_S(passengers, riders, m_eType);
+		members.InsertAll(riders);
 
 		if (members.IsEmpty())
 			return false;
