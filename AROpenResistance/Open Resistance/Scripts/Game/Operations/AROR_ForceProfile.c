@@ -123,6 +123,12 @@ class AROR_ForceProfile
 		return value;
 	}
 
+	//! The quote of a package's transport without its escort, for a joint response's unescorted extras
+	int TransportQuote()
+	{
+		return m_iPersonnelBudget * m_iPersonnelLossValue + VehicleLossValue();
+	}
+
 	int GetWeight(AROR_EOperationType type)
 	{
 		if (type == AROR_EOperationType.QRF)

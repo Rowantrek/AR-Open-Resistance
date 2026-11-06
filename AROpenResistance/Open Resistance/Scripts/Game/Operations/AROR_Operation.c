@@ -13,6 +13,7 @@ class AROR_Operation
 	protected int m_iResponseLevel;
 	protected string m_sRecipeId;
 	protected int m_iRecipePackages;
+	int m_iJointExtraTransports = -1;	//!< Unescorted transports added to a joint response; -1 until decided
 	ref AROR_QRFTacticalCommander m_TacticalCommander;
 	ref AROR_QRFFunding m_Funding;
 	int m_iRequestedTier;
@@ -75,7 +76,7 @@ class AROR_Operation
 			return false;
 		if (recipeId.IsEmpty() || !m_sRecipeId.IsEmpty() || !m_sForceProfileId.IsEmpty())
 			return false;
-		if (level < 1 || level > 5 || packages < 1 || packages > 8)
+		if (level < 1 || level > 5 || packages < 1 || packages > 10)
 			return false;
 		m_sRecipeId = recipeId;
 		m_iResponseLevel = level;
