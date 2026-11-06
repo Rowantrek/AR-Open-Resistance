@@ -1,0 +1,236 @@
+{
+  "generatedAt": "2026-11-06T10:18:19.499Z",
+  "trackedFiles": 695,
+  "addonRoots": [
+    "AROpenResistance/Open Resistance",
+    "OptionalAddons/OpenResistanceREAPER",
+    "OptionalAddons/OpenResistanceRHSCompat/OpenResistanceRHSCompat",
+    "OptionalAddons/OpenResistanceWCSCompat",
+    "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat"
+  ],
+  "metadataResources": 114,
+  "duplicateGuids": [
+    [
+      "264C9015AB136907",
+      [
+        "OptionalAddons/OpenResistanceRHSCompat/OpenResistanceRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf.meta",
+        "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf.meta"
+      ]
+    ],
+    [
+      "0B9D15CDFDB3EDDF",
+      [
+        "OptionalAddons/OpenResistanceRHSCompat/OpenResistanceRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_USAF_FORECON.conf.meta",
+        "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_USAF_FORECON.conf.meta"
+      ]
+    ]
+  ],
+  "missingMeta": [],
+  "badMeta": [],
+  "localGuidMismatches": [],
+  "localReferencesNotInTrackedMetadata": [
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_01_RadioFreeAltis.wav",
+      "guid": "7C96D5121B271A56"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_02_KingoftheSky.wav",
+      "guid": "C289242CDE200E4F"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_03_AnotherLittleWar.wav",
+      "guid": "55D5385BDBB78381"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_04_Interlude1.wav",
+      "guid": "5B2A8DC7ADF4B56C"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_05_MavericksAway.wav",
+      "guid": "8F07F6DB796A7163"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_06_ByMorningItsGone.wav",
+      "guid": "1528854EF34AD50D"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_07_HydraRain.wav",
+      "guid": "B94A6BECC6F7F2F6"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_08_Interlude2.wav",
+      "guid": "5665FCA057D1CDCA"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_09_QRF.wav",
+      "guid": "27041720F5717D23"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_10_GreyhawkOverhead.wav",
+      "guid": "A60CA28EB8F4C98B"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_11_HatchbackRunwayWire.wav",
+      "guid": "ED7E2BF554E80268"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_12_Interlude3.wav",
+      "guid": "B1AF800EE5073B19"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_13_CSATPunishment.wav",
+      "guid": "D4BFEBF742A5C611"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_14_Antistasi.wav",
+      "guid": "D309992592B583FB"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_15_WhiteSaltBlackSmoke.wav",
+      "guid": "096E070E6326729B"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_16_VarsukRollingIn.wav",
+      "guid": "46EA3D6777F60AD7"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_17_HindHind.wav",
+      "guid": "D09C435AC8844D19"
+    },
+    {
+      "source": "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+      "resource": "Sounds/Radio/Samples/AROR_Radio_18_FaxingKavala.wav",
+      "guid": "B7E402AE8E2B3647"
+    }
+  ],
+  "priorQRFReport": {
+    "generatedAt": "2026-10-29T09:51:48.246Z",
+    "passed": true,
+    "recordedHashes": 441,
+    "changedFiles": [
+      "AROpenResistance/Open Resistance/Scripts/Game/Admin/AROR_AdminAccess.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Admin/AROR_AdminDialog.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Admin/AROR_AdminMenuComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/BlackMarket/AROR_BlackMarket.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Capture/AROR_CaptureLocationAction.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Capture/AROR_HostilesQuery.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Capture/AROR_LocationForces.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Commanders/AROR_InvaderCampaignPolicy.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_EAmmunitionType.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_EEquipmentType.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_EFactionPresetCategory.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_EGearType.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_EUnitType.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_EVehicleAmmunitionType.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_EVehicleType.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_EWeaponAccessoryType.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_EWeaponType.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_FactionPreset.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_FactionPresetEntries.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_FactionPresetRegistry.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_FactionPresetsComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/GameFlow/AROR_GameFlowComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/GameFlow/AROR_MarsPlayerController.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/GameFlow/AROR_ModdedPlayerController.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/GameFlow/UI/AROR_SetupDialogs.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/GameFlow/UI/AROR_SetupMenu.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/GameFlow/UI/AROR_SetupUIComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Garage/AROR_GarageVehicleEntry.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Garage/AROR_ResistanceGarageComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Garage/AROR_ResistanceGarageComponentSerializer.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Garrisons/AROR_GarrisonComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Garrisons/AROR_GarrisonFaction.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Garrisons/AROR_GarrisonPolicy.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Garrisons/AROR_OutpostSupplyComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/HighCommand/AROR_HighCommandComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/HighCommand/AROR_HighCommandSquadType.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Locations/AROR_ELocationType.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Locations/AROR_LocationComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Locations/AROR_LocationInfoPopup.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Locations/AROR_LocationMapIconsComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Locations/AROR_MapFrameIcon.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Locations/AROR_MapIconSelector.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Missions/AROR_AssassinationMission.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Missions/AROR_CacheRecoveryMission.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Missions/AROR_ConvoyAmbushMission.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Missions/AROR_Mission.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Missions/AROR_MissionBoardComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Missions/AROR_PrisonerRescueMission.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Missions/AROR_SabotageMission.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Missions/AROR_SupplyTheftMission.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_ForcePoolSmokeTests.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_ForceProfile.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_GroundOperationForce.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_GroundQRFRecipeSmokeTests.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_JointResponseSmokeTests.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_MarsOperationManager.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_Operation.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_OperationExecutorComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_OperationManagerComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_QRFSelectionSmokeTests.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_QRFSpotting.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_QRFStrategicPolicy.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_ReaperAirForce.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_ReaperQRFExecutor.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_ResponseScaleSmokeTests.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_BlackMarketApp.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_HiCommApp.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_MarsApp.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_PhoneComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_PhoneMenu.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_PhonePooledApp.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Storage/AROR_ModdedArsenalComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Storage/AROR_ModdedResourcePlayerControllerInventoryComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Storage/AROR_PlayerLoadoutsComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Storage/AROR_ResistanceStorageComponent.c",
+      "AROpenResistance/Open Resistance/Scripts/Game/Storage/AROR_ResistanceStorageComponentSerializer.c",
+      "AROpenResistance/Open Resistance/Scripts/WorkbenchGame/Plugins/AROR_ImportBaseFactionPresetsPlugin.c",
+      "AROpenResistance/Open Resistance/Prefabs/Characters/AROR_Character_Resistance_Base.et",
+      "AROpenResistance/Open Resistance/Prefabs/Compositions/Locations/AROR_Defence_Fortress_Vostok.et",
+      "AROpenResistance/Open Resistance/Prefabs/Compositions/Locations/AROR_Defence_Stronghold_Delaware.et",
+      "AROpenResistance/Open Resistance/Prefabs/GameModes/AROR_GameMode_Base.et",
+      "AROpenResistance/Open Resistance/Prefabs/Locations/AROR_Location_HQ.et",
+      "AROpenResistance/Open Resistance/Worlds/AROR_Everon/AROR_Everon_Chicken_Layers/Managers.layer",
+      "AROpenResistance/Open Resistance/UI/Layouts/Map/AROR_MapInfoPopup.layout",
+      "AROpenResistance/Open Resistance/UI/Layouts/Phone/AROR_BlackMarket.layout",
+      "AROpenResistance/Open Resistance/UI/Layouts/Setup/AROR_SetupMenu.layout",
+      "AROpenResistance/Open Resistance/Configs/FactionPresets/BaseGame/AROR_Preset_Everon_Civilians.conf",
+      "AROpenResistance/Open Resistance/Configs/FactionPresets/BaseGame/AROR_Preset_FIA.conf",
+      "AROpenResistance/Open Resistance/Configs/FactionPresets/BaseGame/AROR_Preset_USSR_Army.conf",
+      "AROpenResistance/Open Resistance/Configs/FactionPresets/BaseGame/AROR_Preset_US_Army.conf",
+      "AROpenResistance/Open Resistance/Configs/System/chimeraInputCommon.conf",
+      "AROpenResistance/Open Resistance/Configs/System/chimeraMenus.conf",
+      "AROpenResistance/Open Resistance/Configs/UI/AROR_SetupDialogs.conf",
+      "tools/Set-FortressVostok.ps1",
+      "tools/Set-StrongholdDelaware.ps1",
+      "tools/Test-GarrisonsAndSupport.js",
+      "tools/Test-OutpostEquipment.js",
+      "tools/Test-QRFBoarding.js",
+      "tools/Test-QRFIngress.js",
+      "tools/Test-QRFInterruptions.js",
+      "tools/Test-QRFMutations.js",
+      "tools/Test-QRFProgression.js",
+      "tools/Test-QRFReleaseLifecycle.js",
+      "tools/Test-QRFResponseMix.js",
+      "tools/Test-QRFVehicleFaction.js",
+      "tools/Validate-QRFRelease.js"
+    ]
+  }
+}

@@ -1,0 +1,251 @@
+{
+  "generatedAt": "2026-11-06T10:20:05.546Z",
+  "note": "Installed resource-index identity checks only; no native inventory, compilation or flight acceptance.",
+  "databases": 289,
+  "references": 229,
+  "verified": 213,
+  "unverified": [
+    {
+      "guid": "808C54B2F7DEB716",
+      "resource": "Prefabs/Characters/HeadGear/Helmets/Helmet_LShZ/WCS_Variants/Helmet_LShZ_LC_Balaclava_NVG_OD.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": []
+    },
+    {
+      "guid": "A86A0980460A2D85",
+      "resource": "Prefabs/Characters/Footwear/Boots_Faradey_1085/Boots_Faradey_1085_Black.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": []
+    },
+    {
+      "guid": "0A83316977E4E4B7",
+      "resource": "Prefabs/Weapons/Rifles/AK74M/WCS_Variants/Rifle_AK105_SQUAD.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": []
+    },
+    {
+      "guid": "5AED86092AC8BE1C",
+      "resource": "Prefabs/Weapons/MachineGuns/RPK74M/WCS_Variants/MG_RPK74M_SPECTER_SQUAD.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": []
+    },
+    {
+      "guid": "CEA6EC9E6C257CB3",
+      "resource": "Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23X2.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": [
+        {
+          "database": "C:\\Users\\jaspe\\OneDrive\\Documents\\My Games\\ArmaReforger\\addons\\WCS_KA-52_64CB35D07BAEE60F\\resourceDatabase.rdb",
+          "context": "|||{|||P|3/,|j||||4|||Prefabs/Vehicles/Helicopters/KA52/KA52_B8V20A_X4.et|||||||q!|~AHq|/,|j||||/|||Prefabs/Vehicles/Helicopters/KA52/KA52_Base.et|||||||=0||||Ln|||j||||3|||Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23_X2.et|||||||"
+        }
+      ]
+    },
+    {
+      "guid": "160E855F15AC62EF",
+      "resource": "Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23X4.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": [
+        {
+          "database": "C:\\Users\\jaspe\\OneDrive\\Documents\\My Games\\ArmaReforger\\addons\\WCS_KA-52_64CB35D07BAEE60F\\resourceDatabase.rdb",
+          "context": "|||q!|~AHq|/,|j||||/|||Prefabs/Vehicles/Helicopters/KA52/KA52_Base.et|||||||=0||||Ln|||j||||3|||Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23_X2.et|||||||||%l||||/,|j||||3|||Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23_X4.et|||||||"
+        }
+      ]
+    },
+    {
+      "guid": "33085083D07C7B14",
+      "resource": "Prefabs/Vehicles/Helicopters/KA52/KA52_9M120X2.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": [
+        {
+          "database": "C:\\Users\\jaspe\\OneDrive\\Documents\\My Games\\ArmaReforger\\addons\\WCS_KA-52_64CB35D07BAEE60F\\resourceDatabase.rdb",
+          "context": "j||||=|||Prefabs/Vehicles/Helicopters/KA52/Camo/KA52_Camo_UPK23_X4.et||||||||ni||G3|/,|j||||3|||Prefabs/Vehicles/Helicopters/KA52/KA52_9K127_X2.et|||||||He||B9||/,|j||||3|||Prefabs/Vehicles/Helicopters/KA52/KA52_9M120_X2.et|||||||"
+        }
+      ]
+    },
+    {
+      "guid": "B76EAFDBFBA131D9",
+      "resource": "Prefabs/Characters/HeadGear/Helmets/Helmet_OPSCORE/WCS_Variants/Helmet_OPSCORE_XP_Standard_Issue.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": []
+    },
+    {
+      "guid": "9C0D2A98B400B21D",
+      "resource": "Prefabs/Weapons/Rifles/M27IAR/WCS_Varients/Rifle_M27IAR_CTR_GRIP_SQUAD.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": []
+    },
+    {
+      "guid": "A3D9157B6C6257FA",
+      "resource": "Prefabs/Weapons/Rifles/M4A1/WCS_Variants/Rifle_M4A1_RAS_GRIP_SQUAD.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": []
+    },
+    {
+      "guid": "C2A090B4AF474D27",
+      "resource": "Prefabs/Weapons/MachineGuns/M240/WCS_Variants/MG_M240_MDO_SQUAD.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": []
+    },
+    {
+      "guid": "72C04A6EABC12143",
+      "resource": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_M134.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": [
+        {
+          "database": "C:\\Users\\jaspe\\OneDrive\\Documents\\My Games\\ArmaReforger\\addons\\FTA_Vehicle_Core_684E49AF6BE17DC5\\resourceDatabase.rdb",
+          "context": "|+P||||2|||Prefabs/Vehicles/Helicopters/AH6M/AH6M_AIM92X1.et||||||||||h|haa|||j||||5|||Prefabs/Vehicles/Helicopters/AH6M/AH6M_Armed_base.et||||||||a|]|k|l||fj||||:|||Prefabs/Vehicles/Helicopters/AH6M/AH6M_AttackTransport.et|||||||"
+        },
+        {
+          "database": "C:\\Users\\jaspe\\OneDrive\\Documents\\My Games\\ArmaReforger\\addons\\WCS_AH-6M_6273146ADFE8241D\\resourceDatabase.rdb",
+          "context": "|8v||||j||||3|||Prefabs/Vehicles/Helicopters/AH6M/AH6M_GAU19_X1.et|||||||s|$|Y|||,,|j||||7|||Prefabs/Vehicles/Helicopters/AH6M/AH6M_M134_M260_X2.et|||||||w|||||<|,,|j||||2|||Prefabs/Vehicles/Helicopters/AH6M/AH6M_M134_X2.et|||||||"
+        },
+        {
+          "database": "C:\\Users\\jaspe\\OneDrive\\Documents\\My Games\\ArmaReforger\\addons\\WCS_Helicopters_6146FAED5AAD7C55\\resourceDatabase.rdb",
+          "context": "|a|]|k|l|||j||||/|||Prefabs/Vehicles/Helicopters/AH6M/AH6M_Base.et|||||||S||||8v||||j||||7|||Prefabs/Vehicles/Helicopters/AH6M/AH6M_M134_M260_X2.et|||||||w|||||<|3,|j||||2|||Prefabs/Vehicles/Helicopters/AH6M/AH6M_M134_X2.et|||||||"
+        }
+      ]
+    },
+    {
+      "guid": "C8C37964483452EA",
+      "resource": "Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": [
+        {
+          "database": "C:\\Users\\jaspe\\OneDrive\\Documents\\My Games\\ArmaReforger\\addons\\WCS_AH-1S_64CB39E57377C861\\resourceDatabase.rdb",
+          "context": "||||||||V|||j||||'|||Prefabs/Vehicles/Helicopters/AH1S/Army||||||||||ELO;|<|||Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army_AIM9_X2.et||||||||k>Z||Zh,,|j||||<|||Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army_M261_X4.et|||||||"
+        }
+      ]
+    },
+    {
+      "guid": "840FE7B2A2F9F92F",
+      "resource": "Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army_XM65.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": [
+        {
+          "database": "C:\\Users\\jaspe\\OneDrive\\Documents\\My Games\\ArmaReforger\\addons\\WCS_AH-1S_64CB39E57377C861\\resourceDatabase.rdb",
+          "context": "Vehicles/Helicopters/AH1S/Army/AH1S_Army_M261_X4.et||||||||R4Hdy||,,|j||||<|||Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army_M299_X2.et||||||||RH|#@S|,,|j||||<|||Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army_XM65_X2.et|||||||"
+        }
+      ]
+    },
+    {
+      "guid": "397971C2026D588F",
+      "resource": "Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_AGM114L_X2.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": [
+        {
+          "database": "C:\\Users\\jaspe\\OneDrive\\Documents\\My Games\\ArmaReforger\\addons\\WCS_AH-64D_6303360DA719E832\\resourceDatabase.rdb",
+          "context": "/AH64D/USArmy/AH64D_USArmy_LAU117_X4.et|||||||N}|N|d#+/,|j||||B|||Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_M261_X4.et|||||||||p|||||/,|j||||B|||Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_M299_X2.et|||||||"
+        }
+      ]
+    },
+    {
+      "guid": "E1D118037BE446D3",
+      "resource": "Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_AGM114L_X4.et",
+      "verified": false,
+      "candidates": [],
+      "guidLocations": [
+        {
+          "database": "C:\\Users\\jaspe\\OneDrive\\Documents\\My Games\\ArmaReforger\\addons\\WCS_AH-64D_6303360DA719E832\\resourceDatabase.rdb",
+          "context": "rs/AH64D/USArmy/AH64D_USArmy_M261_X4.et|||||||||p|||||/,|j||||B|||Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_M299_X2.et||||||||Xm||qy9/,|j||||B|||Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_M299_X4.et|||||||"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "guid": "6ABF7D8F39B53EB2",
+      "found": true
+    },
+    {
+      "guid": "6AC238614411B347",
+      "found": true
+    },
+    {
+      "guid": "6AA282336705EED2",
+      "found": true
+    },
+    {
+      "guid": "6A50528453E5FF27",
+      "found": true
+    },
+    {
+      "guid": "66A513FA8DEEB7C0",
+      "found": true
+    },
+    {
+      "guid": "65CF7AE8574E06D2",
+      "found": true
+    },
+    {
+      "guid": "6503091A7B264FC3",
+      "found": true
+    },
+    {
+      "guid": "615CC2D870A39838",
+      "found": true
+    },
+    {
+      "guid": "595F2BF2F44836FB",
+      "found": true
+    },
+    {
+      "guid": "1CAE49450A83DEAB",
+      "found": true
+    },
+    {
+      "guid": "58D0FB3206B6F859",
+      "found": true
+    },
+    {
+      "guid": "3B8081D9CAD979D2",
+      "found": true
+    },
+    {
+      "guid": "6326F0C7E748AB8A",
+      "found": true
+    },
+    {
+      "guid": "6508EDDEF93B2B29",
+      "found": true
+    },
+    {
+      "guid": "6528B3CE24C85120",
+      "found": true
+    },
+    {
+      "guid": "65F929DF622BAD50",
+      "found": true
+    },
+    {
+      "guid": "6608EB45061AFC69",
+      "found": true
+    },
+    {
+      "guid": "662EB83AB3F8CAE3",
+      "found": true
+    },
+    {
+      "guid": "615A80027C5C9170",
+      "found": true
+    },
+    {
+      "guid": "6A717EEA63A35E67",
+      "found": true
+    }
+  ]
+}
