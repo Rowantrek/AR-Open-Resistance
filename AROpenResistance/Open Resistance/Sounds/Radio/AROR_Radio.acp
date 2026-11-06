@@ -4,7 +4,7 @@ AudioClass {
    id 15373
    name "Signal"
    tl -768 0
-   res "{F58A24AE8BADE92D}Sounds/RadioBroadcast/RadioBroadcast.sig"
+   res "{63CB02973852A5DE}Sounds/Radio/AROR_Radio.sig"
    inputsport {
     1 3 7 9 11
    }
@@ -20,7 +20,7 @@ AudioClass {
    inputvaluesmax {
     600000 99 1 1 1
    }
-   path "{F58A24AE8BADE92D}Sounds/RadioBroadcast/RadioBroadcast.sig"
+   path "{63CB02973852A5DE}Sounds/Radio/AROR_Radio.sig"
   }
   SignalClass "39949" {
    id 39949
@@ -84,7 +84,7 @@ AudioClass {
      }
     }
    }
-   volume_dB -16
+   volume_dB -10
    outState 43019
    outStatePort 79879
   }
@@ -321,6 +321,114 @@ AudioClass {
    Selection CustomSignalIndex
    Resampler FIR_8
    Samples {
+    AudioBankSampleClass "AROR_Radio_01_RadioFreeAltis.wav" {
+     Filename "{7C96D5121B271A56}Sounds/Radio/Samples/AROR_Radio_01_RadioFreeAltis.wav"
+     Probability 100
+     Index 0
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_02_KingoftheSky.wav" {
+     Filename "{C289242CDE200E4F}Sounds/Radio/Samples/AROR_Radio_02_KingoftheSky.wav"
+     Probability 100
+     Index 1
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_03_AnotherLittleWar.wav" {
+     Filename "{55D5385BDBB78381}Sounds/Radio/Samples/AROR_Radio_03_AnotherLittleWar.wav"
+     Probability 100
+     Index 2
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_04_Interlude1.wav" {
+     Filename "{5B2A8DC7ADF4B56C}Sounds/Radio/Samples/AROR_Radio_04_Interlude1.wav"
+     Probability 100
+     Index 3
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_05_MavericksAway.wav" {
+     Filename "{8F07F6DB796A7163}Sounds/Radio/Samples/AROR_Radio_05_MavericksAway.wav"
+     Probability 100
+     Index 4
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_06_ByMorningItsGone.wav" {
+     Filename "{1528854EF34AD50D}Sounds/Radio/Samples/AROR_Radio_06_ByMorningItsGone.wav"
+     Probability 100
+     Index 5
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_07_HydraRain.wav" {
+     Filename "{B94A6BECC6F7F2F6}Sounds/Radio/Samples/AROR_Radio_07_HydraRain.wav"
+     Probability 100
+     Index 6
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_08_Interlude2.wav" {
+     Filename "{5665FCA057D1CDCA}Sounds/Radio/Samples/AROR_Radio_08_Interlude2.wav"
+     Probability 100
+     Index 7
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_09_QRF.wav" {
+     Filename "{27041720F5717D23}Sounds/Radio/Samples/AROR_Radio_09_QRF.wav"
+     Probability 100
+     Index 8
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_10_GreyhawkOverhead.wav" {
+     Filename "{A60CA28EB8F4C98B}Sounds/Radio/Samples/AROR_Radio_10_GreyhawkOverhead.wav"
+     Probability 100
+     Index 9
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_11_HatchbackRunwayWire.wav" {
+     Filename "{ED7E2BF554E80268}Sounds/Radio/Samples/AROR_Radio_11_HatchbackRunwayWire.wav"
+     Probability 100
+     Index 10
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_12_Interlude3.wav" {
+     Filename "{B1AF800EE5073B19}Sounds/Radio/Samples/AROR_Radio_12_Interlude3.wav"
+     Probability 100
+     Index 11
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_13_CSATPunishment.wav" {
+     Filename "{D4BFEBF742A5C611}Sounds/Radio/Samples/AROR_Radio_13_CSATPunishment.wav"
+     Probability 100
+     Index 12
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_14_Antistasi.wav" {
+     Filename "{D309992592B583FB}Sounds/Radio/Samples/AROR_Radio_14_Antistasi.wav"
+     Probability 100
+     Index 13
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_15_WhiteSaltBlackSmoke.wav" {
+     Filename "{096E070E6326729B}Sounds/Radio/Samples/AROR_Radio_15_WhiteSaltBlackSmoke.wav"
+     Probability 100
+     Index 14
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_16_VarsukRollingIn.wav" {
+     Filename "{46EA3D6777F60AD7}Sounds/Radio/Samples/AROR_Radio_16_VarsukRollingIn.wav"
+     Probability 100
+     Index 15
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_17_HindHind.wav" {
+     Filename "{D09C435AC8844D19}Sounds/Radio/Samples/AROR_Radio_17_HindHind.wav"
+     Probability 100
+     Index 16
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_Radio_18_FaxingKavala.wav" {
+     Filename "{B7E402AE8E2B3647}Sounds/Radio/Samples/AROR_Radio_18_FaxingKavala.wav"
+     Probability 100
+     Index 17
+     SampleMetadata ""
+    }
    }
   }
   BankLocalClass "35844" {
