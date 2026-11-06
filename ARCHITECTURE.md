@@ -51,7 +51,7 @@ Separate addons, maintained by others, that add extra content such as maps, weap
 
 ### Base-game config overrides
 
-The core adds entries to two base-game configs with **Override in addon**, which stores only our additions on top of the base file: `Configs/System/chimeraMenus.conf` (the phone menu) and `Configs/System/chimeraInputCommon.conf` (the phone keybind). Everything else uses our own configs.
+The core adds entries to two base-game configs with **Override in addon**, which stores only our additions on top of the base file: `Configs/System/chimeraMenus.conf` (the phone menu) and `Configs/System/chimeraInputCommon.conf` (the phone keybind). `Prefabs/Vehicles/Core/Vehicle_Base.et` is overridden the same way, for the Radio controls. Everything else uses our own configs.
 
 ### UI design system
 
@@ -357,6 +357,20 @@ Purpose: an in-game phone that hosts player-facing apps. Client only.
 - Depends on: Economy, Notifications (hints), Operations (RebIntel), High Command (HICOMM), Missions (OPS), Resistance Garage (quick store).
 - Saved: REBINTEL player settings (HUD widget on/off, compact/full, top left/right, alert pop-ups, tracked enemy) in the player's own profile folder, client-side (`AROR_RebIntelSettings`). Nothing on the server.
 - Planned: app registration so extender mods can add apps; a Settings app and Feed (see `docs/UI_DESIGN.md`).
+
+### Radio — In progress
+Purpose: music in vehicles. Anyone seated in a vehicle can turn its radio on from the dashboard, and everyone nearby hears the same song at the same point. Ships one station, **Antistasi Radio 101.3**.
+
+- `AROR_RadioManagerComponent` (game mode) owns the system. Vehicles carry no component, so an idle radio costs nothing.
+- **Controls** (`AROR_RadioVehicleAction`): dashboard interaction actions for power, volume and next station (shown with more than one station), added to every vehicle through an Override in addon of `Prefabs/Vehicles/Core/Vehicle_Base.et`. They attach to the contexts base-game vehicles start their engine from (`starter_switch`, `ignition`, `engine_start_button`, `battery_on`), so a modded vehicle needs one of those to show them.
+- **Stations** (`AROR_RadioStation`, listed in `Configs/Radio/AROR_RadioStations.conf`) are worked out, not ticked: every machine builds the same looping running order from a replicated seed (`AROR_RadioSchedule`: shuffled songs with an interlude every few) and finds its place from the server clock and a replicated start time. Nothing replicates as tracks change.
+- **Radios**: the server keeps the list of radios that are on (vehicle, station and volume), replicated to clients, and turns one off when its vehicle is gone, destroyed or left empty for a while. Clients ask through the player controller; the server checks the player sits in that vehicle.
+- **Audio** (client only): each client plays the nearest few radios in range through `AudioSystem`, seeking into the current track, and follows the moving vehicle. Each radio has a replicated volume, sent to the audio project as a signal when the sound starts, so changing it restarts the sound in place.
+- **Audio assets**: `Sounds/Radio` holds one audio project (`AROR_Radio.acp`, built on the base-game Kolguyev radio's sound setup) and a signal (`AROR_Radio.sig`, the base-game radio signals with a longer seek range and a volume). `tools/Convert-RadioTracks.ps1` builds the WAVs from an album folder, measures durations and links the GUIDs Workbench generated.
+- Saved: nothing; stations restart and radios are off after a load.
+- Depends on: Game Mode, Notifications (hints), Resistance Garage (occupant check).
+- Extension points: extender mods add stations through Override in addon of the stations config, each with its own audio project using the same signals. Range, sound limit and empty shut-off are attributes on the component.
+- Planned: placeable radios.
 
 ### Notifications — In progress
 Purpose: tell players what is happening in the campaign, plus quiet personal feedback. Any system can send them.
