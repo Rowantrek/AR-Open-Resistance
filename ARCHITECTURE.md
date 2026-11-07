@@ -229,6 +229,19 @@ Purpose: one server-owned command context per role. The Resistance is player-dir
 - Extension points: server systems subscribe to the evaluation event (Operations does).
 - Planned: enemy target selection and distinct Occupier/Invader strategies.
 
+### Player Squads — In progress
+Purpose: players recruit individual Resistance riflemen at owned territory flags and command them with Reforger's native squad command wheel, including movement and vehicle boarding/disembarking.
+
+- `AROR_SquadManagerComponent` (game mode) manages recruitment transactions and a compact replicated phone roster. `AROR_RecruitRiflemanAction` on the shared capture-flag prefab covers the HQ and all current/future flag-bearing territories. The server checks the actual flag's location owner, player faction/life state, proximity, squad leadership and capacity, including pending spawns.
+- Squads use native `SCR_GroupsManagerComponent` playable groups and their native AI subgroups. A first recruitment creates a squad if needed; existing squads retain their players and leadership. Native commanding owns orders, AI membership, player respawn behaviour and replication. Personal squads are independent of HICOMM's campaign forces and need no extra mod.
+- Riflemen spawn and receive equipment through the selected Resistance faction preset and shared Force Spawner. Recruitment is currently free and limited per native player squad. A queued member joins through the native server recruitment API after equipping; failed spawns release their reserved capacity. The last player's departure retires the managed recruits, while leadership changes within the same squad retain them.
+- **Squad phone app**: available to every player, shows flag-recruited riflemen (including arrivals and vehicle occupancy), renames the native squad, and dismisses individual recruits. Only the current native squad leader may mutate the squad; owner-controller RPCs revalidate this on the server. Player-controlled characters are protected from dismissal.
+- Server/client: recruitment, dismissal and lifecycle are server-only; native squad state and a small recruit status board replicate to clients. Phone rendering is client-only.
+- Saved: no custom squad persistence in this first version; recruits and their roster are session-only.
+- Depends on: Game Mode (native Groups and Commanding managers), Game Flow, Locations, Factions, Phone, Notifications.
+- Extension points: group spawn resource, rifleman cap, flag interaction distance, spawn search and timeout attributes. Existing resource references are reused; new flag templates should inherit `AROR_Prop_CaptureFlag` and remain children of their location.
+- Workbench compile, native command behaviour and multiplayer acceptance remain pending; see `docs/PLAYER_SQUADS.md`.
+
 ### High Command — In progress
 Purpose: Resistance Leaders raise AI squads and command them through the **HICOMM** phone app.
 
@@ -357,7 +370,8 @@ Purpose: an in-game phone that hosts player-facing apps. Client only.
 - A phone frame over a wallpaper with a status bar. Apps open in portrait, or turn the whole phone to landscape and enlarge it. The frame's home button returns to the home screen.
 - **Quick dock**: four slots along the bottom of the home screen. Slot 1 stores the looked-at vehicle (Resistance Garage) and closes the phone; slots 2–3 are empty placeholders; slot 4 saves the campaign (admins only once a campaign is running, checked again by the server; see Persistence).
 - Apps: **Bank** (account holder, personal money, Resistance funds, live from the Economy; Transfer screen sends personal money to an online player or Resistance funds), **REBINTEL** (one tab per enemy army: Readiness and Crackdown cards in that army's labels with a 5-segment meter and what the level means; the player's HUD widget and alert settings; read-only: the levels are driven by the campaign), **HICOMM** (landscape High Command app for Resistance Leaders: leadership, a zoomable map for orders, squad purchases; the map shows the base game map by default with military-frame location symbols, the procedural tactical map behind a toggle), **OPS** (landscape mission board from Missions: browse operations, dossier with an area map; leaders accept and abort), **Black Market** (landscape item shop from Black Market and Imports: category tabs, search, a scrolling cart, one-click import into Storage, purchase popup and sound) and **Imports** (landscape vehicle shop: pictures, one click per vehicle into the Garage, faction or personal funds) and **MARS** (landscape response debugger from Operations, replacing the temporary Test tile).
-- Depends on: Economy, Notifications (hints), Operations (RebIntel), High Command (HICOMM), Missions (OPS), Resistance Garage (quick store).
+- **Squad** (landscape): native player squad name and flag-recruited riflemen; the squad leader can rename and dismiss members (Player Squads).
+- Depends on: Economy, Notifications (hints), Operations (RebIntel), High Command (HICOMM), Missions (OPS), Player Squads (Squad), Resistance Garage (quick store).
 - Saved: REBINTEL player settings (HUD widget on/off, compact/full, top left/right, alert pop-ups, tracked enemy) in the player's own profile folder, client-side (`AROR_RebIntelSettings`). Nothing on the server.
 - Planned: app registration so extender mods can add apps; a Settings app and Feed (see `docs/UI_DESIGN.md`).
 

@@ -1,0 +1,35 @@
+# Player squads
+
+Recruit individual riflemen by walking up to a Resistance-owned flag and choosing **Recruit rifleman**. The HQ, captured ports, outposts and other military territories inherit the action from `AROR_Prop_CaptureFlag`. Future territories using that flag inherit recruitment too. Ownership is read from the flag's actual parent location, including a flag moved by automatic placement. Enemy flags refuse recruitment immediately; settlements without flags do not gain an interaction.
+
+The first recruit creates a native player squad if the player has none. A player already in a squad keeps it; only its leader can recruit. The default cap is six riflemen per squad, bounded by Reforger's native AI limit. Pending arrivals reserve slots, so simultaneous or repeated requests cannot exceed the cap. Recruitment is free in this first version. Equipment comes from the selected Resistance preset, including extender presets.
+
+Close the phone and use the game's **squad command wheel** for orders. Use your configured Reforger commanding controls (the game supports rebinding) and select the ground or vehicle as the order target. Movement, follow, hold, defend, get in and get out use the base game's commands and AI. Vehicle seating/pathfinding, and which vehicles the AI can drive, follow native game behaviour.
+
+Open **Squad** in the phone (Ctrl+Y by default). Rename the native squad with up to 32 letters, digits and single spaces. The app lists flag recruits, including pending arrivals and members seated in vehicles; **Dismiss**, then **Confirm dismiss**, retires one recruit. Other human members cannot be dismissed through this app. Only the current squad leader can rename or dismiss; the authority rechecks the squad ID, leadership and recruit membership, even for stale clicks. A player currently controlling a recruit is protected.
+
+The same native squad retains its recruits across leadership changes and player deaths/respawns. When its last player leaves, managed recruits are retired. A native command-wheel release removes the recruit from our roster and leaves its subsequent behaviour to the game. The first version adds no squad save data: recruit rosters are session-only, separate from HICOMM forces and persistent garrison/economy state.
+
+## Integration and API evidence
+
+- `AROR_GameMode_Base.et` carries `AROR_SquadManagerComponent`. It expects the inherited native **SCR_GroupsManagerComponent** and **SCR_CommandingManagerComponent**, and the normal player controller's group/commanding components. Extender scenarios must retain these. Do not add duplicate inherited managers.
+- The installed Workbench SDK documents `SCR_PlayerControllerGroupComponent.AddAIToSlaveGroup(notnull SCR_ChimeraCharacter, SCR_AIGroup)` and `RemoveAiFromSlaveGroup(notnull SCR_ChimeraCharacter, SCR_AIGroup)` as server-only operations. These are used directly after authorization, rather than client request wrappers whose signatures vary by game version.
+- [Native groups API](https://community.bistudio.com/wikidata/external-data/arma-reforger/ArmaReforgerScriptAPIPublic/interfaceSCR__GroupsManagerComponent.html) and [native commanding API](https://community.bistudio.com/wikidata/external-data/arma-reforger/ArmaReforgerScriptAPIPublic/interfaceSCR__CommandingManagerComponent.html).
+- Bohemia describes the available [native AI orders](https://www.bohemia.net/en/blog/arma-reforger-12-update), including vehicle entry and exit.
+- Existing group and layout resource GUIDs are reused. The new prefab component/action instance IDs are hand-authored identifiers, not new resource GUIDs. No `.meta` files or resource database entries were created or edited.
+- Extenders gain a game-mode component and an inherited flag action; existing public classes/configuration are not renamed. Designer settings on the component control capacity, interaction/spawn distances, timeout and the temporary group prefab.
+
+## Workbench acceptance (required)
+
+These changes cannot be compiled or run from this environment. Source-level tests exercise the server policy and transaction lifecycle with native calls mocked; they do not prove engine compilation, replication, navigation, resource inheritance or visual layout.
+
+Source verification: `tools/Test-PlayerSquads.js` passes 63 assertions, including pending capacity, native recruitment racing an arrival, leader transfer, stale cross-squad dismissal, cancellation before a polling tick, player takeover and client streaming gaps. Existing `Test-CampaignFlagEditor.js` and `Test-CapturePlacement.js` each pass 14 assertions. The unrelated `Test-PostsAndPads.js` fails because its harness expects `InfantryPrefab`, which is absent from the unchanged garrison source; neither input was modified for Player Squads.
+
+1. Open the addon in Workbench, compile in Script Editor, then Play the Chicken world in World Editor. Inspect `AROR_GameMode_Base` inheritance and confirm exactly one native Groups manager and one Commanding manager, with their base-game resources configured. Confirm the normal player controller retains its native group and commanding components.
+2. Create a campaign. At HQ recruit six riflemen, including rapid repeated interactions. Check arrivals are equipped from the Resistance preset, join the native AI subgroup and appear in **Squad**. A seventh recruitment must be refused. Test a different Resistance preset as well.
+3. Close the phone. Order follow, move, halt/defend and get in/get out of a vehicle with enough seats. Check physical boarding and disembarking. Repeat a move order on the map. Native AI/vehicle limitations remain engine acceptance items.
+4. Rename the squad, check its name in the native group UI and on another client, and reject empty, oversized or markup-containing names. Open/close the phone and switch between Squad, Imports, Black Market and Home; confirm tile routing, field focus and scaling.
+5. Dismiss an arriving rifleman and a seated rifleman. Confirm only that soldier is retired, the vehicle remains, no delayed spawn appears, and the released slot can be recruited again. Dismiss when the group has other human players; those players must remain.
+6. Capture a port and an outpost; recruit at their flags. Flip them back to the enemy and verify rejection. Test a flag moved by automatic placement, distant interaction and a flag whose parent location is absent. No recruitment during setup, while dead, or from an enemy faction.
+7. On a dedicated server with two clients, check independent squads, a shared squad with a nonleader, simultaneous recruitment near capacity, leadership transfer, another squad's/stale dismissal IDs, native command-wheel release, member death, leader death/respawn and the last player's departure. Verify no client can rename/dismiss another squad and no player-controlled entity is deleted.
+8. Force a failed/delayed spawn or unavailable native command group. Confirm a useful refusal/timeout hint, no orphaned spawn group or rifleman, and capacity recovery. Confirm campaign save/load does not promise to restore this session's recruit roster.
