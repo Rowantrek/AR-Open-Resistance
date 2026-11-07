@@ -1,0 +1,9 @@
+SCR_BaseGameMode : "{49BA4199470D70DA}Prefabs/GameModes/AROR_GameMode_Base.et" {
+ ID "D1841E48D5FA1903"
+ components {
+  AROR_FactionPresetsComponent "{5C71FA2147F19FB3}" {
+   m_sDefaultOccupiers "RHS_USAF_FORECON"
+   m_sDefaultInvaders "RHS_AFRF_MSV_VPKO3_EMR"
+  }
+ }
+}

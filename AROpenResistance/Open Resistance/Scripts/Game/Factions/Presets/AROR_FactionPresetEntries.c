@@ -59,7 +59,7 @@ class AROR_FactionPresetUnit : AROR_FactionPresetEntry
 	[Attribute("0", UIWidgets.ComboBox, desc: "Unit type (one unit per type in a preset)", enums: ParamEnumArray.FromEnum(AROR_EUnitType))]
 	protected AROR_EUnitType m_eType;
 
-	[Attribute(desc: "Kit variants by Readiness, applied to the role's gear-less base character. A unit without loadouts is replaced by the base-game preset's unit of its type.")]
+	[Attribute(desc: "Kit variants by Readiness, applied to the role's gear-less base character. A unit without loadouts falls back through the role's configured default preset.")]
 	protected ref array<ref AROR_UnitLoadout> m_aLoadouts;
 
 	//------------------------------------------------------------------------------------------------

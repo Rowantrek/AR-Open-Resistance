@@ -235,7 +235,7 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! True when the role's preset, or its base-game preset, fields the unit type (no rifleman stand-in)
+	//! True when the role's preset, or its configured default preset, fields the unit type (no rifleman stand-in)
 	bool HasUnit(AROR_EFactionRole role, AROR_EUnitType type)
 	{
 		if (IsUsableUnit(role, GetPreset(role), type))
@@ -247,7 +247,7 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	//! The loadout a unit type of the role gets now: picked from the unit's variants by the role's current Readiness
 	//! (the highest tier at or below it, else the lowest; 1 for roles without Readiness). The unit is the role preset's,
-	//! else the role's base-game preset's, else that preset's rifleman (see FindUnit). Null when there is none.
+	//! else the role's configured default preset's, else that preset's rifleman (see FindUnit). Null when there is none.
 	AROR_UnitLoadout GetUnitLoadout(AROR_EFactionRole role, AROR_EUnitType type)
 	{
 		AROR_FactionPresetUnit unit = FindUnit(role, type);
@@ -258,8 +258,8 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The preset unit used for a type: the role preset's own, else the same type from the role's base-game preset
-	//! (its default, e.g. US_ARMY for a mod army in the Occupiers role), else that preset's rifleman. Each stand-in is
+	//! The preset unit used for a type: the role preset's own, else the same type from the role's configured default
+	//! preset (which an extender can override), else that preset's rifleman. Each stand-in is
 	//! logged once. A unit counts only if it can be dressed (has loadouts), or for a role without a base character
 	//! (Civilians) if it names a prefab.
 	protected AROR_FactionPresetUnit FindUnit(AROR_EFactionRole role, AROR_EUnitType type)
@@ -275,7 +275,7 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 
 		if (!IsUsableUnit(role, fallback, used))
 		{
-			LogFallback(preset, type, "nothing (the base-game preset has neither it nor a rifleman)");
+			LogFallback(preset, type, "nothing (the default preset has neither it nor a rifleman)");
 			return null;
 		}
 
@@ -671,7 +671,7 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 					if (GetRoleBasePrefab(role).IsEmpty())
 						missing = "prefab";
 
-					Print(string.Format("[AROR] Faction preset '%1': %2 has no %3, so as %4 it is replaced by the base-game preset's", preset.GetId(), unit.GetTypeName(), missing, typename.EnumToString(AROR_EFactionRole, role)), LogLevel.WARNING);
+					Print(string.Format("[AROR] Faction preset '%1': %2 has no %3, so as %4 it is replaced using the role's default preset", preset.GetId(), unit.GetTypeName(), missing, typename.EnumToString(AROR_EFactionRole, role)), LogLevel.WARNING);
 				}
 			}
 		}
