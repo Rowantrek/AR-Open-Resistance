@@ -150,8 +150,6 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
   }
   AROR_PhoneComponent "{059A3EBE5C463A90}" {
   }
-  AROR_RadioManagerComponent "{6D1A7E2C40000001}" {
-  }
   AROR_RecaptureComponent "{6AAE785D6545A5DE}" {
   }
   AROR_SetupUIComponent "{6AAC8BBC83F0CB25}" {

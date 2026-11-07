@@ -1,6 +1,6 @@
 //! One sample in a station's audio project
 [BaseContainerProps()]
-class AROR_RadioTrack
+class ORRadio_Track
 {
 	[Attribute("", desc: "Title shown when the radio is tuned to it")]
 	string m_sTitle;
@@ -16,7 +16,7 @@ class AROR_RadioTrack
 }
 
 [BaseContainerProps()]
-class AROR_RadioStation
+class ORRadio_Station
 {
 	[Attribute("", desc: "Name shown when the radio is tuned to it")]
 	string m_sName;
@@ -31,34 +31,34 @@ class AROR_RadioStation
 	int m_iSongsPerInterlude;
 
 	[Attribute(desc: "Songs and interludes")]
-	ref array<ref AROR_RadioTrack> m_aTracks;
+	ref array<ref ORRadio_Track> m_aTracks;
 }
 
 //! Stations, listed in Configs/Radio/AROR_RadioStations.conf. Extender mods add theirs with Override in addon.
 [BaseContainerProps(configRoot: true)]
-class AROR_RadioStations
+class ORRadio_Stations
 {
 	[Attribute(desc: "Stations, in the order the next station control goes through them")]
-	ref array<ref AROR_RadioStation> m_aStations;
+	ref array<ref ORRadio_Station> m_aStations;
 }
 
 //! A station's looping running order. Built from a shared seed with integer maths only, so every machine gets the same
 //! order, and a position in the loop is worked out from the server clock: nothing is replicated as tracks change.
-class AROR_RadioSchedule
+class ORRadio_Schedule
 {
-	protected ref array<AROR_RadioTrack> m_aOrder = {};
+	protected ref array<ORRadio_Track> m_aOrder = {};
 	protected ref array<int> m_aEndsMs = {};
 	protected int m_iLengthMs;
 
 	//------------------------------------------------------------------------------------------------
-	void AROR_RadioSchedule(AROR_RadioStation station, int seed)
+	void ORRadio_Schedule(ORRadio_Station station, int seed)
 	{
 		if (!station || !station.m_aTracks)
 			return;
 
-		array<AROR_RadioTrack> songs = {};
-		array<AROR_RadioTrack> interludes = {};
-		foreach (AROR_RadioTrack entry : station.m_aTracks)
+		array<ORRadio_Track> songs = {};
+		array<ORRadio_Track> interludes = {};
+		foreach (ORRadio_Track entry : station.m_aTracks)
 		{
 			if (!entry || entry.m_iDurationMs <= 0)
 				continue;
@@ -88,7 +88,7 @@ class AROR_RadioSchedule
 		// A station of nothing but interludes still plays
 		if (songs.IsEmpty())
 		{
-			foreach (AROR_RadioTrack interlude : interludes)
+			foreach (ORRadio_Track interlude : interludes)
 			{
 				Append(interlude);
 			}
@@ -96,7 +96,7 @@ class AROR_RadioSchedule
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void Append(AROR_RadioTrack entry)
+	protected void Append(ORRadio_Track entry)
 	{
 		m_iLengthMs += entry.m_iDurationMs;
 		m_aOrder.Insert(entry);
@@ -105,13 +105,13 @@ class AROR_RadioSchedule
 
 	//------------------------------------------------------------------------------------------------
 	//! Fisher-Yates with a linear congruential generator; returns the generator's state
-	protected int Shuffle(array<AROR_RadioTrack> entries, int state)
+	protected int Shuffle(array<ORRadio_Track> entries, int state)
 	{
 		for (int i = entries.Count() - 1; i > 0; i--)
 		{
 			state = (state * 1103515245 + 12345) & 0x7FFFFFFF;
 			int other = state % (i + 1);
-			AROR_RadioTrack swap = entries[i];
+			ORRadio_Track swap = entries[i];
 			entries[i] = entries[other];
 			entries[other] = swap;
 		}
@@ -121,7 +121,7 @@ class AROR_RadioSchedule
 
 	//------------------------------------------------------------------------------------------------
 	//! The track playing elapsedMs after the station started, and how far into it; false for an empty station
-	bool Resolve(int elapsedMs, out AROR_RadioTrack current, out int offsetMs, out AROR_RadioTrack upcoming)
+	bool Resolve(int elapsedMs, out ORRadio_Track current, out int offsetMs, out ORRadio_Track upcoming)
 	{
 		if (m_iLengthMs <= 0)
 			return false;

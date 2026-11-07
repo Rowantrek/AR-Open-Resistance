@@ -1,21 +1,21 @@
 //! A radio that is currently sounding on this machine
-class AROR_RadioSound
+class ORRadio_Sound
 {
 	int m_iVehicleId;
 	int m_iStation;
 	int m_iVolume;
-	AROR_RadioTrack m_Track;
+	ORRadio_Track m_Track;
 	AudioHandle m_Handle = AudioHandle.Invalid;
 	IEntity m_Vehicle;
 }
 
 [ComponentEditorProps(category: "OpenResistance/Radio", description: "Vehicle radios and the stations they play. Server owns which radios are on; each client plays the nearest ones.")]
-class AROR_RadioManagerComponentClass : SCR_BaseGameModeComponentClass {}
+class ORRadio_ManagerComponentClass : SCR_BaseGameModeComponentClass {}
 
 //! Vehicle radios (see ARCHITECTURE.md -> Radio). Stations are worked out from a replicated seed and start time (see
-//! AROR_RadioSchedule) and only the radios that are on are replicated, so vehicles need no component of their own.
-//! The controls are actions added to every vehicle by the Vehicle_Base override (see AROR_RadioVehicleAction).
-class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
+//! ORRadio_Schedule) and only the radios that are on are replicated, so vehicles need no component of their own.
+//! The controls are actions added to every vehicle by the Vehicle_Base override (see ORRadio_VehicleAction).
+class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 {
 	protected static const int SWEEP_MS = 5000;
 	protected static const int CLIENT_TICK_MS = 100;
@@ -29,7 +29,7 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 	protected static const int RADIO_STRIDE = 3;
 	static const int VOLUME_MAX = 10;
 
-	[Attribute("{6D1A7E2C40000010}Configs/Radio/AROR_RadioStations.conf", UIWidgets.ResourceNamePicker, desc: "Stations config", params: "conf class=AROR_RadioStations")]
+	[Attribute("{6D1A7E2C40000010}Configs/Radio/AROR_RadioStations.conf", UIWidgets.ResourceNamePicker, desc: "Stations config", params: "conf class=ORRadio_Stations")]
 	protected ResourceName m_sStationsConfig;
 
 	[Attribute("120", desc: "Metres at which a client starts playing a radio. Match the outer range of the audio project's amplitude curve", params: "10 500 1")]
@@ -50,7 +50,7 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("2", desc: "Volume response. 1 is linear; higher is gentler at the low end", params: "1 4 0.1")]
 	protected float m_fVolumeCurve;
 
-	protected static AROR_RadioManagerComponent s_Instance;
+	protected static ORRadio_ManagerComponent s_Instance;
 
 	[RplProp(onRplName: "OnScheduleReplicated")]
 	protected int m_iSeed;
@@ -62,9 +62,9 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 	[RplProp(onRplName: "OnRadiosReplicated")]
 	protected ref array<int> m_aRadios = {};
 
-	protected ref AROR_RadioStations m_Stations;
-	protected ref array<ref AROR_RadioStation> m_aNoStations = {};
-	protected ref array<ref AROR_RadioSchedule> m_aSchedules = {};
+	protected ref ORRadio_Stations m_Stations;
+	protected ref array<ref ORRadio_Station> m_aNoStations = {};
+	protected ref array<ref ORRadio_Schedule> m_aSchedules = {};
 	protected ChimeraWorld m_World;
 	protected bool m_bAuthority;
 
@@ -72,13 +72,13 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 	protected ref array<float> m_aEmptySinceMs = {};
 
 	// Client
-	protected ref array<ref AROR_RadioSound> m_aSounds = {};
+	protected ref array<ref ORRadio_Sound> m_aSounds = {};
 	protected bool m_bSelectionDue;
 	protected int m_iTicksToSelect;
 	protected bool m_bReportedStartFailure;
 
 	//------------------------------------------------------------------------------------------------
-	static AROR_RadioManagerComponent GetInstance()
+	static ORRadio_ManagerComponent GetInstance()
 	{
 		return s_Instance;
 	}
@@ -111,7 +111,7 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 
 		if (RplSession.Mode() != RplMode.Dedicated)
 		{
-			foreach (AROR_RadioStation station : GetStations())
+			foreach (ORRadio_Station station : GetStations())
 			{
 				if (station && !station.m_sAudioProject.IsEmpty())
 					AudioSystem.PlayEventInitialize(station.m_sAudioProject);
@@ -126,7 +126,7 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 	{
 		GetGame().GetCallqueue().Remove(Sweep_S);
 		GetGame().GetCallqueue().Remove(ClientTick);
-		foreach (AROR_RadioSound sound : m_aSounds)
+		foreach (ORRadio_Sound sound : m_aSounds)
 		{
 			if (sound.m_Handle != AudioHandle.Invalid)
 				AudioSystem.TerminateSound(sound.m_Handle);
@@ -149,17 +149,17 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
-		m_Stations = AROR_RadioStations.Cast(BaseContainerTools.CreateInstanceFromContainer(resource.GetResource().ToBaseContainer()));
+		m_Stations = ORRadio_Stations.Cast(BaseContainerTools.CreateInstanceFromContainer(resource.GetResource().ToBaseContainer()));
 	}
 
 	//------------------------------------------------------------------------------------------------
 	protected void BuildSchedules()
 	{
 		m_aSchedules.Clear();
-		array<ref AROR_RadioStation> stations = GetStations();
+		array<ref ORRadio_Station> stations = GetStations();
 		for (int i = 0; i < stations.Count(); i++)
 		{
-			m_aSchedules.Insert(new AROR_RadioSchedule(stations[i], (m_iSeed + i * 7919) & 0x7FFFFFFF));
+			m_aSchedules.Insert(new ORRadio_Schedule(stations[i], (m_iSeed + i * 7919) & 0x7FFFFFFF));
 		}
 	}
 
@@ -179,7 +179,7 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	// Queries, every machine
 	//------------------------------------------------------------------------------------------------
-	array<ref AROR_RadioStation> GetStations()
+	array<ref ORRadio_Station> GetStations()
 	{
 		if (m_Stations && m_Stations.m_aStations)
 			return m_Stations.m_aStations;
@@ -213,7 +213,7 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! What a station is playing now; false when it has nothing to play or has not replicated yet
-	bool GetNowPlaying(int station, out AROR_RadioTrack current, out int offsetMs, out AROR_RadioTrack upcoming)
+	bool GetNowPlaying(int station, out ORRadio_Track current, out int offsetMs, out ORRadio_Track upcoming)
 	{
 		if (!m_World || m_iSeed == 0 || !m_aSchedules.IsIndexValid(station))
 			return false;
@@ -372,7 +372,7 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 
 		for (int i = m_aSounds.Count() - 1; i >= 0; i--)
 		{
-			AROR_RadioSound sound = m_aSounds[i];
+			ORRadio_Sound sound = m_aSounds[i];
 			if (!sound.m_Vehicle)
 			{
 				StopSound(i, FADE_STOP_SECONDS);
@@ -433,7 +433,7 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 		int wanted = Math.Min(m_iMaxSounds, nearest.Count());
 		for (int s = m_aSounds.Count() - 1; s >= 0; s--)
 		{
-			AROR_RadioSound sound = m_aSounds[s];
+			ORRadio_Sound sound = m_aSounds[s];
 			bool keep;
 			for (int k = 0; k < wanted; k++)
 			{
@@ -447,7 +447,7 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 				continue;
 			}
 
-			AROR_RadioTrack current, upcoming;
+			ORRadio_Track current, upcoming;
 			int offsetMs;
 			int radioIndex = FindRadio(sound.m_iVehicleId);
 			// The engine cannot change a playing sound's signals, so a new volume restarts it in place
@@ -466,9 +466,9 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	protected void StartSound(int vehicleId, int station, int volume)
 	{
-		array<ref AROR_RadioStation> stations = GetStations();
+		array<ref ORRadio_Station> stations = GetStations();
 		IEntity vehicle = FindVehicle(vehicleId);
-		AROR_RadioTrack current, upcoming;
+		ORRadio_Track current, upcoming;
 		int offsetMs;
 		if (!vehicle || !stations.IsIndexValid(station) || !GetNowPlaying(station, current, offsetMs, upcoming))
 			return;
@@ -476,7 +476,7 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 		if (offsetMs > current.m_iDurationMs - END_GUARD_MS)
 			return;
 
-		AROR_RadioStation stationData = stations[station];
+		ORRadio_Station stationData = stations[station];
 		vector transform[4];
 		vehicle.GetTransform(transform);
 		float loudness = Math.Pow(volume / (float)VOLUME_MAX, m_fVolumeCurve);
@@ -494,7 +494,7 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
-		AROR_RadioSound sound = new AROR_RadioSound();
+		ORRadio_Sound sound = new ORRadio_Sound();
 		sound.m_iVehicleId = vehicleId;
 		sound.m_iStation = station;
 		sound.m_iVolume = volume;
@@ -519,7 +519,7 @@ class AROR_RadioManagerComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	protected void StopSound(int index, float fadeSeconds)
 	{
-		AROR_RadioSound sound = m_aSounds[index];
+		ORRadio_Sound sound = m_aSounds[index];
 		if (sound.m_Handle != AudioHandle.Invalid)
 			AudioSystem.TerminateSoundFadeOut(sound.m_Handle, true, fadeSeconds);
 

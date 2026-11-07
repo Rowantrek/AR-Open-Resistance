@@ -3,7 +3,7 @@ Vehicle : "{4085446E2B406849}Prefabs/Vehicles/Core/Vehicle_Base.et" {
  components {
   ActionsManagerComponent "{C97BE5489221AE18}" {
    additionalActions + {
-    AROR_RadioVehicleAction "{6D1C000000000001}" {
+    ORRadio_VehicleAction "{6D1C000000000001}" {
      ParentContextList {
       "starter_switch"
       "ignition"
@@ -19,7 +19,7 @@ Vehicle : "{4085446E2B406849}Prefabs/Vehicles/Core/Vehicle_Base.et" {
      m_bInteriorOnly 1
      m_eControl POWER
     }
-    AROR_RadioVehicleAction "{6D1C000000000002}" {
+    ORRadio_VehicleAction "{6D1C000000000002}" {
      ParentContextList {
       "starter_switch"
       "ignition"
@@ -35,7 +35,7 @@ Vehicle : "{4085446E2B406849}Prefabs/Vehicles/Core/Vehicle_Base.et" {
      m_bInteriorOnly 1
      m_eControl NEXT_STATION
     }
-    AROR_RadioVehicleAction "{6D1C000000000003}" {
+    ORRadio_VehicleAction "{6D1C000000000003}" {
      ParentContextList {
       "starter_switch"
       "ignition"
@@ -51,7 +51,7 @@ Vehicle : "{4085446E2B406849}Prefabs/Vehicles/Core/Vehicle_Base.et" {
      m_bInteriorOnly 1
      m_eControl VOLUME_UP
     }
-    AROR_RadioVehicleAction "{6D1C000000000004}" {
+    ORRadio_VehicleAction "{6D1C000000000004}" {
      ParentContextList {
       "starter_switch"
       "ignition"

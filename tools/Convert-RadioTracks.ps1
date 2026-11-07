@@ -20,7 +20,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$addon = Join-Path $PSScriptRoot '..\AROpenResistance\Open Resistance' | Resolve-Path | Select-Object -ExpandProperty Path
+$addon = Join-Path $PSScriptRoot '..\OptionalAddons\OpenResistanceRadio' | Resolve-Path | Select-Object -ExpandProperty Path
 $samplesDir = Join-Path $addon 'Sounds\Radio\Samples'
 $acpPath = Join-Path $addon 'Sounds\Radio\AROR_Radio.acp'
 $sigPath = Join-Path $addon 'Sounds\Radio\AROR_Radio.sig'
@@ -277,14 +277,14 @@ Set-TextCrlf $acpPath $acp
 $project = ''
 if ($acpGuid) { $project = "{$acpGuid}Sounds/Radio/AROR_Radio.acp" }
 $conf = New-Object Text.StringBuilder
-[void]$conf.Append("AROR_RadioStations {`n m_aStations {`n  AROR_RadioStation `"{6D1A7E2C40000100}`" {`n")
+[void]$conf.Append("ORRadio_Stations {`n m_aStations {`n  ORRadio_Station `"{6D1A7E2C40000100}`" {`n")
 [void]$conf.Append("   m_sName `"$StationName`"`n   m_sAudioProject `"$project`"`n   m_iSongsPerInterlude $SongsPerInterlude`n   m_aTracks {`n")
 foreach ($track in $tracks)
 {
 	$id = '6D1A7E2C4001{0:X4}' -f $track.Bank
 	$interlude = 0
 	if ($track.Interlude) { $interlude = 1 }
-	[void]$conf.Append("    AROR_RadioTrack `"{$id}`" {`n     m_sTitle `"$($track.Title)`"`n     m_iDurationMs $($track.Ms)`n     m_iBankIndex $($track.Bank)`n     m_bInterlude $interlude`n    }`n")
+	[void]$conf.Append("    ORRadio_Track `"{$id}`" {`n     m_sTitle `"$($track.Title)`"`n     m_iDurationMs $($track.Ms)`n     m_iBankIndex $($track.Bank)`n     m_bInterlude $interlude`n    }`n")
 }
 [void]$conf.Append("   }`n  }`n }`n}`n")
 Set-TextCrlf $confPath $conf.ToString()
