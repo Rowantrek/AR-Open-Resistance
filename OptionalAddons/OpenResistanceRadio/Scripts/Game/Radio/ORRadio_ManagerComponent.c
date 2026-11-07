@@ -41,7 +41,7 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("15", desc: "Metres another radio must be closer by to replace one already playing, so equal distances do not restart sounds", params: "0 100 1")]
 	protected float m_fSwitchMargin;
 
-	[Attribute("60", desc: "Seconds before the radio of an empty vehicle turns off. 0 keeps it on", params: "0 3600 1")]
+	[Attribute("0", desc: "Seconds before the radio of an empty vehicle turns off. 0 keeps it on", params: "0 3600 1")]
 	protected float m_fEmptyShutoffSeconds;
 
 	[Attribute("7", desc: "Volume a radio turns on at", params: "0 10 1")]
