@@ -64,6 +64,13 @@ class ORRadio_VehicleAction : SCR_VehicleActionBase
 
 			case ORRadio_EControl.NEXT_STATION:
 				outName = "Radio: next station";
+				array<ref ORRadio_Station> stations = manager.GetStations();
+				if (stations.Count() > 1)
+				{
+					ORRadio_Station nextStation = stations[(station + 1) % stations.Count()];
+					outName = string.Format("Radio: switch to %1", nextStation.m_sName);
+				}
+
 				break;
 
 			case ORRadio_EControl.VOLUME_UP:
@@ -98,7 +105,7 @@ class ORRadio_VehicleAction : SCR_VehicleActionBase
 				}
 
 				controller.ORRadio_Request(vehicleId, 0, -1);
-				AnnounceStation(manager, 0);
+				manager.ShowNowPlaying(0);
 				break;
 
 			case ORRadio_EControl.NEXT_STATION:
@@ -107,7 +114,7 @@ class ORRadio_VehicleAction : SCR_VehicleActionBase
 
 				station = (station + 1) % manager.GetStations().Count();
 				controller.ORRadio_Request(vehicleId, station, -1);
-				AnnounceStation(manager, station);
+				manager.ShowNowPlaying(station);
 				break;
 
 			case ORRadio_EControl.VOLUME_UP:
@@ -120,23 +127,6 @@ class ORRadio_VehicleAction : SCR_VehicleActionBase
 					controller.ORRadio_Request(vehicleId, station, manager.GetVehicleVolume(vehicleId) - 1);
 				break;
 		}
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! The station name and what it is playing, as a hint to the player who tuned it
-	protected void AnnounceStation(ORRadio_ManagerComponent manager, int station)
-	{
-		array<ref ORRadio_Station> stations = manager.GetStations();
-		if (!stations.IsIndexValid(station))
-			return;
-
-		string text = stations[station].m_sName;
-		ORRadio_Track current, upcoming;
-		int offsetMs;
-		if (manager.GetNowPlaying(station, current, offsetMs, upcoming))
-			text = string.Format("%1: %2", text, current.m_sTitle);
-
-		AROR_NotificationManagerComponent.ShowHint(text);
 	}
 
 	//------------------------------------------------------------------------------------------------

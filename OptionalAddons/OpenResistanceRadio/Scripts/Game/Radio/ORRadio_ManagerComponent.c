@@ -50,6 +50,12 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("2", desc: "Volume response. 1 is linear; higher is gentler at the low end", params: "1 4 0.1")]
 	protected float m_fVolumeCurve;
 
+	[Attribute("{6D77C615F1EBB509}UI/Layouts/Radio/ORRadio_NowPlaying.layout", UIWidgets.ResourceNamePicker, desc: "Now playing card", params: "layout")]
+	protected ResourceName m_sNowPlayingLayout;
+
+	[Attribute("5", desc: "Seconds the now playing card stays up", params: "1 30 0.5")]
+	protected float m_fNowPlayingSeconds;
+
 	protected static ORRadio_ManagerComponent s_Instance;
 
 	[RplProp(onRplName: "OnScheduleReplicated")]
@@ -76,6 +82,7 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 	protected bool m_bSelectionDue;
 	protected int m_iTicksToSelect;
 	protected bool m_bReportedStartFailure;
+	protected ref ORRadio_NowPlayingCard m_NowPlayingCard;
 
 	//------------------------------------------------------------------------------------------------
 	static ORRadio_ManagerComponent GetInstance()
@@ -133,6 +140,7 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 		}
 
 		m_aSounds.Clear();
+		m_NowPlayingCard = null;
 		if (s_Instance == this)
 			s_Instance = null;
 
@@ -533,5 +541,26 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 		{
 			StopSound(i, FADE_STOP_SECONDS);
 		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Shows a station's art and current track to the player who tuned it
+	void ShowNowPlaying(int station)
+	{
+		array<ref ORRadio_Station> stations = GetStations();
+		if (!stations.IsIndexValid(station))
+			return;
+
+		if (!m_NowPlayingCard)
+			m_NowPlayingCard = new ORRadio_NowPlayingCard(m_sNowPlayingLayout, m_fNowPlayingSeconds);
+
+		string title;
+		ORRadio_Track current, upcoming;
+		int offsetMs;
+		if (GetNowPlaying(station, current, offsetMs, upcoming))
+			title = current.m_sTitle;
+
+		ORRadio_Station stationData = stations[station];
+		m_NowPlayingCard.Show(stationData.m_sName, title, stationData.m_sAlbumArt);
 	}
 }

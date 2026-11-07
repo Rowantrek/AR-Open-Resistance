@@ -1,30 +1,44 @@
 <#
 .SYNOPSIS
-  Builds the Radio system's audio from a folder of numbered MP3s ("1. Title.mp3").
+  Builds one station of the Radio addon from a folder of MP3s or WAVs ("1. Title.mp3" or "Title.wav") and a PNG of its
+  album art. Sub-folders are ignored.
 
 .DESCRIPTION
   Safe to run repeatedly:
-    1. Decodes each MP3 to a mono WAV in Sounds/Radio/Samples (half the source sample rate), using Windows Media
+    1. Decodes each track to a mono WAV in Sounds/Radio/Samples (half the source sample rate), using Windows Media
        Foundation so nothing needs installing. Existing WAVs are kept.
-    2. Writes the station's tracks, with durations measured from the audio, to Configs/Radio/AROR_RadioStations.conf.
-    3. Reads the GUIDs Workbench generated (.wav.meta, .sig.meta, .acp.meta) and writes them into the audio project
-       and the station config. No GUID is invented: anything not registered yet is reported and left out.
+    2. Crops the album art to a square PNG in UI/Textures/Radio. An existing PNG is kept.
+    3. Writes the station's tracks, with durations measured from the audio, into Configs/Radio/AROR_RadioStations.conf,
+       leaving the other stations alone. A new station's audio project starts as a copy of AROR_Radio.acp.
+    4. Reads the GUIDs Workbench generated (.wav.meta, .sig.meta, .acp.meta, .edds.meta) and writes them into the audio
+       project and the station config. No GUID is invented: anything not registered yet is reported and left out.
 
-  So: run it, register Sounds/Radio in Workbench's Resource Browser so the .meta files exist, then run it again.
+  So: run it, register Sounds/Radio and UI/Textures/Radio in Workbench's Resource Browser so the .meta files and the
+  .edds exist, then run it again.
+
+.EXAMPLE
+  .\Convert-RadioTracks.ps1 -Source 'C:\Music\Radio Free Altis'
+  .\Convert-RadioTracks.ps1 -Source 'C:\Music\Everon Underground' -Station 1 -Slug AROR_EveronUnderground -StationName 'Everon Underground 94.5'
 #>
 param(
 	[Parameter(Mandatory = $true)][string]$Source,
-	[string]$StationName = 'Antistasi Radio 101.3',
-	[string]$InterludePattern = '^(Interlude \d+|Radio Free Altis)$',
-	[int]$SongsPerInterlude = 3
+	[string]$StationName = 'Radio Free Altis 101.3',
+	[int]$Station = 0,
+	[string]$Slug = 'AROR_Radio',
+	[string]$InterludePattern = '^(Interlude \d+|Intro .*|Radio Free Altis)$',
+	[int]$SongsPerInterlude = 3,
+	[int]$ArtSize = 256
 )
 
 $ErrorActionPreference = 'Stop'
 $addon = Join-Path $PSScriptRoot '..\OptionalAddons\OpenResistanceRadio' | Resolve-Path | Select-Object -ExpandProperty Path
 $samplesDir = Join-Path $addon 'Sounds\Radio\Samples'
-$acpPath = Join-Path $addon 'Sounds\Radio\AROR_Radio.acp'
+$acpPath = Join-Path $addon "Sounds\Radio\$Slug.acp"
+$acpTemplatePath = Join-Path $addon 'Sounds\Radio\AROR_Radio.acp'
 $sigPath = Join-Path $addon 'Sounds\Radio\AROR_Radio.sig'
 $confPath = Join-Path $addon 'Configs\Radio\AROR_RadioStations.conf'
+$artDir = Join-Path $addon 'UI\Textures\Radio'
+$artPath = Join-Path $artDir "$Slug.png"
 
 Add-Type -TypeDefinition @'
 using System;
@@ -225,14 +239,51 @@ function Set-TextCrlf([string]$path, [string]$text)
 [void](New-Item -ItemType Directory -Force $samplesDir)
 [void](New-Item -ItemType Directory -Force (Split-Path $confPath))
 
+#! Crops to a centred square and scales down, so the card's art is not stretched
+function Save-AlbumArt([string]$from, [string]$to, [int]$size)
+{
+	Add-Type -AssemblyName System.Drawing
+	$image = [Drawing.Image]::FromFile($from)
+	$output = New-Object Drawing.Bitmap $size, $size
+	$graphics = [Drawing.Graphics]::FromImage($output)
+	try
+	{
+		$graphics.InterpolationMode = [Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+		$graphics.PixelOffsetMode = [Drawing.Drawing2D.PixelOffsetMode]::HighQuality
+		$side = [Math]::Min($image.Width, $image.Height)
+		$crop = New-Object Drawing.Rectangle ([int](($image.Width - $side) / 2)), ([int](($image.Height - $side) / 2)), $side, $side
+		$target = New-Object Drawing.Rectangle 0, 0, $size, $size
+		$graphics.DrawImage($image, $target, $crop, [Drawing.GraphicsUnit]::Pixel)
+		$output.Save($to, [Drawing.Imaging.ImageFormat]::Png)
+	}
+	finally
+	{
+		$graphics.Dispose()
+		$output.Dispose()
+		$image.Dispose()
+	}
+}
+
+$artSource = Get-ChildItem -LiteralPath $Source -Filter *.png -File | Select-Object -First 1
+if ($artSource -and -not (Test-Path -LiteralPath $artPath))
+{
+	[void](New-Item -ItemType Directory -Force $artDir)
+	Save-AlbumArt $artSource.FullName $artPath $ArtSize
+	Write-Host "art      $Slug.png from $($artSource.Name)"
+}
+
 $tracks = New-Object System.Collections.ArrayList
-$sources = Get-ChildItem -LiteralPath $Source -Filter *.mp3 -File | Sort-Object { [int]($_.Name -replace '\..*$', '') }
+$sources = Get-ChildItem -LiteralPath $Source -File | Where-Object { $_.Extension -in '.mp3', '.wav' } | Sort-Object @{ Expression = {
+	$number = [regex]::Match($_.Name, '^\d+')
+	if ($number.Success) { [int]$number.Value } else { [int]::MaxValue }
+} }, Name
 $bankIndex = 0
 foreach ($mp3 in $sources)
 {
 	$title = ($mp3.BaseName -replace '^\d+\.\s*', '').Trim()
-	$slug = ($title -replace "[^A-Za-z0-9]", '')
-	$wavName = 'AROR_Radio_{0:00}_{1}.wav' -f ($bankIndex + 1), $slug
+	# Accented letters keep their base letter in the file name: the title itself is kept as it is
+	$fileSlug = ($title.Normalize([Text.NormalizationForm]::FormD) -replace "[^A-Za-z0-9]", '')
+	$wavName = '{0}_{1:00}_{2}.wav' -f $Slug, ($bankIndex + 1), $fileSlug
 	$wav = Join-Path $samplesDir $wavName
 	if (Test-Path -LiteralPath $wav)
 	{
@@ -253,6 +304,7 @@ foreach ($mp3 in $sources)
 }
 
 # Audio project: this station's samples in the Music bank, and our own signal once it is registered
+if (-not (Test-Path -LiteralPath $acpPath)) { Copy-Item -LiteralPath $acpTemplatePath -Destination $acpPath }
 $acpGuid = Get-Guid $acpPath
 $sigGuid = Get-Guid $sigPath
 $acp = (Get-Content -LiteralPath $acpPath -Raw) -replace "`r`n", "`n"
@@ -275,28 +327,42 @@ Set-TextCrlf $acpPath $acp
 
 # Station config. Component and object IDs are derived from the track, so regenerating keeps the diff small
 $project = ''
-if ($acpGuid) { $project = "{$acpGuid}Sounds/Radio/AROR_Radio.acp" }
-$conf = New-Object Text.StringBuilder
-[void]$conf.Append("ORRadio_Stations {`n m_aStations {`n  ORRadio_Station `"{6D1A7E2C40000100}`" {`n")
-[void]$conf.Append("   m_sName `"$StationName`"`n   m_sAudioProject `"$project`"`n   m_iSongsPerInterlude $SongsPerInterlude`n   m_aTracks {`n")
+if ($acpGuid) { $project = "{$acpGuid}Sounds/Radio/$Slug.acp" }
+$artGuid = Get-Guid (Join-Path $artDir "$Slug.edds")
+$art = ''
+if ($artGuid) { $art = "{$artGuid}UI/Textures/Radio/$Slug.edds" }
+$block = New-Object Text.StringBuilder
+$stationId = '6D1A7E2C4000{0:X4}' -f (0x100 + $Station)
+[void]$block.Append("  ORRadio_Station `"{$stationId}`" {`n")
+[void]$block.Append("   m_sName `"$StationName`"`n   m_sAlbumArt `"$art`"`n   m_sAudioProject `"$project`"`n   m_iSongsPerInterlude $SongsPerInterlude`n   m_aTracks {`n")
 foreach ($track in $tracks)
 {
-	$id = '6D1A7E2C4001{0:X4}' -f $track.Bank
+	$id = '6D1A7E2C40{0:X2}{1:X4}' -f ($Station + 1), $track.Bank
 	$interlude = 0
 	if ($track.Interlude) { $interlude = 1 }
-	[void]$conf.Append("    ORRadio_Track `"{$id}`" {`n     m_sTitle `"$($track.Title)`"`n     m_iDurationMs $($track.Ms)`n     m_iBankIndex $($track.Bank)`n     m_bInterlude $interlude`n    }`n")
+	[void]$block.Append("    ORRadio_Track `"{$id}`" {`n     m_sTitle `"$($track.Title)`"`n     m_iDurationMs $($track.Ms)`n     m_iBankIndex $($track.Bank)`n     m_bInterlude $interlude`n    }`n")
 }
-[void]$conf.Append("   }`n  }`n }`n}`n")
-Set-TextCrlf $confPath $conf.ToString()
+[void]$block.Append("   }`n  }`n")
+
+# Only this station's block changes
+$blocks = New-Object System.Collections.ArrayList
+if (Test-Path -LiteralPath $confPath)
+{
+	$existing = [IO.File]::ReadAllText($confPath, [Text.Encoding]::UTF8) -replace "`r`n", "`n"
+	foreach ($match in [regex]::Matches($existing, '(?ms)^  ORRadio_Station ".*?^  \}\n')) { [void]$blocks.Add($match.Value) }
+}
+if ($Station -gt $blocks.Count) { throw "Station $Station would leave a gap: the config has $($blocks.Count) stations." }
+if ($Station -eq $blocks.Count) { [void]$blocks.Add($block.ToString()) } else { $blocks[$Station] = $block.ToString() }
+Set-TextCrlf $confPath ("ORRadio_Stations {`n m_aStations {`n" + ($blocks -join '') + " }`n}`n")
 
 $missing = @($tracks | Where-Object { -not $_.Guid })
 $totalMs = ($tracks | Measure-Object -Property Ms -Sum).Sum
 $bytes = (Get-ChildItem -LiteralPath $samplesDir -Filter *.wav | Measure-Object -Property Length -Sum).Sum
-Write-Host ("{0} tracks, {1:N1} minutes, {2:N0} MB of WAV" -f $tracks.Count, ($totalMs / 60000), ($bytes / 1MB))
-if ($missing.Count -gt 0 -or -not $acpGuid -or -not $sigGuid)
+Write-Host ("{0} tracks, {1:N1} minutes, {2:N0} MB of WAV across all stations" -f $tracks.Count, ($totalMs / 60000), ($bytes / 1MB))
+if ($missing.Count -gt 0 -or -not $acpGuid -or -not $sigGuid -or ($artSource -and -not $artGuid))
 {
-	Write-Host "Not linked yet: $($missing.Count) WAVs, audio project registered: $([bool]$acpGuid), signal registered: $([bool]$sigGuid)."
-	Write-Host "Register Sounds/Radio in Workbench's Resource Browser, then run this again."
+	Write-Host "Not linked yet: $($missing.Count) WAVs, audio project registered: $([bool]$acpGuid), signal registered: $([bool]$sigGuid), album art imported: $([bool]$artGuid)."
+	Write-Host "Register Sounds/Radio and UI/Textures/Radio in Workbench's Resource Browser, then run this again."
 }
 else
 {

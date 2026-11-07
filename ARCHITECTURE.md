@@ -362,7 +362,7 @@ Purpose: an in-game phone that hosts player-facing apps. Client only.
 - Planned: app registration so extender mods can add apps; a Settings app and Feed (see `docs/UI_DESIGN.md`).
 
 ### Radio — In progress
-Purpose: music in vehicles. Anyone seated in a vehicle can turn its radio on from the dashboard, and everyone nearby hears the same song at the same point. Ships one station, **Antistasi Radio 101.3**.
+Purpose: music in vehicles. Anyone seated in a vehicle can turn its radio on from the dashboard, and everyone nearby hears the same song at the same point. Ships two stations, **Radio Free Altis 101.3** and **Everon Underground 94.5**.
 
 Lives in the optional addon `OptionalAddons/OpenResistanceRadio` (addon ID `OpenResistanceRadio`, class prefix `ORRadio_`), which depends on the core. The core has no radio code or audio, so a server without the addon has no radio and no controls.
 
@@ -371,9 +371,10 @@ Lives in the optional addon `OptionalAddons/OpenResistanceRadio` (addon ID `Open
 - **Stations** (`ORRadio_Station`, listed in `Configs/Radio/AROR_RadioStations.conf`) are worked out, not ticked: every machine builds the same looping running order from a replicated seed (`ORRadio_Schedule`: shuffled songs with an interlude every few) and finds its place from the server clock and a replicated start time. Nothing replicates as tracks change.
 - **Radios**: the server keeps the list of radios that are on (vehicle, station and volume), replicated to clients, and turns one off when its vehicle is gone, destroyed or left empty for a while. Clients ask through the player controller; the server checks the player sits in that vehicle.
 - **Audio** (client only): each client plays the nearest few radios in range through `AudioSystem`, seeking into the current track, and follows the moving vehicle. Each radio has a replicated volume, sent to the audio project as a signal when the sound starts, so changing it restarts the sound in place.
-- **Audio assets**: `Sounds/Radio` holds one audio project (`AROR_Radio.acp`, built on the base-game Kolguyev radio's sound setup) and a signal (`AROR_Radio.sig`, the base-game radio signals with a longer seek range and a volume). `tools/Convert-RadioTracks.ps1` builds the WAVs from an album folder, measures durations and links the GUIDs Workbench generated.
+- **Now playing card** (client only, `ORRadio_NowPlayingCard`): shows the station's album art, name and current track for a few seconds to the player who turns the radio on or switches station. Nothing is replicated for it.
+- **Assets**: `Sounds/Radio` holds one audio project per station (built on the base-game Kolguyev radio's sound setup) sharing one signal (`AROR_Radio.sig`, the base-game radio signals with a longer seek range and a volume); `UI/Textures/Radio` holds the album art. `tools/Convert-RadioTracks.ps1` builds a station from an album folder: it makes the WAVs and art, measures durations and links the GUIDs Workbench generated.
 - Saved: nothing; stations restart and radios are off after a load.
-- Depends on (all in the core): Game Mode, Notifications (hints), Resistance Garage (occupant check).
+- Depends on (all in the core): Game Mode, UI colours, Resistance Garage (occupant check).
 - Extension points: other addons add stations through Override in addon of the stations config, each with its own audio project using the same signals. Range, sound limit and empty shut-off are attributes on the component.
 - Planned: placeable radios.
 

@@ -21,6 +21,9 @@ class ORRadio_Station
 	[Attribute("", desc: "Name shown when the radio is tuned to it")]
 	string m_sName;
 
+	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Album art shown on the now playing card", params: "edds")]
+	ResourceName m_sAlbumArt;
+
 	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Audio project with the tracks in its Music bank, using the signals of Sounds/Radio/AROR_Radio.sig", params: "acp")]
 	ResourceName m_sAudioProject;
 
