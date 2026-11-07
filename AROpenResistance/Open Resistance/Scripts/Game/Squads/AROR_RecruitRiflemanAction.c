@@ -21,13 +21,13 @@ class AROR_RecruitRiflemanAction : ScriptedUserAction
 		return false;
 	}
 
-	override void PerformAction(IEntity owner, IEntity user)
+	override void PerformAction(IEntity pOwnerEntity, IEntity pUserEntity)
 	{
-		if (!Replication.IsServer() || !user)
+		if (!Replication.IsServer() || !pUserEntity)
 			return;
 		AROR_SquadManagerComponent manager = AROR_SquadManagerComponent.GetInstance();
 		if (manager)
-			manager.Recruit_S(GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(user), GetOwner());
+			manager.Recruit_S(GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(pUserEntity), GetOwner());
 	}
 
 	override bool GetActionNameScript(out string outName)
