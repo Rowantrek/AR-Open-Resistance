@@ -16,6 +16,18 @@ class AROR_ImportsApp : AROR_ShopAppBase
 	protected int m_iTab;
 	protected int m_iScroll;
 
+	void SaveState(notnull AROR_PhoneSessionState state)
+	{
+		state.m_iImportsTab = m_iTab;
+		state.m_iImportsScroll = m_iScroll;
+	}
+
+	void RestoreState(notnull AROR_PhoneSessionState state)
+	{
+		m_iTab = state.m_iImportsTab;
+		m_iScroll = state.m_iImportsScroll;
+	}
+
 	//------------------------------------------------------------------------------------------------
 	bool Init(Widget phoneRoot)
 	{
@@ -30,12 +42,6 @@ class AROR_ImportsApp : AROR_ShopAppBase
 	override protected bool IsVehicleShop()
 	{
 		return true;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override protected void OnOpened()
-	{
-		m_iScroll = 0;
 	}
 
 	//------------------------------------------------------------------------------------------------

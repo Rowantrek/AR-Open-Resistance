@@ -1,0 +1,73 @@
+Vehicle : "{4085446E2B406849}Prefabs/Vehicles/Core/Vehicle_Base.et" {
+ ID "BBCBA43A9778AE21"
+ components {
+  ActionsManagerComponent "{C97BE5489221AE18}" {
+   additionalActions + {
+    ORRadio_VehicleAction "{6D1C000000000001}" {
+     ParentContextList {
+      "starter_switch"
+      "ignition"
+      "engine_start_button"
+      "battery_on"
+     }
+     UIInfo SCR_ActionUIInfo "{6D1C000000000011}" {
+      Name "Radio"
+     }
+     "Sort Priority" 15
+     m_bIsToggle 0
+     m_bPilotOnly 0
+     m_bInteriorOnly 1
+     m_eControl POWER
+    }
+    ORRadio_VehicleAction "{6D1C000000000002}" {
+     ParentContextList {
+      "starter_switch"
+      "ignition"
+      "engine_start_button"
+      "battery_on"
+     }
+     UIInfo SCR_ActionUIInfo "{6D1C000000000012}" {
+      Name "Radio"
+     }
+     "Sort Priority" 16
+     m_bIsToggle 0
+     m_bPilotOnly 0
+     m_bInteriorOnly 1
+     m_eControl NEXT_STATION
+    }
+    ORRadio_VehicleAction "{6D1C000000000003}" {
+     ParentContextList {
+      "starter_switch"
+      "ignition"
+      "engine_start_button"
+      "battery_on"
+     }
+     UIInfo SCR_ActionUIInfo "{6D1C000000000013}" {
+      Name "Radio"
+     }
+     "Sort Priority" 17
+     m_bIsToggle 0
+     m_bPilotOnly 0
+     m_bInteriorOnly 1
+     m_eControl VOLUME_UP
+    }
+    ORRadio_VehicleAction "{6D1C000000000004}" {
+     ParentContextList {
+      "starter_switch"
+      "ignition"
+      "engine_start_button"
+      "battery_on"
+     }
+     UIInfo SCR_ActionUIInfo "{6D1C000000000014}" {
+      Name "Radio"
+     }
+     "Sort Priority" 18
+     m_bIsToggle 0
+     m_bPilotOnly 0
+     m_bInteriorOnly 1
+     m_eControl VOLUME_DOWN
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,306 @@
+[
+  {
+    "file": "AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf",
+    "ours": [
+      {
+        "id": "6AC457B015AFBFAF",
+        "type": "AT",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{0A83316977E4E4B7}Prefabs/Weapons/Rifles/AK74M/WCS_Variants/Rifle_AK105_SQUAD.et",
+          "{722CE6FEC39EE896}Prefabs/Weapons/Launchers/RPG22/Launcher_RPG22.et",
+          "{645C73791ECA1698}Prefabs/Weapons/Grenades/Grenade_RGD5.et",
+          "{77EAE5E07DC4678A}Prefabs/Weapons/Grenades/Smoke_RDG2.et"
+        ]
+      },
+      {
+        "id": "6AC457B015AFB673",
+        "type": "LAT",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{0A83316977E4E4B7}Prefabs/Weapons/Rifles/AK74M/WCS_Variants/Rifle_AK105_SQUAD.et",
+          "{722CE6FEC39EE896}Prefabs/Weapons/Launchers/RPG22/Launcher_RPG22.et",
+          "{645C73791ECA1698}Prefabs/Weapons/Grenades/Grenade_RGD5.et",
+          "{77EAE5E07DC4678A}Prefabs/Weapons/Grenades/Smoke_RDG2.et"
+        ]
+      },
+      {
+        "id": "6AC457B015AF8603",
+        "type": "AUTORIFLEMAN",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{5AED86092AC8BE1C}Prefabs/Weapons/MachineGuns/RPK74M/WCS_Variants/MG_RPK74M_SPECTER_SQUAD.et",
+          "{645C73791ECA1698}Prefabs/Weapons/Grenades/Grenade_RGD5.et",
+          "{77EAE5E07DC4678A}Prefabs/Weapons/Grenades/Smoke_RDG2.et"
+        ]
+      },
+      {
+        "id": "6AC457B015AC4B83",
+        "type": "ENGINEER",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{A7F743234BC78FB9}Prefabs/Weapons/Rifles/AK74/Variants/Rifle_AK74N_MOD3_SQUAD.et",
+          "{645C73791ECA1698}Prefabs/Weapons/Grenades/Grenade_RGD5.et",
+          "{77EAE5E07DC4678A}Prefabs/Weapons/Grenades/Smoke_RDG2.et"
+        ]
+      },
+      {
+        "id": "6AC457B015AF9352",
+        "type": "GRENADIER",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{2F9BF587FDB19E32}Prefabs/Weapons/Rifles/AK12/Variants/Rifle_AK12_UBGL_SQUAD.et",
+          "{645C73791ECA1698}Prefabs/Weapons/Grenades/Grenade_RGD5.et",
+          "{77EAE5E07DC4678A}Prefabs/Weapons/Grenades/Smoke_RDG2.et"
+        ]
+      },
+      {
+        "id": "6AC457B015AC512E",
+        "type": "SQUADLEADER",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{397B6CBE56D21341}Prefabs/Weapons/Rifles/AK12/Variants/Rifle_AK12_EOTECH_SQUAD.et",
+          "{C0F7DD85A86B2900}Prefabs/Weapons/Handguns/PM/Handgun_PM.et",
+          "{645C73791ECA1698}Prefabs/Weapons/Grenades/Grenade_RGD5.et",
+          "{77EAE5E07DC4678A}Prefabs/Weapons/Grenades/Smoke_RDG2.et"
+        ]
+      },
+      {
+        "id": "6AC457B015AC5AF4",
+        "type": "TEAMLEADER",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{397B6CBE56D21341}Prefabs/Weapons/Rifles/AK12/Variants/Rifle_AK12_EOTECH_SQUAD.et",
+          "{C0F7DD85A86B2900}Prefabs/Weapons/Handguns/PM/Handgun_PM.et",
+          "{645C73791ECA1698}Prefabs/Weapons/Grenades/Grenade_RGD5.et",
+          "{77EAE5E07DC4678A}Prefabs/Weapons/Grenades/Smoke_RDG2.et"
+        ]
+      },
+      {
+        "id": "6AC457B015AF9D5D",
+        "type": "MACHINEGUNNER",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{337537C0F36E664D}Prefabs/Weapons/MachineGuns/PKP/Variants/MG_PKP_NPZ_SQUAD.et",
+          "{C0F7DD85A86B2900}Prefabs/Weapons/Handguns/PM/Handgun_PM.et",
+          "{645C73791ECA1698}Prefabs/Weapons/Grenades/Grenade_RGD5.et",
+          "{77EAE5E07DC4678A}Prefabs/Weapons/Grenades/Smoke_RDG2.et"
+        ]
+      },
+      {
+        "id": "6AC457B015AFA2A8",
+        "type": "MARKSMAN",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{FCB8365693483876}Prefabs/Weapons/Rifles/SVCh/Variants/Rifle_SVCH_ATACR_SQUAD.et",
+          "{645C73791ECA1698}Prefabs/Weapons/Grenades/Grenade_RGD5.et",
+          "{77EAE5E07DC4678A}Prefabs/Weapons/Grenades/Smoke_RDG2.et"
+        ]
+      },
+      {
+        "id": "6AC457B015AFAA1E",
+        "type": "MEDIC",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{397B6CBE56D21341}Prefabs/Weapons/Rifles/AK12/Variants/Rifle_AK12_EOTECH_SQUAD.et",
+          "{645C73791ECA1698}Prefabs/Weapons/Grenades/Grenade_RGD5.et",
+          "{77EAE5E07DC4678A}Prefabs/Weapons/Grenades/Smoke_RDG2.et"
+        ]
+      },
+      {
+        "id": "6AC457B015AC4358",
+        "type": "RADIO_OPERATOR",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{397B6CBE56D21341}Prefabs/Weapons/Rifles/AK12/Variants/Rifle_AK12_EOTECH_SQUAD.et",
+          "{645C73791ECA1698}Prefabs/Weapons/Grenades/Grenade_RGD5.et",
+          "{77EAE5E07DC4678A}Prefabs/Weapons/Grenades/Smoke_RDG2.et"
+        ]
+      },
+      {
+        "id": "6AC457B015AF8DFB",
+        "type": "RIFLEMAN",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{397B6CBE56D21341}Prefabs/Weapons/Rifles/AK12/Variants/Rifle_AK12_EOTECH_SQUAD.et",
+          "{645C73791ECA1698}Prefabs/Weapons/Grenades/Grenade_RGD5.et",
+          "{77EAE5E07DC4678A}Prefabs/Weapons/Grenades/Smoke_RDG2.et"
+        ]
+      }
+    ],
+    "incoming": []
+  },
+  {
+    "file": "AROR_Preset_RHS_USAF_FORECON.conf",
+    "ours": [
+      {
+        "id": "6AC2476845A024DE",
+        "type": "AT",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{9C0D2A98B400B21D}Prefabs/Weapons/Rifles/M27IAR/WCS_Varients/Rifle_M27IAR_CTR_GRIP_SQUAD.et",
+          "{9C5C20FB0E01E64F}Prefabs/Weapons/Launchers/M72/Launcher_M72A3.et",
+          "{E8F00BF730225B00}Prefabs/Weapons/Grenades/Grenade_M67.et",
+          "{9DB69176CEF0EE97}Prefabs/Weapons/Grenades/Smoke_ANM8HC.et"
+        ]
+      },
+      {
+        "id": "6AC2476845A02172",
+        "type": "LAT",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{9C0D2A98B400B21D}Prefabs/Weapons/Rifles/M27IAR/WCS_Varients/Rifle_M27IAR_CTR_GRIP_SQUAD.et",
+          "{9C5C20FB0E01E64F}Prefabs/Weapons/Launchers/M72/Launcher_M72A3.et",
+          "{E8F00BF730225B00}Prefabs/Weapons/Grenades/Grenade_M67.et",
+          "{9DB69176CEF0EE97}Prefabs/Weapons/Grenades/Smoke_ANM8HC.et"
+        ]
+      },
+      {
+        "id": "6AC2476845A028E1",
+        "type": "AUTORIFLEMAN",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{37C1DF2751538357}Prefabs/Weapons/MachineGuns/M249/Variants/MG_M249_HAMR_SQUAD.et",
+          "{E8F00BF730225B00}Prefabs/Weapons/Grenades/Grenade_M67.et",
+          "{9DB69176CEF0EE97}Prefabs/Weapons/Grenades/Smoke_ANM8HC.et"
+        ]
+      },
+      {
+        "id": "6AC2476845A038A0",
+        "type": "ENGINEER",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{A3D9157B6C6257FA}Prefabs/Weapons/Rifles/M4A1/WCS_Variants/Rifle_M4A1_RAS_GRIP_SQUAD.et",
+          "{E8F00BF730225B00}Prefabs/Weapons/Grenades/Grenade_M67.et",
+          "{9DB69176CEF0EE97}Prefabs/Weapons/Grenades/Smoke_ANM8HC.et"
+        ]
+      },
+      {
+        "id": "6AC2476845A03A65",
+        "type": "SQUADLEADER",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{362A8B0E3D778A90}Prefabs/Weapons/Rifles/M4A1/WCS_Variants/Rifle_M4A1_BLOCK_II_SQUAD.et",
+          "{1353C6EAD1DCFE43}Prefabs/Weapons/Handguns/M9/Handgun_M9.et",
+          "{E8F00BF730225B00}Prefabs/Weapons/Grenades/Grenade_M67.et",
+          "{9DB69176CEF0EE97}Prefabs/Weapons/Grenades/Smoke_ANM8HC.et"
+        ]
+      },
+      {
+        "id": "6AC2476845A03DF7",
+        "type": "TEAMLEADER",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{362A8B0E3D778A90}Prefabs/Weapons/Rifles/M4A1/WCS_Variants/Rifle_M4A1_BLOCK_II_SQUAD.et",
+          "{1353C6EAD1DCFE43}Prefabs/Weapons/Handguns/M9/Handgun_M9.et",
+          "{E8F00BF730225B00}Prefabs/Weapons/Grenades/Grenade_M67.et",
+          "{9DB69176CEF0EE97}Prefabs/Weapons/Grenades/Smoke_ANM8HC.et"
+        ]
+      },
+      {
+        "id": "6AC2476845A02931",
+        "type": "MACHINEGUNNER",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{C2A090B4AF474D27}Prefabs/Weapons/MachineGuns/M240/WCS_Variants/MG_M240_MDO_SQUAD.et",
+          "{1353C6EAD1DCFE43}Prefabs/Weapons/Handguns/M9/Handgun_M9.et",
+          "{E8F00BF730225B00}Prefabs/Weapons/Grenades/Grenade_M67.et",
+          "{9DB69176CEF0EE97}Prefabs/Weapons/Grenades/Smoke_ANM8HC.et"
+        ]
+      },
+      {
+        "id": "6AC2476845A02B55",
+        "type": "MEDIC",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{362A8B0E3D778A90}Prefabs/Weapons/Rifles/M4A1/WCS_Variants/Rifle_M4A1_BLOCK_II_SQUAD.et",
+          "{E8F00BF730225B00}Prefabs/Weapons/Grenades/Grenade_M67.et",
+          "{9DB69176CEF0EE97}Prefabs/Weapons/Grenades/Smoke_ANM8HC.et"
+        ]
+      },
+      {
+        "id": "6AC2476845A015BB",
+        "type": "RIFLEMAN",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{362A8B0E3D778A90}Prefabs/Weapons/Rifles/M4A1/WCS_Variants/Rifle_M4A1_BLOCK_II_SQUAD.et",
+          "{E8F00BF730225B00}Prefabs/Weapons/Grenades/Grenade_M67.et",
+          "{9DB69176CEF0EE97}Prefabs/Weapons/Grenades/Smoke_ANM8HC.et"
+        ]
+      },
+      {
+        "id": "6AC2476845A02F21",
+        "type": "SNIPER",
+        "readiness": [
+          2
+        ],
+        "weapons": [
+          "{B62706F300381519}Prefabs/Weapons/Rifles/MK14MOD1/Variants/Rifle_MK14MOD1_BLK_TANGO_SQUAD.et",
+          "{1353C6EAD1DCFE43}Prefabs/Weapons/Handguns/M9/Handgun_M9.et",
+          "{E8F00BF730225B00}Prefabs/Weapons/Grenades/Grenade_M67.et",
+          "{9DB69176CEF0EE97}Prefabs/Weapons/Grenades/Smoke_ANM8HC.et"
+        ]
+      }
+    ],
+    "incoming": [
+      {
+        "id": "6AC2476845A024DE",
+        "type": "AT",
+        "readiness": [],
+        "weapons": [
+          "{DB53366D8C521124}Prefabs/Weapons/Launchers/MK153/Launcher_MK153mod2_NoMBS.et"
+        ]
+      },
+      {
+        "id": "6AC2476845A026E8",
+        "type": "AA",
+        "readiness": [],
+        "weapons": [
+          "{3DF204EEE0534EF2}Prefabs/Weapons/Launchers/FIM92_Stinger/Launcher_FIM92_Stinger.et"
+        ]
+      }
+    ]
+  }
+]

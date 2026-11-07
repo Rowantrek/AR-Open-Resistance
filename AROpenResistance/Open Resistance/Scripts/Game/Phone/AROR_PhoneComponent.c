@@ -19,6 +19,16 @@ class AROR_PhoneComponent : SCR_BaseGameModeComponent
 	protected int m_iLastToggleMs = -TOGGLE_COOLDOWN_MS;
 	protected bool m_bActionDown;
 	protected bool m_bAltDown;
+	protected static AROR_PhoneComponent s_Instance;
+	protected ref AROR_PhoneSessionState m_Session;
+
+	//! Client session survives menu destruction and player respawn, but not a world/server change.
+	static AROR_PhoneSessionState GetSession()
+	{
+		if (!s_Instance)
+			return null;
+		return s_Instance.m_Session;
+	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Every frame on the client
@@ -111,6 +121,8 @@ class AROR_PhoneComponent : SCR_BaseGameModeComponent
 		if (!GetGame().InPlayMode() || RplSession.Mode() == RplMode.Dedicated)
 			return;
 
+		m_Session = new AROR_PhoneSessionState();
+		s_Instance = this;
 		Print("[AROR] Phone hotkey ready (input action + polling)", LogLevel.NORMAL);
 		GetGame().GetInputManager().AddActionListener(INPUT_ACTION, EActionTrigger.DOWN, OnPhoneAction);
 		GetGame().GetCallqueue().CallLater(Update, 0, true);
@@ -119,6 +131,9 @@ class AROR_PhoneComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	override void OnDelete(IEntity owner)
 	{
+		if (s_Instance == this)
+			s_Instance = null;
+		m_Session = null;
 		GetGame().GetCallqueue().Remove(Update);
 
 		InputManager inputManager = GetGame().GetInputManager();

@@ -64,6 +64,23 @@ class AROR_BankTransferApp
 	protected bool m_bAmountSeeded;
 	protected int m_iNextRefresh;
 
+	void SaveState(notnull AROR_PhoneSessionState state)
+	{
+		state.m_bTransferSelection = m_bHasSelection;
+		state.m_bTransferToResistance = m_bToResistance;
+		state.m_iTransferPlayer = m_iTargetPlayerId;
+		state.m_sTransferAmount = m_wAmountEdit.GetText();
+	}
+
+	void RestoreState(notnull AROR_PhoneSessionState state)
+	{
+		m_bHasSelection = state.m_bTransferSelection;
+		m_bToResistance = state.m_bTransferToResistance;
+		m_iTargetPlayerId = state.m_iTransferPlayer;
+		m_wAmountEdit.SetText(state.m_sTransferAmount);
+		m_bAmountSeeded = true;
+	}
+
 	//------------------------------------------------------------------------------------------------
 	bool Init(Widget phoneRoot)
 	{

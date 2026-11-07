@@ -1,0 +1,600 @@
+{
+  "note": "Same resource GUID retained; canonical paths read from installed indexes in the declared dependency tree.",
+  "changes": [
+    {
+      "file": "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf",
+      "guid": "7FF511EDC4034D9F",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_S5.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_UB1657_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "7FF511EDC4034D9F",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_S5.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_UB1657_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf",
+      "guid": "9AA441DE6DAB6D94",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_S8.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_B8V20A_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "9AA441DE6DAB6D94",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_S8.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_B8V20A_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf",
+      "guid": "65ED07118C75B32F",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_UPK23.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_UPK23_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "65ED07118C75B32F",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_UPK23.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_UPK23_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf",
+      "guid": "62A9D6C4ABD7BFC9",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_rockets.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_Armed_B8V20A_X6.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "62A9D6C4ABD7BFC9",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_rockets.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_Armed_B8V20A_X6.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf",
+      "guid": "55B4044D7422667E",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_UPK23.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_Armed_UPK23_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "55B4044D7422667E",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_UPK23.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_Armed_UPK23_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf",
+      "guid": "CEA6EC9E6C257CB3",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "CEA6EC9E6C257CB3",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf",
+      "guid": "160E855F15AC62EF",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23X4.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "160E855F15AC62EF",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23X4.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf",
+      "guid": "33085083D07C7B14",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_9M120X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_9M120_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "33085083D07C7B14",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_9M120X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_9M120_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "4A557ED50561128B",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/Camo/Camo_KA52_Base.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/Camo/KA52_Camo_B8V20A_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "709B2E77B5E07092",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/Camo/Camo_KA52_UPK23X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/Camo/KA52_Camo_UPK23_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "A83347B6CC696ECE",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/Camo/Camo_KA52_UPK23X4.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/Camo/KA52_Camo_UPK23_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "0CC3BC829873F8AF",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/Camo/Camo_KA52_9M120X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/Camo/KA52_Camo_9M120_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "EBA03942A9F56548",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_9K127X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/KA52_9K127_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "5927210D915B9371",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/Camo/Camo_KA52_9K127X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/Camo/KA52_Camo_9K127_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "BE44A4CDA0DD0E96",
+      "oldPath": "Prefabs/Vehicles/Helicopters/KA52/KA52K/KA52K_9K127X4.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/KA52/KA52K/KA52K_9K127_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "397971C2026D588F",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_AGM114L_X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_M299_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "E1D118037BE446D3",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_AGM114L_X4.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_M299_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "F38B0D1637736312",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_AGM65_X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_LAU117_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "2B2364D74EFA7D4E",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_AGM65_X4.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/USArmy/AH64D_USArmy_LAU117_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "1D6F418148913BCE",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/RAF/AH64D_RAF_M261.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/RAF/AH64D_RAF_M261_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "0EEDEA986594A4C4",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/RAF/AH64D_RAF_AGM114L_X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/RAF/AH64D_RAF_M299_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "D64583591C1DBA98",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/RAF/AH64D_RAF_AGM114L_X4.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/RAF/AH64D_RAF_M299_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "0C2362335A4F35BB",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/RAF/AH64D_RAF_AGM65_X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/RAF/AH64D_RAF_LAU117_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "D48B0BF223C62BE7",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/RAF/AH64D_RAF_AGM65_X4.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/RAF/AH64D_RAF_LAU117_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "7284865FEA343807",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/RNLAF/AH64D_RNLAF_M261.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/RNLAF/AH64D_RNLAF_M261_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "46DE3D53C91B7A30",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/RNLAF/AH64D_RNLAF_AGM114L_X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/RNLAF/AH64D_RNLAF_M299_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "9E765492B092646C",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/RNLAF/AH64D_RNLAF_AGM114L_X4.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/RNLAF/AH64D_RNLAF_M299_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "1DC1A94A17ADE3E7",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/RNLAF/AH64D_RNLAF_AGM65_X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/RNLAF/AH64D_RNLAF_LAU117_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "C569C08B6E24FDBB",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/RNLAF/AH64D_RNLAF_AGM65_X4.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/RNLAF/AH64D_RNLAF_LAU117_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "B906CE403ECBC6D8",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/Desert/AH64D_Desert_M261.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/Desert/AH64D_Desert_M261_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "9C746326587DC8F4",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/Desert/AH64D_Desert_AGM114L_X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/Desert/AH64D_Desert_M299_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "44DC0AE721F4D6A8",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/Desert/AH64D_Desert_AGM114L_X4.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/Desert/AH64D_Desert_M299_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "44B78902E39DA2C1",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/Desert/AH64D_Desert_AGM65_X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/Desert/AH64D_Desert_LAU117_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "9C1FE0C39A14BC9D",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH64D/Desert/AH64D_Desert_AGM65_X4.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH64D/Desert/AH64D_Desert_LAU117_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "3F0C718D8FA6E1AE",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_GUV8700.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_Armed_GUV8700_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "6FFBFBC0EF06333D",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_FAB250.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_Armed_BDZUMK_X6.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "CABC7E8496E298F2",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_R60.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_R60_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "3A70C582A43B50C8",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_GUV8700.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_GUV8700_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "9CBF2E3809F1EC0C",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_FAB250.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_BDZUMK_X6.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "392760BB2457F661",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_9M120_X16.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_9M120_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "2FA364D8E326CB3C",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24P_Armed_9M114.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24P_Armed_B8V20A_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "3DD336DB69DCD4AC",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24P_Armed_R60.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24P_Armed_R60_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "B7446F42AC0063B8",
+      "oldPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24P_Armed_GUV8700.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/Mi24/Mi24P_Armed_GUV8700_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "24D33E2D4AA88D27",
+      "oldPath": "Prefabs/Vehicles/Helicopters/UH1H/UH1H_armed_M261.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/UH1H/UH1H_Armed_M261_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "DD19D25FC3C12FD7",
+      "oldPath": "Prefabs/Vehicles/Helicopters/UH1H/UH1H_armed_M261_SharkNose.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/UH1H/UH1H_Armed_SharkNose_M261_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "C8C37964483452EA",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army_M261_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "840FE7B2A2F9F92F",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army_XM65.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army_XM65_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "0453402396485205",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army_M299.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army_M299_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "685A81835A3E6BC0",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army_AIM9.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Army/AH1S_Army_AIM9_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "0174CF72FDB6B805",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Marines/AH1S_Marines.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Marines/AH1S_Marines_M261_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "7981D5EB0583B2B3",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Marines/AH1S_Marines_XM65.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Marines/AH1S_Marines_XM65_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "B8D8076535277E61",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Marines/AH1S_Marines_M299.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Marines/AH1S_Marines_M299_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "4BE0F3AE27C9FC29",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Marines/AH1S_Marines_AIM9.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Marines/AH1S_Marines_AIM9_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "3DAF183ED62F4AE7",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Black/AH1S_Black.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Black/AH1S_Black_M261_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "A7C13A3ADA1049A7",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Black/AH1S_Black_XM65.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Black/AH1S_Black_XM65_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "4320310A77B174DA",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Black/AH1S_Black_M299.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Black/AH1S_Black_M299_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "4BE0F3AE27C9FC2A",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Black/AH1S_Black_AIM9.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Black/AH1S_Black_AIM9_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "F78A24725E7A4BEC",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Japan/AH1S_Japan.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Japan/AH1S_Japan_M261_X4.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "DCDFBCB8FCDD63E0",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Japan/AH1S_Japan_XM65.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Japan/AH1S_Japan_XM65_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "5C831B29C86CC8CA",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Japan/AH1S_Japan_M299.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Japan/AH1S_Japan_M299_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "308ADA89041AF10F",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH1S/Japan/AH1S_Japan_AIM9.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH1S/Japan/AH1S_Japan_AIM9_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "1842D8F34217FB9B",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_M134.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_M134_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "9027BE1352D8662F",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_RKTO.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_M260_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "7985E901F2C011F4",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_RKT.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_M134_M260_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "CB371ED4C27F4935",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_GAU19.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_GAU19_X1.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "46E500475E86EC78",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_ATGMX1.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_M299_X1.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "2AB134A7E2426356",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_ATGMX2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_M299_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "CC601CEFD8CD2A28",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_AIM92X1.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_AIM92_X1.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "A034280F6409A506",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_AIM92X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/OPFOR/AH6M_OPFOR_AIM92_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "72C04A6EABC12143",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_M134.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_M134_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "FAA52C8EBB0EBCF7",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_RKTO.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_M260_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "823CA4130CE90077",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_RKT.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_M134_M260_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "A317D959A4248173",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_GAU19.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_GAU19_X1.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "C28701D4428959F5",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_ATGMX2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_M299_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "E23BB241D2645937",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_ATGMX1.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_M299_X1.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "0D355CF9D40F79CA",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_AIM92X2.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_AIM92_X2.et",
+      "occurrences": 1
+    },
+    {
+      "file": "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+      "guid": "6161681968CBF6E4",
+      "oldPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_AIM92X1.et",
+      "canonicalPath": "Prefabs/Vehicles/Helicopters/AH6M/AH6M_AIM92_X1.et",
+      "occurrences": 1
+    }
+  ]
+}

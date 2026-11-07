@@ -582,6 +582,9 @@ class AROR_HiCommMap
 	protected vector m_vZoomAnchor;	//!< Screen point the zoom keeps still
 	protected vector m_vCentre;
 	protected bool m_bHasView;
+	protected bool m_bRestorePhoneView;
+	protected vector m_vPhoneCentre;
+	protected float m_fPhoneZoom = 1;
 
 	// What the base layer was last drawn for
 	protected bool m_bStaticDirty = true;
@@ -615,8 +618,36 @@ class AROR_HiCommMap
 	//! Follow the real game map (null returns to the procedural map)
 	void SetGameMap(SCR_MapEntity gameMap)
 	{
+		// Preserve the terrain-map view before detaching it on Home, app switch or phone close.
+		if (UsesGameMap() && m_bHasView)
+		{
+			m_vCentre = ScreenToWorld(m_fWidth * 0.5, m_fHeight * 0.5);
+			m_fZoom = GetZoom();
+			m_fTargetZoom = m_fZoom;
+		}
 		m_GameMap = gameMap;
+		if (UsesGameMap() && m_bHasView)
+		{
+			float zoom = Math.Clamp(m_fZoom * m_GameMap.GetMinZoom(), m_GameMap.GetMinZoom(), m_GameMap.GetMaxZoom());
+			m_GameMap.ZoomPanSmooth(zoom, m_vCentre[0], m_vCentre[2], 0);
+		}
 		m_bStaticDirty = true;
+	}
+
+	void SavePhoneView(notnull AROR_PhoneSessionState state)
+	{
+		if (!m_bHasView || m_fWidth <= 0 || m_fHeight <= 0)
+			return;
+		state.m_bHiCommMapView = true;
+		state.m_vHiCommMapCentre = ScreenToWorld(m_fWidth * 0.5, m_fHeight * 0.5);
+		state.m_fHiCommMapZoom = GetZoom();
+	}
+
+	void RestorePhoneView(notnull AROR_PhoneSessionState state)
+	{
+		m_bRestorePhoneView = state.m_bHiCommMapView;
+		m_vPhoneCentre = state.m_vHiCommMapCentre;
+		m_fPhoneZoom = state.m_fHiCommMapZoom;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -654,6 +685,17 @@ class AROR_HiCommMap
 		{
 			m_fWidth = width;
 			m_fHeight = height;
+			m_bStaticDirty = true;
+		}
+		// Bounds and pixel size must exist before restoring a view; first SetView otherwise fits the whole map.
+		if (m_bRestorePhoneView)
+		{
+			m_bRestorePhoneView = false;
+			m_vCentre = m_vPhoneCentre;
+			ClampCentre();
+			// The terrain map can zoom farther than the procedural view; its own limits apply on attachment.
+			m_fZoom = Math.Max(m_fPhoneZoom, MIN_ZOOM);
+			m_fTargetZoom = m_fZoom;
 			m_bStaticDirty = true;
 		}
 	}

@@ -1,0 +1,175 @@
+{
+    "generatedAt":  "2026-11-06T10:41:26.203Z",
+    "base":  "57a4369f64bde91961d0e3c11678054e4a77a34b",
+    "preserved":  [
+                      {
+                          "file":  "AROpenResistance/Open Resistance/Configs/ContentPacks/BaseGame/AROR_ContentPack_BaseGame.conf",
+                          "equal":  true
+                      },
+                      {
+                          "file":  "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_Formations.c",
+                          "equal":  true
+                      },
+                      {
+                          "file":  "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_ModdedAISwitchMagazine.c",
+                          "equal":  true
+                      },
+                      {
+                          "file":  "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_USAF_FORECON.conf",
+                          "equal":  true
+                      }
+                  ],
+    "samples":  [
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_01_RadioFreeAltis.wav",
+                        "guid":  "7C96D5121B271A56",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_02_KingoftheSky.wav",
+                        "guid":  "C289242CDE200E4F",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_03_AnotherLittleWar.wav",
+                        "guid":  "55D5385BDBB78381",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_04_Interlude1.wav",
+                        "guid":  "5B2A8DC7ADF4B56C",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_05_MavericksAway.wav",
+                        "guid":  "8F07F6DB796A7163",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_06_ByMorningItsGone.wav",
+                        "guid":  "1528854EF34AD50D",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_07_HydraRain.wav",
+                        "guid":  "B94A6BECC6F7F2F6",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_08_Interlude2.wav",
+                        "guid":  "5665FCA057D1CDCA",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_09_QRF.wav",
+                        "guid":  "27041720F5717D23",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_10_GreyhawkOverhead.wav",
+                        "guid":  "A60CA28EB8F4C98B",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_11_HatchbackRunwayWire.wav",
+                        "guid":  "ED7E2BF554E80268",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_12_Interlude3.wav",
+                        "guid":  "B1AF800EE5073B19",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_13_CSATPunishment.wav",
+                        "guid":  "D4BFEBF742A5C611",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_14_Antistasi.wav",
+                        "guid":  "D309992592B583FB",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_15_WhiteSaltBlackSmoke.wav",
+                        "guid":  "096E070E6326729B",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_16_VarsukRollingIn.wav",
+                        "guid":  "46EA3D6777F60AD7",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_17_HindHind.wav",
+                        "guid":  "D09C435AC8844D19",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    },
+                    {
+                        "resource":  "Sounds/Radio/Samples/AROR_Radio_18_FaxingKavala.wav",
+                        "guid":  "B7E402AE8E2B3647",
+                        "metadataMatches":  true,
+                        "riff":  true,
+                        "lengthMatches":  true,
+                        "durationMatches":  true
+                    }
+                ],
+    "dependencyChecks":  {
+                             "rowanAdditionRetained":  true,
+                             "alternateUltimateExcluded":  true
+                         },
+    "nativeVerified":  false,
+    "passed":  true,
+    "candidateCommit":  "a3147455cc77884e6f5607706d2e11d4b2a4a9d8"
+}

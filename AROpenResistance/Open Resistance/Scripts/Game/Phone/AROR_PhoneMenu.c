@@ -31,7 +31,8 @@ enum AROR_EPhoneApp
 	OPS,		//!< Landscape: Resistance mission board (see AROR_OpsApp)
 	MARS,		//!< Landscape: response debugger
 	BLACK_MARKET,	//!< Landscape: items shop paid by import facilities held (see AROR_BlackMarketApp)
-	IMPORTS		//!< Landscape: vehicle shop, one click per vehicle (see AROR_ImportsApp)
+	IMPORTS,	//!< Landscape: vehicle shop, one click per vehicle (see AROR_ImportsApp)
+	SQUAD		//!< Landscape: native player squad name and recruited riflemen
 }
 
 //! The phone (see ARCHITECTURE.md -> Phone). A menu (preset AROR_PhoneMenu, registered in chimeraMenus.conf), so it
@@ -165,6 +166,10 @@ class AROR_PhoneMenu : ChimeraMenuBase
 	protected RichTextWidget m_wImportsTileGlyph;	//!< Imports uses its own copy of the same layout, so its tile widgets are separate
 	protected RichTextWidget m_wImportsTileLabel;
 	protected Widget m_wImportsTileButton;
+	protected ref AROR_SquadApp m_Squad;
+	protected RichTextWidget m_wSquadTileGlyph;
+	protected RichTextWidget m_wSquadTileLabel;
+	protected Widget m_wSquadTileButton;
 
 	//! Home quick dock: slot 0 = garage store; 1–2 empty placeholders; 3 = save campaign (admins, drawn on HomeTileCanvas)
 	protected ImageWidget m_wQuickSlot0;
@@ -197,6 +202,7 @@ class AROR_PhoneMenu : ChimeraMenuBase
 	protected ref AROR_PhoneButtonHandler m_ButtonHandler;
 
 	protected AROR_EPhoneApp m_eApp;
+	protected bool m_bSessionReady;
 
 	//! 0 = off screen below, 1 = fully open
 	protected float m_fOpen;
@@ -244,8 +250,10 @@ class AROR_PhoneMenu : ChimeraMenuBase
 			OpenApp(AROR_EPhoneApp.OPS);
 		else if (buttonName == "BlackMarketTileButton")
 		{
-			// The Imports app is a second copy of the Black Market layout, so both tiles share this name
-			if (w && w == m_wImportsTileButton)
+			// Imports and Squad reuse the pooled layout; distinguish its home tiles by widget identity.
+			if (w && w == m_wSquadTileButton)
+				OpenApp(AROR_EPhoneApp.SQUAD);
+			else if (w && w == m_wImportsTileButton)
 				OpenApp(AROR_EPhoneApp.IMPORTS);
 			else
 				OpenApp(AROR_EPhoneApp.BLACK_MARKET);
@@ -301,6 +309,8 @@ class AROR_PhoneMenu : ChimeraMenuBase
 			return;
 		if (app == AROR_EPhoneApp.IMPORTS && !m_Imports)
 			return;
+		if (app == AROR_EPhoneApp.SQUAD && !m_Squad)
+			return;
 		if (app == m_eApp)
 			return;
 
@@ -316,6 +326,8 @@ class AROR_PhoneMenu : ChimeraMenuBase
 	//------------------------------------------------------------------------------------------------
 	protected static bool IsLandscapeApp(AROR_EPhoneApp app)
 	{
+		if (app == AROR_EPhoneApp.SQUAD)
+			return true;
 		return app == AROR_EPhoneApp.TEST || app == AROR_EPhoneApp.HICOMM || app == AROR_EPhoneApp.OPS || app == AROR_EPhoneApp.MARS || app == AROR_EPhoneApp.BLACK_MARKET || app == AROR_EPhoneApp.IMPORTS;
 	}
 
@@ -338,6 +350,7 @@ class AROR_PhoneMenu : ChimeraMenuBase
 	{
 		super.OnMenuOpen();
 		s_Instance = this;
+		m_bSessionReady = false;
 
 		// The menu manager sizes the root to the screen; it has no slot to set
 		Widget root = GetRootWidget();
@@ -427,6 +440,21 @@ class AROR_PhoneMenu : ChimeraMenuBase
 		m_wQuickSlot3 = ImageWidget.Cast(root.FindAnyWidget("QuickSlot3"));
 		m_wQuickSlot3Button = root.FindAnyWidget("QuickSlot3Button");
 
+		m_Squad = new AROR_SquadApp();
+		if (m_Squad.Init(root))
+		{
+			Widget squadResource = m_Squad.GetResource();
+			m_wSquadTileGlyph = RichTextWidget.Cast(squadResource.FindAnyWidget("BlackMarketTileGlyph"));
+			m_wSquadTileLabel = RichTextWidget.Cast(squadResource.FindAnyWidget("BlackMarketTileLabel"));
+			m_wSquadTileButton = squadResource.FindAnyWidget("BlackMarketTileButton");
+		}
+		else
+		{
+			m_Squad.Shutdown();
+			m_Squad = null;
+			Print("[AROR] Squad app layout unavailable", LogLevel.WARNING);
+		}
+
 		m_wBankApp = root.FindAnyWidget("BankApp");
 		m_wBankBackground = ImageWidget.Cast(root.FindAnyWidget("BankBackground"));
 		m_wBankName = RichTextWidget.Cast(root.FindAnyWidget("BankName"));
@@ -483,6 +511,11 @@ class AROR_PhoneMenu : ChimeraMenuBase
 			buttons.Insert(m_wImportsTileButton);
 		}
 		m_RebIntel.CollectButtons(buttons);
+		if (m_wSquadTileButton)
+		{
+			m_wSquadTileButton.SetColor(Color.FromRGBA(0, 0, 0, 0));
+			buttons.Insert(m_wSquadTileButton);
+		}
 		foreach (Widget button : buttons)
 		{
 			if (button)
@@ -497,6 +530,9 @@ class AROR_PhoneMenu : ChimeraMenuBase
 		m_fTurnTarget = 0;
 		m_fContentFade = 0;
 		m_bClosing = false;
+		m_bHotkeyDown = true;
+		RestoreSession();
+		m_bSessionReady = true;
 		UpdateClock();
 		UpdateLayout();
 	}
@@ -504,6 +540,9 @@ class AROR_PhoneMenu : ChimeraMenuBase
 	//------------------------------------------------------------------------------------------------
 	override void OnMenuClose()
 	{
+		// Capture before releasing the real map, widget values and dynamically created app resources.
+		SaveSession();
+		m_bSessionReady = false;
 		GetGame().GetInputManager().RemoveActionListener("MenuBack", EActionTrigger.DOWN, OnBack);
 
 		if (s_Instance == this)
@@ -525,9 +564,64 @@ class AROR_PhoneMenu : ChimeraMenuBase
 		if (m_Imports)
 			m_Imports.Shutdown();
 		m_Imports = null;
+		if (m_Squad)
+			m_Squad.Shutdown();
+		m_Squad = null;
 		m_BankTransfer = null;
 
 		super.OnMenuClose();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void SaveSession()
+	{
+		AROR_PhoneSessionState state = AROR_PhoneComponent.GetSession();
+		if (!m_bSessionReady || !state)
+			return;
+		state.m_eApp = m_eApp;
+		if (m_HiComm)
+			m_HiComm.SaveState(state);
+		if (m_Ops)
+			m_Ops.SaveState(state);
+		if (m_RebIntel)
+			m_RebIntel.SaveState(state);
+		if (m_Squad)
+			m_Squad.SaveState(state);
+		if (m_BlackMarket)
+			m_BlackMarket.SaveState(state);
+		if (m_Imports)
+			m_Imports.SaveState(state);
+		if (m_Mars)
+			m_Mars.SaveState(state);
+		if (m_BankTransfer)
+			m_BankTransfer.SaveState(state);
+		state.m_bCaptured = true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void RestoreSession()
+	{
+		AROR_PhoneSessionState state = AROR_PhoneComponent.GetSession();
+		if (!state || !state.m_bCaptured)
+			return;
+		if (m_HiComm)
+			m_HiComm.RestoreState(state);
+		if (m_Ops)
+			m_Ops.RestoreState(state);
+		if (m_RebIntel)
+			m_RebIntel.RestoreState(state);
+		if (m_Squad)
+			m_Squad.RestoreState(state);
+		if (m_BlackMarket)
+			m_BlackMarket.RestoreState(state);
+		if (m_Imports)
+			m_Imports.RestoreState(state);
+		if (m_Mars)
+			m_Mars.RestoreState(state);
+		if (m_BankTransfer)
+			m_BankTransfer.RestoreState(state);
+		OpenApp(state.m_eApp);
+		m_fTurn = m_fTurnTarget;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -644,7 +738,10 @@ class AROR_PhoneMenu : ChimeraMenuBase
 		bool showImports = landscapeSettled && m_eApp == AROR_EPhoneApp.IMPORTS;
 		if (m_Imports)
 			m_Imports.SetVisible(showImports, contentOpacity);
-		array<Widget> marketTile = {m_wBlackMarketTileGlyph, m_wBlackMarketTileLabel, m_wBlackMarketTileButton, m_wImportsTileGlyph, m_wImportsTileLabel, m_wImportsTileButton};
+		bool showSquad = landscapeSettled && m_eApp == AROR_EPhoneApp.SQUAD;
+		if (m_Squad)
+			m_Squad.SetVisible(showSquad, contentOpacity);
+		array<Widget> marketTile = {m_wBlackMarketTileGlyph, m_wBlackMarketTileLabel, m_wBlackMarketTileButton, m_wImportsTileGlyph, m_wImportsTileLabel, m_wImportsTileButton, m_wSquadTileGlyph, m_wSquadTileLabel, m_wSquadTileButton};
 		foreach (Widget marketTileWidget : marketTile)
 		{
 			if (marketTileWidget)
@@ -695,6 +792,8 @@ class AROR_PhoneMenu : ChimeraMenuBase
 			m_BlackMarket.Layout(centerX - SCREEN_HEIGHT * scale * 0.5, centerY - SCREEN_WIDTH * scale * 0.5, scale);
 		if (showImports && m_Imports)
 			m_Imports.Layout(centerX - SCREEN_HEIGHT * scale * 0.5, centerY - SCREEN_WIDTH * scale * 0.5, scale);
+		if (showSquad && m_Squad)
+			m_Squad.Layout(centerX - SCREEN_HEIGHT * scale * 0.5, centerY - SCREEN_WIDTH * scale * 0.5, scale);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -790,6 +889,17 @@ class AROR_PhoneMenu : ChimeraMenuBase
 			Place(m_wImportsTileButton, left + TILE_LEFT * scale, top + thirdRowTop * scale, TILE_SIZE * scale, (TILE_SIZE + 60) * scale);
 		}
 
+		// Squad: second tile of the third row; its widgets belong to its own resource copy.
+		if (m_wSquadTileGlyph && m_wSquadTileLabel && m_wSquadTileButton)
+		{
+			float squadLeft = TILE_LEFT + TILE_SIZE + TILE_SPACING;
+			SetFontSize(m_wSquadTileGlyph, 86 * scale);
+			CentreText(m_wSquadTileGlyph, left + (squadLeft + TILE_SIZE * 0.5) * scale, top + (thirdRowTop + TILE_SIZE * 0.5) * scale);
+			SetFontSize(m_wSquadTileLabel, 32 * scale);
+			CentreText(m_wSquadTileLabel, left + (squadLeft + TILE_SIZE * 0.5) * scale, top + (thirdRowTop + TILE_SIZE + 34) * scale);
+			Place(m_wSquadTileButton, left + squadLeft * scale, top + thirdRowTop * scale, TILE_SIZE * scale, (TILE_SIZE + 60) * scale);
+		}
+
 		DrawRoundedTiles(scale);
 		LayoutQuickDock(scale);
 	}
@@ -814,6 +924,8 @@ class AROR_PhoneMenu : ChimeraMenuBase
 			AddRoundedTile(TILE_LEFT + (TILE_SIZE + TILE_SPACING) * 2, secondRow, AROR_UIColors.SURFACE, pixels);
 		if (m_Imports)
 			AddRoundedTile(TILE_LEFT, TILE_TOP + (TILE_SIZE + TILE_ROW_SPACING) * 2, AROR_UIColors.SURFACE, pixels);
+		if (m_Squad)
+			AddRoundedTile(TILE_LEFT + TILE_SIZE + TILE_SPACING, TILE_TOP + (TILE_SIZE + TILE_ROW_SPACING) * 2, AROR_UIColors.SURFACE, pixels);
 		if (m_bManualSaveAvailable)
 		{
 			// Quick dock slot 3, in the garage slot's colours
@@ -1026,6 +1138,14 @@ class AROR_PhoneMenu : ChimeraMenuBase
 			m_wBlackMarketTileGlyph.SetColor(AROR_UIColors.Get(AROR_UIColors.REBEL));
 			FrameSlot.SetSizeToContent(m_wBlackMarketTileGlyph, true);
 			FrameSlot.SetSizeToContent(m_wBlackMarketTileLabel, true);
+		}
+		StyleText(m_wSquadTileGlyph, "SQ", true);
+		StyleText(m_wSquadTileLabel, "SQUAD", false);
+		if (m_wSquadTileGlyph && m_wSquadTileLabel)
+		{
+			m_wSquadTileGlyph.SetColor(AROR_UIColors.Get(AROR_UIColors.REBEL));
+			FrameSlot.SetSizeToContent(m_wSquadTileGlyph, true);
+			FrameSlot.SetSizeToContent(m_wSquadTileLabel, true);
 		}
 		StyleText(m_wImportsTileGlyph, "V", true);
 		StyleText(m_wImportsTileLabel, "IMPORTS", false);

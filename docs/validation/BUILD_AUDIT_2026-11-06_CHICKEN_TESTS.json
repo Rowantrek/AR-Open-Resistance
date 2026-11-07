@@ -1,0 +1,260 @@
+{
+  "generatedAt": "2026-11-06T10:21:33.264Z",
+  "head": "chicken-dev (0d2e5e8)",
+  "runtime": "v24.22.1",
+  "nativeVerified": false,
+  "results": [
+    {
+      "name": "Test-CampaignFlagEditor.js",
+      "passed": true,
+      "assertions": 14,
+      "exitCode": 0,
+      "output": "{\"assertions\":14,\"note\":\"Mocked editor API; native plugin compile, terrain collision and actual mesh placement still need Workbench.\"}\n[1106/212130.368:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-CapturePlacement.js",
+      "passed": true,
+      "assertions": 14,
+      "exitCode": 0,
+      "output": "{\"assertions\":14,\"note\":\"Native traces, navmesh access, replication and driving still require Workbench verification.\"}\n[1106/212130.429:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-DefenceLayout.js",
+      "passed": true,
+      "assertions": 177,
+      "exitCode": 0,
+      "output": "{\n  assertions: 177,\n  note: 'Native terrain/trace services mocked; actual bushes, walls, gun height, navigation and AI need Workbench.'\n}\n[1106/212130.485:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-DefenceSiteAudit.js",
+      "passed": true,
+      "assertions": 61,
+      "exitCode": 0,
+      "output": "{\n  assertions: 61,\n  note: 'Editor orchestration and geometry services mocked; native compile and dense scan still required.'\n}\n[1106/212130.541:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-DefenceWallGrounding.js",
+      "passed": true,
+      "assertions": 21,
+      "exitCode": 0,
+      "output": "{\n  assertions: 21,\n  note: 'Editor invalidation reproduced with mocks; native compile/grounding still required.'\n}\n[1106/212130.622:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-EveronQRFIntegration.js",
+      "passed": true,
+      "assertions": 50,
+      "exitCode": 0,
+      "output": "{\"assertions\":50,\"note\":\"Native events, faction manager and response execution mocked; Play verification required.\"}\n[1106/212130.681:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-FieldSystems.js",
+      "passed": true,
+      "assertions": 274,
+      "exitCode": 0,
+      "output": "{\n  \"assertions\": 274,\n  \"result\": \"PASS\",\n  \"limitations\": \"Mocked native services; Workbench compilation, replication, seating and pathfinding still require native acceptance.\"\n}\n[1106/212130.738:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-FortifiedOutpostLayouts.js",
+      "passed": true,
+      "assertions": 1477,
+      "exitCode": 0,
+      "output": "{\n  assertions: 1477,\n  note: 'Estimated envelopes only; native bounds, terrain, navigation and loot acceptance required.'\n}\n[1106/212130.793:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-GarrisonCrew.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "[1106/212131.132:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n<anonymous_script>:4\r\n\t\tif (GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(entity) > 0 || AROR_ResistanceFleet.IsClaimed(entity))\r\n\t\t                                                                                ^\r\n\r\nReferenceError: AROR_ResistanceFleet is not defined\r\n    at Object.eval [as IsPlayerOrForeignAsset] (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-GarrisonCrew.js:29:10), <anonymous>:4:83)\r\n    at Object.eval [as MaintainCrewSeats_S] (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-GarrisonCrew.js:29:10), <anonymous>:21:13)\r\n    at Object.eval [as CrewAndOrder] (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-GarrisonCrew.js:29:10), <anonymous>:4:33)\r\n    at Object.tick (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-GarrisonCrew.js:55:17)\r\n    at runGarrisonCrewTests (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-GarrisonCrew.js:57:22)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-GarrisonCrew.js:152:14)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n\r\nNode.js v24.22.1\r\n"
+    },
+    {
+      "name": "Test-GarrisonsAndSupport.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "[1106/212131.190:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n<anonymous_script>:50\r\n\t\t\t\tlet armourSlot = this.AddSlot(this.ParkedPrefab(faction, armourVariant), 2);\r\n\t\t\t\t                                   ^\r\n\r\nTypeError: this.ParkedPrefab is not a function\r\n    at Object.eval (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-GarrisonsAndSupport.js:42:12), <anonymous>:50:40)\r\n    at roster (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-GarrisonsAndSupport.js:116:14)\r\n    at runGarrisonsAndSupportTests (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-GarrisonsAndSupport.js:123:17)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-GarrisonsAndSupport.js:577:30)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n\r\nNode.js v24.22.1\r\n"
+    },
+    {
+      "name": "Test-InvaderCampaign.js",
+      "passed": true,
+      "assertions": 55,
+      "exitCode": 0,
+      "output": "{\n  assertions: 55,\n  baselineMeanPercent: 37.8,\n  escalatedMeanPercent: 63.9,\n  note: 'Funded policy model, not native gameplay or sustained income/performance acceptance.'\n}\n[1106/212131.252:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-MarsAndAttacks.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "[1106/212131.367:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\nC:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-MarsAndAttacks.js:12\r\nfunction check(ok, label) { assertions++; if (!ok) throw Error(label); }\r\n                                                   ^\r\n\r\nError: Readiness selects light transport-only or heavy escorted air without changing intensity\r\n    at check (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-MarsAndAttacks.js:12:58)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-MarsAndAttacks.js:127:17)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1\r\n"
+    },
+    {
+      "name": "Test-MissionLifecycle.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "[1106/212131.440:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n<anonymous_script>:38\r\n\t\t\tif (entity && !this.HasPlayerAboard(entity) && !AROR_ResistanceFleet.IsClaimed(entity))\r\n\t\t\t                                                ^\r\n\r\nReferenceError: AROR_ResistanceFleet is not defined\r\n    at Object.eval (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-MissionLifecycle.js:40:12), <anonymous>:38:52)\r\n    at runMissionLifecycleTests (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-MissionLifecycle.js:99:10)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-MissionLifecycle.js:113:30)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n\r\nNode.js v24.22.1\r\n"
+    },
+    {
+      "name": "Test-OperationAlerts.js",
+      "passed": true,
+      "assertions": 33,
+      "exitCode": 0,
+      "output": "{\"assertions\":33,\"note\":\"Native headlines, map widgets and replication require Workbench Play.\"}\n[1106/212131.492:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-OutpostEquipment.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "[1106/212131.548:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n<anonymous_script>:23\r\n\t\t\tResourceName prefab = entry.GetPrefab();\r\n\t\t\t             ^^^^^^\r\n\r\nSyntaxError: Unexpected identifier 'prefab'\r\n    at new Function (<anonymous>)\r\n    at compile (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-OutpostEquipment.js:30:10)\r\n    at runOutpostEquipmentTests (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-OutpostEquipment.js:33:137)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-OutpostEquipment.js:92:14)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n\r\nNode.js v24.22.1\r\n"
+    },
+    {
+      "name": "Test-PostsAndPads.js",
+      "passed": true,
+      "assertions": 29,
+      "exitCode": 0,
+      "output": "{\n  assertions: 29,\n  note: 'Native geometry, spawning, teleport and AI behaviour mocked; Workbench Play acceptance required.'\n}\n[1106/212131.596:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-QRFBoarding.js",
+      "passed": true,
+      "assertions": 104,
+      "exitCode": 0,
+      "output": "{\"assertions\":104,\"note\":\"Native activation, capacity and compartment operations require Workbench Play.\"}\n[1106/212131.651:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-QRFIngress.js",
+      "passed": true,
+      "assertions": 53,
+      "exitCode": 0,
+      "output": "{\"assertions\":53,\"note\":\"Mocked native services; Workbench compile and airport driving/unloading required.\"}\n[1106/212131.709:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-QRFInterruptions.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "[1106/212131.766:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n<anonymous_script>:131\r\n\t\tlet airHome = this.ReaperLaunchPoint(operation, target, home, airSite);\r\n\t\t                   ^\r\n\r\nTypeError: this.ReaperLaunchPoint is not a function\r\n    at Object.eval (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFInterruptions.js:35:9), <anonymous>:131:22)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFInterruptions.js:187:9)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1\r\n"
+    },
+    {
+      "name": "Test-QRFManagerSoak.js",
+      "passed": true,
+      "assertions": 60024,
+      "exitCode": 0,
+      "output": "{\"assertions\":60024,\"simulatedTicks\":10000,\"admittedOrDeduplicated\":1811,\"rejected\":28189,\"notifications\":5186,\"maxCallbackDepth\":1,\"note\":\"Deterministic mocked scheduler soak; no native driving, combat, network or real-time performance evidence.\"}\n[1106/212131.849:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-QRFMutations.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "[1106/212131.936:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\nC:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFMutations.js:123\r\n  if(!baseline.passed)throw Error('Mutation baseline failed: '+suite+'\\n'+baseline.error);\r\n                      ^\r\n\r\nError: Mutation baseline failed: Test-QRFInterruptions.js\r\n<anonymous_script>:131\r\n\t\tlet airHome = this.ReaperLaunchPoint(operation, target, home, airSite);\r\n\t\t                   ^\r\n\r\nTypeError: this.ReaperLaunchPoint is not a function\r\n    at Object.eval (eval at compile (Test-QRFInterruptions.js:35:9), <anonymous>:131:22)\r\n    at Test-QRFInterruptions.js:187:9\r\n    at Script.runInContext (node:vm:149:12)\r\n    at Script.runInNewContext (node:vm:154:17)\r\n    at Object.runInNewContext (node:vm:310:38)\r\n    at execute (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFMutations.js:146:10)\r\n    at runQRFMutationTests (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFMutations.js:122:18)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFMutations.js:149:29)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at runQRFMutationTests (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFMutations.js:123:29)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFMutations.js:149:29)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1\r\n"
+    },
+    {
+      "name": "Test-QRFProgression.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "[1106/212132.042:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\nC:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFProgression.js:6\r\n  const check=(ok,message)=>{assertions++;if(!ok)throw Error(message);};\r\n                                                 ^\r\n\r\nError: real component defaults start new campaigns at readiness one and response tier one\r\n    at check (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFProgression.js:6:56)\r\n    at runQRFProgressionTests (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFProgression.js:109:3)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFProgression.js:217:15)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n\r\nNode.js v24.22.1\r\n"
+    },
+    {
+      "name": "Test-QRFReleaseLifecycle.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "[1106/212132.112:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n<anonymous_script>:131\r\n\t\tlet airHome = this.ReaperLaunchPoint(operation, target, home, airSite);\r\n\t\t                   ^\r\n\r\nTypeError: this.ReaperLaunchPoint is not a function\r\n    at Object.eval (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFReleaseLifecycle.js:38:9), <anonymous>:131:22)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-QRFReleaseLifecycle.js:165:13)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1\r\n"
+    },
+    {
+      "name": "Test-QRFResponseMix.js",
+      "passed": true,
+      "assertions": 1842,
+      "exitCode": 0,
+      "output": "{\"assertions\":1842,\"note\":\"Actual-source mix, routing, accounting and save checks; native execution remains mocked.\"}\n[1106/212132.178:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-QRFRetention.js",
+      "passed": true,
+      "assertions": 10,
+      "exitCode": 0,
+      "output": "{\"assertions\":10,\"note\":\"Native distance culling, AI dormancy and deletion require Workbench Play.\"}\n[1106/212132.261:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-QRFRouteAudit.js",
+      "passed": true,
+      "assertions": 147,
+      "exitCode": 0,
+      "output": "{\"assertions\":147,\"note\":\"Audit scheduling and coverage only. Run the sweep in Workbench for native planning evidence.\"}\n[1106/212132.318:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-QRFStrategy.js",
+      "passed": true,
+      "assertions": 7254,
+      "exitCode": 0,
+      "output": "{\n  assertions: 7254,\n  note: 'Actual-source bodies; native lifecycle, perception, replication and serialization remain mocked/unverified.'\n}\n[1106/212132.381:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-QRFSupportAndHeadlines.js",
+      "passed": true,
+      "assertions": 94,
+      "exitCode": 0,
+      "output": "{\"assertions\":94,\"note\":\"Native banner rendering, terrain flight, target spotting and road navigation require Workbench compile and Play.\"}\n[1106/212132.452:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-QRFTownHold.js",
+      "passed": true,
+      "assertions": 22,
+      "exitCode": 0,
+      "output": "{\"assertions\":22,\"note\":\"Native navigation, dismounting and town occupation still require Play verification.\"}\n[1106/212132.509:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-QRFUnloading.js",
+      "passed": true,
+      "assertions": 42,
+      "exitCode": 0,
+      "output": "{\"assertions\":42,\"note\":\"Native clearance, animation and replication mocked; compile and Play required.\"}\n[1106/212132.562:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-QRFVehicleFaction.js",
+      "passed": true,
+      "assertions": 23,
+      "exitCode": 0,
+      "output": "{\"assertions\":23,\"note\":\"Compile and combat test required; no vehicle re-factioning or loss-price changes.\"}\n[1106/212132.613:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-ReaperLandingSearch.js",
+      "passed": true,
+      "assertions": 159,
+      "exitCode": 0,
+      "output": "{\"assertions\":159,\"note\":\"Native Lamentin terrain and REAPER landings still require Workbench Play.\"}\n[1106/212132.672:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-RebIntel.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "[1106/212132.731:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n<anonymous_script>:36\r\n\t\t\tSCR_PlayerController playerController = SCR_PlayerController.Cast(GetGame().GetPlayerController());\r\n\t\t\t                     ^^^^^^^^^^^^^^^^\r\n\r\nSyntaxError: Unexpected identifier 'playerController'\r\n    at new Function (<anonymous>)\r\n    at compile (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-RebIntel.js:29:12)\r\n    at runRebIntelTests (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-RebIntel.js:97:108)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\.tmp\\build-audit-chicken\\tools\\Test-RebIntel.js:114:15)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n\r\nNode.js v24.22.1\r\n"
+    },
+    {
+      "name": "Test-SessionFixes.js",
+      "passed": true,
+      "assertions": 27,
+      "exitCode": 0,
+      "output": "{\"assertions\":27,\"note\":\"Native inventory transactions, AI/WCS execution and catalogue resources remain unverified in Workbench.\"}\n[1106/212133.062:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-StrongholdIntegration.js",
+      "passed": true,
+      "assertions": 95,
+      "exitCode": 0,
+      "output": "{\"assertions\":95,\"note\":\"Actual-source scripted admission, funding, wave, stronghold lifecycle and save policy. Native placement, flight, garrison queues and multiplayer remain unverified.\"}\n[1106/212133.123:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    },
+    {
+      "name": "Test-WCSIntegration.js",
+      "passed": true,
+      "assertions": 41,
+      "exitCode": 0,
+      "output": "{\n  \"assertions\": 41,\n  \"result\": \"PASS\",\n  \"limitations\": \"Mocked native services; no Workbench compile, multiplayer session or AI flight/drive test.\"\n}\n[1106/212133.194:ERROR:third_party\\crashpad\\crashpad\\util\\win\\registration_protocol_win.cc:108] CreateFile: Access is denied. (0x5)\r\n"
+    }
+  ]
+}

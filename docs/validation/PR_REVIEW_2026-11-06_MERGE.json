@@ -1,0 +1,92 @@
+{
+    "generatedAt":  "2026-11-06T10:35:23.322Z",
+    "ours":  "0075d8dc9d609161d6fd65c0ed057a1b54eb85e0",
+    "base":  "a770bf021f45b467e7a94cb279ac5c094801825d",
+    "incoming":  "7c4fc6c7eca19704841e34a554af8b009152835a",
+    "liveIntegration":  "57a4369f64bde91961d0e3c11678054e4a77a34b",
+    "note":  "Live integration tree verified equal to PR #59 head through GitHub; per-file merge simulation only, no branch or working-tree mutation.",
+    "ourChangedFiles":  [
+                            "ARCHITECTURE.md",
+                            "AROpenResistance/Open Resistance/Configs/ContentPacks/BaseGame/AROR_ContentPack_BaseGame.conf",
+                            "AROpenResistance/Open Resistance/Configs/Radio/AROR_RadioStations.conf",
+                            "AROpenResistance/Open Resistance/Configs/Radio/AROR_RadioStations.conf.meta",
+                            "AROpenResistance/Open Resistance/Prefabs/GameModes/AROR_GameMode_Base.et",
+                            "AROpenResistance/Open Resistance/Prefabs/Vehicles/Core/Vehicle_Base.et",
+                            "AROpenResistance/Open Resistance/Prefabs/Vehicles/Core/Vehicle_Base.et.meta",
+                            "AROpenResistance/Open Resistance/Scripts/Game/Broadcast/AROR_RadioManagerComponent.c",
+                            "AROpenResistance/Open Resistance/Scripts/Game/Broadcast/AROR_RadioPlayerController.c",
+                            "AROpenResistance/Open Resistance/Scripts/Game/Broadcast/AROR_RadioStation.c",
+                            "AROpenResistance/Open Resistance/Scripts/Game/Broadcast/AROR_RadioVehicleAction.c",
+                            "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_Operation.c",
+                            "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_OperationExecutorComponent.c",
+                            "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_ReaperQRFExecutor.c",
+                            "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp",
+                            "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.acp.meta",
+                            "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.sig",
+                            "AROpenResistance/Open Resistance/Sounds/Radio/AROR_Radio.sig.meta",
+                            "AROpenResistance/Open Resistance/Worlds/AROR_Everon/AROR_Everon_Chicken_Layers/Managers.layer",
+                            "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf",
+                            "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_USAF_FORECON.conf",
+                            "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/addon.gproj",
+                            "tools/Convert-RadioTracks.ps1"
+                        ],
+    "incomingChangedFiles":  [
+                                 "ARCHITECTURE.md",
+                                 "AROpenResistance/Open Resistance/Configs/ContentPacks/BaseGame/AROR_ContentPack_BaseGame.conf",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_EFormation.c",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_FormationSmokeTests.c",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Factions/Presets/AROR_Formations.c",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Garrisons/AROR_GarrisonComponent.c",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Garrisons/AROR_GarrisonPolicy.c",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Missions/AROR_ConvoyAmbushMission.c",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Missions/AROR_Mission.c",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Missions/AROR_MissionBoardComponent.c",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Missions/AROR_MissionType.c",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_ForceProfile.c",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_ModdedAISwitchMagazine.c",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_OperationExecutorComponent.c",
+                                 "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_OperationTestComponent.c",
+                                 "AROpenResistance/Open Resistance/Worlds/AROR_Everon/AROR_Everon_Layers/Managers.layer",
+                                 "OptionalAddons/OpenResistanceRHSCompat/OpenResistanceRHSCompat/Configs/ContentPacks/AROR_ContentPack_RHS.conf",
+                                 "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf",
+                                 "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_USAF_FORECON.conf",
+                                 "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/addon.gproj"
+                             ],
+    "overlap":  [
+                    {
+                        "file":  "ARCHITECTURE.md",
+                        "status":  0,
+                        "conflicts":  0,
+                        "error":  "",
+                        "temporaryOutputRemoved":  true
+                    },
+                    {
+                        "file":  "AROpenResistance/Open Resistance/Configs/ContentPacks/BaseGame/AROR_ContentPack_BaseGame.conf",
+                        "status":  8,
+                        "conflicts":  8,
+                        "error":  "",
+                        "temporaryOutputRemoved":  true
+                    },
+                    {
+                        "file":  "AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_OperationExecutorComponent.c",
+                        "status":  0,
+                        "conflicts":  0,
+                        "error":  "",
+                        "temporaryOutputRemoved":  true
+                    },
+                    {
+                        "file":  "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_USAF_FORECON.conf",
+                        "status":  2,
+                        "conflicts":  2,
+                        "error":  "",
+                        "temporaryOutputRemoved":  true
+                    },
+                    {
+                        "file":  "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/addon.gproj",
+                        "status":  1,
+                        "conflicts":  1,
+                        "error":  "",
+                        "temporaryOutputRemoved":  true
+                    }
+                ]
+}

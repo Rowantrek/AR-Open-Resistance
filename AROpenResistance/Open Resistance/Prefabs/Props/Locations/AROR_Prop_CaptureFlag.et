@@ -25,6 +25,15 @@ GenericEntity {
     }
    }
    additionalActions {
+    AROR_RecruitRiflemanAction "{CB5D5FB66B773DA2}" {
+     ParentContextList {
+      "capture"
+     }
+     UIInfo SCR_ActionUIInfo "{3CE395E1528D8B8A}" {
+      Name "Recruit rifleman"
+     }
+     Duration 1
+    }
     AROR_CaptureLocationAction "{6AAE5E8DC81A6290}" {
      ParentContextList {
       "capture"

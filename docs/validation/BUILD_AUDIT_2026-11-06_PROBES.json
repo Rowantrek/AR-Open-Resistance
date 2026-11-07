@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-11-06T10:22:18.661Z",
+  "nativeVerified": false,
+  "probes": [
+    {
+      "finding": "Extra unescorted transport priced as escorted",
+      "sourceMethod": "JointExtraTransports",
+      "available": 7900,
+      "baseAndOverhead": 5500,
+      "remaining": 2400,
+      "unescortedQuoteUsingSamePersonnelCeiling": 2400,
+      "actualReturnedExtras": 0,
+      "requestedExtras": 1
+    },
+    {
+      "finding": "Single-hull extra uses two-hull construction cost",
+      "sourceMethod": "CanConstruct",
+      "scenario": "Supported 100% extra-transport setting: four ground elements plus five transports and one escort, with sufficient global budgets",
+      "liveAircraft": 5,
+      "limit": 6,
+      "withCurrentProfileCost": false,
+      "withActualPackageCost": true,
+      "nativeVerified": false
+    }
+  ]
+}
