@@ -4,6 +4,7 @@ class AROR_SquadRecruit
 	int m_iId;
 	SCR_AIGroup m_Master;
 	SCR_AIGroup m_SpawnGroup;
+	SCR_AIGroup m_CommandGroup;
 	SCR_ChimeraCharacter m_Character;
 	float m_fStarted;
 	bool m_bJoined;

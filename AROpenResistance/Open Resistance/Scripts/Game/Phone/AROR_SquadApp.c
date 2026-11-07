@@ -83,6 +83,8 @@ class AROR_SquadApp : AROR_PhonePooledApp
 			m_iPage = 0;
 		}
 		bool leader = group.IsPlayerLeader(player.GetPlayerId());
+		if (!leader && m_wName.GetText() != group.GetCustomName())
+			m_wName.SetText(group.GetCustomName());
 		m_wName.SetEnabled(leader);
 		Panel(40, 116, 1050, 64, C(AROR_UIColors.SURFACE_RAISED));
 		PlaceRaw(m_wName, 56 * m_fScale, 124 * m_fScale, 1018 * m_fScale, 48 * m_fScale);

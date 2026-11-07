@@ -289,6 +289,36 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 		return entity && GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(entity) > 0;
 	}
 
+	protected AIGroup GetCharacterGroup(IEntity character)
+	{
+		if (!character)
+			return null;
+		AIControlComponent control = AIControlComponent.Cast(character.FindComponent(AIControlComponent));
+		if (!control)
+			return null;
+		AIAgent agent = control.GetControlAIAgent();
+		if (!agent)
+			return null;
+		return agent.GetParentGroup();
+	}
+
+	//! Cleanup can run before the next poll, after a native release/transfer or the master group's deletion.
+	//! Keep the original command subgroup so a departed squad cannot retire another group's soldier.
+	protected bool CanRetireRecruit(AROR_SquadRecruit recruit)
+	{
+		if (!AROR_ForceSpawner.IsAlive(recruit.m_Character) || IsPlayerControlled(recruit.m_Character))
+			return false;
+		SCR_AIGroup expected = recruit.m_SpawnGroup;
+		if (recruit.m_bJoined)
+			expected = recruit.m_CommandGroup;
+		AIGroup actual = GetCharacterGroup(recruit.m_Character);
+		if (actual && actual != expected)
+			return false;
+		if (recruit.m_bJoined && expected && !expected.IsAIControlledCharacterMember(recruit.m_Character))
+			return false;
+		return true;
+	}
+
 	//! The engine may spawn the member later. Do not attach it until the preset outfitter has dressed it.
 	protected void Update_S()
 	{
@@ -314,6 +344,13 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 			AROR_ForceSpawner.CountLiving(recruit.m_SpawnGroup, members);
 			if (!members.IsEmpty())
 				recruit.m_Character = SCR_ChimeraCharacter.Cast(members[0]);
+			AIGroup currentGroup = GetCharacterGroup(recruit.m_Character);
+			if (recruit.m_Character && (!AROR_ForceSpawner.IsAlive(recruit.m_Character) || (currentGroup && currentGroup != recruit.m_SpawnGroup)))
+			{
+				// Never reuse a stale character pointer after death or an external AI-group transfer.
+				RemoveRecruit_S(i, false);
+				continue;
+			}
 			if (IsPlayerControlled(recruit.m_Character))
 			{
 				// Game Master/player takeover transfers this entity out of our recruitment lifecycle.
@@ -321,7 +358,7 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 				RemoveRecruit_S(i, false);
 				continue;
 			}
-			if (recruit.m_Character && !AROR_LoadoutOutfitter.IsUndressed(recruit.m_Character))
+			if (recruit.m_Character && currentGroup && !AROR_LoadoutOutfitter.IsUndressed(recruit.m_Character))
 			{
 				// Native wheel recruitment can fill the subgroup while our spawn is pending.
 				if (CountNativeMembers(recruit.m_Master) >= GetLimit())
@@ -339,6 +376,7 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 					if (subgroup.IsAIControlledCharacterMember(recruit.m_Character))
 					{
 						recruit.m_bJoined = true;
+						recruit.m_CommandGroup = subgroup;
 						SCR_EntityHelper.DeleteEntityAndChildren(recruit.m_SpawnGroup);
 						recruit.m_SpawnGroup = null;
 					}
@@ -356,7 +394,7 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 	protected void RemoveRecruit_S(int index, bool deleteCharacter)
 	{
 		AROR_SquadRecruit recruit = m_aRecruits[index];
-		if (deleteCharacter && recruit.m_Character && !IsPlayerControlled(recruit.m_Character))
+		if (deleteCharacter && CanRetireRecruit(recruit))
 		{
 			if (recruit.m_bJoined && recruit.m_Master)
 			{
@@ -377,7 +415,7 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 			{
 				if (IsPlayerControlled(pendingMember))
 					preserveGroup = true;
-				else
+				else if (GetCharacterGroup(pendingMember) == recruit.m_SpawnGroup)
 					SCR_EntityHelper.DeleteEntityAndChildren(pendingMember);
 			}
 			if (!preserveGroup)
@@ -392,6 +430,9 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 		foreach (AROR_SquadRecruit recruit : m_aRecruits)
 		{
 			if (!recruit.m_Master)
+				continue;
+			// A character may be deleted between the periodic update and an immediate request publication.
+			if (recruit.m_bJoined && !AROR_ForceSpawner.IsAlive(recruit.m_Character))
 				continue;
 			string state = "Arriving";
 			if (recruit.m_bJoined)

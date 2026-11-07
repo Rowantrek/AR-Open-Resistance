@@ -240,7 +240,7 @@ Purpose: players recruit individual Resistance riflemen at owned territory flags
 - Saved: no custom squad persistence in this first version; recruits and their roster are session-only.
 - Depends on: Game Mode (native Groups and Commanding managers), Game Flow, Locations, Factions, Phone, Notifications.
 - Extension points: group spawn resource, rifleman cap, flag interaction distance, spawn search and timeout attributes. Existing resource references are reused; new flag templates should inherit `AROR_Prop_CaptureFlag` and remain children of their location.
-- Workbench compile, native command behaviour and multiplayer acceptance remain pending; see `docs/PLAYER_SQUADS.md`.
+- Feature detail and native acceptance checklist: `docs/PLAYER_SQUADS.md`.
 
 ### High Command — In progress
 Purpose: Resistance Leaders raise AI squads and command them through the **HICOMM** phone app.
