@@ -160,6 +160,16 @@ class AROR_RebIntelApp
 	protected AROR_EFactionRole m_eRole;
 	protected int m_iNextRefresh;
 
+	void SaveState(notnull AROR_PhoneSessionState state)
+	{
+		state.m_eRebIntelRole = m_eRole;
+	}
+
+	void RestoreState(notnull AROR_PhoneSessionState state)
+	{
+		m_eRole = state.m_eRebIntelRole;
+	}
+
 	//------------------------------------------------------------------------------------------------
 	bool Init(Widget phoneRoot)
 	{

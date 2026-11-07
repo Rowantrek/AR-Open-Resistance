@@ -202,6 +202,7 @@ class AROR_PhoneMenu : ChimeraMenuBase
 	protected ref AROR_PhoneButtonHandler m_ButtonHandler;
 
 	protected AROR_EPhoneApp m_eApp;
+	protected bool m_bSessionReady;
 
 	//! 0 = off screen below, 1 = fully open
 	protected float m_fOpen;
@@ -349,6 +350,7 @@ class AROR_PhoneMenu : ChimeraMenuBase
 	{
 		super.OnMenuOpen();
 		s_Instance = this;
+		m_bSessionReady = false;
 
 		// The menu manager sizes the root to the screen; it has no slot to set
 		Widget root = GetRootWidget();
@@ -528,6 +530,9 @@ class AROR_PhoneMenu : ChimeraMenuBase
 		m_fTurnTarget = 0;
 		m_fContentFade = 0;
 		m_bClosing = false;
+		m_bHotkeyDown = true;
+		RestoreSession();
+		m_bSessionReady = true;
 		UpdateClock();
 		UpdateLayout();
 	}
@@ -535,6 +540,9 @@ class AROR_PhoneMenu : ChimeraMenuBase
 	//------------------------------------------------------------------------------------------------
 	override void OnMenuClose()
 	{
+		// Capture before releasing the real map, widget values and dynamically created app resources.
+		SaveSession();
+		m_bSessionReady = false;
 		GetGame().GetInputManager().RemoveActionListener("MenuBack", EActionTrigger.DOWN, OnBack);
 
 		if (s_Instance == this)
@@ -562,6 +570,58 @@ class AROR_PhoneMenu : ChimeraMenuBase
 		m_BankTransfer = null;
 
 		super.OnMenuClose();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void SaveSession()
+	{
+		AROR_PhoneSessionState state = AROR_PhoneComponent.GetSession();
+		if (!m_bSessionReady || !state)
+			return;
+		state.m_eApp = m_eApp;
+		if (m_HiComm)
+			m_HiComm.SaveState(state);
+		if (m_Ops)
+			m_Ops.SaveState(state);
+		if (m_RebIntel)
+			m_RebIntel.SaveState(state);
+		if (m_Squad)
+			m_Squad.SaveState(state);
+		if (m_BlackMarket)
+			m_BlackMarket.SaveState(state);
+		if (m_Imports)
+			m_Imports.SaveState(state);
+		if (m_Mars)
+			m_Mars.SaveState(state);
+		if (m_BankTransfer)
+			m_BankTransfer.SaveState(state);
+		state.m_bCaptured = true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void RestoreSession()
+	{
+		AROR_PhoneSessionState state = AROR_PhoneComponent.GetSession();
+		if (!state || !state.m_bCaptured)
+			return;
+		if (m_HiComm)
+			m_HiComm.RestoreState(state);
+		if (m_Ops)
+			m_Ops.RestoreState(state);
+		if (m_RebIntel)
+			m_RebIntel.RestoreState(state);
+		if (m_Squad)
+			m_Squad.RestoreState(state);
+		if (m_BlackMarket)
+			m_BlackMarket.RestoreState(state);
+		if (m_Imports)
+			m_Imports.RestoreState(state);
+		if (m_Mars)
+			m_Mars.RestoreState(state);
+		if (m_BankTransfer)
+			m_BankTransfer.RestoreState(state);
+		OpenApp(state.m_eApp);
+		m_fTurn = m_fTurnTarget;
 	}
 
 	//------------------------------------------------------------------------------------------------

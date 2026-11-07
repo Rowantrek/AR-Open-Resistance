@@ -11,6 +11,20 @@ class AROR_SquadApp : AROR_PhonePooledApp
 	protected bool m_bShown;
 	protected ref array<AROR_SquadMemberInfo> m_aMembers = {};
 
+	void SaveState(notnull AROR_PhoneSessionState state)
+	{
+		state.m_iSquadGroup = m_iGroupId;
+		state.m_iSquadPage = m_iPage;
+		state.m_sSquadName = m_wName.GetText();
+	}
+
+	void RestoreState(notnull AROR_PhoneSessionState state)
+	{
+		m_iGroupId = state.m_iSquadGroup;
+		m_iPage = state.m_iSquadPage;
+		m_wName.SetText(state.m_sSquadName);
+	}
+
 	protected static Color C(int token)
 	{
 		return AROR_UIColors.Get(token);
@@ -48,8 +62,6 @@ class AROR_SquadApp : AROR_PhonePooledApp
 		super.SetVisible(visible, opacity);
 		if (visible && !m_bShown)
 		{
-			m_iGroupId = -1;
-			m_iPage = 0;
 			m_iConfirmDismiss = -1;
 		}
 		m_bShown = visible;

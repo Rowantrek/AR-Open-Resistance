@@ -22,6 +22,30 @@ class AROR_MarsApp : AROR_PhonePooledApp
 	protected int m_iCrackdown = 1;
 	protected int m_iTypePage;
 
+	void SaveState(notnull AROR_PhoneSessionState state)
+	{
+		state.m_eMarsRole = m_eRole;
+		state.m_iMarsType = m_iType;
+		state.m_iMarsReadiness = m_iReadiness;
+		state.m_iMarsCrackdown = m_iCrackdown;
+		state.m_iMarsPage = m_iTypePage;
+		state.m_bMarsUnlocked = m_bUnlocked;
+		state.m_sMarsCredential = m_sCredential;
+	}
+
+	void RestoreState(notnull AROR_PhoneSessionState state)
+	{
+		m_eRole = state.m_eMarsRole;
+		m_iType = state.m_iMarsType;
+		m_iReadiness = state.m_iMarsReadiness;
+		m_iCrackdown = state.m_iMarsCrackdown;
+		m_iTypePage = state.m_iMarsPage;
+		m_bUnlocked = state.m_bMarsUnlocked;
+		m_sCredential = state.m_sMarsCredential;
+		m_wReadiness.SetCurrent(m_iReadiness);
+		m_wCrackdown.SetCurrent(m_iCrackdown);
+	}
+
 	bool Init(Widget phoneRoot)
 	{
 		m_wResource = GetGame().GetWorkspace().CreateWidgets(LAYOUT, phoneRoot);

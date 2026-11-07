@@ -31,6 +31,37 @@ class AROR_BlackMarketApp : AROR_ShopAppBase
 	protected bool m_bPayFaction = true;
 	protected bool m_bAwaiting;
 
+	void SaveState(notnull AROR_PhoneSessionState state)
+	{
+		ReadSearch();
+		state.m_iMarketTab = m_iTab;
+		state.m_iMarketScroll = m_iScroll;
+		state.m_iMarketCartScroll = m_iCartScroll;
+		state.m_sMarketQuery = m_sQuery;
+		state.m_bMarketPayFaction = m_bPayFaction;
+		state.m_aMarketCartPrefabs.Clear();
+		state.m_aMarketCartQuantities.Clear();
+		// Submitted checkout is no longer a draft; its reply may arrive after this menu is destroyed.
+		if (!m_bAwaiting)
+		{
+			state.m_aMarketCartPrefabs.Copy(m_aCartPrefabs);
+			state.m_aMarketCartQuantities.Copy(m_aCartQuantities);
+		}
+	}
+
+	void RestoreState(notnull AROR_PhoneSessionState state)
+	{
+		m_iTab = state.m_iMarketTab;
+		m_iScroll = state.m_iMarketScroll;
+		m_iCartScroll = state.m_iMarketCartScroll;
+		m_sQuery = state.m_sMarketQuery;
+		m_bPayFaction = state.m_bMarketPayFaction;
+		m_aCartPrefabs.Copy(state.m_aMarketCartPrefabs);
+		m_aCartQuantities.Copy(state.m_aMarketCartQuantities);
+		if (m_wSearch)
+			m_wSearch.SetText(m_sQuery);
+	}
+
 	//------------------------------------------------------------------------------------------------
 	bool Init(Widget phoneRoot)
 	{
@@ -50,9 +81,6 @@ class AROR_BlackMarketApp : AROR_ShopAppBase
 	//------------------------------------------------------------------------------------------------
 	override protected void OnOpened()
 	{
-		m_iScroll = 0;
-		m_iCartScroll = 0;
-		m_bAwaiting = false;
 		if (m_wSearch)
 			m_wSearch.SetText(m_sQuery);
 	}
