@@ -84,6 +84,13 @@ class AROR_LeaderboardOverlay : AROR_PhonePooledApp
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Closed and fully retracted (and so already hidden)
+	bool IsIdle()
+	{
+		return !m_bOpen && m_fShown <= 0;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Menus (pause, inventory, phone, deploy) and the map take the screen
 	protected static bool IsBlocked()
 	{

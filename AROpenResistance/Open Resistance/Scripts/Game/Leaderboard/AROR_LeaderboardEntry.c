@@ -56,9 +56,10 @@ class AROR_KillCredit
 	bool m_bPending;	//!< In the leaderboard's watch list
 
 	//------------------------------------------------------------------------------------------------
+	//! Server only: clients never judge kills, so they carry no credit and no damage subscription
 	static AROR_KillCredit Attach(IEntity owner, SCR_DamageManagerComponent damageManager)
 	{
-		if (!owner || !damageManager || !GetGame().InPlayMode())
+		if (!owner || !damageManager || !GetGame().InPlayMode() || !Replication.IsServer())
 			return null;
 
 		AROR_KillCredit credit = new AROR_KillCredit();
@@ -86,6 +87,18 @@ class AROR_KillCredit
 
 		ChimeraCharacter character = ChimeraCharacter.Cast(m_Owner);
 		return character && character.GetCharacterController() && character.GetCharacterController().IsDead();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The owner is being deleted: a watched victim that died is counted now rather than lost
+	void OnOwnerDeleted()
+	{
+		if (!m_bPending || m_bResolved || !Replication.IsServer())
+			return;
+
+		AROR_LeaderboardComponent leaderboard = AROR_LeaderboardComponent.GetInstance();
+		if (leaderboard)
+			leaderboard.OnVictimDeleted_S(this);
 	}
 
 	//------------------------------------------------------------------------------------------------

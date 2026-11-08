@@ -46,6 +46,12 @@ class AROR_LeaderboardComponent : SCR_BaseGameModeComponent
 	protected static const string DEFAULT_APC_MATCHES = "jltv,m-atv,matv,mrap,cougar,maxxpro,brdm";
 	protected static const float CHECK_INTERVAL_MS = 1000;
 	protected static const float PUBLISH_DELAY_MS = 2000;
+	protected static const float COMMANDER_CACHE_MS = 2000;
+
+	//! Server: the commander last resolved for an AI group (see GetCommander)
+	protected SCR_AIGroup m_CachedGroup;
+	protected int m_iCachedCommander;
+	protected float m_fCachedAt;
 
 	protected static AROR_LeaderboardComponent s_Instance;
 
@@ -168,14 +174,24 @@ class AROR_LeaderboardComponent : SCR_BaseGameModeComponent
 		if (playerId <= 0 && attacker)
 			playerId = GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(attacker);
 
-		// Fire, bleeding or a crash with no one behind it: keep whoever hit last
+		// The last creditable hit earns the death. Hits nobody can be credited for (enemy AI, Resistance AI nobody
+		// commands, Occupiers against Invaders, fire, bleeding, crashes) leave an earlier player's credit in place;
+		// the credit window still bounds how old that hit may be.
 		if (playerId > 0 || (attacker && attacker != victim))
 		{
 			bool assist;
-			credit.m_iPlayerId = ResolveCredit(playerId, attacker, assist);
-			credit.m_bAssist = assist;
-			credit.m_fHitTime = GetNow();
+			int credited = ResolveCredit(playerId, attacker, assist);
+			if (credited > 0)
+			{
+				credit.m_iPlayerId = credited;
+				credit.m_bAssist = assist;
+				credit.m_fHitTime = GetNow();
+			}
 		}
+
+		// Nothing to watch until someone creditable has hit it
+		if (credit.m_iPlayerId <= 0)
+			return;
 
 		if (!credit.m_bPending)
 		{
@@ -203,13 +219,27 @@ class AROR_LeaderboardComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The player commanding an AI group: a HICOMM squad's leader, or the leader of the native squad the AI is in
+	//! The player commanding an AI group: a HICOMM squad's leader, or the leader of the native squad the AI is in.
+	//! A firefight sends many hits from the same group in a row, so the last answer is reused for a moment.
 	protected int GetCommander(AIGroup group)
 	{
 		SCR_AIGroup aiGroup = SCR_AIGroup.Cast(group);
 		if (!aiGroup)
 			return 0;
 
+		float now = GetNow();
+		if (aiGroup == m_CachedGroup && now - m_fCachedAt < COMMANDER_CACHE_MS)
+			return m_iCachedCommander;
+
+		m_CachedGroup = aiGroup;
+		m_fCachedAt = now;
+		m_iCachedCommander = FindCommander(aiGroup);
+		return m_iCachedCommander;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected int FindCommander(notnull SCR_AIGroup aiGroup)
+	{
 		AROR_HighCommandComponent highCommand = AROR_HighCommandComponent.GetInstance();
 		if (highCommand)
 		{
@@ -293,12 +323,8 @@ class AROR_LeaderboardComponent : SCR_BaseGameModeComponent
 
 			if (credit.IsDead())
 			{
-				credit.m_bResolved = true;
-				credit.m_bPending = false;
 				m_aPending.Remove(i);
-				if (credit.m_iPlayerId > 0 && now - credit.m_fHitTime <= window)
-					CountKill_S(credit);
-
+				ResolveDeath_S(credit, now);
 				continue;
 			}
 
@@ -308,6 +334,27 @@ class AROR_LeaderboardComponent : SCR_BaseGameModeComponent
 				m_aPending.Remove(i);
 			}
 		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A watched victim is being deleted (Game Master, cleanup, despawn): settle its death now, before the sweep
+	//! would find it gone. The entity still exists during the delete. A victim deleted alive counts for nobody.
+	void OnVictimDeleted_S(notnull AROR_KillCredit credit)
+	{
+		if (!Replication.IsServer() || !credit.m_bPending || credit.m_bResolved || !credit.IsDead())
+			return;
+
+		ResolveDeath_S(credit, GetNow());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The victim died: counts it once for the credited player when their hit is recent enough
+	protected void ResolveDeath_S(notnull AROR_KillCredit credit, float now)
+	{
+		credit.m_bResolved = true;
+		credit.m_bPending = false;
+		if (credit.m_iPlayerId > 0 && now - credit.m_fHitTime <= m_fCreditWindow * 1000)
+			CountKill_S(credit);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -462,9 +509,8 @@ class AROR_LeaderboardComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	protected AROR_LeaderboardEntry FindOrCreateEntry(int playerId)
 	{
-		string name = GetGame().GetPlayerManager().GetPlayerName(playerId);
 		string key = GetPlayerKey(playerId);
-		if (key.IsEmpty() || name.IsEmpty())
+		if (key.IsEmpty())
 			return null;
 
 		AROR_LeaderboardEntry entry;
@@ -475,8 +521,20 @@ class AROR_LeaderboardComponent : SCR_BaseGameModeComponent
 			m_mEntries.Set(key, entry);
 		}
 
-		entry.m_sName = name;
+		// A kill is never dropped for a missing name (some local sessions); a known name is kept until a real one arrives
+		string name = GetDisplayName(playerId);
+		if (!name.IsEmpty())
+			entry.m_sName = name;
+		else if (entry.m_sName.IsEmpty())
+			entry.m_sName = string.Format("Player %1", playerId);
+
 		return entry;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static string GetDisplayName(int playerId)
+	{
+		return GetGame().GetPlayerManager().GetPlayerName(playerId);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -632,16 +690,30 @@ class AROR_LeaderboardComponent : SCR_BaseGameModeComponent
 		string board;
 		foreach (int rank, AROR_LeaderboardEntry entry : sorted)
 		{
-			int playerId;
-			online.Find(entry.m_sKey, playerId);
+			// Reset per row: a key that is not online must never keep the previous row's player ID
+			int playerId = 0;
+			if (!online.Find(entry.m_sKey, playerId))
+				playerId = 0;
+
 			if (rank >= m_iMaxRows && playerId <= 0)
 				continue;
 
-			string name = entry.m_sName;
-			name.Replace("|", "/");
-			name.Replace(";", ",");
 			string kills = string.Format("%1,%2,%3,%4,%5", entry.m_aKills[0], entry.m_aKills[1], entry.m_aKills[2], entry.m_aKills[3], entry.m_aKills[4]);
-			board += string.Format("%1|%2|%3|%4|%5|%6;", playerId, name, scores[rank], kills, entry.GetAssistTotal(), GetAssistPoints(entry));
+			board += string.Format("%1|%2|%3|%4|%5|%6;", playerId, SanitizeName(entry.m_sName), scores[rank], kills, entry.GetAssistTotal(), GetAssistPoints(entry));
+		}
+
+		// Everyone online is listed, Arma 3 style: players without a record yet follow with nothing scored
+		foreach (int onlineId : players)
+		{
+			string onlineKey = GetPlayerKey(onlineId);
+			if (onlineKey.IsEmpty() || m_mEntries.Contains(onlineKey))
+				continue;
+
+			string onlineName = GetDisplayName(onlineId);
+			if (onlineName.IsEmpty())
+				onlineName = string.Format("Player %1", onlineId);
+
+			board += string.Format("%1|%2|0|0,0,0,0,0|0|0;", onlineId, SanitizeName(onlineName));
 		}
 
 		if (board == m_sBoard)
@@ -650,6 +722,15 @@ class AROR_LeaderboardComponent : SCR_BaseGameModeComponent
 		m_sBoard = board;
 		Replication.BumpMe();
 		OnBoardReplicated();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The board's field and row separators cannot appear in a name (commas are harmless: only the kills field has them)
+	protected static string SanitizeName(string name)
+	{
+		name.Replace("|", "/");
+		name.Replace(";", ",");
+		return name;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -711,7 +792,9 @@ class AROR_LeaderboardComponent : SCR_BaseGameModeComponent
 		int now = System.GetTickCount();
 		float timeSlice = Math.Clamp((now - m_iLastFrameMs) / 1000.0, 0, 0.1);
 		m_iLastFrameMs = now;
-		if (m_Overlay)
+
+		// Closed and fully up out of sight: nothing to slide or draw (it hid itself on the frame it got there)
+		if (m_Overlay && !m_Overlay.IsIdle())
 			m_Overlay.Update(timeSlice);
 	}
 
