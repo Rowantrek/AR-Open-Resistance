@@ -38,8 +38,33 @@ class AROR_PrefabInfo
 		if (s_mImages.Find(key, cached))
 			return cached;
 
+		EEntityCatalogType type = EEntityCatalogType.ITEM;
+		if (vehicle)
+			type = EEntityCatalogType.VEHICLE;
+
+		ResourceName image = ReadImage(FindUiInfoOfType(prefab, type));
+		s_mImages.Set(key, image);
+		return image;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A character prefab's picture from the character catalogues (e.g. for the leaderboard's infantry icon)
+	static ResourceName GetCharacterImage(ResourceName prefab)
+	{
+		string key = prefab;
+		string cached;
+		if (s_mImages.Find(key, cached))
+			return cached;
+
+		ResourceName image = ReadImage(FindUiInfoOfType(prefab, EEntityCatalogType.CHARACTER));
+		s_mImages.Set(key, image);
+		return image;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static ResourceName ReadImage(SCR_UIInfo info)
+	{
 		ResourceName image;
-		SCR_UIInfo info = FindUiInfo(prefab, vehicle);
 		if (info)
 		{
 			SCR_EditableEntityUIInfo editable = SCR_EditableEntityUIInfo.Cast(info);
@@ -50,20 +75,25 @@ class AROR_PrefabInfo
 				image = info.GetIconPath();
 		}
 
-		s_mImages.Set(key, image);
 		return image;
 	}
 
 	//------------------------------------------------------------------------------------------------
 	protected static SCR_UIInfo FindUiInfo(ResourceName prefab, bool vehicle)
 	{
-		SCR_EntityCatalogManagerComponent catalogs = SCR_EntityCatalogManagerComponent.GetInstance();
-		if (!catalogs || prefab.IsEmpty())
-			return null;
-
 		EEntityCatalogType type = EEntityCatalogType.ITEM;
 		if (vehicle)
 			type = EEntityCatalogType.VEHICLE;
+
+		return FindUiInfoOfType(prefab, type);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static SCR_UIInfo FindUiInfoOfType(ResourceName prefab, EEntityCatalogType type)
+	{
+		SCR_EntityCatalogManagerComponent catalogs = SCR_EntityCatalogManagerComponent.GetInstance();
+		if (!catalogs || prefab.IsEmpty())
+			return null;
 
 		SCR_EntityCatalogEntry entry = catalogs.GetEntryWithPrefabFromAnyCatalog(type, prefab, null);
 		if (!entry)

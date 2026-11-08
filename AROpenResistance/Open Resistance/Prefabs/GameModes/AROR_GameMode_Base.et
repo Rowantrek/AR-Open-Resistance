@@ -3,6 +3,8 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
  components {
   AROR_SquadManagerComponent "{94BA827CEB4E4C26}" {
   }
+  AROR_LeaderboardComponent "{6AC1D2E3F4A5B607}" {
+  }
   AROR_InvaderCampaignComponent "{9AB2CB63D7214001}" {
    m_bInvaderCampaign 0
   }

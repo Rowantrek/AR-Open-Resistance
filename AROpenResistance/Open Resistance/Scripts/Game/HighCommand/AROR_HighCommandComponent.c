@@ -620,6 +620,22 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Server: player ID of the leader commanding the squad fielded in this AI group; 0 if none or unassigned
+	int GetSquadCommander_S(SCR_AIGroup group)
+	{
+		if (!group)
+			return 0;
+
+		foreach (AROR_HighCommandSquad squad : m_aSquads)
+		{
+			if (squad.m_Group == group)
+				return squad.m_iOwnerId;
+		}
+
+		return 0;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected int CountServerSquadsOwnedBy(int playerId)
 	{
 		int count;
