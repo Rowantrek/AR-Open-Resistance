@@ -36,6 +36,9 @@ class ORRadio_Station
 	[Attribute("0", desc: "Play the tracks in their listed (album) order, interludes where the album puts them, instead of shuffled songs with an interlude every few")]
 	bool m_bAlbumOrder;
 
+	[Attribute("1", desc: "Album order only: begin the loop at a song picked at random each game, so the first listeners do not always hear the opening tracks. The album order is kept from there")]
+	bool m_bRandomStart;
+
 	[Attribute(desc: "Songs and interludes")]
 	ref array<ref ORRadio_Track> m_aTracks;
 }
@@ -63,13 +66,24 @@ class ORRadio_Schedule
 		if (!station || !station.m_aTracks)
 			return;
 
-		// Album order: the tracklist as numbered, looping from the first track again
+		// Album order: the tracklist as numbered, looping. With m_bRandomStart the loop begins at a song picked from the
+		// seed, so it differs each game but is the same on every machine and for the rest of the game.
 		if (station.m_bAlbumOrder)
 		{
-			foreach (ORRadio_Track listed : station.m_aTracks)
+			array<ORRadio_Track> listed = {};
+			foreach (ORRadio_Track track : station.m_aTracks)
 			{
-				if (listed && listed.m_iDurationMs > 0)
-					Append(listed);
+				if (track && track.m_iDurationMs > 0)
+					listed.Insert(track);
+			}
+
+			int firstIndex;
+			if (station.m_bRandomStart)
+				firstIndex = PickFirstSong(listed, seed);
+
+			for (int t = 0; t < listed.Count(); t++)
+			{
+				Append(listed[(firstIndex + t) % listed.Count()]);
 			}
 
 			return;
@@ -120,6 +134,24 @@ class ORRadio_Schedule
 		m_iLengthMs += entry.m_iDurationMs;
 		m_aOrder.Insert(entry);
 		m_aEndsMs.Insert(m_iLengthMs);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Index in entries of a song (not an interlude) picked from the seed; 0 when there are no songs
+	protected int PickFirstSong(array<ORRadio_Track> entries, int seed)
+	{
+		array<int> songs = {};
+		for (int i = 0; i < entries.Count(); i++)
+		{
+			if (!entries[i].m_bInterlude)
+				songs.Insert(i);
+		}
+
+		if (songs.IsEmpty())
+			return 0;
+
+		int state = (seed * 1103515245 + 12345) & 0x7FFFFFFF;
+		return songs[state % songs.Count()];
 	}
 
 	//------------------------------------------------------------------------------------------------
