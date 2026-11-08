@@ -388,31 +388,7 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 	//! is allowed yet), or empty if it has none
 	ResourceName GetVehiclePrefab_S(AROR_EFactionRole role, AROR_EVehicleType type)
 	{
-		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
-		if (!presets)
-			return string.Empty;
-
-		AROR_FactionPreset preset = presets.GetPreset(role);
-		if (!preset)
-			return string.Empty;
-
-		array<AROR_FactionPresetEntry> entries = {};
-		preset.GetEntries(AROR_EFactionPresetCategory.VEHICLES, type, entries);
-		if (entries.IsEmpty())
-			return string.Empty;
-
-		array<ResourceName> allowed = {};
-		foreach (AROR_FactionPresetEntry candidate : entries)
-		{
-			if (AROR_ContentPacksComponent.IsAvailableAtReadiness(candidate.GetPrefab(), role))
-				allowed.Insert(candidate.GetPrefab());
-		}
-
-		if (!allowed.IsEmpty())
-			return allowed.GetRandomElement();
-
-		AROR_FactionPresetEntry entry = entries.GetRandomElement();
-		return entry.GetPrefab();
+		return AROR_ForceSpawner.VehiclePrefab(role, type);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -496,70 +472,7 @@ class AROR_MissionBoardComponent : SCR_BaseGameModeComponent
 	//! every update until it returns true: seat requests can be dropped, and members spawn over several frames.
 	bool SeatGroup_S(SCR_AIGroup group, IEntity vehicle, int expectedMembers)
 	{
-		if (!group || !vehicle)
-			return false;
-
-		BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(vehicle.FindComponent(BaseCompartmentManagerComponent));
-		SCR_AIVehicleUsageComponent usage = SCR_AIVehicleUsageComponent.Cast(vehicle.FindComponent(SCR_AIVehicleUsageComponent));
-		if (!compartments || !usage || !usage.GetPilotCompartmentSlot())
-			return false;
-
-		array<IEntity> members = {};
-		AROR_ForceSpawner.CountLiving(group, members);
-		if (members.Count() < expectedMembers)
-			return false;
-
-		array<BaseCompartmentSlot> slots = {};
-		compartments.GetCompartments(slots);
-		array<BaseCompartmentSlot> ordered = {usage.GetPilotCompartmentSlot()};
-		foreach (BaseCompartmentSlot slot : slots)
-		{
-			if (slot && TurretCompartmentSlot.Cast(slot) && !ordered.Contains(slot))
-				ordered.Insert(slot);
-		}
-
-		foreach (BaseCompartmentSlot slot : slots)
-		{
-			if (slot && CargoCompartmentSlot.Cast(slot) && !ordered.Contains(slot))
-				ordered.Insert(slot);
-		}
-
-		bool allSeated = true;
-		foreach (IEntity member : members)
-		{
-			CompartmentAccessComponent access = CompartmentAccessComponent.Cast(member.FindComponent(CompartmentAccessComponent));
-			if (!access)
-			{
-				allSeated = false;
-				continue;
-			}
-
-			BaseCompartmentSlot current = access.GetCompartment();
-			if (access.IsInCompartment() && current && current.GetVehicle() == vehicle)
-				continue;
-
-			allSeated = false;
-			if (access.IsGettingIn() || access.IsGettingOut() || access.IsInCompartment())
-				continue;
-
-			foreach (BaseCompartmentSlot seat : ordered)
-			{
-				if (!seat.IsCompartmentAccessible() || seat.IsOccupied() || seat.GetOccupant())
-					continue;
-
-				access.GetInVehicle(vehicle, seat, true, -1, ECloseDoorAfterActions.CLOSE_DOOR, false);
-				break;
-			}
-		}
-
-		if (!allSeated || !usage.GetPilotCompartmentSlot().GetOccupant())
-			return false;
-
-		SCR_AIGroupUtilityComponent utility = group.GetGroupUtilityComponent();
-		if (utility)
-			utility.AddUsableVehicle(usage);
-
-		return true;
+		return AROR_ForceSpawner.SeatGroup(group, vehicle, expectedMembers);
 	}
 
 	//------------------------------------------------------------------------------------------------
