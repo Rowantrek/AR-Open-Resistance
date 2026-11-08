@@ -1,5 +1,5 @@
 MetaFileClass {
- Name "{78DC1F4F738C6F4C}Sounds/Radio/Samples/AROR_EveronUnderground_10_RuskaArtiljerija.wav"
+ Name "{D8E44BC5E3C6E47A}Sounds/Radio/Samples/AROR_EveronUnderground_03_QRFEveronUDGRemix.wav"
  Configurations {
   WAVResourceClass PC : "{F72B05D02F3F135E}Configs/System/ResourceTypes/PC/Sound.conf" {
   }

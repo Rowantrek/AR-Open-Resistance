@@ -30,8 +30,11 @@ class ORRadio_Station
 	[Attribute("SOUND_RADIO", desc: "Event in the audio project")]
 	string m_sEvent;
 
-	[Attribute("3", desc: "Songs between interludes", params: "1 20 1")]
+	[Attribute("3", desc: "Songs between interludes (shuffled stations only)", params: "1 20 1")]
 	int m_iSongsPerInterlude;
+
+	[Attribute("0", desc: "Play the tracks in their listed (album) order, interludes where the album puts them, instead of shuffled songs with an interlude every few")]
+	bool m_bAlbumOrder;
 
 	[Attribute(desc: "Songs and interludes")]
 	ref array<ref ORRadio_Track> m_aTracks;
@@ -45,8 +48,9 @@ class ORRadio_Stations
 	ref array<ref ORRadio_Station> m_aStations;
 }
 
-//! A station's looping running order. Built from a shared seed with integer maths only, so every machine gets the same
-//! order, and a position in the loop is worked out from the server clock: nothing is replicated as tracks change.
+//! A station's looping running order: the album as listed (m_bAlbumOrder), or shuffled songs with an interlude every
+//! few. Shuffles use a shared seed with integer maths only, so every machine gets the same order, and a position in the
+//! loop is worked out from the server clock: nothing is replicated as tracks change.
 class ORRadio_Schedule
 {
 	protected ref array<ORRadio_Track> m_aOrder = {};
@@ -58,6 +62,18 @@ class ORRadio_Schedule
 	{
 		if (!station || !station.m_aTracks)
 			return;
+
+		// Album order: the tracklist as numbered, looping from the first track again
+		if (station.m_bAlbumOrder)
+		{
+			foreach (ORRadio_Track listed : station.m_aTracks)
+			{
+				if (listed && listed.m_iDurationMs > 0)
+					Append(listed);
+			}
+
+			return;
+		}
 
 		array<ORRadio_Track> songs = {};
 		array<ORRadio_Track> interludes = {};

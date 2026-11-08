@@ -1,5 +1,5 @@
 MetaFileClass {
- Name "{B072E8888681C547}Sounds/Radio/Samples/AROR_EveronUnderground_05_NemaSignala.wav"
+ Name "{FD101461808B3A32}Sounds/Radio/Samples/AROR_EveronUnderground_08_NightRaid.wav"
  Configurations {
   WAVResourceClass PC : "{F72B05D02F3F135E}Configs/System/ResourceTypes/PC/Sound.conf" {
   }

@@ -1,5 +1,5 @@
 MetaFileClass {
- Name "{D8E44BC5E3C6E47A}Sounds/Radio/Samples/AROR_EveronUnderground_09_QRFEveronUDGRemix.wav"
+ Name "{F46B954C4CAA67C2}Sounds/Radio/Samples/AROR_EveronUnderground_09_NoWarning.wav"
  Configurations {
   WAVResourceClass PC : "{F72B05D02F3F135E}Configs/System/ResourceTypes/PC/Sound.conf" {
   }

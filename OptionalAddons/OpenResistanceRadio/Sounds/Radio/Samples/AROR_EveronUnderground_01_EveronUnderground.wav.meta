@@ -1,5 +1,5 @@
 MetaFileClass {
- Name "{92E509F16FC63B5B}Sounds/Radio/Samples/AROR_EveronUnderground_02_Interlude2.wav"
+ Name "{B342C4073F04E1B8}Sounds/Radio/Samples/AROR_EveronUnderground_01_EveronUnderground.wav"
  Configurations {
   WAVResourceClass PC : "{F72B05D02F3F135E}Configs/System/ResourceTypes/PC/Sound.conf" {
   }

@@ -322,88 +322,106 @@ AudioClass {
    Selection CustomSignalIndex
    Resampler FIR_8
    Samples {
-    AudioBankSampleClass "AROR_EveronUnderground_01_Interlude1.wav" {
-     Filename "{8F97B2A21F2483CF}Sounds/Radio/Samples/AROR_EveronUnderground_01_Interlude1.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_01_EveronUnderground.wav" {
+     Filename "{B342C4073F04E1B8}Sounds/Radio/Samples/AROR_EveronUnderground_01_EveronUnderground.wav"
      Probability 100
      Index 0
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_02_Interlude2.wav" {
-     Filename "{92E509F16FC63B5B}Sounds/Radio/Samples/AROR_EveronUnderground_02_Interlude2.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_02_NocasGorimo.wav" {
+     Filename "{AD1C1B10C96395D0}Sounds/Radio/Samples/AROR_EveronUnderground_02_NocasGorimo.wav"
      Probability 100
      Index 1
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_03_Interlude3.wav" {
-     Filename "{5864C066D8C1BEA6}Sounds/Radio/Samples/AROR_EveronUnderground_03_Interlude3.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_03_QRFEveronUDGRemix.wav" {
+     Filename "{D8E44BC5E3C6E47A}Sounds/Radio/Samples/AROR_EveronUnderground_03_QRFEveronUDGRemix.wav"
      Probability 100
      Index 2
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_04_IntroEveronUnderground.wav" {
-     Filename "{B342C4073F04E1B8}Sounds/Radio/Samples/AROR_EveronUnderground_04_IntroEveronUnderground.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_04_VoziVozi.wav" {
+     Filename "{58CB59447093B7D2}Sounds/Radio/Samples/AROR_EveronUnderground_04_VoziVozi.wav"
      Probability 100
      Index 3
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_05_NemaSignala.wav" {
-     Filename "{B072E8888681C547}Sounds/Radio/Samples/AROR_EveronUnderground_05_NemaSignala.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_05_URAL.wav" {
+     Filename "{FD3BB99E20C90EB3}Sounds/Radio/Samples/AROR_EveronUnderground_05_URAL.wav"
      Probability 100
      Index 4
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_06_NightRaid.wav" {
-     Filename "{FD101461808B3A32}Sounds/Radio/Samples/AROR_EveronUnderground_06_NightRaid.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_06_NemaSignala.wav" {
+     Filename "{B072E8888681C547}Sounds/Radio/Samples/AROR_EveronUnderground_06_NemaSignala.wav"
      Probability 100
      Index 5
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_07_NoWarning.wav" {
-     Filename "{F46B954C4CAA67C2}Sounds/Radio/Samples/AROR_EveronUnderground_07_NoWarning.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_07_Interlude1.wav" {
+     Filename "{8F97B2A21F2483CF}Sounds/Radio/Samples/AROR_EveronUnderground_07_Interlude1.wav"
      Probability 100
      Index 6
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_08_NocasGorimo.wav" {
-     Filename "{AD1C1B10C96395D0}Sounds/Radio/Samples/AROR_EveronUnderground_08_NocasGorimo.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_08_NightRaid.wav" {
+     Filename "{FD101461808B3A32}Sounds/Radio/Samples/AROR_EveronUnderground_08_NightRaid.wav"
      Probability 100
      Index 7
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_09_QRFEveronUDGRemix.wav" {
-     Filename "{D8E44BC5E3C6E47A}Sounds/Radio/Samples/AROR_EveronUnderground_09_QRFEveronUDGRemix.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_09_NoWarning.wav" {
+     Filename "{F46B954C4CAA67C2}Sounds/Radio/Samples/AROR_EveronUnderground_09_NoWarning.wav"
      Probability 100
      Index 8
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_10_RuskaArtiljerija.wav" {
-     Filename "{78DC1F4F738C6F4C}Sounds/Radio/Samples/AROR_EveronUnderground_10_RuskaArtiljerija.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_10_Treelines.wav" {
+     Filename "{D41953895E42562C}Sounds/Radio/Samples/AROR_EveronUnderground_10_Treelines.wav"
      Probability 100
      Index 9
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_11_Treelines.wav" {
-     Filename "{D41953895E42562C}Sounds/Radio/Samples/AROR_EveronUnderground_11_Treelines.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_11_NoPapersNoPlates.wav" {
+     Filename "{EC765BB013724152}Sounds/Radio/Samples/AROR_EveronUnderground_11_NoPapersNoPlates.wav"
      Probability 100
      Index 10
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_12_URAL.wav" {
-     Filename "{FD3BB99E20C90EB3}Sounds/Radio/Samples/AROR_EveronUnderground_12_URAL.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_12_Interlude2.wav" {
+     Filename "{5864C066D8C1BEA6}Sounds/Radio/Samples/AROR_EveronUnderground_12_Interlude2.wav"
      Probability 100
      Index 11
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_13_USSRRetaliation.wav" {
-     Filename "{E2027A0380DA8D5D}Sounds/Radio/Samples/AROR_EveronUnderground_13_USSRRetaliation.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_13_RuskaArtiljerija.wav" {
+     Filename "{78DC1F4F738C6F4C}Sounds/Radio/Samples/AROR_EveronUnderground_13_RuskaArtiljerija.wav"
      Probability 100
      Index 12
      SampleMetadata ""
     }
-    AudioBankSampleClass "AROR_EveronUnderground_14_VoziVozi.wav" {
-     Filename "{58CB59447093B7D2}Sounds/Radio/Samples/AROR_EveronUnderground_14_VoziVozi.wav"
+    AudioBankSampleClass "AROR_EveronUnderground_14_USSRRetaliation.wav" {
+     Filename "{E2027A0380DA8D5D}Sounds/Radio/Samples/AROR_EveronUnderground_14_USSRRetaliation.wav"
      Probability 100
      Index 13
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_EveronUnderground_15_Interlude3.wav" {
+     Filename "{5CF51CBE7977EE33}Sounds/Radio/Samples/AROR_EveronUnderground_15_Interlude3.wav"
+     Probability 100
+     Index 14
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_EveronUnderground_16_BlueHorizon.wav" {
+     Filename "{226C55CEE4A77BCC}Sounds/Radio/Samples/AROR_EveronUnderground_16_BlueHorizon.wav"
+     Probability 100
+     Index 15
+     SampleMetadata ""
+    }
+    AudioBankSampleClass "AROR_EveronUnderground_17_2027.wav" {
+     Filename "{4E754C1A7FAD2F5A}Sounds/Radio/Samples/AROR_EveronUnderground_17_2027.wav"
+     Probability 100
+     Index 16
      SampleMetadata ""
     }
    }
