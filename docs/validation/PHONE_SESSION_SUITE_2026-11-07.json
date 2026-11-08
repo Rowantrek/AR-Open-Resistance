@@ -1,0 +1,347 @@
+{
+  "generatedAt": "2026-11-07T07:55:43.730Z",
+  "baseCommit": "63e43927c97b5b40f07eebb0ae65185d94c08cce",
+  "nativeVerified": false,
+  "note": "Actual Enforce method bodies with native services mocked; no script compilation, engine input, rendering or native multiplayer execution.",
+  "sourceHashes": {
+    "AROpenResistance/Open Resistance/Scripts/Game/GameFlow/AROR_ModdedPlayerController.c": "9f7c35e043ee9f1286ffc53177b94de0e4a3239eec1d470d2ac230395b8742ac",
+    "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_BankTransferApp.c": "ac8a8fe05aebf682a09acccafcc723e54f2df65d855a58c5177b6218d400926d",
+    "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_BlackMarketApp.c": "780cb24ae26192ab9965d0e79975612a5ea56990da97b74cf52d4b80ec7fb1f7",
+    "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_HiCommApp.c": "b2ec5cea6c7e460cf7cf666924e2721357035c0131c4d77ec6658fd2ebde16d5",
+    "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_HiCommMap.c": "dd384a3e9fca651b4a6eb9e2e0e65e02022fb1fa44dd1da9fe94938d551dbf13",
+    "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_ImportsApp.c": "35fa42459803372fd47518228d22a2a525eb94e27059f3f5917e4fe883d71f41",
+    "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_MarsApp.c": "f32da05ac6c7df4da044c708fc063e07c83f66854666d8535e6c3ad2618236a4",
+    "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_OpsApp.c": "3adb32b29724cf3aa558de54ccca45bd37fa20003c62babec4200d37e209132e",
+    "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_PhoneComponent.c": "38db13d1dadc53de8004366e9d234018c3e6a99a8097af1987e718c0de6874ba",
+    "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_PhoneMenu.c": "ca556fe0fbee48c69de0c7024c2b3269b37bfb3c5c29a254e1a51cbc182c3940",
+    "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_RebIntelApp.c": "3ced3a9244699af9b651edf288ddf635a82fb895de731c04e14eb0cb1672c9a1",
+    "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_SquadApp.c": "68d575d818fbaebb050465ab49cf2c7eadb17d433f0c9c99df4ec920b108cc33",
+    "AROpenResistance/Open Resistance/Scripts/Game/Phone/AROR_PhoneSessionState.c": "80b205dacf54ce8309e51603efc62a6cf4fbefc3f0352817d8c736417c5106a1"
+  },
+  "results": [
+    {
+      "name": "Test-CampaignFlagEditor.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":14,\"note\":\"Mocked editor API; native plugin compile, terrain collision and actual mesh placement still need Workbench.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-CapturePlacement.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":14,\"note\":\"Native traces, navmesh access, replication and driving still require Workbench verification.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-DefenceLayout.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\n  assertions: 177,\n  note: 'Native terrain/trace services mocked; actual bushes, walls, gun height, navigation and AI need Workbench.'\n}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-DefenceSiteAudit.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\n  assertions: 61,\n  note: 'Editor orchestration and geometry services mocked; native compile and dense scan still required.'\n}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-DefenceWallGrounding.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\n  assertions: 21,\n  note: 'Editor invalidation reproduced with mocks; native compile/grounding still required.'\n}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-EveronQRFIntegration.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":50,\"note\":\"Native events, faction manager and response execution mocked; Play verification required.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-FortifiedOutpostLayouts.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\n  assertions: 1477,\n  note: 'Estimated envelopes only; native bounds, terrain, navigation and loot acceptance required.'\n}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-GarrisonCrew.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "<anonymous_script>:4\r\n\t\tif (GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(entity) > 0 || AROR_ResistanceFleet.IsClaimed(entity))\r\n\t\t                                                                                ^\r\n\r\nReferenceError: AROR_ResistanceFleet is not defined\r\n    at Object.eval [as IsPlayerOrForeignAsset] (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonCrew.js:29:10), <anonymous>:4:83)\r\n    at Object.eval [as MaintainCrewSeats_S] (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonCrew.js:29:10), <anonymous>:21:13)\r\n    at Object.eval [as CrewAndOrder] (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonCrew.js:29:10), <anonymous>:4:33)\r\n    at Object.tick (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonCrew.js:55:17)\r\n    at runGarrisonCrewTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonCrew.js:57:22)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonCrew.js:152:14)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-GarrisonsAndSupport.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonsAndSupport.js:23\r\n    if(!m)throw Error('Missing '+name);\r\n          ^\r\n\r\nError: Missing InfantryPrefab\r\n    at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonsAndSupport.js:23:17)\r\n    at roster (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonsAndSupport.js:114:140)\r\n    at runGarrisonsAndSupportTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonsAndSupport.js:117:17)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonsAndSupport.js:566:30)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-InvaderCampaign.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\n  assertions: 55,\n  baselineMeanPercent: 37.8,\n  escalatedMeanPercent: 63.9,\n  note: 'Funded policy model, not native gameplay or sustained income/performance acceptance.'\n}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-MarsAndAttacks.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "<anonymous_script>:10\r\n\t\tthis.GetAvailableProfiles(availableProfiles);\r\n\t\t     ^\r\n\r\nTypeError: this.GetAvailableProfiles is not a function\r\n    at Object.eval [as GetMarsEntries] (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-MarsAndAttacks.js:77:10), <anonymous>:10:8)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-MarsAndAttacks.js:112:29)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-MissionLifecycle.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "<anonymous_script>:14\r\n\t\t\tif (AROR_ForceSpawner.IsDestroyed(vehicle))\r\n\t\t\t^\r\n\r\nReferenceError: AROR_ForceSpawner is not defined\r\n    at Object.eval (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-MissionLifecycle.js:40:12), <anonymous>:14:4)\r\n    at Object.run (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-MissionLifecycle.js:51:56)\r\n    at runMissionLifecycleTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-MissionLifecycle.js:54:32)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-MissionLifecycle.js:113:30)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-OperationAlerts.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":33,\"note\":\"Native headlines, map widgets and replication require Workbench Play.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-OutpostEquipment.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\n  assertions: 27,\n  note: 'Native inventories mocked. Container contents, access, depletion and save/load require Workbench.'\n}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-PhoneSession.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":90,\"note\":\"Actual presentation/lifecycle bodies with native services mocked. Workbench compile, phone input/rendering and real map lifecycle still required.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-PlayerSquadMutations.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":11,\"mutantsDetected\":10,\"nativeVerified\":false,\"results\":[{\"name\":\"client-side renaming\",\"detected\":true},{\"name\":\"pending slots ignored\",\"detected\":true},{\"name\":\"leader checks removed\",\"detected\":true},{\"name\":\"cross-squad dismissal\",\"detected\":true},{\"name\":\"foreign AI parent ignored\",\"detected\":true},{\"name\":\"released membership ignored\",\"detected\":true},{\"name\":\"deleted publication unguarded\",\"detected\":true},{\"name\":\"dead or transferred arrival reused\",\"detected\":true},{\"name\":\"name validation bypassed\",\"detected\":true},{\"name\":\"unchanged snapshots republished\",\"detected\":true}]}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-PlayerSquads.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":408,\"nativeVerified\":false,\"result\":\"Player squad server policy and lifecycle passed\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-PostsAndPads.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-PostsAndPads.js:42\r\n  if(!m)throw Error('Missing actual method '+name);\r\n        ^\r\n\r\nError: Missing actual method InfantryPrefab\r\n    at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-PostsAndPads.js:42:15)\r\n    at runPostsAndPadsTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-PostsAndPads.js:57:219)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-PostsAndPads.js:145:14)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-PresetVehicles.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "Preset vehicle selection, content filtering, role assignment, saved variants and runtime availability checks passed. Workbench validation required.",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFBoarding.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFBoarding.js:18\r\n  if(!m)throw Error('Missing '+name);\r\n        ^\r\n\r\nError: Missing ReplaceIntoSeat\r\n    at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFBoarding.js:18:15)\r\n    at C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFBoarding.js:30:53\r\n    at Array.map (<anonymous>)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFBoarding.js:30:43)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFIngress.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "<anonymous_script>:4\r\n\t\treturn GetMountRejection().IsEmpty();\r\n\t\t^\r\n\r\nReferenceError: GetMountRejection is not defined\r\n    at Object.eval (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFIngress.js:31:12), <anonymous>:4:3)\r\n    at runQRFIngressTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFIngress.js:48:19)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFIngress.js:176:30)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFInterruptions.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "<anonymous_script>:7\r\n\t\tprofile.m_eCrewType = AROR_EUnitType.CREW;\r\n\t\t                      ^\r\n\r\nReferenceError: AROR_EUnitType is not defined\r\n    at eval (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFInterruptions.js:35:9), <anonymous>:7:25)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFInterruptions.js:61:49)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFManagerSoak.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":60024,\"simulatedTicks\":10000,\"admittedOrDeduplicated\":1811,\"rejected\":28189,\"notifications\":5186,\"maxCallbackDepth\":1,\"note\":\"Deterministic mocked scheduler soak; no native driving, combat, network or real-time performance evidence.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFMutations.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFMutations.js:123\r\n  if(!baseline.passed)throw Error('Mutation baseline failed: '+suite+'\\n'+baseline.error);\r\n                      ^\r\n\r\nError: Mutation baseline failed: Test-QRFInterruptions.js\r\n<anonymous_script>:7\r\n\t\tprofile.m_eCrewType = AROR_EUnitType.CREW;\r\n\t\t                      ^\r\n\r\nReferenceError: AROR_EUnitType is not defined\r\n    at eval (eval at compile (Test-QRFInterruptions.js:35:9), <anonymous>:7:25)\r\n    at Test-QRFInterruptions.js:61:49\r\n    at Script.runInContext (node:vm:149:12)\r\n    at Script.runInNewContext (node:vm:154:17)\r\n    at Object.runInNewContext (node:vm:310:38)\r\n    at execute (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFMutations.js:146:10)\r\n    at runQRFMutationTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFMutations.js:122:18)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFMutations.js:149:29)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at runQRFMutationTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFMutations.js:123:29)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFMutations.js:149:29)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFProgression.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFProgression.js:6\r\n  const check=(ok,message)=>{assertions++;if(!ok)throw Error(message);};\r\n                                                 ^\r\n\r\nError: real component defaults start new campaigns at readiness one and response tier one\r\n    at check (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFProgression.js:6:56)\r\n    at runQRFProgressionTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFProgression.js:109:3)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFProgression.js:219:15)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFReleaseLifecycle.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "<anonymous_script>:41\r\n\t\t\tif (!candidate || !candidate.m_bEnabled || !candidate.IsValid() || !candidate.HasPresetVehicles() || candidate.m_eType != AROR_EForceType.AIRBORNE)\r\n\t\t\t                                                                              ^\r\n\r\nTypeError: candidate.HasPresetVehicles is not a function\r\n    at Object.eval (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFReleaseLifecycle.js:38:9), <anonymous>:41:82)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFReleaseLifecycle.js:165:13)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFResponseMix.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":1842,\"note\":\"Actual-source mix, routing, accounting and save checks; native execution remains mocked.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFRetention.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":10,\"note\":\"Native distance culling, AI dormancy and deletion require Workbench Play.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFRouteAudit.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":147,\"note\":\"Audit scheduling and coverage only. Run the sweep in Workbench for native planning evidence.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFStrategy.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "<anonymous_script>:11\r\n\t\tGetAvailableProfiles(availableProfiles);\r\n\t\t^\r\n\r\nReferenceError: GetAvailableProfiles is not defined\r\n    at Object.eval (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFStrategy.js:39:12), <anonymous>:11:3)\r\n    at runQRFTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFStrategy.js:161:48)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFStrategy.js:360:15)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFSupportAndHeadlines.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":94,\"note\":\"Native banner rendering, terrain flight, target spotting and road navigation require Workbench compile and Play.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFTownHold.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":22,\"note\":\"Native navigation, dismounting and town occupation still require Play verification.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFUnloading.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":42,\"note\":\"Native clearance, animation and replication mocked; compile and Play required.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-QRFVehicleFaction.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":14,\"note\":\"Compile and combat test required; no vehicle re-factioning or loss-price changes.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-ReaperLandingSearch.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":159,\"note\":\"Native Lamentin terrain and REAPER landings still require Workbench Play.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-RebIntel.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "<anonymous_script>:36\r\n\t\t\tSCR_PlayerController playerController = SCR_PlayerController.Cast(GetGame().GetPlayerController());\r\n\t\t\t                     ^^^^^^^^^^^^^^^^\r\n\r\nSyntaxError: Unexpected identifier 'playerController'\r\n    at new Function (<anonymous>)\r\n    at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-RebIntel.js:29:12)\r\n    at runRebIntelTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-RebIntel.js:97:108)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-RebIntel.js:114:15)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n\r\nNode.js v24.22.1",
+      "matchesPreviousFailure": true,
+      "newFailure": false
+    },
+    {
+      "name": "Test-StrongholdIntegration.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":95,\"note\":\"Actual-source scripted admission, funding, wave, stronghold lifecycle and save policy. Native placement, flight, garrison queues and multiplayer remain unverified.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    },
+    {
+      "name": "Test-WCSIntegration.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":774,\"effectivePresets\":[\"RHS_USAF_FORECON\",\"RHS_AFRF_MSV_VPKO3_EMR\"],\"forceProfiles\":12,\"note\":\"Actual Enforce selector bodies with native services mocked; ID-based config override model and installed resource indexes. Workbench compile/loading/gameplay still required.\"}",
+      "matchesPreviousFailure": false,
+      "newFailure": false
+    }
+  ],
+  "summary": {
+    "total": 38,
+    "passed": 25,
+    "knownFailures": [
+      "Test-GarrisonCrew.js",
+      "Test-GarrisonsAndSupport.js",
+      "Test-MarsAndAttacks.js",
+      "Test-MissionLifecycle.js",
+      "Test-PostsAndPads.js",
+      "Test-QRFBoarding.js",
+      "Test-QRFIngress.js",
+      "Test-QRFInterruptions.js",
+      "Test-QRFMutations.js",
+      "Test-QRFProgression.js",
+      "Test-QRFReleaseLifecycle.js",
+      "Test-QRFStrategy.js",
+      "Test-RebIntel.js"
+    ],
+    "newFailures": []
+  }
+}

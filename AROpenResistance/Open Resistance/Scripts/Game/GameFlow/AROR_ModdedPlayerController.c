@@ -532,6 +532,10 @@ modded class SCR_PlayerController
 		if (!success)
 			return;
 
+		// The phone may have closed before this owner reply arrived.
+		AROR_PhoneSessionState state = AROR_PhoneComponent.GetSession();
+		if (state)
+			state.m_sTransferAmount = string.Empty;
 		AROR_PhoneMenu phone = AROR_PhoneMenu.GetInstance();
 		if (phone)
 			phone.OnBankTransferSucceeded();

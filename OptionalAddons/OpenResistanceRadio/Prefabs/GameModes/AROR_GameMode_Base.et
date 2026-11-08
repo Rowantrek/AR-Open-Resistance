@@ -1,0 +1,7 @@
+SCR_BaseGameMode : "{49BA4199470D70DA}Prefabs/GameModes/AROR_GameMode_Base.et" {
+ ID "CF8D6EFB39C358F9"
+ components {
+  ORRadio_ManagerComponent "{6D1A7E2C40000001}" {
+  }
+ }
+}

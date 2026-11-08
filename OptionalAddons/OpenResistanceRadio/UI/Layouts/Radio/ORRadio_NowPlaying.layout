@@ -1,0 +1,52 @@
+FrameWidgetClass {
+ Name "ORRadio_NowPlaying"
+ {
+  FrameWidgetClass "{6D77C615F1EB0001}" {
+   Name "Card"
+   Slot FrameWidgetSlot "{6D77C615F1EB0101}" {
+    Anchor 0 0 0 0
+   }
+   {
+    ImageWidgetClass "{6D77C615F1EB0002}" {
+     Name "Plate"
+     Slot FrameWidgetSlot "{6D77C615F1EB0102}" {
+      Anchor 0 0 0 0
+     }
+    }
+    ImageWidgetClass "{6D77C615F1EB0003}" {
+     Name "Art"
+     Slot FrameWidgetSlot "{6D77C615F1EB0103}" {
+      Anchor 0 0 0 0
+     }
+    }
+    RichTextWidgetClass "{6D77C615F1EB0004}" {
+     Name "Kicker"
+     Slot FrameWidgetSlot "{6D77C615F1EB0104}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6D77C615F1EB0204}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass "{6D77C615F1EB0005}" {
+     Name "Station"
+     Slot FrameWidgetSlot "{6D77C615F1EB0105}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6D77C615F1EB0205}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+    RichTextWidgetClass "{6D77C615F1EB0006}" {
+     Name "Title"
+     Slot FrameWidgetSlot "{6D77C615F1EB0106}" {
+      Anchor 0 0 0 0
+     }
+     FontProperties FontProperties "{6D77C615F1EB0206}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
+   }
+  }
+ }
+}

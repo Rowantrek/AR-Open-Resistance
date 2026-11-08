@@ -228,7 +228,7 @@ class AROR_HiCommApp
 	protected ref Color m_ButtonMuted = AROR_HiCommMap.Srgb(12, 24, 17, 1);
 	protected ref Color m_ButtonPanel = AROR_HiCommMap.Srgb(4, 12, 8, 0.93);
 
-	// State (reset each time the phone opens)
+	// Presentation state is restored by the phone for this client session.
 	protected AROR_EHiCommScreen m_eScreen = AROR_EHiCommScreen.LOGIN;
 	protected AROR_EHiCommScreen m_eLastScreen = -1;
 	protected int m_iLoginStart;
@@ -1176,6 +1176,35 @@ class AROR_HiCommApp
 	void Shutdown()
 	{
 		CloseGameMap();
+	}
+
+	void SaveState(notnull AROR_PhoneSessionState state)
+	{
+		state.m_eHiCommScreen = m_eScreen;
+		state.m_aHiCommSelected.Copy(m_aSelected);
+		state.m_eHiCommOrder = m_eSelectedOrder;
+		state.m_sHiCommTarget = m_sSelectedTarget;
+		state.m_vHiCommMoveTarget = m_vMoveTarget;
+		state.m_bHiCommMoveTarget = m_bHasMoveTarget;
+		state.m_bHiCommGameMap = m_bUseGameMap;
+		state.m_bHiCommOrderOfBattle = m_bShowOrderOfBattle;
+		state.m_bHiCommHelp = m_bShowHelp;
+		m_Map.SavePhoneView(state);
+	}
+
+	void RestoreState(notnull AROR_PhoneSessionState state)
+	{
+		// Layout still rechecks live leadership before drawing any command screen.
+		m_eScreen = state.m_eHiCommScreen;
+		m_aSelected.Copy(state.m_aHiCommSelected);
+		m_eSelectedOrder = state.m_eHiCommOrder;
+		m_sSelectedTarget = state.m_sHiCommTarget;
+		m_vMoveTarget = state.m_vHiCommMoveTarget;
+		m_bHasMoveTarget = state.m_bHiCommMoveTarget;
+		m_bUseGameMap = state.m_bHiCommGameMap;
+		m_bShowOrderOfBattle = state.m_bHiCommOrderOfBattle;
+		m_bShowHelp = state.m_bHiCommHelp;
+		m_Map.RestorePhoneView(state);
 	}
 
 	//------------------------------------------------------------------------------------------------

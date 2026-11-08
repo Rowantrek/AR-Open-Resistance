@@ -1,0 +1,8 @@
+GameProject {
+ ID "OpenResistanceRadio"
+ GUID "6DBF9192A9BF58D2"
+ TITLE "Open Resistance - Radio"
+ Dependencies {
+  "6AA282336705EED2" "58D0FB3206B6F859"
+ }
+}

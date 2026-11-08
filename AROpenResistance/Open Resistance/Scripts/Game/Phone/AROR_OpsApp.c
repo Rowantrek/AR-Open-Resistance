@@ -81,7 +81,7 @@ class AROR_OpsApp : AROR_PhonePooledApp
 	protected ref Color m_StatusFill = AROR_HiCommMap.Srgb(230, 168, 58, 0.07);
 	protected ref Color m_Clear = Color.FromRGBA(0, 0, 0, 0);
 
-	// State (reset each time the phone opens)
+	// Presentation state is restored by the phone for this client session.
 	protected AROR_EOpsScreen m_eScreen = AROR_EOpsScreen.LOGIN;
 	protected AROR_EOpsScreen m_eLastScreen = -1;
 	protected int m_iLoginStart;
@@ -94,6 +94,20 @@ class AROR_OpsApp : AROR_PhonePooledApp
 	protected int m_iAbortArmedId = -1;
 	protected int m_iAbortArmedAt;
 	protected int m_iLastFrameMs;
+
+	void SaveState(notnull AROR_PhoneSessionState state)
+	{
+		state.m_eOpsScreen = m_eScreen;
+		state.m_sOpsCategory = m_sCategory;
+		state.m_iOpsSelected = m_iSelectedId;
+	}
+
+	void RestoreState(notnull AROR_PhoneSessionState state)
+	{
+		m_eScreen = state.m_eOpsScreen;
+		m_sCategory = state.m_sOpsCategory;
+		m_iSelectedId = state.m_iOpsSelected;
+	}
 
 	//------------------------------------------------------------------------------------------------
 	bool Init(Widget phoneRoot)
