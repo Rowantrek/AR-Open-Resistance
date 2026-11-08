@@ -510,5 +510,11 @@ FrameWidgetClass {
     }
    }
   }
+  CanvasWidgetClass "{6AB5C0DA3F1EA1B0}" {
+   Name "Earplugs"
+   Slot FrameWidgetSlot "{6AB5C0DA3F1EA1B1}" {
+    Anchor 0 0 0 0
+   }
+  }
  }
 }

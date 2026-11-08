@@ -388,6 +388,11 @@ Purpose: an in-game phone that hosts player-facing apps. Client only.
 - Saved: REBINTEL player settings (HUD widget on/off, compact/full, top left/right, alert pop-ups, tracked enemy) in the player's own profile folder, client-side (`AROR_RebIntelSettings`). Nothing on the server.
 - Planned: app registration so extender mods can add apps; a Settings app and Feed (see `docs/UI_DESIGN.md`).
 
+### Earplugs — In progress
+Purpose: let a player quieten the world. Client only; nothing replicated or saved.
+
+- `AROR_EarplugComponent` (game mode) toggles earplugs with a rebindable keybind (**F2**, action `AROR_ToggleEarplugs` in the shared `AROR_Context`). While in, the player's SFX and Dialog master volume is cut by 75% (factor is a component attribute); pressing again restores the volume they had. Voice chat, music and UI are untouched. A crossed-out ear indicator shows in the top left while they are in, drawn into the Notifications overlay layout.
+
 ### Radio — In progress
 Purpose: music in vehicles. Anyone seated in a vehicle can turn its radio on from the dashboard, and everyone nearby hears the same song at the same point. Ships two stations, **Radio Free Altis 101.3** and **Everon Underground 94.5**.
 

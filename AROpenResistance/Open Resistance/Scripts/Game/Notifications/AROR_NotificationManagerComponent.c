@@ -226,6 +226,21 @@ class AROR_NotificationManagerComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Client. The HUD overlay root (AROR_Notifications layout) for other HUD elements that live in it; null on a
+	//! dedicated server or when the manager is missing
+	static Widget GetOverlayRoot()
+	{
+		if (!s_Instance)
+			return null;
+
+		AROR_NotificationDisplay display = s_Instance.GetDisplay();
+		if (!display)
+			return null;
+
+		return display.GetRoot();
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Created on first use; never on a dedicated server
 	protected AROR_NotificationDisplay GetDisplay()
 	{
