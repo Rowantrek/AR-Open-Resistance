@@ -900,6 +900,9 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			FailOperation(operation, "Ground QRF recipe missing, disabled, unsupported or faction-incompatible");
 			return;
 		}
+		// Recipes list elements in priority order, so a limit keeps the most important ones
+		if (operation.m_iElementLimit > 0 && elements.Count() > operation.m_iElementLimit)
+			elements.Resize(operation.m_iElementLimit);
 		if (recipe.m_eResponseType == AROR_EResponseType.AIR_GROUND)
 		{
 			StartJointResponse(operation, recipe, elements);

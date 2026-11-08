@@ -320,7 +320,8 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 		RecordStrategicEvidence(role);
 		foreach (AROR_Operation operation : m_aOperations)
 		{
-			if (!operation.IsTerminal() && operation.GetRole() == role && operation.GetTargetLocationId() == targetId && operation.GetType() == AROR_EOperationType.QRF)
+			// A town's response waves never absorb an ordinary QRF threat at the same target
+			if (!operation.IsTerminal() && !operation.m_bAssaultWave && operation.GetRole() == role && operation.GetTargetLocationId() == targetId && operation.GetType() == AROR_EOperationType.QRF)
 			{
 				if (captured && !operation.m_bCaptureThreatRecorded)
 				{
@@ -778,7 +779,8 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 		{
 			if (!operation.IsTerminal() && operation.GetType() == AROR_EOperationType.ATTACK)
 				attackOutstanding = true;
-			if (operation.IsTerminal() || operation.GetRole() != role)
+			// Assault waves neither take the target nor count toward the role's operation limit
+			if (operation.IsTerminal() || operation.GetRole() != role || operation.m_bAssaultWave)
 				continue;
 			if (operation.GetTargetLocationId() == targetId)
 			{

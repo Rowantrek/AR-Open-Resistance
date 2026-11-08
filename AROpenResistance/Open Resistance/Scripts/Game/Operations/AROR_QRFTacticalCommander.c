@@ -24,6 +24,8 @@ class AROR_QRFTacticalCommander
 	AROR_EFactionRole m_eRole;	//!< The army this response belongs to
 	bool m_bAssault;	//!< An attack: stage at rally points, then assault on two axes
 	bool m_bJointResponse;	//!< One authored response sharing ground and airborne packages
+	bool m_bConvoy;	//!< Launch in a column along the road and stop together short of the objective
+	float m_fConvoyDismount;	//!< Lead vehicle's stop, metres short of the objective
 	bool m_bAssaultReleased;
 	int m_iStagingDeadline = -1;	//!< Executor clock when the assault goes even if not every package has staged
 	vector m_vContact;
@@ -100,6 +102,14 @@ class AROR_QRFTacticalCommander
 			else
 				m_aWave[index] = 1;
 		}
+	}
+
+	//! Responses that arrive together (a town's convoy waves): every package in the lead wave, whatever the tier.
+	void ForceSingleWave()
+	{
+		m_iFirstWaveCount = m_iPackages;
+		for (int index = 0; index < m_aWave.Count(); index++)
+			m_aWave[index] = 0;
 	}
 
 	bool IsReserve(int index)
