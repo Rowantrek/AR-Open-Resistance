@@ -50,7 +50,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_iQRFSplitTier 5
    m_iQRFReinforcementDelay 60
    m_iQRFReserveWait 450
-   m_iQRFMaxLiveGround 6
+   m_iQRFMaxLiveGround 10
    m_iQRFMaxLiveAircraft 6
    m_iQRFTacticalDuration 600
    m_iQRFTownHoldDuration 900
@@ -246,6 +246,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
       "us_motorized"
+      "us_motorized"
       "us_light_support"
      }
     }
@@ -257,6 +258,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
+      "us_motorized"
       "us_motorized"
       "us_motorized"
       "us_light_support"
@@ -386,6 +388,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
       "ussr_motorized"
+      "ussr_motorized"
       "ussr_light_support"
      }
     }
@@ -397,6 +400,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
+      "ussr_motorized"
       "ussr_motorized"
       "ussr_motorized"
       "ussr_light_support"
@@ -688,6 +692,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_aProfileIds {
       "us_airborne"
       "us_motorized"
+      "us_motorized"
       "us_light_support"
      }
     }
@@ -701,6 +706,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sFactionKey "AROR_OCCUPIERS"
      m_aProfileIds {
       "us_airborne"
+      "us_motorized"
       "us_motorized"
       "us_motorized"
       "us_light_support"
@@ -848,6 +854,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_aProfileIds {
       "ussr_airborne"
       "ussr_motorized"
+      "ussr_motorized"
       "ussr_light_support"
      }
     }
@@ -861,6 +868,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
       "ussr_airborne"
+      "ussr_motorized"
       "ussr_motorized"
       "ussr_motorized"
       "ussr_light_support"
@@ -997,6 +1005,312 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "ussr_light_support"
      }
     }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_townwave1_r1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_motorized"
+      "us_light_support"
+      "us_motorized"
+      "us_light_support"
+      "us_motorized"
+     }
+     m_iAssaultWave 1
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_townwave2_r1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_light_support"
+      "us_motorized"
+      "us_light_support"
+      "us_motorized"
+      "us_motorized"
+     }
+     m_iAssaultWave 2
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_townwave3_r1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_light_support"
+      "us_motorized"
+      "us_motorized"
+      "us_light_support"
+      "us_motorized"
+      "us_light_support"
+     }
+     m_iAssaultWave 3
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_townwave1_r3"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_motorized"
+      "us_mechanized"
+      "us_light_support"
+      "us_motorized"
+      "us_mechanized"
+     }
+     m_iAssaultWave 1
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_townwave2_r3"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_mechanized"
+      "us_motorized"
+      "us_mechanized"
+      "us_light_support"
+      "us_motorized"
+     }
+     m_iAssaultWave 2
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_townwave3_r3"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_mechanized"
+      "us_motorized"
+      "us_mechanized"
+      "us_light_support"
+      "us_mechanized"
+      "us_motorized"
+     }
+     m_iAssaultWave 3
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_townwave1_r5"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_motorized"
+      "us_mechanized"
+      "us_motorized"
+      "us_mechanized"
+      "us_light_support"
+      "us_motorized"
+     }
+     m_iAssaultWave 1
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_townwave2_r5"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_mechanized"
+      "us_mechanized"
+      "us_motorized"
+      "us_armour"
+      "us_motorized"
+      "us_mechanized"
+     }
+     m_iAssaultWave 2
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_townwave3_r5"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_armour"
+      "us_mechanized"
+      "us_motorized"
+      "us_armour"
+      "us_mechanized"
+      "us_motorized"
+     }
+     m_iAssaultWave 3
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_townwave1_r1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_light_support"
+      "ussr_motorized"
+      "ussr_light_support"
+      "ussr_motorized"
+     }
+     m_iAssaultWave 1
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_townwave2_r1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_light_support"
+      "ussr_motorized"
+      "ussr_light_support"
+      "ussr_motorized"
+      "ussr_motorized"
+     }
+     m_iAssaultWave 2
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_townwave3_r1"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 1
+     m_iMaximumReadinessLevel 2
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_light_support"
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_light_support"
+      "ussr_motorized"
+      "ussr_light_support"
+     }
+     m_iAssaultWave 3
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_townwave1_r3"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_light_support"
+      "ussr_motorized"
+      "ussr_mechanized"
+     }
+     m_iAssaultWave 1
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_townwave2_r3"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_light_support"
+      "ussr_motorized"
+     }
+     m_iAssaultWave 2
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_townwave3_r3"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 3
+     m_iMaximumReadinessLevel 4
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_mechanized"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_light_support"
+      "ussr_mechanized"
+      "ussr_motorized"
+     }
+     m_iAssaultWave 3
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_townwave1_r5"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_motorized"
+      "ussr_mechanized"
+      "ussr_light_support"
+      "ussr_motorized"
+     }
+     m_iAssaultWave 1
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_townwave2_r5"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_mechanized"
+      "ussr_mechanized"
+      "ussr_motorized"
+      "ussr_armour"
+      "ussr_motorized"
+      "ussr_mechanized"
+     }
+     m_iAssaultWave 2
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_townwave3_r5"
+     m_iLevel 1
+     m_iMinimumReadinessLevel 5
+     m_iMaximumReadinessLevel 5
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_armour"
+      "ussr_mechanized"
+      "ussr_motorized"
+      "ussr_armour"
+      "ussr_mechanized"
+      "ussr_motorized"
+     }
+     m_iAssaultWave 3
+    }
    }
    m_fReaperTransportSpeed 160
    m_fReaperTransportHeight 60
@@ -1023,7 +1337,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_vInvadersSpawnPosition 5950 0 6080
    m_iMaxGroups 24
    m_iMaxMembers 220
-   m_iMaxVehicles 12
+   m_iMaxVehicles 16
    m_sWorkbenchForceProfileId ""
    m_iWorkbenchResponseLevel 1
    m_fPackageSpacing 35

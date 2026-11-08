@@ -46,8 +46,21 @@ $grp GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et"
    AROR_SettlementComponent "{6AAE72CBD95477C1}" {
     m_iPopulation 35
    }
+   AROR_GarrisonComponent "{4C958DCD1962312B}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{F03EF4C88CB0254B}" {
+   }
+   AROR_TownLifeComponent "{13241BF553181DFF}" {
+   }
   }
   coords 5760.571 217.282 7061.821
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "7EEC545543C691C8"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_meaux {
   components {
@@ -62,8 +75,21 @@ $grp GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et"
    AROR_SettlementComponent "{6AAE72CBD95477C1}" {
     m_iPopulation 50
    }
+   AROR_GarrisonComponent "{1D6CDF2993DAF903}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{CB591723E2673450}" {
+   }
+   AROR_TownLifeComponent "{97BC3B78B71E0BC9}" {
+   }
   }
   coords 4517.52 14.462 9467.668
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "B34874B3B18F90D4"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_figari {
   components {
@@ -78,8 +104,21 @@ $grp GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et"
    AROR_SettlementComponent "{6AAE72CBD95477C1}" {
     m_iPopulation 40
    }
+   AROR_GarrisonComponent "{6C52F4079DB87A42}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{57DD6AAB3AF98BC4}" {
+   }
+   AROR_TownLifeComponent "{06EA42C021A3D307}" {
+   }
   }
   coords 5256.366 62.647 5341.263
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "4923814263FADE2C"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_durras {
   components {
@@ -94,8 +133,21 @@ $grp GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et"
    AROR_SettlementComponent "{6AAE72CBD95477C1}" {
     m_iPopulation 40
    }
+   AROR_GarrisonComponent "{54C6B7BDD732D1F4}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{CFFC994C7B87E297}" {
+   }
+   AROR_TownLifeComponent "{BB459B6F014C126F}" {
+   }
   }
   coords 8826.12 95.068 2746.123
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "4CE882FD06BD13D4"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_camurac {
   components {
@@ -110,8 +162,21 @@ $grp GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et"
    AROR_SettlementComponent "{6AAE72CBD95477C1}" {
     m_iPopulation 25
    }
+   AROR_GarrisonComponent "{428F2BCD2BE5F8E4}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{EA7F2648CD557551}" {
+   }
+   AROR_TownLifeComponent "{7529D139A7D34507}" {
+   }
   }
   coords 6594.162 6.114 3116.684
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "ED31971199D285BA"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_provins {
   components {
@@ -126,8 +191,21 @@ $grp GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et"
    AROR_SettlementComponent "{6AAE72CBD95477C1}" {
     m_iPopulation 45
    }
+   AROR_GarrisonComponent "{A91D986F2F9DCEAC}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{A7DA80FA4D02FFFD}" {
+   }
+   AROR_TownLifeComponent "{D9C7E083CCA2D0AF}" {
+   }
   }
   coords 5503.833 96.354 6081.837
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "547526AB00875612"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_kermovan {
   components {
@@ -142,8 +220,21 @@ $grp GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et"
    AROR_SettlementComponent "{6AAE72CBD95477C1}" {
     m_iPopulation 35
    }
+   AROR_GarrisonComponent "{FD3DF4EC86C07D86}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{4199A2D4EAC35527}" {
+   }
+   AROR_TownLifeComponent "{82B82CCE224D4FC2}" {
+   }
   }
   coords 6359.376 6.748 9668.684
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "C02EEE623BF870F3"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_gravette {
   components {
@@ -158,8 +249,21 @@ $grp GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et"
    AROR_SettlementComponent "{6AAE72CBD95477C1}" {
     m_iPopulation 40
    }
+   AROR_GarrisonComponent "{B22C5FE7D9EFEA92}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{0B1A1095AD248A54}" {
+   }
+   AROR_TownLifeComponent "{6C2560C193EFD7EA}" {
+   }
   }
   coords 4128.282 36.576 7792.364
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "4B0C0D98F3830FE3"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_regina {
   components {
@@ -174,8 +278,21 @@ $grp GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et"
    AROR_SettlementComponent "{6AAE72CBD95477C1}" {
     m_iPopulation 40
    }
+   AROR_GarrisonComponent "{E51A303A6F499164}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{760C20A618E6A757}" {
+   }
+   AROR_TownLifeComponent "{752C2BADEFFA5902}" {
+   }
   }
   coords 7188.38 137.478 2312.382
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "3A147DD5EEBE9CC6"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_villeneuve {
   components {
@@ -190,8 +307,21 @@ $grp GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et"
    AROR_SettlementComponent "{6AAE72CBD95477C1}" {
     m_iPopulation 35
    }
+   AROR_GarrisonComponent "{D016B048AC7058FE}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{A14EF345010A295A}" {
+   }
+   AROR_TownLifeComponent "{DB9D7E86A2CDCAA3}" {
+   }
   }
   coords 2847.008 86.844 6339.848
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "629E87064A6D81FC"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_tyrone {
   components {
@@ -206,8 +336,21 @@ $grp GenericEntity : "{A744BF492EFD2B54}Prefabs/Locations/AROR_Location_Town.et"
    AROR_SettlementComponent "{6AAE72CBD95477C1}" {
     m_iPopulation 25
    }
+   AROR_GarrisonComponent "{AF66BDDF7475C5E7}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{346616005020913D}" {
+   }
+   AROR_TownLifeComponent "{D4CF0BC2F50B2BA9}" {
+   }
   }
   coords 4948.837 38.124 9075.68
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "7A6CDB5355AD8FC0"
+    coords 0 0 0
+   }
+  }
  }
 }
 $grp GenericEntity : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et" {
@@ -224,8 +367,21 @@ $grp GenericEntity : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et"
    AROR_SettlementComponent "{6AAE72CBC3214551}" {
     m_iPopulation 140
    }
+   AROR_GarrisonComponent "{C16D18017325C0D7}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{A95FD65FAE6A4FCD}" {
+   }
+   AROR_TownLifeComponent "{73673627AC170B7A}" {
+   }
   }
   coords 4500.872 12.835 10776.053
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "A8249C7E292C33D7"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_montignac {
   components {
@@ -240,8 +396,21 @@ $grp GenericEntity : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et"
    AROR_SettlementComponent "{6AAE72CBC3214551}" {
     m_iPopulation 160
    }
+   AROR_GarrisonComponent "{A2FAAC8377F22CB9}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{ECE23D7F4C8D7739}" {
+   }
+   AROR_TownLifeComponent "{0DF43DC06027803F}" {
+   }
   }
   coords 4775.641 164.054 7086.945
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "5AEBA0441CE9D86C"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_saint_pierre {
   components {
@@ -256,8 +425,21 @@ $grp GenericEntity : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et"
    AROR_SettlementComponent "{6AAE72CBC3214551}" {
     m_iPopulation 100
    }
+   AROR_GarrisonComponent "{2C91C1F66AC9704F}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{C199D9BBFC20A838}" {
+   }
+   AROR_TownLifeComponent "{C9D619C342ECE99C}" {
+   }
   }
   coords 9689.432 12.569 1558.166
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "59B62D069679EBC2"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_morton_town {
   components {
@@ -272,8 +454,21 @@ $grp GenericEntity : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et"
    AROR_SettlementComponent "{6AAE72CBC3214551}" {
     m_iPopulation 100
    }
+   AROR_GarrisonComponent "{C2A25FF9FA49F06E}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{E68DBDD81438E896}" {
+   }
+   AROR_TownLifeComponent "{825C32FF18264874}" {
+   }
   }
   coords 5132.015 16.575 4008.557
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "71B16D9B2075EB01"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_lamentin_town {
   components {
@@ -288,8 +483,21 @@ $grp GenericEntity : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et"
    AROR_SettlementComponent "{6AAE72CBC3214551}" {
     m_iPopulation 100
    }
+   AROR_GarrisonComponent "{2F52739EB804150B}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{3717938399C9C26B}" {
+   }
+   AROR_TownLifeComponent "{99B208BF48BAF9BD}" {
+   }
   }
   coords 1308.509 38.292 5985.583
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "6045C8CBB121E690"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_chotain {
   components {
@@ -304,8 +512,21 @@ $grp GenericEntity : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et"
    AROR_SettlementComponent "{6AAE72CBC3214551}" {
     m_iPopulation 100
    }
+   AROR_GarrisonComponent "{642D33CEE0E8409C}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{23A9338E4C6EE8A9}" {
+   }
+   AROR_TownLifeComponent "{73FB98F5F0A7BC81}" {
+   }
   }
   coords 7087.74 118.867 6011.904
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "D9815B7CBBE1AFEA"
+    coords 0 0 0
+   }
+  }
  }
  AROR_Location_everon_levie {
   components {
@@ -320,7 +541,20 @@ $grp GenericEntity : "{CCD444F168F300B9}Prefabs/Locations/AROR_Location_City.et"
    AROR_SettlementComponent "{6AAE72CBC3214551}" {
     m_iPopulation 120
    }
+   AROR_GarrisonComponent "{4EB953A14D0D9DA1}" {
+    m_bSettlementPost 1
+   }
+   AROR_TownWavesComponent "{71DE3CD8CCECD2F5}" {
+   }
+   AROR_TownLifeComponent "{F478B4B62DCC580E}" {
+   }
   }
   coords 7456.592 137.273 4737.094
+  {
+   GenericEntity : "{AE9B75D00D75366B}Prefabs/Props/Locations/AROR_Prop_CaptureFlag.et" {
+    ID "9546F18D6DA55DE9"
+    coords 0 0 0
+   }
+  }
  }
 }
