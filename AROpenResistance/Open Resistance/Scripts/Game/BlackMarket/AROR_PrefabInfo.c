@@ -89,13 +89,40 @@ class AROR_PrefabInfo
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! The search of SCR_EntityCatalogManagerComponent.GetEntryWithPrefabFromAnyCatalog (general catalogue, then each
+	//! faction's), without its warning for every faction lacking a catalogue of the type: the AROR factions have no
+	//! item catalogues, so each new prefab a shop list or the leaderboard looked up logged four warnings.
 	protected static SCR_UIInfo FindUiInfoOfType(ResourceName prefab, EEntityCatalogType type)
 	{
 		SCR_EntityCatalogManagerComponent catalogs = SCR_EntityCatalogManagerComponent.GetInstance();
 		if (!catalogs || prefab.IsEmpty())
 			return null;
 
-		SCR_EntityCatalogEntry entry = catalogs.GetEntryWithPrefabFromAnyCatalog(type, prefab, null);
+		SCR_EntityCatalogEntry entry;
+		SCR_EntityCatalog catalog = catalogs.GetEntityCatalogOfType(type, false);
+		if (catalog)
+			entry = catalog.GetEntryWithPrefab(prefab);
+
+		SCR_FactionManager factionManager = SCR_FactionManager.Cast(GetGame().GetFactionManager());
+		if (!entry && factionManager)
+		{
+			array<Faction> factions = {};
+			factionManager.GetFactionsList(factions);
+			foreach (Faction faction : factions)
+			{
+				SCR_Faction scrFaction = SCR_Faction.Cast(faction);
+				if (!scrFaction)
+					continue;
+
+				catalog = scrFaction.GetFactionEntityCatalogOfType(type, false);
+				if (catalog)
+					entry = catalog.GetEntryWithPrefab(prefab);
+
+				if (entry)
+					break;
+			}
+		}
+
 		if (!entry)
 			return null;
 
