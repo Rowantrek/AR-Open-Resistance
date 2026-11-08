@@ -37,6 +37,41 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 		return location.SetControllingRole_S(role);
 	}
 
+	//! A town or city's garrison post, if the location has one (see AROR_GarrisonComponent.IsSettlementPost)
+	static AROR_GarrisonComponent GetSettlementPost(AROR_LocationComponent location)
+	{
+		if (!location)
+			return null;
+		AROR_GarrisonComponent garrison = AROR_GarrisonComponent.Cast(location.GetOwner().FindComponent(AROR_GarrisonComponent));
+		if (!garrison || !garrison.IsSettlementPost())
+			return null;
+		return garrison;
+	}
+
+	//! Taking a settlement post's flag never changes control directly: it swings support towards the taker (which
+	//! may flip the town through Settlements) and breaks the post until it re-forms
+	static bool TakeSettlementPost_S(AROR_LocationComponent location, AROR_EFactionRole role)
+	{
+		AROR_GarrisonComponent post = GetSettlementPost(location);
+		if (!Replication.IsServer() || !post || post.IsPostBroken() || role == location.GetControllingRole())
+			return false;
+		post.BreakSettlementPost_S();
+		AROR_SettlementComponent settlement = AROR_SettlementComponent.Cast(location.GetOwner().FindComponent(AROR_SettlementComponent));
+		if (settlement)
+			settlement.AddSupport_S(role, post.GetPostSupportSwing());
+		string name = location.GetName();
+		name.ToUpper();
+		string text = string.Format("%1 GARRISON POST TAKEN / Support for the Resistance rises", name);
+		AROR_NotificationManagerComponent.Send_S(new AROR_Notification(AROR_ENotificationType.HEADLINE, text, location.GetMapIcon(), AROR_UIColors.Get(AROR_UIColors.REBEL), "INTEL"));
+		return true;
+	}
+
+	//! Locations whose flag this action works on: military captures and settlement posts
+	protected static bool IsActionLocation(AROR_LocationComponent location)
+	{
+		return IsCapturableLocation(location) || GetSettlementPost(location) != null;
+	}
+
 	//! The hostile check queries a large area, so cache it while the player looks at the flag
 	protected static const float HOSTILE_CHECK_INTERVAL_MS = 1000;
 
@@ -83,7 +118,12 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 			return m_bHostilesPresent;
 
 		AROR_LocationComponent location = GetLocation();
-		m_bHostilesPresent = AROR_HostilesQuery.HasHostilesInRadius(userFaction, location.GetCenter(), location.GetRadius());
+		// A settlement post is cleared around its flag, not across the whole town (patrols and checkpoints roam)
+		AROR_GarrisonComponent post = GetSettlementPost(location);
+		if (post)
+			m_bHostilesPresent = AROR_HostilesQuery.HasHostilesInRadius(userFaction, post.GetDefenceCenter(), post.GetPostClearRadius());
+		else
+			m_bHostilesPresent = AROR_HostilesQuery.HasHostilesInRadius(userFaction, location.GetCenter(), location.GetRadius());
 		m_fLastHostileCheckTime = now;
 		return m_bHostilesPresent;
 	}
@@ -103,13 +143,18 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 	override bool CanBeShownScript(IEntity user)
 	{
 		AROR_LocationComponent location = GetLocation();
-		if (!IsCapturableLocation(location) || location.IsControlFixed())
+		if (!IsActionLocation(location) || location.IsControlFixed())
 			return false;
 
 		AROR_EFactionRole role;
 		Faction faction;
 		if (!GetUserRole(user, role, faction))
 			return false;
+
+		// A settlement post is only taken from an AI army that holds the town, and only while it stands
+		AROR_GarrisonComponent post = GetSettlementPost(location);
+		if (post)
+			return role == AROR_EFactionRole.RESISTANCE && AROR_GarrisonPolicy.IsEnemyRole(location.GetControllingRole()) && !post.IsPostBroken();
 
 		return role != location.GetControllingRole();
 	}
@@ -120,10 +165,17 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 		AROR_LocationComponent location = GetLocation();
 		AROR_EFactionRole role;
 		Faction faction;
-		if (!IsCapturableLocation(location) || !GetUserRole(user, role, faction))
+		if (!IsActionLocation(location) || !GetUserRole(user, role, faction))
 			return false;
 
-		if (!location.CanBeTakenBy(role))
+		AROR_GarrisonComponent post = GetSettlementPost(location);
+		if (post && post.IsPostBroken())
+		{
+			SetCannotPerformReason("Garrison post already taken");
+			return false;
+		}
+
+		if (!post && !location.CanBeTakenBy(role))
 		{
 			SetCannotPerformReason("Recently captured");
 			return false;
@@ -153,17 +205,20 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 		AROR_LocationComponent location = GetLocation();
 		AROR_EFactionRole role;
 		Faction faction;
-		if (!IsCapturableLocation(location) || !GetUserRole(pUserEntity, role, faction))
+		if (!IsActionLocation(location) || !GetUserRole(pUserEntity, role, faction))
 			return;
 
 		// Authoritative re-check without the cache; the player is told why it failed
+		bool settlementPost = GetSettlementPost(location) != null;
 		string rejection;
 		string deploymentReason = GetDefenceBlockReason();
 		if (HasHostiles(faction, false))
 			rejection = "Can't capture: hostiles in the area";
 		else if (!deploymentReason.IsEmpty())
 			rejection = "Can't capture: " + deploymentReason;
-		else if (!CaptureLocation_S(location, role))
+		else if (settlementPost && (role != AROR_EFactionRole.RESISTANCE || !TakeSettlementPost_S(location, role)))
+			rejection = "Can't capture: the garrison post is already taken";
+		else if (!settlementPost && !CaptureLocation_S(location, role))
 			rejection = "Can't capture: recently captured";
 
 		if (!rejection.IsEmpty())
@@ -188,6 +243,8 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 			return false;
 
 		outName = string.Format("Capture %1", location.GetName());
+		if (GetSettlementPost(location))
+			outName = string.Format("Take %1 garrison post", location.GetName());
 		return true;
 	}
 

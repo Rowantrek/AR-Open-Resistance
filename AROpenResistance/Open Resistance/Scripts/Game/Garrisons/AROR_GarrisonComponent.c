@@ -5,6 +5,12 @@ class AROR_GarrisonComponent : ScriptComponent
 {
 	[Attribute("1", desc: "Allow a defence roster for this installation")]
 	protected bool m_bHasGarrison;
+	[Attribute("0", desc: "Town or city garrison post: defenders hold the capture flag's spot, sized by the holding army's Crackdown when the roster is raised. Taking the flag swings support instead of control and breaks the post until it re-forms.", category: "Settlement post")]
+	protected bool m_bSettlementPost;
+	[Attribute("30", desc: "Resistance support gained (percentage points) when players take the post's flag", params: "0 100 1", category: "Settlement post")]
+	protected float m_fPostSupportSwing;
+	[Attribute("2700", desc: "Seconds after the post is taken before the holding army raises a new garrison there (while it still holds the town and no players are near)", params: "300 14400 60", category: "Settlement post")]
+	protected int m_iPostReformSeconds;
 	[Attribute("0", desc: "Defence level override, 0 = type/random recipe", params: "0 4 1")]
 	protected int m_iDefenceLevel;
 	[Attribute("0", desc: "Static weapon count override; zero uses the defence-level recipe. Authored positions and crew staging are required for every added weapon.", params: "0 6 1")]
@@ -74,6 +80,10 @@ class AROR_GarrisonComponent : ScriptComponent
 	protected bool m_bPendingDefense;
 	[RplProp()]
 	protected string m_sPendingDefenseReason;
+	//! A settlement post whose flag the Resistance took; nobody defends it until it re-forms. Not saved: a restored
+	//! all-lost post re-forms on its own (see RestoreRoster_S).
+	[RplProp()]
+	protected bool m_bPostBroken;
 	protected bool m_bDeploymentDeferred;
 	protected int m_iNextGroup;
 	protected int m_iNextAsset;
@@ -113,7 +123,72 @@ class AROR_GarrisonComponent : ScriptComponent
 	{
 		if (m_iStaticWeaponCountOverride > 0)
 			return Math.Clamp(m_iStaticWeaponCountOverride, 1, 6);
+		if (IsSettlementPost())
+			return AROR_GarrisonPolicy.SettlementStaticCount(level);
 		return AROR_GarrisonPolicy.StaticCount(level);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every machine: a town or city garrison post (see m_bSettlementPost)
+	bool IsSettlementPost()
+	{
+		if (!m_bSettlementPost || !m_Location)
+			return false;
+		AROR_ELocationType type = m_Location.GetLocationType();
+		return type == AROR_ELocationType.TOWN || type == AROR_ELocationType.CITY;
+	}
+	bool IsPostBroken() { return m_bPostBroken; }
+	float GetPostSupportSwing() { return m_fPostSupportSwing; }
+	//! Radius around the flag that must be clear of hostiles before the post can be taken
+	float GetPostClearRadius() { return GetDefenceHalfExtent() * 1.5 + 30; }
+
+	//------------------------------------------------------------------------------------------------
+	//! Server: the Resistance took the post's flag. Nothing left in the roster deploys again; the post re-forms later.
+	void BreakSettlementPost_S()
+	{
+		if (!Replication.IsServer() || !IsSettlementPost() || m_bPostBroken)
+			return;
+		foreach (AROR_GarrisonSlot slot : m_aSlots)
+			slot.m_bLost = true;
+		m_bPostBroken = true;
+		Replication.BumpMe();
+		ScheduleReform_S(m_iPostReformSeconds);
+		Print(string.Format("[AROR GARRISON] %1 settlement post taken; re-forms in %2s", m_Location.GetId(), m_iPostReformSeconds), LogLevel.NORMAL);
+	}
+
+	protected void ScheduleReform_S(int seconds)
+	{
+		GetGame().GetCallqueue().Remove(ReformSettlementPost_S);
+		GetGame().GetCallqueue().CallLater(ReformSettlementPost_S, Math.Max(seconds, 60) * 1000);
+	}
+
+	//! A fresh roster is raised at the next activation, at the Crackdown of that moment. Waits while the post is
+	//! deployed (players nearby) and while the town is held by the Resistance.
+	protected void ReformSettlementPost_S()
+	{
+		if (!Replication.IsServer() || !m_Location)
+			return;
+		if (m_bActive || !AROR_GarrisonPolicy.IsEnemyRole(m_Location.GetControllingRole()))
+		{
+			ScheduleReform_S(300);
+			return;
+		}
+		ResetRoster_S();
+		m_bPostBroken = false;
+		Replication.BumpMe();
+		Print(string.Format("[AROR GARRISON] %1 settlement post re-formed for %2", m_Location.GetId(), m_Location.GetControllingRole()), LogLevel.NORMAL);
+	}
+
+	protected bool IsRosterSpent()
+	{
+		if (!m_bGenerated || m_aSlots.IsEmpty())
+			return false;
+		foreach (AROR_GarrisonSlot slot : m_aSlots)
+		{
+			if (!slot.m_bLost)
+				return false;
+		}
+		return true;
 	}
 	AROR_EFactionRole GetRosterRole() { return m_eRosterRole; }
 	string GetRosterFaction() { return m_sFactionKey; }
@@ -244,7 +319,7 @@ class AROR_GarrisonComponent : ScriptComponent
 	}
 	bool IsEligible()
 	{
-		return m_bHasGarrison && m_Location && AROR_CaptureLocationAction.IsCapturableLocation(m_Location);
+		return m_bHasGarrison && m_Location && (AROR_CaptureLocationAction.IsCapturableLocation(m_Location) || IsSettlementPost());
 	}
 	//! Once real personnel have deployed and all submitted native queues have
 	//! resolved, capture depends on actual hostile presence, not unused recipe slots.
@@ -492,6 +567,15 @@ class AROR_GarrisonComponent : ScriptComponent
 			m_iLevel = Math.Clamp(m_iDefenceLevel, 1, 4);
 		if (m_Location.GetLocationType() == AROR_ELocationType.AIRPORT)
 			m_iLevel = 4;
+		// Crackdown sizes a settlement post when it is raised; the saved roster keeps that size until it re-forms
+		if (IsSettlementPost() && m_iDefenceLevel <= 0)
+		{
+			int crackdownLevel = 1;
+			AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+			if (operations)
+				crackdownLevel = operations.GetCrackdownLevel(faction.m_eRole);
+			m_iLevel = AROR_GarrisonPolicy.SettlementLevel(m_Location.GetLocationType(), crackdownLevel);
+		}
 		// An outpost override may strengthen infantry/statics, never add armour.
 		int group;
 		for (int team = 0; team < AROR_GarrisonPolicy.InfantryTeams(m_iLevel) + GetExtraInfantryTeams(); team++)
@@ -804,7 +888,8 @@ class AROR_GarrisonComponent : ScriptComponent
 		if (!HasSuitableDefenceTerrain_S())
 		{
 			bool onFoot = slot.m_iKind == 0 || (slot.m_iKind == 4 && (slot.m_iVehicle < 0 || m_aSlots[slot.m_iVehicle].m_bLost));
-			if (!m_bInfantryTerrainFallback || !onFoot)
+			// Town posts stand among buildings and rarely fit a flat compound: their infantry always deploys
+			if ((!m_bInfantryTerrainFallback && !IsSettlementPost()) || !onFoot)
 				return false;
 		}
 		if (slot.m_bPlaced)
@@ -1796,6 +1881,12 @@ class AROR_GarrisonComponent : ScriptComponent
 		m_bGenerated = true;
 		m_bAssetsBound = false;
 		DetachOrphanedCrew_S();
+		// A post taken before the save comes back broken and re-forms on the normal timer
+		if (IsSettlementPost() && IsRosterSpent())
+		{
+			m_bPostBroken = true;
+			ScheduleReform_S(m_iPostReformSeconds);
+		}
 	}
 	//! Unsupported/damaged headers quarantine the section instead of generating free replacements.
 	void QuarantineRoster_S(string reason)
@@ -1874,6 +1965,8 @@ class AROR_GarrisonComponent : ScriptComponent
 	}
 	override void OnDelete(IEntity owner)
 	{
+		if (GetGame())
+			GetGame().GetCallqueue().Remove(ReformSettlementPost_S);
 		if (GetGame() && Replication.IsServer() && m_bActive)
 			Retire_S();
 		super.OnDelete(owner);
