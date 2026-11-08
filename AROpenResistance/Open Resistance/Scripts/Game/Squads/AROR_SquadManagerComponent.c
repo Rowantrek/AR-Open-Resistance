@@ -319,6 +319,24 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 		return true;
 	}
 
+	//! In the squad's native command group, by membership flag or by the agent's actual group (either can update first)
+	protected bool IsInCommandGroup(SCR_ChimeraCharacter character, SCR_AIGroup commandGroup)
+	{
+		if (!character || !commandGroup)
+			return false;
+		return commandGroup.IsAIControlledCharacterMember(character) || GetCharacterGroup(character) == commandGroup;
+	}
+
+	//! The recruit now belongs to the native squad; its temporary spawn group is no longer needed
+	protected void MarkJoined(notnull AROR_SquadRecruit recruit, SCR_AIGroup commandGroup)
+	{
+		recruit.m_bJoined = true;
+		recruit.m_CommandGroup = commandGroup;
+		if (recruit.m_SpawnGroup)
+			SCR_EntityHelper.DeleteEntityAndChildren(recruit.m_SpawnGroup);
+		recruit.m_SpawnGroup = null;
+	}
+
 	//! The engine may spawn the member later. Do not attach it until the preset outfitter has dressed it.
 	protected void Update_S()
 	{
@@ -336,7 +354,7 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 			if (recruit.m_bJoined)
 			{
 				SCR_AIGroup slave = recruit.m_Master.GetSlave();
-				if (!AROR_ForceSpawner.IsAlive(recruit.m_Character) || !slave || !slave.IsAIControlledCharacterMember(recruit.m_Character))
+				if (!AROR_ForceSpawner.IsAlive(recruit.m_Character) || !IsInCommandGroup(recruit.m_Character, slave))
 					RemoveRecruit_S(i, false);
 				continue;
 			}
@@ -345,6 +363,14 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 			if (!members.IsEmpty())
 				recruit.m_Character = SCR_ChimeraCharacter.Cast(members[0]);
 			AIGroup currentGroup = GetCharacterGroup(recruit.m_Character);
+			SCR_AIGroup commandGroup = recruit.m_Master.GetSlave();
+			if (AROR_ForceSpawner.IsAlive(recruit.m_Character) && commandGroup && currentGroup == commandGroup)
+			{
+				// The native transfer requested on an earlier poll completed after that poll's membership check.
+				// The squad's own command group is the destination, not an external transfer.
+				MarkJoined(recruit, commandGroup);
+				continue;
+			}
 			if (recruit.m_Character && (!AROR_ForceSpawner.IsAlive(recruit.m_Character) || (currentGroup && currentGroup != recruit.m_SpawnGroup)))
 			{
 				// Never reuse a stale character pointer after death or an external AI-group transfer.
@@ -373,13 +399,9 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 				{
 					// Native transfer updates agents, recruited flags, radio tuning and replicated AI membership.
 					controller.AddAIToSlaveGroup(recruit.m_Character, recruit.m_Master);
-					if (subgroup.IsAIControlledCharacterMember(recruit.m_Character))
-					{
-						recruit.m_bJoined = true;
-						recruit.m_CommandGroup = subgroup;
-						SCR_EntityHelper.DeleteEntityAndChildren(recruit.m_SpawnGroup);
-						recruit.m_SpawnGroup = null;
-					}
+					// May complete later; the next poll then sees the character in the command group (above)
+					if (IsInCommandGroup(recruit.m_Character, subgroup))
+						MarkJoined(recruit, subgroup);
 				}
 			}
 			if (!recruit.m_bJoined && now - recruit.m_fStarted > m_fSpawnTimeout * 1000)
@@ -472,6 +494,8 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 
 	protected void Hint(int playerId, string message)
 	{
+		// Logged too, so a refusal the player saw can be traced afterwards
+		Print(string.Format("[AROR SQUAD] player %1: %2", playerId, message), LogLevel.NORMAL);
 		AROR_NotificationManagerComponent.SendHint_S(playerId, message);
 	}
 
