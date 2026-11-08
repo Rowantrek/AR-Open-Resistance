@@ -107,13 +107,13 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
     AROR_HighCommandSquadType {
      m_sCallsign "RFL"
      m_sName "Rifle Squad"
-     m_aMembers {
-      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
-      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
-      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
-      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
-      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
-      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
+     m_aUnits {
+      RIFLEMAN
+      RIFLEMAN
+      RIFLEMAN
+      RIFLEMAN
+      RIFLEMAN
+      RIFLEMAN
      }
      m_iFundsCost 2000
      m_iManpowerCost 6
@@ -121,11 +121,11 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
     AROR_HighCommandSquadType {
      m_sCallsign "FTM"
      m_sName "Fire Team"
-     m_aMembers {
-      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
-      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
-      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
-      "{84B40583F4D1B7A3}Prefabs/Characters/Factions/INDFOR/FIA/Character_FIA_Rifleman.et"
+     m_aUnits {
+      RIFLEMAN
+      RIFLEMAN
+      RIFLEMAN
+      RIFLEMAN
      }
      m_iFundsCost 1200
      m_iManpowerCost 4
