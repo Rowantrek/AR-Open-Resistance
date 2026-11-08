@@ -81,8 +81,11 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 	protected ref array<ref ORRadio_Sound> m_aSounds = {};
 	protected bool m_bSelectionDue;
 	protected int m_iTicksToSelect;
-	protected bool m_bReportedStartFailure;
+	protected ref array<string> m_aReportedFailures = {};
+	protected bool m_bReportedFirstSound;
 	protected ref ORRadio_NowPlayingCard m_NowPlayingCard;
+	protected int m_iCardStation = -1;
+	protected bool m_bCardTitlePending;
 
 	//------------------------------------------------------------------------------------------------
 	static ORRadio_ManagerComponent GetInstance()
@@ -100,21 +103,24 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	override void EOnInit(IEntity owner)
 	{
+		if (s_Instance && s_Instance != this)
+		{
+			Print("[AROR Radio] A second radio manager is attached. Radio state lives on one instance, so machines can read different ones and radios fall silent. Remove the duplicate game mode component.", LogLevel.ERROR);
+			return;
+		}
+
 		s_Instance = this;
 		m_World = ChimeraWorld.CastFrom(owner.GetWorld());
 		LoadStations();
 
 		RplComponent rpl = RplComponent.Cast(owner.FindComponent(RplComponent));
 		m_bAuthority = !rpl || rpl.IsMaster();
+		// The station clock starts with the first radio (StartClock_S), not here
 		if (m_bAuthority && m_World)
-		{
-			m_iSeed = Math.RandomInt(1, 0x3FFFFFFF);
-			m_Epoch = m_World.GetServerTimestamp();
-			Replication.BumpMe();
 			GetGame().GetCallqueue().CallLater(Sweep_S, SWEEP_MS, true);
-		}
 
 		BuildSchedules();
+		Print(string.Format("[AROR Radio] Ready: %1 stations, authority %2, %3", GetStations().Count(), m_bAuthority, typename.EnumToString(RplMode, RplSession.Mode())), LogLevel.NORMAL);
 
 		if (RplSession.Mode() != RplMode.Dedicated)
 		{
@@ -176,6 +182,8 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 	{
 		BuildSchedules();
 		m_bSelectionDue = true;
+		Print(string.Format("[AROR Radio] Station clock received (seed %1)", m_iSeed), LogLevel.NORMAL);
+		RefreshNowPlayingTitle();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -260,13 +268,40 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 	//! keep the current one (the default for a radio being turned on)
 	void SetRadio_S(int playerId, RplId vehicleId, int station, int volume)
 	{
-		if (!m_bAuthority || station >= GetStations().Count())
+		if (!m_bAuthority)
+		{
+			RejectRequest_S(playerId, "it reached a machine that is not the server");
 			return;
+		}
+
+		if (station >= GetStations().Count())
+		{
+			RejectRequest_S(playerId, string.Format("station %1 is not in the stations config", station));
+			return;
+		}
 
 		int id = vehicleId;
 		IEntity vehicle = FindVehicle(id);
-		if (!vehicle || !IsSittingIn(playerId, vehicle) || IsDestroyed(vehicle))
+		if (!vehicle)
+		{
+			RejectRequest_S(playerId, "the vehicle was not found");
 			return;
+		}
+
+		if (!IsSittingIn(playerId, vehicle))
+		{
+			RejectRequest_S(playerId, "the player is not sitting in the vehicle");
+			return;
+		}
+
+		if (IsDestroyed(vehicle))
+		{
+			RejectRequest_S(playerId, "the vehicle is destroyed");
+			return;
+		}
+
+		if (station >= 0)
+			StartClock_S();
 
 		int index = FindRadio(id);
 		if (station < 0)
@@ -293,6 +328,33 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 
 		Replication.BumpMe();
 		m_bSelectionDue = true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Starts the station clock (seed and start time) the first time a radio is turned on; it then runs for the rest of
+	//! the game. Not set in EOnInit: values the game mode set while the world loaded did not reach clients in multiplayer
+	//! (Workbench, being server and client at once, hid it), whereas a change made now goes out in the same update as
+	//! the radio that needs it.
+	protected void StartClock_S()
+	{
+		if (m_iSeed != 0 || !m_World)
+			return;
+
+		// Mixed with the date and time in case the engine's generator starts from the same state each server run (the
+		// first multiplayer test received seed 65535), which would give every game the same order and starting song
+		m_iSeed = (Math.RandomInt(1, 0x3FFFFFFF) ^ (System.GetUnixTime() * 1103515245)) & 0x3FFFFFFF;
+		if (m_iSeed == 0)
+			m_iSeed = 1;
+
+		m_Epoch = m_World.GetServerTimestamp();
+		BuildSchedules();
+		Print(string.Format("[AROR Radio] Station clock started (seed %1)", m_iSeed), LogLevel.NORMAL);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void RejectRequest_S(int playerId, string reason)
+	{
+		Print(string.Format("[AROR Radio] Radio request from player %1 rejected: %2", playerId, reason), LogLevel.WARNING);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -478,8 +540,26 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 		IEntity vehicle = FindVehicle(vehicleId);
 		ORRadio_Track current, upcoming;
 		int offsetMs;
-		if (!vehicle || !stations.IsIndexValid(station) || !GetNowPlaying(station, current, offsetMs, upcoming))
+		if (!vehicle)
 			return;
+
+		if (!stations.IsIndexValid(station))
+		{
+			ReportStartFailure(string.Format("station %1 is not in the stations config", station));
+			return;
+		}
+
+		if (!GetNowPlaying(station, current, offsetMs, upcoming))
+		{
+			if (!m_World)
+				ReportStartFailure("the manager has no world");
+			else if (m_iSeed == 0)
+				ReportStartFailure("the station clock has not reached this machine (seed 0)");
+			else
+				ReportStartFailure(string.Format("station %1 has no playable tracks; check m_iDurationMs in the stations config", station));
+
+			return;
+		}
 
 		if (offsetMs > current.m_iDurationMs - END_GUARD_MS)
 			return;
@@ -493,13 +573,20 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 		AudioHandle handle = AudioSystem.PlayEvent(stationData.m_sAudioProject, stationData.m_sEvent, transform, names, values);
 		if (handle == AudioHandle.Invalid)
 		{
-			if (!m_bReportedStartFailure)
-			{
-				m_bReportedStartFailure = true;
-				Print(string.Format("[AROR Radio] Could not play event '%1' of '%2'", stationData.m_sEvent, stationData.m_sAudioProject), LogLevel.WARNING);
-			}
+			float distance = -1;
+			IEntity listener = SCR_PlayerController.GetLocalControlledEntity();
+			if (listener)
+				distance = vector.Distance(vehicle.GetOrigin(), listener.GetOrigin());
 
+			string details = string.Format(" ('%1', bank index %2, %3 ms of %4 in, %5 m away)", current.m_sTitle, current.m_iBankIndex, offsetMs, current.m_iDurationMs, distance);
+			ReportStartFailure(string.Format("could not play event '%1' of '%2'", stationData.m_sEvent, stationData.m_sAudioProject), details);
 			return;
+		}
+
+		if (!m_bReportedFirstSound)
+		{
+			m_bReportedFirstSound = true;
+			Print(string.Format("[AROR Radio] Playing '%1' on %2 (bank index %3, %4 ms in, loudness %5)", current.m_sTitle, stationData.m_sName, current.m_iBankIndex, offsetMs, loudness), LogLevel.NORMAL);
 		}
 
 		ORRadio_Sound sound = new ORRadio_Sound();
@@ -510,6 +597,18 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 		sound.m_Handle = handle;
 		sound.m_Vehicle = vehicle;
 		m_aSounds.Insert(sound);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Logs each reason a radio could not start once, as starting is retried every selection; details are logged with
+	//! the first occurrence but do not make a reason count as new
+	protected void ReportStartFailure(string reason, string details = "")
+	{
+		if (m_aReportedFailures.Contains(reason))
+			return;
+
+		m_aReportedFailures.Insert(reason);
+		Print("[AROR Radio] Radio did not start: " + reason + details, LogLevel.WARNING);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -560,7 +659,26 @@ class ORRadio_ManagerComponent : SCR_BaseGameModeComponent
 		if (GetNowPlaying(station, current, offsetMs, upcoming))
 			title = current.m_sTitle;
 
+		// The first radio of a game starts the station clock, which arrives after the card is up (RefreshNowPlayingTitle)
+		m_iCardStation = station;
+		m_bCardTitlePending = title.IsEmpty();
+
 		ORRadio_Station stationData = stations[station];
 		m_NowPlayingCard.Show(stationData.m_sName, title, stationData.m_sAlbumArt);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void RefreshNowPlayingTitle()
+	{
+		if (!m_bCardTitlePending || !m_NowPlayingCard || !m_NowPlayingCard.IsShowing())
+			return;
+
+		ORRadio_Track current, upcoming;
+		int offsetMs;
+		if (!GetNowPlaying(m_iCardStation, current, offsetMs, upcoming))
+			return;
+
+		m_bCardTitlePending = false;
+		m_NowPlayingCard.SetTitle(current.m_sTitle);
 	}
 }
