@@ -9,7 +9,7 @@ function runGarrisonsAndSupportTests(sources) {
   let server=true;
   const types={TOWN:0,HQ:1,AIRPORT:2,CITY:3,FACTORY:4,MILITARY_BASE:5,PORT:6,RESOURCES:7,OUTPOST:8};
   const roles={RESISTANCE:0,OCCUPIERS:1,INVADERS:2};
-  const env={Replication:{IsServer:()=>server},AROR_ELocationType:types,AROR_EFactionRole:roles,
+  const env={Replication:{IsServer:()=>server},AROR_ELocationType:types,AROR_EFactionRole:roles,AROR_LocationForces:{IsInAircraft:()=>false},
     Math:{Clamp:(n,a,b)=>Math.max(a,Math.min(b,n)),Max:Math.max,Min:Math.min,AbsFloat:Math.abs,RandomInt:(a,b)=>a,Mod:(a,b)=>a%b},
     vector:{DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])},
     Print:()=>{},LogLevel:{NORMAL:0,WARNING:1,ERROR:2},string:{Empty:'',Format:(text,...args)=>text.replace(/%(\d+)/g,(_,i)=>String(args[i-1]))},

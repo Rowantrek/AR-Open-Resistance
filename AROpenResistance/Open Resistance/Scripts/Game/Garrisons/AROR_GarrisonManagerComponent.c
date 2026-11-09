@@ -8,7 +8,7 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 	bool CanDefendRole(AROR_EFactionRole role) { return m_bGarrisonsActive && FactionFor(role) != null; }
 	[Attribute("1", desc: "Garrisons Active: allow proximity activation of hostile military-site defenders.")]
 	protected bool m_bGarrisonsActive;
-	[Attribute("1000", desc: "Activate when any living player is within this many metres of the location centre, including after teleporting", params: "250 5000 50")]
+	[Attribute("1000", desc: "Activate when a living player outside a helicopter is within this many metres of the location centre, including after teleporting. Helicopter occupants retain existing garrisons but cannot trigger deployment.", params: "250 5000 50")]
 	protected float m_fActivationRadius;
 	[Attribute("1", desc: "Seconds between proximity and retirement scans; physical spawn requests remain paced at 250 ms.", params: "1 2 0.25")]
 	protected float m_fProximityInterval;
@@ -130,7 +130,7 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 	{
 		m_iNextProximityAt = now + Math.Max(1, m_fProximityInterval) * 1000;
 		m_aNearby.Clear();
-		array<vector> living = {};
+		array<vector> activationPlayers = {};
 		array<vector> allPlayers = {};
 		array<int> ids = {};
 		GetGame().GetPlayerManager().GetPlayers(ids);
@@ -139,10 +139,11 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 			IEntity entity = GetGame().GetPlayerManager().GetPlayerControlledEntity(id);
 			if (!entity)
 				continue;
+			// Air support keeps existing defenders present even after the ground players leave or die.
 			allPlayers.Insert(entity.GetOrigin());
 			ChimeraCharacter player = ChimeraCharacter.Cast(entity);
-			if (player && player.GetCharacterController() && !player.GetCharacterController().IsDead())
-				living.Insert(player.GetOrigin());
+			if (player && player.GetCharacterController() && !player.GetCharacterController().IsDead() && !AROR_LocationForces.IsInAircraft(player))
+				activationPlayers.Insert(player.GetOrigin());
 		}
 		bool pressure;
 		foreach (AROR_GarrisonComponent waiting : m_aGarrisons)
@@ -182,7 +183,7 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 				garrison.RefreshPending_S();
 				continue;
 			}
-			if (AROR_GarrisonPolicy.IsEnemyRole(location.GetControllingRole()) && PlayerNear(location, living) && CanDefendRole(location.GetControllingRole()))
+			if (AROR_GarrisonPolicy.IsEnemyRole(location.GetControllingRole()) && PlayerNear(location, activationPlayers) && CanDefendRole(location.GetControllingRole()))
 			{
 				garrison.BeginDeployment_S(now);
 				if (!garrison.IsDeploymentClosed())
@@ -195,9 +196,9 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 		for (int current = 1; current < m_aNearby.Count(); current++)
 		{
 			AROR_GarrisonComponent candidate = m_aNearby[current];
-			float distance = NearestPlayerDistance(candidate.GetLocation(), living);
+			float distance = NearestPlayerDistance(candidate.GetLocation(), activationPlayers);
 			int previous = current - 1;
-			while (previous >= 0 && NearestPlayerDistance(m_aNearby[previous].GetLocation(), living) > distance)
+			while (previous >= 0 && NearestPlayerDistance(m_aNearby[previous].GetLocation(), activationPlayers) > distance)
 			{
 				m_aNearby[previous + 1] = m_aNearby[previous];
 				previous--;
