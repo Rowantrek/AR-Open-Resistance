@@ -193,9 +193,9 @@ modded class AROR_OperationExecutorComponent
 	//! and whoever is in its groups now
 	protected static void AddForceMembers(AROR_OperationForce force, notnull array<IEntity> members)
 	{
-		array<IEntity> owned = {};
-		force.GetOwnedMembers(owned);
-		foreach (IEntity soldier : owned)
+		array<IEntity> roster = {};
+		force.GetOwnedMembers(roster);
+		foreach (IEntity soldier : roster)
 		{
 			if (soldier && !members.Contains(soldier))
 				members.Insert(soldier);
