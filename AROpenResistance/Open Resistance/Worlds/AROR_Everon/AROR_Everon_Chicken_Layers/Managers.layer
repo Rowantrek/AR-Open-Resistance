@@ -42,6 +42,8 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_iManpowerPerTown 1
    m_iManpowerPerCity 2
   }
+  AROR_TownMilitiaComponent "{6B3A1C2D4E5F6071}" {
+  }
   AROR_InvaderCampaignComponent "{9AB2CB63D7214001}" {
    m_bInvaderCampaign 1
    m_bOccupyTowns 1

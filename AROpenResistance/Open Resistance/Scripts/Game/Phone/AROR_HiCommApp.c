@@ -4,7 +4,8 @@ enum AROR_EHiCommScreen
 	LOGIN,		//!< Clearance check: only Resistance Leaders get past it
 	COMMAND,	//!< Resistance name and leaders (the host delegates here)
 	STRATEGIC,	//!< Strategic Command: map and orders only
-	UNITS		//!< Unit Management: raise squads, review the order of battle
+	UNITS,		//!< Unit Management: raise squads, review the order of battle
+	GARRISONS	//!< Town garrisons: buy infantry, APCs and armour that stay in held towns
 }
 
 //! Passes HICOMM clicks, with their screen position, to the app
@@ -416,6 +417,8 @@ class AROR_HiCommApp
 				DrawCommand(highCommand);
 			else if (m_eScreen == AROR_EHiCommScreen.STRATEGIC)
 				DrawStrategic(highCommand);
+			else if (m_eScreen == AROR_EHiCommScreen.GARRISONS)
+				DrawGarrisons();
 			else
 				DrawUnits(highCommand);
 		}
@@ -570,6 +573,7 @@ class AROR_HiCommApp
 		TabButton(240, "COMMAND", AROR_EHiCommScreen.COMMAND, 190);
 		TabButton(440, "STRATEGIC COMMAND", AROR_EHiCommScreen.STRATEGIC, 320);
 		TabButton(770, "UNIT MANAGEMENT", AROR_EHiCommScreen.UNITS, 290);
+		TabButton(1070, "GARRISONS", AROR_EHiCommScreen.GARRISONS, 200);
 
 		AROR_EconomyComponent economy = AROR_EconomyComponent.GetInstance();
 		string funds = "$ -";
@@ -769,6 +773,80 @@ class AROR_HiCommApp
 
 		if (squads.IsEmpty())
 			Text(875, 210, 780, 40, 22, "No squads in the field.", m_GreenDim);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Town garrisons: every held town and city with what it holds and what can be bought for it
+	protected void DrawGarrisons()
+	{
+		AROR_TownMilitiaComponent militia = AROR_TownMilitiaComponent.GetInstance();
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
+		AROR_EconomyComponent economy = AROR_EconomyComponent.GetInstance();
+		Box(30, 110, 1645, 770);
+		Header(55, 125, "// TOWN GARRISONS");
+		if (!militia || !locations)
+		{
+			Text(55, 175, 1580, 34, 22, "Town garrisons are not enabled in this scenario.", m_GreenDim);
+			return;
+		}
+		int funds, manpower;
+		if (economy)
+		{
+			funds = economy.GetFactionFunds(AROR_EFactionRole.RESISTANCE);
+			manpower = economy.GetManpower();
+		}
+		int ports = AROR_ImportPoints.CountPorts(AROR_EFactionRole.RESISTANCE);
+		Text(55, 165, 1580, 34, 20, string.Format("One-time cost; units stay in the town until they die or it is lost, and turn out when you or the enemy come near. Seaports held: %1 (APCs need %2, armour %3).", ports, militia.GetPortsNeeded(AROR_EMilitiaKind.APC), militia.GetPortsNeeded(AROR_EMilitiaKind.ARMOUR)), m_GreenDim);
+
+		Text(55, 215, 330, 30, 18, "TOWN", m_GreenFaint);
+		Text(390, 215, 180, 30, 18, "INFANTRY", m_GreenFaint);
+		Text(570, 215, 200, 30, 18, "VEHICLES", m_GreenFaint);
+
+		array<AROR_LocationComponent> towns = {};
+		locations.GetLocationsOfType(AROR_ELocationType.CITY, towns);
+		locations.GetLocationsOfType(AROR_ELocationType.TOWN, towns);
+		float y = 250;
+		int shown;
+		foreach (AROR_LocationComponent town : towns)
+		{
+			if (!town || town.GetControllingRole() != AROR_EFactionRole.RESISTANCE)
+				continue;
+			if (y > 820)
+				break;
+			shown++;
+			int infantry, apcs, armour;
+			militia.GetGarrison(town.GetId(), infantry, apcs, armour);
+			string name = Upper(town.GetName());
+			if (town.GetLocationType() == AROR_ELocationType.CITY)
+				name += " (CITY)";
+			Text(55, y + 10, 330, 36, 22, name, m_Green, true);
+			Text(390, y + 10, 180, 36, 22, string.Format("%1 / %2", infantry, militia.GetMaxInfantry(town)), m_Green);
+			Text(570, y + 10, 200, 36, 22, string.Format("%1 APC  %2 ARM  / %3", apcs, armour, militia.GetMaxVehicles(town)), m_Green);
+
+			int soldiers = militia.InfantryToBuy(town);
+			GarrisonButton(780, y, 290, town, AROR_EMilitiaKind.INFANTRY, string.Format("+%1 INF", soldiers), soldiers * militia.GetSoldierCost(), soldiers * militia.GetSoldierManpower(), funds, manpower, militia);
+			GarrisonButton(1080, y, 290, town, AROR_EMilitiaKind.APC, "+APC", militia.GetVehicleCost(AROR_EMilitiaKind.APC), militia.GetVehicleManpower(), funds, manpower, militia);
+			GarrisonButton(1380, y, 270, town, AROR_EMilitiaKind.ARMOUR, "+ARMOUR", militia.GetVehicleCost(AROR_EMilitiaKind.ARMOUR), militia.GetVehicleManpower(), funds, manpower, militia);
+			Panel(55, y + 54, 1595, 1, m_GreenFaint);
+			y += 60;
+		}
+		if (shown == 0)
+			Text(55, 260, 1580, 40, 22, "The Resistance holds no towns yet. Take a town's garrison flag to hold it.", m_GreenDim);
+	}
+
+	//! One buy button: label and price, or why it cannot be bought
+	protected void GarrisonButton(float x, float y, float width, AROR_LocationComponent town, AROR_EMilitiaKind kind, string label, int cost, int manpowerCost, int funds, int manpower, AROR_TownMilitiaComponent militia)
+	{
+		string reason = militia.WhyNot(town, kind);
+		if (reason.IsEmpty() && (funds < cost || manpower < manpowerCost))
+			reason = "Can't afford";
+		string text = string.Format("%1  %2 / %3 MP", label, AROR_EconomyComponent.FormatMoney(cost), manpowerCost);
+		if (!reason.IsEmpty())
+		{
+			Button(x, y, width, 48, Upper(reason), string.Empty, STYLE_DISABLED, 18);
+			return;
+		}
+		Button(x, y, width, 48, text, string.Format("garrison:%1:%2", town.GetId(), kind), STYLE_PRIMARY, 18);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -2542,6 +2620,10 @@ class AROR_HiCommApp
 		else if (verb == "raise" && parts.Count() > 1)
 		{
 			controller.AROR_RequestHiCommRaise(parts[1].ToInt());
+		}
+		else if (verb == "garrison" && parts.Count() > 2)
+		{
+			controller.AROR_RequestTownGarrison(parts[1], parts[2].ToInt());
 		}
 		else if (verb == "leader" && parts.Count() > 2)
 		{

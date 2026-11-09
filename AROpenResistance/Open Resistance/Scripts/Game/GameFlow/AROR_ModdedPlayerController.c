@@ -572,6 +572,25 @@ modded class SCR_PlayerController
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! HICOMM Garrisons: buy one unit (AROR_EMilitiaKind) for a held town (validated by AROR_TownMilitiaComponent)
+	void AROR_RequestTownGarrison(string townId, int kind)
+	{
+		if (Replication.IsServer())
+			AROR_RpcAsk_TownGarrison(townId, kind);
+		else
+			Rpc(AROR_RpcAsk_TownGarrison, townId, kind);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void AROR_RpcAsk_TownGarrison(string townId, int kind)
+	{
+		AROR_TownMilitiaComponent militia = AROR_TownMilitiaComponent.GetInstance();
+		if (militia)
+			militia.RequestBuy_S(GetPlayerId(), townId, kind);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
 	protected void AROR_RpcAsk_HiCommRaise(int typeIndex)
 	{
