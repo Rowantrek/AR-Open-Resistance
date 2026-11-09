@@ -1311,6 +1311,34 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      }
      m_iAssaultWave 3
     }
+    AROR_GroundQRFRecipe {
+     m_sId "occupier_townair_r4"
+     m_eResponseType 7
+     m_iLevel 1
+     m_iMinimumReadinessLevel 4
+     m_iMaximumReadinessLevel 5
+     m_eRole 1
+     m_sFactionKey "AROR_OCCUPIERS"
+     m_aProfileIds {
+      "us_airborne"
+      "us_light_support"
+     }
+     m_iAssaultWave 9
+    }
+    AROR_GroundQRFRecipe {
+     m_sId "invader_townair_r4"
+     m_eResponseType 7
+     m_iLevel 1
+     m_iMinimumReadinessLevel 4
+     m_iMaximumReadinessLevel 5
+     m_eRole 2
+     m_sFactionKey "AROR_INVADERS"
+     m_aProfileIds {
+      "ussr_airborne"
+      "ussr_light_support"
+     }
+     m_iAssaultWave 9
+    }
    }
    m_fReaperTransportSpeed 160
    m_fReaperTransportHeight 60

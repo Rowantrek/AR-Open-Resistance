@@ -900,7 +900,18 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			FailOperation(operation, "Ground QRF recipe missing, disabled, unsupported or faction-incompatible");
 			return;
 		}
-		// Recipes list elements in priority order, so a limit keeps the most important ones
+		// Recipes list elements in priority order, so a limit keeps the most important ones. An offset (a split
+		// column) starts further down the list; joint recipes keep their airborne pair first, so never offset them.
+		if (operation.m_iElementOffset > 0 && recipe.m_eResponseType != AROR_EResponseType.AIR_GROUND)
+		{
+			if (operation.m_iElementOffset >= elements.Count())
+			{
+				FailOperation(operation, "Element offset leaves no elements in the recipe");
+				return;
+			}
+			for (int skipped = 0; skipped < operation.m_iElementOffset; skipped++)
+				elements.RemoveOrdered(0);
+		}
 		if (operation.m_iElementLimit > 0 && elements.Count() > operation.m_iElementLimit)
 			elements.Resize(operation.m_iElementLimit);
 		if (recipe.m_eResponseType == AROR_EResponseType.AIR_GROUND)

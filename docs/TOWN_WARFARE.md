@@ -28,11 +28,27 @@ an occupying presence in the streets, and a fixed three-wave response when playe
 
 ## Wave response
 
-Trigger: players kill 25% of the defenders seen (post, checkpoint guards, patrol crews), at least 3. Then:
+Trigger: players kill 25% of the defenders seen (post, checkpoint guards, patrol crews), at least 3. The response
+then runs in phases, after the pattern of RC Dynamic Counter Attacks (ideas from its workshop page only; no code):
 
-- Three waves, one every 150 s. Each stages on a road 1–2 km out, on the side of the army's nearest base, and drives
-  in as a column. The lead vehicle stops 220 m short of the post, later vehicles 25 m behind each other, and the
-  infantry walk in.
+1. **Alert**: headline "X GARRISON CALLS FOR HELP". The first wave forms up 30–90 s later.
+2. **Waves**: three, 150 s apart (±30 s). Each stages on a road 1–2 km out and drives in as a column. The lead
+   vehicle stops 220 m short of the post, later vehicles 25 m behind each other, and the infantry walk in.
+   - **Axes**: wave 1 comes from the side of the army's nearest base; each later wave uses a road at least 500 m from
+     the previous wave's (preferred bearings rotate 0°, 90° one way, 90° the other, then the diagonals). If no such
+     road is safe, a repeated road beats no wave.
+   - **Split last wave**: with 3+ elements, the last wave is two columns on two roads. The lead column takes the
+     recipe's first (heaviest) half, the second column the rest.
+3. **Helicopter assault** (Readiness 4+): once any wave package is within 350 m of the post, the army commits one
+   joint recipe (`<army>_townair_r4`: airborne pair plus light support) from its own bases. Headline "Enemy
+   helicopters inbound". It waits its turn if another airborne response holds the airspace, and falls back to
+   ground if no air launch is clear.
+4. **Outcome**: nothing is declared while any column, armour or the assault is still out there.
+   - **Repelled**: every operation has ended (destroyed or withdrawn) with the Resistance still near: +10% Resistance
+     support in the town and an HQ headline from a pool ("X HOLDS / …").
+   - **Abandoned**: no Resistance player within 1.5 km for 3 minutes: the army retakes a taken post at once (it
+     re-forms as soon as nobody is near) with the headline "X GARRISON RESTORED".
+   - Unresolved 15 minutes after the last wave: ends quietly.
 - **Readiness picks the kit** (wave recipes `<army>_townwave<N>_r1|r3|r5`):
 
 | Readiness | Wave 1 | Wave 2 | Wave 3 |
@@ -45,7 +61,7 @@ Trigger: players kill 25% of the defenders seen (post, checkpoint guards, patrol
   Recipes list elements in priority order and the response takes the first N.
 - Funded by the scenario, not the army's bank. Executor capacity still applies (Chicken's live ground cap is raised
   from 6 to 10 packages and its vehicle reservation cap from 12 to 16 so waves can overlap).
-- Stops sending waves after 3 minutes with no Resistance player within 1.5 km. Re-arms 30 minutes after it ends.
+- Re-arms 30 minutes after it ends.
 - **No capture QRF** for these towns: the waves are the whole response.
 
 ## Town life
@@ -66,7 +82,11 @@ Spawned while a player is within 900 m; removed half a minute after everyone is 
 - Early QRFs: the level 1–2 light and joint recipes (both armies) each carry one more truck of infantry.
 - `AROR_ForceSpawner` now holds the faction-preset vehicle lookup and crew seating that missions used; missions call it.
 
-## Freedom Fighters
+## Other mods
+
+RC Dynamic Counter Attacks (RadarController, APL) was used the same way: its source is not public, and only the
+behaviour its workshop page describes (alert delay, several axes, air committing once the ground force presses,
+"repelled" only when nothing is left inbound, an HQ line pool) shaped the response phases.
 
 Freedom Fighters (Johnny Kerner) is APL-ND: none of its code is used. Ideas taken from its design: civilians each in
 their own group, spawned away from players; convoys formed up along one road; checkpoints at town approaches.
@@ -77,8 +97,10 @@ their own group, spawned away from players; convoys formed up along one road; ch
 2. Open `AROR_Everon_Chicken.ent` and save once so Workbench rewrites the edited layers. Check a town shows the three
    components and a flag child.
 3. Play near Meaux: civilians, cars, a checkpoint and the patrol should appear (`[AROR TOWN]` log lines). Kill three
-   defenders: expect `response triggered`, a headline and `[AROR] Town wave` lines, then a column arriving from a road
-   1–2 km away.
+   defenders: expect `response triggered`, the alert headline, then `[AROR] Town wave` lines 30–90 s later and a
+   column arriving from a road 1–2 km away. Check waves 2 and 3 come from different roads and wave 3 logs two
+   columns. With Readiness 4+ (debug), expect `helicopter assault requested` once a column reaches the town. Kill
+   everything: expect `response repelled` and an "X HOLDS" headline. Run off 1.5 km instead: expect `abandoned`.
 4. Clear the post and take the flag: expect the headline and a support jump, and no QRF.
 5. Watch server FPS with a wave, a QRF and town life at once.
 

@@ -7,7 +7,9 @@
 modded class AROR_OperationManagerComponent
 {
 	//! Returns the new operation ID, or empty when rejected. Several waves may target the same town at once.
-	string RequestTownWave_S(AROR_EFactionRole role, string targetId, string recipeId, int readiness, int crackdownLevel, vector origin, int elementLimit, float dismount)
+	//! origin vector.Zero launches from the role's best friendly military site, as an ordinary QRF does (the
+	//! helicopter assault). elementOffset skips the recipe's first elements (the second column of a split wave).
+	string RequestTownWave_S(AROR_EFactionRole role, string targetId, string recipeId, int readiness, int crackdownLevel, vector origin, int elementLimit, float dismount, int elementOffset = 0)
 	{
 		if (!IsReady() || !IsEnemyRole(role) || !HasLocation(targetId) || recipeId.IsEmpty())
 			return string.Empty;
@@ -26,14 +28,15 @@ modded class AROR_OperationManagerComponent
 		created.m_iPoolReadinessLevel = readiness;
 		created.m_bUseResponseMetrics = true;
 		created.m_bFundingWaived = true;
-		created.m_bHasOriginOverride = true;
+		created.m_bHasOriginOverride = origin != vector.Zero;
 		created.m_vOriginOverride = origin;
 		created.m_bAssaultWave = true;
 		created.m_bConvoy = dismount > 0;
 		created.m_fConvoyDismount = dismount;
 		created.m_iElementLimit = Math.Max(elementLimit, 0);
+		created.m_iElementOffset = Math.Max(elementOffset, 0);
 		m_aOperations.Insert(created);
-		Print(string.Format("[AROR] Town wave %1 role=%2 target=%3 recipe=%4 readiness=%5 crackdown=%6 elements<=%7 origin=%8", id, role, targetId, recipeId, readiness, crackdownLevel, elementLimit, origin), LogLevel.NORMAL);
+		Print(string.Format("[AROR] Town wave %1 role=%2 target=%3 recipe=%4 readiness=%5 crackdown=%6 elements=%7+%8 origin=%9", id, role, targetId, recipeId, readiness, crackdownLevel, elementOffset, elementLimit, origin), LogLevel.NORMAL);
 		NotifyChanged(created);
 		return id;
 	}
@@ -60,9 +63,10 @@ modded class AROR_OperationExecutorComponent
 	}
 
 	//! A road point between min and max distance from the target, nearest the preferred direction first, that a
-	//! ground response can launch from right now (dry land, away from players). Bounded number of road queries, so it
-	//! can run once per wave.
-	bool FindWaveStaging_S(vector target, vector towards, float minDistance, float maxDistance, out vector staging)
+	//! ground response can launch from right now (dry land, away from players) and that is at least avoidDistance
+	//! from every point in avoid (roads other columns already use). Bounded number of road queries, so it can run
+	//! once per wave.
+	bool FindWaveStaging_S(vector target, vector towards, float minDistance, float maxDistance, out vector staging, array<vector> avoid = null, float avoidDistance = 0)
 	{
 		if (!Replication.IsServer() || minDistance < 300 || minDistance > maxDistance)
 			return false;
@@ -95,6 +99,8 @@ modded class AROR_OperationExecutorComponent
 					continue;
 				if (world.GetSurfaceY(road[0], road[2]) <= world.GetOceanHeight(road[0], road[2]) + 0.5)
 					continue;
+				if (IsNearAny(road, avoid, avoidDistance))
+					continue;
 				if (!IsLaunchPositionSafe(road, target))
 					continue;
 				staging = road;
@@ -105,10 +111,45 @@ modded class AROR_OperationExecutorComponent
 		return false;
 	}
 
+	protected static bool IsNearAny(vector point, array<vector> others, float distance)
+	{
+		if (!others || distance <= 0)
+			return false;
+		foreach (vector other : others)
+		{
+			if (vector.DistanceXZ(point, other) < distance)
+				return true;
+		}
+		return false;
+	}
+
 	//! Whether a staging point found earlier can still launch the next wave
 	bool IsWaveStagingSafe_S(vector staging, vector target)
 	{
 		return Replication.IsServer() && IsLaunchPositionSafe(staging, target);
+	}
+
+	//! How many of an operation's live packages (group leader or vehicle) are within radius of the target: a wave
+	//! "pressing" the objective, which commits the helicopter assault
+	int CountPressingPackages_S(string operationId, vector target, float radius)
+	{
+		if (!Replication.IsServer() || operationId.IsEmpty())
+			return 0;
+		int pressing;
+		foreach (AROR_OperationForce force : m_aForces)
+		{
+			if (!force || force.m_sOperationId != operationId)
+				continue;
+			IEntity anchor;
+			if (force.m_Group)
+				anchor = force.m_Group.GetLeaderEntity();
+			AROR_GroundOperationForce ground = AROR_GroundOperationForce.Cast(force);
+			if (!anchor && ground)
+				anchor = ground.m_Vehicle;
+			if (anchor && vector.DistanceXZ(anchor.GetOrigin(), target) <= radius)
+				pressing++;
+		}
+		return pressing;
 	}
 
 	override protected void CreateQRFTacticalCommander(AROR_Operation operation, int packages, vector origin)

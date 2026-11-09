@@ -156,6 +156,16 @@ class AROR_GarrisonComponent : ScriptComponent
 		Print(string.Format("[AROR GARRISON] %1 settlement post taken; re-forms in %2s", m_Location.GetId(), m_iPostReformSeconds), LogLevel.NORMAL);
 	}
 
+	//! The holding army takes a broken post back without waiting the reform time (its relief reached the town and
+	//! the Resistance left). It still waits until nobody is near, as any reform does.
+	void ReformSoon_S()
+	{
+		if (!Replication.IsServer() || !IsSettlementPost() || !m_bPostBroken)
+			return;
+		ScheduleReform_S(60);
+		Print(string.Format("[AROR GARRISON] %1 settlement post retaken; re-forms once clear", m_Location.GetId()), LogLevel.NORMAL);
+	}
+
 	protected void ScheduleReform_S(int seconds)
 	{
 		GetGame().GetCallqueue().Remove(ReformSettlementPost_S);

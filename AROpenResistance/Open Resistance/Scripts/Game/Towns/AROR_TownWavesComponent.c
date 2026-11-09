@@ -1,10 +1,15 @@
-[ComponentEditorProps(category: "OpenResistance/Locations", description: "Town garrison response: once players kill a share of a town's defenders (post, checkpoints, patrol), the holding army sends convoy waves from a road staging point nearby. Separate from QRFs. Put on a town or city location with a settlement garrison post.")]
+[ComponentEditorProps(category: "OpenResistance/Locations", description: "Town garrison response: once players kill a share of a town's defenders (post, checkpoints, patrol), the holding army sends convoy waves from roads nearby, a helicopter assault once they press the post, and ends repelled or holding. Separate from QRFs. Put on a town or city location with a settlement garrison post.")]
 class AROR_TownWavesComponentClass : ScriptComponentClass {}
 
-//! Server logic for one town's wave response. Waves go through Operations (RequestTownWave_S): the holding army's
-//! wave recipe for that wave at its current Readiness (equipment), sized by its Crackdown (element count), paid by
-//! the scenario, launched from a road 1-2 km out on the side of the army's nearest base, driven as a convoy that
-//! dismounts short of the post. Session-only: kill progress and a running response are not saved.
+//! Server logic for one town's wave response, in phases:
+//! - ALERT: the trigger kill; the first wave forms up after a short random delay.
+//! - WAVES: each wave is the holding army's wave recipe at its current Readiness (equipment), sized by its Crackdown
+//!   (element count), paid by the scenario, driven as a convoy from a road 1-2 km out that dismounts short of the post.
+//!   Waves come in on different roads (axes); the last one splits into two columns on two roads.
+//! - A helicopter assault (joint recipe) commits once a wave is pressing the post, at high Readiness.
+//! - RESOLVING: once every wave and the assault have ended, the town holds: a support reward and an HQ headline.
+//!   If the Resistance leaves instead, the army retakes a broken post at once.
+//! Waves go through Operations (RequestTownWave_S). Session-only: kill progress and a running response are not saved.
 class AROR_TownWavesComponent : ScriptComponent
 {
 	[Attribute("0.25", desc: "Share of the town's defenders (post, checkpoints and patrol) players must kill to bring the response", params: "0.05 1 0.05")]
@@ -13,45 +18,78 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected int m_iMinimumKills;
 	[Attribute("3", desc: "Waves in one response", params: "1 5 1")]
 	protected int m_iWaves;
-	[Attribute("150", desc: "Seconds between one wave being sent and the next", params: "30 900 10")]
+	[Attribute("30", desc: "Shortest delay from the trigger to the first wave, seconds", params: "0 600 5")]
+	protected int m_iAlertDelayMin;
+	[Attribute("90", desc: "Longest delay from the trigger to the first wave, seconds", params: "0 600 5")]
+	protected int m_iAlertDelayMax;
+	[Attribute("150", desc: "Average seconds between one wave being sent and the next", params: "30 900 10")]
 	protected int m_iWaveInterval;
+	[Attribute("30", desc: "Random spread either side of the wave interval, seconds", params: "0 300 5")]
+	protected int m_iWaveIntervalJitter;
 	[Attribute("1000", desc: "Nearest road staging distance from the post, metres", params: "300 3000 50")]
 	protected float m_fStagingMinDistance;
 	[Attribute("2000", desc: "Furthest road staging distance from the post, metres", params: "500 4000 50")]
 	protected float m_fStagingMaxDistance;
+	[Attribute("500", desc: "A wave's staging road keeps at least this far from the previous wave's and from its other column, so attacks come from different directions, metres (0 = any road)", params: "0 2000 50")]
+	protected float m_fAxisSeparation;
 	[Attribute("220", desc: "Where the convoy's lead vehicle stops, metres short of the post; later vehicles stop behind it. Infantry walk in.", params: "100 290 10")]
 	protected float m_fDismountDistance;
 	[Attribute("0", desc: "Extra wave elements on top of the Crackdown size; cities always add one", params: "0 4 1")]
 	protected int m_iExtraElements;
+	[Attribute("3", desc: "The last wave splits into two columns on two roads when it has at least this many elements (0 = never)", params: "0 8 1")]
+	protected int m_iSplitMinElements;
+	[Attribute("4", desc: "Lowest Readiness at which a helicopter assault joins the response (0 = never). Uses the army's wave 9 recipe.", params: "0 5 1")]
+	protected int m_iAirAssaultReadiness;
+	[Attribute("350", desc: "A wave package this close to the post is pressing it; that commits the helicopter assault, metres", params: "100 1000 25")]
+	protected float m_fPressingDistance;
+	[Attribute("10", desc: "Resistance support gained in the town when the whole response is beaten off, percent", params: "0 50 1")]
+	protected float m_fRepelledSupportSwing;
+	[Attribute("900", desc: "Seconds after the last wave is sent before an unresolved response ends without an outcome", params: "120 3600 30")]
+	protected int m_iResolveTimeout;
+	[Attribute("1", desc: "If the Resistance leaves while the response runs, the army retakes a taken garrison post at once instead of waiting for it to re-form")]
+	protected bool m_bRetakeWhenAbandoned;
 	[Attribute("1800", desc: "Seconds after a response ends before kills count towards a new one", params: "300 7200 60")]
 	protected int m_iRearmSeconds;
-	[Attribute("1500", desc: "The response stops sending waves once no Resistance player has been this close for the abandon time, metres", params: "300 4000 50")]
+	[Attribute("1500", desc: "The response is abandoned once no Resistance player has been this close for the abandon time, metres", params: "300 4000 50")]
 	protected float m_fAbandonDistance;
-	[Attribute("180", desc: "Seconds without a Resistance player near before the remaining waves are called off", params: "30 900 10")]
+	[Attribute("180", desc: "Seconds without a Resistance player near before the response is abandoned", params: "30 900 10")]
 	protected int m_iAbandonSeconds;
 	[Attribute("1", desc: "The waves are this town's whole response: a change of control here never draws an ordinary capture QRF")]
 	protected bool m_bReplacesCaptureQRF;
 
+	static const int AIR_ASSAULT_WAVE = 9;			//!< Recipe m_iAssaultWave of a response's helicopter assault
 	protected static const int KILL_CREDIT_SECONDS = 30;	//!< A death counts for the player who hit the defender this recently
 	protected static const int STAGING_RETRY_SECONDS = 20;
 	protected static const int STAGING_ATTEMPTS = 6;
+	protected static const int PRESSING_CHECK_SECONDS = 5;
+	protected static const float AXIS_PREFERENCE_DISTANCE = 1000;
+
+	protected static const int PHASE_IDLE = 0;
+	protected static const int PHASE_ALERT = 1;		//!< Triggered; the first wave is forming up
+	protected static const int PHASE_WAVES = 2;		//!< Sending waves
+	protected static const int PHASE_RESOLVING = 3;	//!< Every wave sent; waiting for them (and the assault) to end
 
 	protected AROR_LocationComponent m_Location;
 	protected AROR_GarrisonComponent m_Garrison;
 	protected AROR_TownLifeComponent m_TownLife;
 	protected ref array<ref AROR_TownCasualtyWatch> m_aWatches = {};
 	protected ref array<IEntity> m_aSeen = {};	//!< Every defender watched since the response last armed
-	protected ref array<string> m_aWaveIds = {};
+	protected ref array<string> m_aOperationIds = {};	//!< Every column and the assault of the running response
+	protected ref array<string> m_aFielded = {};	//!< Operations of the running response that reached the field
+	protected ref array<vector> m_aLastAxes = {};	//!< Staging roads of the previous wave
 	protected AROR_EFactionRole m_eRole;
+	protected int m_iPhase;
 	protected int m_iClock;
 	protected int m_iKills;
-	protected int m_iWave;			//!< Waves sent in the running response; 0 when none is running
+	protected int m_iWavesSent;		//!< Waves sent or skipped in the running response
+	protected int m_iAxisIndex;		//!< Columns sent so far; picks the next preferred bearing
+	protected int m_iAxisSide;		//!< +1 or -1: which way the axes rotate in this response
 	protected int m_iNextWaveAt;
+	protected int m_iResolveSince;
 	protected int m_iRearmAt;
 	protected int m_iLastResistanceNear;
 	protected int m_iStagingFailures;
-	protected bool m_bHasStaging;
-	protected vector m_vStaging;
+	protected bool m_bAirRequested;
 
 	//------------------------------------------------------------------------------------------------
 	//! Every machine: true if this town's waves stand in for the capture QRF
@@ -63,7 +101,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		return waves && waves.m_bReplacesCaptureQRF;
 	}
 
-	bool IsResponding() { return m_iWave > 0; }
+	bool IsResponding() { return m_iPhase != PHASE_IDLE; }
 
 	//------------------------------------------------------------------------------------------------
 	protected void Tick()
@@ -78,19 +116,19 @@ class AROR_TownWavesComponent : ScriptComponent
 		AROR_EFactionRole role = m_Location.GetControllingRole();
 		if (!AROR_GarrisonPolicy.IsEnemyRole(role))
 		{
-			if (m_iWave > 0 || m_iKills > 0 || !m_aWatches.IsEmpty())
-				Disarm(false);
+			if (m_iPhase != PHASE_IDLE || m_iKills > 0 || !m_aWatches.IsEmpty())
+				EndResponse(false);
 			return;
 		}
 		if (role != m_eRole)
 		{
 			// A new holder starts its own count
-			Disarm(false);
+			EndResponse(false);
 			m_eRole = role;
 		}
 
 		RefreshWatches();
-		if (m_iWave > 0)
+		if (m_iPhase != PHASE_IDLE)
 		{
 			UpdateResponse();
 			return;
@@ -111,14 +149,17 @@ class AROR_TownWavesComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	protected void StartResponse()
 	{
-		m_iWave = 0;
-		m_iStagingFailures = 0;
-		m_bHasStaging = false;
-		m_aWaveIds.Clear();
+		ResetResponse();
+		m_iPhase = PHASE_ALERT;
+		m_iAxisSide = 1;
+		if (Math.RandomInt(0, 2) == 0)
+			m_iAxisSide = -1;
+		int delayMin = Math.Min(m_iAlertDelayMin, m_iAlertDelayMax);
+		int delayMax = Math.Max(m_iAlertDelayMin, m_iAlertDelayMax);
+		m_iNextWaveAt = m_iClock + Math.RandomInt(delayMin, delayMax + 1);
 		m_iLastResistanceNear = m_iClock;
-		Print(string.Format("[AROR TOWN] %1 response triggered: %2 player kills of %3 defenders seen", m_Location.GetId(), m_iKills, m_aSeen.Count()), LogLevel.NORMAL);
-		if (!LaunchWave(1))
-			m_iWave = Math.Max(m_iWave, 1);	// Keep the response running so the retries and later waves follow
+		Print(string.Format("[AROR TOWN] %1 response triggered: %2 player kills of %3 defenders seen; first wave in %4s", m_Location.GetId(), m_iKills, m_aSeen.Count(), m_iNextWaveAt - m_iClock), LogLevel.NORMAL);
+		Headline("%1 GARRISON CALLS FOR HELP / Enemy reinforcements are forming up", AROR_UIColors.DANGER);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -128,38 +169,126 @@ class AROR_TownWavesComponent : ScriptComponent
 			m_iLastResistanceNear = m_iClock;
 		else if (m_iClock - m_iLastResistanceNear >= m_iAbandonSeconds)
 		{
-			Print(string.Format("[AROR TOWN] %1 response called off after %2 of %3 waves: no Resistance near", m_Location.GetId(), WavesSent(), m_iWaves), LogLevel.NORMAL);
-			Disarm(true);
+			Abandon();
 			return;
 		}
-		if (m_iClock < m_iNextWaveAt)
-			return;
-		if (WavesSent() >= m_iWaves)
-		{
-			Disarm(true);
-			return;
-		}
-		LaunchWave(WavesSent() + 1);
-	}
+		TrackFielded();
 
-	protected int WavesSent()
-	{
-		return m_aWaveIds.Count();
+		if (m_iPhase == PHASE_ALERT || m_iPhase == PHASE_WAVES)
+		{
+			if (m_iClock >= m_iNextWaveAt)
+			{
+				if (m_iWavesSent < m_iWaves)
+					LaunchWave(m_iWavesSent + 1);
+				if (m_iWavesSent >= m_iWaves)
+				{
+					m_iPhase = PHASE_RESOLVING;
+					m_iResolveSince = m_iClock;
+				}
+			}
+		}
+		if (m_iClock % PRESSING_CHECK_SECONDS == 0)
+			TryAirAssault();
+		if (m_iPhase == PHASE_RESOLVING)
+			TryResolve();
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! False when the wave could not be requested yet (retried shortly) or has no recipe (skipped)
-	protected bool LaunchWave(int wave)
+	//! Remember which operations reached the field, so the outcome knows whether anything was actually fought
+	protected void TrackFielded()
 	{
 		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
-		AROR_OperationExecutorComponent executor;
-		BaseGameMode gameMode = GetGame().GetGameMode();
-		if (gameMode)
-			executor = AROR_OperationExecutorComponent.Cast(gameMode.FindComponent(AROR_OperationExecutorComponent));
-		m_iWave = Math.Max(m_iWave, wave);
+		if (!operations)
+			return;
+		foreach (string id : m_aOperationIds)
+		{
+			if (m_aFielded.Contains(id))
+				continue;
+			AROR_Operation operation = operations.GetOperation(id);
+			if (operation && (operation.GetState() == AROR_EOperationState.ACTIVE || operation.GetState() == AROR_EOperationState.SUCCEEDED))
+				m_aFielded.Insert(id);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every wave sent: the response is over once each of its operations has ended (destroyed, withdrawn or failed).
+	//! Nothing is declared while any column or the assault is still out there, armour included.
+	protected void TryResolve()
+	{
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		if (!operations)
+			return;
+		foreach (string id : m_aOperationIds)
+		{
+			AROR_Operation operation = operations.GetOperation(id);
+			if (operation && !operation.IsTerminal())
+			{
+				if (m_iClock - m_iResolveSince < m_iResolveTimeout)
+					return;
+				Print(string.Format("[AROR TOWN] %1 response timed out %2s after its last wave; ended without an outcome", m_Location.GetId(), m_iResolveTimeout), LogLevel.WARNING);
+				EndResponse(true);
+				return;
+			}
+		}
+		if (m_aFielded.IsEmpty())
+		{
+			Print(string.Format("[AROR TOWN] %1 response ended: no wave reached the field", m_Location.GetId()), LogLevel.WARNING);
+			EndResponse(true);
+			return;
+		}
+		Repelled();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void Repelled()
+	{
+		AROR_SettlementComponent settlement = AROR_SettlementComponent.Cast(m_Location.GetOwner().FindComponent(AROR_SettlementComponent));
+		if (settlement && m_fRepelledSupportSwing > 0)
+			settlement.AddSupport_S(AROR_EFactionRole.RESISTANCE, m_fRepelledSupportSwing);
+		Print(string.Format("[AROR TOWN] %1 response repelled: %2 of %3 operations fielded; Resistance support +%4", m_Location.GetId(), m_aFielded.Count(), m_aOperationIds.Count(), m_fRepelledSupportSwing), LogLevel.NORMAL);
+		Headline(RepelledLine(), AROR_UIColors.REBEL);
+		EndResponse(true);
+	}
+
+	//! A line from the HQ pool; %1 is the town
+	protected string RepelledLine()
+	{
+		array<string> lines = {
+			"%1 HOLDS / The enemy assault is broken",
+			"%1 HOLDS / Enemy columns pull back from the town",
+			"%1 HOLDS / The counterattack has been beaten off",
+			"%1 HOLDS / Enemy reinforcements destroyed",
+			"%1 HOLDS / The garrison's relief has failed",
+			"%1 HOLDS / The enemy falls back, support for the Resistance rises"
+		};
+		return lines[Math.RandomInt(0, lines.Count())];
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! No Resistance near for the abandon time: waves already on the road carry on under Operations, and the army
+	//! takes back a broken garrison post at once
+	protected void Abandon()
+	{
+		Print(string.Format("[AROR TOWN] %1 response abandoned after %2 of %3 waves: no Resistance near", m_Location.GetId(), m_iWavesSent, m_iWaves), LogLevel.NORMAL);
+		if (m_bRetakeWhenAbandoned && m_Garrison && m_Garrison.IsPostBroken())
+		{
+			m_Garrison.ReformSoon_S();
+			Headline("%1 GARRISON RESTORED / The army has retaken the post", AROR_UIColors.DANGER);
+		}
+		EndResponse(true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Sends one wave (one or two columns). Retried shortly when no staging road or capacity is free yet; skipped
+	//! after repeated failures or when the army has no recipe for it.
+	protected void LaunchWave(int wave)
+	{
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		AROR_OperationExecutorComponent executor = Executor();
+		m_iPhase = PHASE_WAVES;
 		m_iNextWaveAt = m_iClock + STAGING_RETRY_SECONDS;
 		if (!operations || !executor)
-			return false;
+			return;
 
 		int readiness = Math.Clamp(operations.GetReadinessLevel(m_eRole), 1, 5);
 		int crackdown = Math.Clamp(operations.GetCrackdownLevel(m_eRole), 1, 5);
@@ -167,39 +296,154 @@ class AROR_TownWavesComponent : ScriptComponent
 		if (recipe.IsEmpty())
 		{
 			Print(string.Format("[AROR TOWN] %1 has no wave %2 recipe for role %3 at readiness %4; wave skipped", m_Location.GetId(), wave, m_eRole, readiness), LogLevel.WARNING);
-			m_aWaveIds.Insert(string.Empty);
-			m_iNextWaveAt = m_iClock + m_iWaveInterval;
-			return false;
-		}
-
-		vector post = PostPosition();
-		if (!m_bHasStaging || !executor.IsWaveStagingSafe_S(m_vStaging, post))
-		{
-			m_bHasStaging = executor.FindWaveStaging_S(post, NearestFriendlyBase(post), m_fStagingMinDistance, Math.Max(m_fStagingMinDistance, m_fStagingMaxDistance), m_vStaging);
-			if (!m_bHasStaging)
-			{
-				m_iStagingFailures++;
-				Print(string.Format("[AROR TOWN] %1 wave %2 has no safe road staging %3-%4m out (attempt %5)", m_Location.GetId(), wave, m_fStagingMinDistance, m_fStagingMaxDistance, m_iStagingFailures), LogLevel.WARNING);
-				if (m_iStagingFailures >= STAGING_ATTEMPTS)
-				{
-					m_aWaveIds.Insert(string.Empty);
-					m_iStagingFailures = 0;
-					m_iNextWaveAt = m_iClock + m_iWaveInterval;
-				}
-				return false;
-			}
+			SkipWave();
+			return;
 		}
 
 		int elements = WaveElements(wave, crackdown);
-		string id = operations.RequestTownWave_S(m_eRole, m_Location.GetId(), recipe, readiness, crackdown, m_vStaging, elements, m_fDismountDistance);
-		if (id.IsEmpty())
-			return false;
-		m_aWaveIds.Insert(id);
+		int columns = 1;
+		if (wave >= m_iWaves && m_iSplitMinElements > 0 && elements >= m_iSplitMinElements)
+			columns = 2;
+
+		// One staging road per column, each on its own axis away from the previous wave's roads
+		vector post = PostPosition();
+		array<vector> stagings = {};
+		array<vector> avoid = {};
+		avoid.Copy(m_aLastAxes);
+		for (int column = 0; column < columns; column++)
+		{
+			vector staging;
+			if (!FindStaging(executor, post, m_iAxisIndex + column, avoid, staging))
+				break;
+			stagings.Insert(staging);
+			avoid.Insert(staging);
+		}
+		if (stagings.IsEmpty())
+		{
+			m_iStagingFailures++;
+			Print(string.Format("[AROR TOWN] %1 wave %2 has no safe road staging %3-%4m out (attempt %5)", m_Location.GetId(), wave, m_fStagingMinDistance, m_fStagingMaxDistance, m_iStagingFailures), LogLevel.WARNING);
+			if (m_iStagingFailures >= STAGING_ATTEMPTS)
+				SkipWave();
+			return;
+		}
+		columns = stagings.Count();
+
+		// The lead column takes the recipe's first elements (its heaviest), the second the rest
+		int leadElements = elements;
+		if (columns == 2)
+			leadElements = (elements + 1) / 2;
+		array<string> sent = {};
+		for (int index = 0; index < columns; index++)
+		{
+			int offset = 0;
+			int limit = leadElements;
+			if (index == 1)
+			{
+				offset = leadElements;
+				limit = elements - leadElements;
+			}
+			string id = operations.RequestTownWave_S(m_eRole, m_Location.GetId(), recipe, readiness, crackdown, stagings[index], limit, m_fDismountDistance, offset);
+			if (id.IsEmpty())
+				continue;
+			sent.Insert(id);
+			Print(string.Format("[AROR TOWN] %1 wave %2/%3 column %4/%5 requested: %6 recipe=%7 elements=%8+%9", m_Location.GetId(), wave, m_iWaves, index + 1, columns, id, recipe, offset, limit), LogLevel.NORMAL);
+		}
+		if (sent.IsEmpty())
+			return;
+
+		foreach (string sentId : sent)
+			m_aOperationIds.Insert(sentId);
+		m_aLastAxes.Copy(stagings);
+		m_iAxisIndex += columns;
 		m_iStagingFailures = 0;
-		m_iNextWaveAt = m_iClock + m_iWaveInterval;
-		Announce(wave);
-		Print(string.Format("[AROR TOWN] %1 wave %2/%3 requested: %4 recipe=%5 elements<=%6 staging=%7", m_Location.GetId(), wave, m_iWaves, id, recipe, elements, m_vStaging), LogLevel.NORMAL);
-		return true;
+		m_iWavesSent++;
+		m_iNextWaveAt = m_iClock + NextInterval();
+		string waveText = " wave " + wave.ToString() + " of " + m_iWaves.ToString();
+		if (sent.Count() > 1)
+			Headline("%1 UNDER ATTACK / Two enemy columns inbound," + waveText, AROR_UIColors.DANGER);
+		else
+			Headline("%1 UNDER ATTACK / Enemy convoy inbound," + waveText, AROR_UIColors.DANGER);
+	}
+
+	protected void SkipWave()
+	{
+		m_iWavesSent++;
+		m_iStagingFailures = 0;
+		m_iNextWaveAt = m_iClock + NextInterval();
+	}
+
+	protected int NextInterval()
+	{
+		int jitter = Math.Max(m_iWaveIntervalJitter, 0);
+		return Math.Max(30, m_iWaveInterval + Math.RandomInt(-jitter, jitter + 1));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A staging road for the axis-th column of this response. Axes rotate around the bearing to the army's nearest
+	//! base (0, then 90 degrees to one side, 90 to the other, then the diagonals). Falls back to any road when every
+	//! road on a new axis is taken.
+	protected bool FindStaging(AROR_OperationExecutorComponent executor, vector post, int axis, array<vector> avoid, out vector staging)
+	{
+		vector base = NearestFriendlyBase(post);
+		vector heading = base - post;
+		heading[1] = 0;
+		float bearing = Math.RandomFloat(0, Math.PI2);
+		if (heading.Length() > 1)
+			bearing = Math.Atan2(heading[0], heading[2]);
+		array<float> offsets = {0.0, 90.0, -90.0, 45.0, -45.0, 135.0};
+		float offset = offsets[axis % offsets.Count()] * m_iAxisSide * Math.DEG2RAD;
+		vector towards = post + Vector(Math.Sin(bearing + offset), 0, Math.Cos(bearing + offset)) * AXIS_PREFERENCE_DISTANCE;
+		float maxDistance = Math.Max(m_fStagingMinDistance, m_fStagingMaxDistance);
+		if (executor.FindWaveStaging_S(post, towards, m_fStagingMinDistance, maxDistance, staging, avoid, m_fAxisSeparation))
+			return true;
+		// A repeated road beats no wave, unless this is a second column (the lead column already has that road) or
+		// nothing was avoided in the first place
+		if (avoid.IsEmpty() || avoid.Count() > m_aLastAxes.Count())
+			return false;
+		return executor.FindWaveStaging_S(post, towards, m_fStagingMinDistance, maxDistance, staging);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! At high Readiness, once a wave is pressing the post, the army commits one helicopter assault (its wave 9 joint
+	//! recipe) from its own bases, as an ordinary airborne response would launch
+	protected void TryAirAssault()
+	{
+		if (m_bAirRequested || m_iAirAssaultReadiness <= 0 || m_iPhase == PHASE_ALERT)
+			return;
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		AROR_OperationExecutorComponent executor = Executor();
+		if (!operations || !executor)
+			return;
+		int readiness = Math.Clamp(operations.GetReadinessLevel(m_eRole), 1, 5);
+		if (readiness < m_iAirAssaultReadiness)
+			return;
+		vector post = PostPosition();
+		bool pressing;
+		foreach (string id : m_aOperationIds)
+		{
+			if (executor.CountPressingPackages_S(id, post, m_fPressingDistance) > 0)
+			{
+				pressing = true;
+				break;
+			}
+		}
+		if (!pressing)
+			return;
+
+		m_bAirRequested = true;
+		string recipe = executor.FindTownWaveRecipeId_S(m_eRole, AIR_ASSAULT_WAVE, readiness);
+		if (recipe.IsEmpty())
+		{
+			Print(string.Format("[AROR TOWN] %1 has no helicopter assault recipe for role %2 at readiness %3", m_Location.GetId(), m_eRole, readiness), LogLevel.NORMAL);
+			return;
+		}
+		int crackdown = Math.Clamp(operations.GetCrackdownLevel(m_eRole), 1, 5);
+		string assault = operations.RequestTownWave_S(m_eRole, m_Location.GetId(), recipe, readiness, crackdown, vector.Zero, 0, 0);
+		if (assault.IsEmpty())
+			return;
+		m_aOperationIds.Insert(assault);
+		Print(string.Format("[AROR TOWN] %1 helicopter assault requested: %2 recipe=%3", m_Location.GetId(), assault, recipe), LogLevel.NORMAL);
+		Headline("%1 UNDER ATTACK / Enemy helicopters inbound", AROR_UIColors.DANGER);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -215,26 +459,36 @@ class AROR_TownWavesComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void Announce(int wave)
+	//! A headline to everyone; %1 in text is the town's name
+	protected void Headline(string text, int colorKey)
 	{
 		string name = m_Location.GetName();
 		name.ToUpper();
-		string text = string.Format("%1 UNDER ATTACK / Enemy convoy inbound, wave %2 of %3", name, wave, m_iWaves);
-		AROR_NotificationManagerComponent.Send_S(new AROR_Notification(AROR_ENotificationType.HEADLINE, text, m_Location.GetMapIcon(), AROR_UIColors.Get(AROR_UIColors.DANGER), "INTEL"));
+		AROR_NotificationManagerComponent.Send_S(new AROR_Notification(AROR_ENotificationType.HEADLINE, string.Format(text, name), m_Location.GetMapIcon(), AROR_UIColors.Get(colorKey), "INTEL"));
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! End the response (waves already on the road carry on under Operations); kills count again after the rearm
-	//! time when it ran, at once when the town changed hands
-	protected void Disarm(bool rearmDelay)
+	protected void ResetResponse()
 	{
-		if (m_iWave > 0)
-			Print(string.Format("[AROR TOWN] %1 response ended after %2 waves", m_Location.GetId(), WavesSent()), LogLevel.NORMAL);
-		m_iWave = 0;
+		m_iPhase = PHASE_IDLE;
+		m_iWavesSent = 0;
+		m_iAxisIndex = 0;
+		m_iStagingFailures = 0;
+		m_bAirRequested = false;
+		m_aOperationIds.Clear();
+		m_aFielded.Clear();
+		m_aLastAxes.Clear();
+	}
+
+	//! End the response (operations already on the road carry on under Operations); kills count again after the
+	//! rearm time when it ran, at once when the town changed hands
+	protected void EndResponse(bool rearmDelay)
+	{
+		if (m_iPhase != PHASE_IDLE)
+			Print(string.Format("[AROR TOWN] %1 response ended after %2 waves", m_Location.GetId(), m_iWavesSent), LogLevel.NORMAL);
+		ResetResponse();
 		m_iKills = 0;
-		m_aWaveIds.Clear();
 		m_aSeen.Clear();
-		m_bHasStaging = false;
 		ClearWatches();
 		if (rearmDelay)
 			m_iRearmAt = m_iClock + m_iRearmSeconds;
@@ -243,6 +497,14 @@ class AROR_TownWavesComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	protected AROR_OperationExecutorComponent Executor()
+	{
+		BaseGameMode gameMode = GetGame().GetGameMode();
+		if (!gameMode)
+			return null;
+		return AROR_OperationExecutorComponent.Cast(gameMode.FindComponent(AROR_OperationExecutorComponent));
+	}
+
 	protected vector PostPosition()
 	{
 		if (m_Garrison && m_Garrison.IsEligible())
