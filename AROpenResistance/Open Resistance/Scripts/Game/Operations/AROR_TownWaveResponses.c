@@ -6,6 +6,45 @@
 //! on its fixed-origin support.
 modded class AROR_OperationManagerComponent
 {
+	[Attribute("0", desc: "Readiness pressure removed each quiet minute (same quiet time as crackdown cooling), never below the starting Readiness level; 0 keeps equipment progress. Town fights and captures push it back up.", params: "0 100 1")]
+	protected int m_iReadinessDecay;
+	protected int m_iNextReadinessDecay;
+
+	//! Town fighting (AROR_TownWavesComponent): crackdown and readiness pressure for an army's losses in a town or a
+	//! taken garrison post. Counts as fresh evidence, so neither scale cools while the fight goes on.
+	//! capture: also apply the scenario's capture escalation (as for a captured location).
+	void RecordTownEscalation_S(AROR_EFactionRole role, int crackdown, int readiness, string townId, string reason, bool capture = false)
+	{
+		if (!Replication.IsServer() || !IsEnemyRole(role))
+			return;
+		int crackdownBefore = GetCrackdown(role);
+		int readinessBefore = GetReadinessPressure(role);
+		if (capture)
+			RecordCaptureEscalation_S(role);
+		SetCrackdown_S(role, GetCrackdown(role) + crackdown);
+		SetReadinessPressure_S(role, GetReadinessPressure(role) + readiness);
+		if (role == AROR_EFactionRole.OCCUPIERS)
+			m_iOccupierLastThreat = m_iClock;
+		else
+			m_iInvaderLastThreat = m_iClock;
+		Print(string.Format("[AROR BALANCE] town_escalation town=%1 role=%2 reason=%3 crackdown=%4->%5 readiness=%6->%7 crackdownLevel=%8 readinessLevel=%9", townId, role, reason, crackdownBefore, GetCrackdown(role), readinessBefore, GetReadinessPressure(role), GetCrackdownLevel(role), GetReadinessLevel(role)), LogLevel.NORMAL);
+	}
+
+	//! Readiness cools like crackdown once an army has been quiet, down to the scenario's starting level
+	override protected void UpdateCrackdown_S()
+	{
+		super.UpdateCrackdown_S();
+		if (!Replication.IsServer() || !m_bQRFStrategicEconomy || m_iReadinessDecay <= 0 || m_iClock < m_iNextReadinessDecay)
+			return;
+		m_iNextReadinessDecay = m_iClock + 60;
+		int floor = AROR_QRFStrategicPolicy.PressureForLevel(m_iStartingReadinessLevel);
+		if (m_iClock - m_iOccupierLastThreat >= m_iCrackdownQuietTime && GetReadinessPressure(AROR_EFactionRole.OCCUPIERS) > floor)
+			SetReadinessPressure_S(AROR_EFactionRole.OCCUPIERS, Math.Max(floor, GetReadinessPressure(AROR_EFactionRole.OCCUPIERS) - m_iReadinessDecay));
+		if (m_iClock - m_iInvaderLastThreat >= m_iCrackdownQuietTime && GetReadinessPressure(AROR_EFactionRole.INVADERS) > floor)
+			SetReadinessPressure_S(AROR_EFactionRole.INVADERS, Math.Max(floor, GetReadinessPressure(AROR_EFactionRole.INVADERS) - m_iReadinessDecay));
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Returns the new operation ID, or empty when rejected. Several waves may target the same town at once.
 	//! origin vector.Zero launches from the role's best friendly military site, as an ordinary QRF does (the
 	//! helicopter assault). elementOffset skips the recipe's first elements (the second column of a split wave).

@@ -55,10 +55,19 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 		AROR_GarrisonComponent post = GetSettlementPost(location);
 		if (!Replication.IsServer() || !post || post.IsPostBroken() || role == location.GetControllingRole())
 			return false;
+		AROR_EFactionRole holder = location.GetControllingRole();
 		post.BreakSettlementPost_S();
 		AROR_SettlementComponent settlement = AROR_SettlementComponent.Cast(location.GetOwner().FindComponent(AROR_SettlementComponent));
+		float supportBefore;
 		if (settlement)
+		{
+			supportBefore = settlement.GetSupport(role);
 			settlement.AddSupport_S(role, post.GetPostSupportSwing());
+			Print(string.Format("[AROR BALANCE] post_taken town=%1 holder=%2 support=%3->%4", location.GetId(), holder, supportBefore, settlement.GetSupport(role)), LogLevel.NORMAL);
+		}
+		// Losing a garrison post escalates the holder like losing a location (through Towns: Capture compiles before
+		// the Operations file that adds the escalation call)
+		AROR_TownWavesComponent.RecordPostTaken_S(location, holder);
 		string name = location.GetName();
 		name.ToUpper();
 		string text = string.Format("%1 GARRISON POST TAKEN / Support for the Resistance rises", name);

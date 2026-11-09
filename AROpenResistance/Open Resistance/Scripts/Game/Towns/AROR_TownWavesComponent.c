@@ -8,10 +8,28 @@ class AROR_TownWavesComponentClass : ScriptComponentClass {}
 //!   Waves come in on different roads (axes); the last one splits into two columns on two roads.
 //! - A helicopter assault (joint recipe) commits once a wave is pressing the post, at high Readiness.
 //! - RESOLVING: once every wave and the assault have ended, the town holds: a support reward and an HQ headline.
-//!   If the Resistance leaves instead, the army retakes a broken post at once.
+//! - LOCKDOWN, throughout: the army's fighters and the Resistance's are counted around the town. Outnumbered for the
+//!   lockdown time in total and the army retakes the town: the post is restored and the Resistance support gained
+//!   since the contact is lost. The same happens if the Resistance leaves. Clients see it on AROR_TownContestHud.
+//! Only one town response runs on the map at a time; a second town under attack gets no reinforcements until it ends.
+//! Every enemy killed in the town (garrison, checkpoints, patrol, wave troops) raises the army's Crackdown and
+//! Readiness through Operations (RecordTownEscalation_S). "[AROR BALANCE]" log lines record each response.
 //! Waves go through Operations (RequestTownWave_S). Session-only: kill progress and a running response are not saved.
 class AROR_TownWavesComponent : ScriptComponent
 {
+	[Attribute("8", desc: "Army crackdown points per enemy killed in the town (0-1000 scale, 200 per level)", params: "0 100 1", category: "Escalation")]
+	protected int m_iKillCrackdown;
+	[Attribute("4", desc: "Army readiness pressure per enemy killed in the town (levels at 100, 250, 450, 700)", params: "0 100 1", category: "Escalation")]
+	protected int m_iKillReadiness;
+	[Attribute("0", desc: "Radius counted for the lockdown, metres; 0 uses the town's radius (kept within 120-300)", params: "0 600 10", category: "Lockdown")]
+	protected float m_fContestRadius;
+	[Attribute("600", desc: "Seconds the army must outnumber the Resistance in the town (in total; it counts back down while it does not) to retake it", params: "60 3600 30", category: "Lockdown")]
+	protected int m_iLockdownSeconds;
+	[Attribute("700", desc: "Players this close to the town see the lockdown indicator, metres", params: "100 2000 50", category: "Lockdown")]
+	protected float m_fIndicatorRadius;
+	[Attribute("1", desc: "How many enemy fighters one Resistance fighter (player or recruit) is worth in the lockdown count; above 1 lets small squads hold against larger AI forces", params: "0.5 5 0.25", category: "Lockdown")]
+	protected float m_fResistanceWeight;
+
 	[Attribute("0.25", desc: "Share of the town's defenders (post, checkpoints and patrol) players must kill to bring the response", params: "0.05 1 0.05")]
 	protected float m_fTriggerShare;
 	[Attribute("3", desc: "Fewest player kills that bring the response", params: "1 30 1")]
@@ -42,7 +60,7 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected int m_iAirAssaultReadiness;
 	[Attribute("350", desc: "A wave package this close to the post is pressing it; that commits the helicopter assault, metres", params: "100 1000 25")]
 	protected float m_fPressingDistance;
-	[Attribute("10", desc: "Resistance support gained in the town when the whole response is beaten off, percent", params: "0 50 1")]
+	[Attribute("20", desc: "Resistance support gained in the town when the whole response is beaten off, percent", params: "0 50 1")]
 	protected float m_fRepelledSupportSwing;
 	[Attribute("900", desc: "Seconds after the last wave is sent before an unresolved response ends without an outcome", params: "120 3600 30")]
 	protected int m_iResolveTimeout;
@@ -62,7 +80,25 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected static const int STAGING_RETRY_SECONDS = 20;
 	protected static const int STAGING_ATTEMPTS = 6;
 	protected static const int PRESSING_CHECK_SECONDS = 5;
+	protected static const int CONTEST_CHECK_SECONDS = 5;
+	protected static const int CONTEST_LOG_SECONDS = 30;
+	protected static const int MAX_WATCHES = 250;
 	protected static const float AXIS_PREFERENCE_DISTANCE = 1000;
+
+	protected static AROR_TownWavesComponent s_ActiveResponse;	//!< Server: the one town response running on the map
+	protected static ref array<AROR_TownWavesComponent> s_aTowns = {};	//!< Every machine: all towns, for the HUD
+
+	//! Replicated lockdown state for the HUD (see AROR_TownContestHud)
+	[RplProp()]
+	protected bool m_bContestActive;
+	[RplProp()]
+	protected int m_iContestSeconds;
+	[RplProp()]
+	protected int m_iContestEnemies;
+	[RplProp()]
+	protected int m_iContestFriendlies;
+	[RplProp()]
+	protected bool m_bContestLosing;	//!< The army outnumbers the Resistance (weighted) right now
 
 	protected static const int PHASE_IDLE = 0;
 	protected static const int PHASE_ALERT = 1;		//!< Triggered; the first wave is forming up
@@ -94,6 +130,52 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected int m_iLastResistanceNear;
 	protected int m_iStagingFailures;
 	protected bool m_bAirRequested;
+	protected bool m_bDeferredReported;	//!< The "no reinforcements available" contact report went out this arming
+	protected string m_sOutcome;		//!< Set before a response ends, for the balance log
+	// Balance log snapshot of the running response
+	protected int m_iStartedAt;
+	protected int m_iResponseKills;
+	protected int m_iCrackdownAtStart;
+	protected int m_iReadinessAtStart;
+	protected float m_fSupportAtContact;	//!< Resistance support when the response began; lost gains go back to it
+	protected int m_iPeakEnemies;
+	protected int m_iPeakFriendlies;
+	protected int m_iNextContestCheck;
+	protected int m_iNextContestLog;
+	// Lockdown scan scratch
+	protected int m_iScanEnemies;
+	protected int m_iScanFriendlies;
+	protected AROR_FactionRolesComponent m_ScanRoles;
+
+	//------------------------------------------------------------------------------------------------
+	//! Every machine: lockdown state for the HUD
+	bool IsContestActive() { return m_bContestActive; }
+	int GetContestSeconds() { return m_iContestSeconds; }
+	int GetLockdownSeconds() { return m_iLockdownSeconds; }
+	int GetContestEnemies() { return m_iContestEnemies; }
+	int GetContestFriendlies() { return m_iContestFriendlies; }
+	bool IsContestLosing() { return m_bContestLosing; }
+	AROR_LocationComponent GetLocation() { return m_Location; }
+
+	//! Every machine: the town whose lockdown indicator a player at this position should see, or null
+	static AROR_TownWavesComponent FindContest(vector position)
+	{
+		foreach (AROR_TownWavesComponent town : s_aTowns)
+		{
+			if (town && town.m_bContestActive && town.m_Location && vector.DistanceXZ(position, town.m_Location.GetCenter()) <= town.m_fIndicatorRadius)
+				return town;
+		}
+		return null;
+	}
+
+	//! Server: a taken garrison post escalates the holding army like a lost location (called by Location Capture)
+	static void RecordPostTaken_S(AROR_LocationComponent location, AROR_EFactionRole holder)
+	{
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		if (!Replication.IsServer() || !operations || !location)
+			return;
+		operations.RecordTownEscalation_S(holder, 0, 0, location.GetId(), "post_taken", true);
+	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Every machine: true if this town's waves stand in for the capture QRF
@@ -118,9 +200,26 @@ class AROR_TownWavesComponent : ScriptComponent
 		m_iClock++;
 
 		AROR_EFactionRole role = m_Location.GetControllingRole();
+		// A running response stays with its army even when the town's support flips it to the Resistance mid-fight:
+		// the lockdown decides who keeps it. Only another army taking the town ends it.
+		if (m_iPhase != PHASE_IDLE)
+		{
+			if (AROR_GarrisonPolicy.IsEnemyRole(role) && role != m_eRole)
+			{
+				m_sOutcome = "HANDOVER";
+				EndResponse(false);
+				m_eRole = role;
+			}
+			else
+			{
+				RefreshWatches();
+				UpdateResponse();
+				return;
+			}
+		}
 		if (!AROR_GarrisonPolicy.IsEnemyRole(role))
 		{
-			if (m_iPhase != PHASE_IDLE || m_iKills > 0 || !m_aWatches.IsEmpty())
+			if (m_iKills > 0 || !m_aWatches.IsEmpty())
 				EndResponse(false);
 			return;
 		}
@@ -132,15 +231,25 @@ class AROR_TownWavesComponent : ScriptComponent
 		}
 
 		RefreshWatches();
-		if (m_iPhase != PHASE_IDLE)
-		{
-			UpdateResponse();
-			return;
-		}
 		if (m_iClock < m_iRearmAt)
 			return;
-		if (m_iKills >= KillThreshold())
-			StartResponse();
+		if (m_iKills < KillThreshold())
+			return;
+		// One town response on the map at a time: the garrison here fights on alone until that one ends
+		if (s_ActiveResponse && s_ActiveResponse != this && s_ActiveResponse.IsResponding())
+		{
+			if (!m_bDeferredReported)
+			{
+				m_bDeferredReported = true;
+				Print(string.Format("[AROR BALANCE] town_response_deferred town=%1 role=%2 kills=%3 busy=%4", m_Location.GetId(), m_eRole, m_iKills, s_ActiveResponse.GetLocation().GetId()), LogLevel.NORMAL);
+				Headline("CONTACT REPORT  ·  %1 / Garrison engaged by " + ContactNames() + ". No reinforcements available", AROR_UIColors.WARN);
+			}
+			return;
+		}
+		// A deferred town whose attackers have since left does not send waves at nobody
+		if (!IsResistanceNear())
+			return;
+		StartResponse();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -162,6 +271,28 @@ class AROR_TownWavesComponent : ScriptComponent
 		int delayMax = Math.Max(m_iAlertDelayMin, m_iAlertDelayMax);
 		m_iNextWaveAt = m_iClock + Math.RandomInt(delayMin, delayMax + 1);
 		m_iLastResistanceNear = m_iClock;
+		s_ActiveResponse = this;
+
+		// Snapshot for the lockdown (support to fall back to) and the balance log
+		m_iStartedAt = m_iClock;
+		m_iResponseKills = 0;
+		m_iPeakEnemies = 0;
+		m_iPeakFriendlies = 0;
+		m_iNextContestCheck = m_iClock;
+		m_iNextContestLog = m_iClock + CONTEST_LOG_SECONDS;
+		m_fSupportAtContact = ResistanceSupport();
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		if (operations)
+		{
+			m_iCrackdownAtStart = operations.GetCrackdown(m_eRole);
+			m_iReadinessAtStart = operations.GetReadinessPressure(m_eRole);
+			Print(string.Format("[AROR BALANCE] town_response_start town=%1 role=%2 readinessLevel=%3 crackdownLevel=%4 readiness=%5 crackdown=%6 players=%7 defenders=%8 kills=%9", m_Location.GetId(), m_eRole, operations.GetReadinessLevel(m_eRole), operations.GetCrackdownLevel(m_eRole), m_iReadinessAtStart, m_iCrackdownAtStart, ResistancePlayersNear(), m_aSeen.Count(), m_iKills), LogLevel.NORMAL);
+		}
+		m_bContestActive = true;
+		m_iContestSeconds = 0;
+		m_iContestEnemies = 0;
+		m_iContestFriendlies = 0;
+		Replication.BumpMe();
 		Print(string.Format("[AROR TOWN] %1 response triggered: %2 player kills of %3 defenders seen; first wave in %4s", m_Location.GetId(), m_iKills, m_aSeen.Count(), m_iNextWaveAt - m_iClock), LogLevel.NORMAL);
 		// The contact report: the garrison names who hit it before the response is on its way
 		Headline("CONTACT REPORT  ·  %1 / Garrison engaged by " + ContactNames() + ". Reinforcements requested", AROR_UIColors.DANGER);
@@ -246,6 +377,12 @@ class AROR_TownWavesComponent : ScriptComponent
 			return;
 		}
 		TrackFielded();
+		if (m_iClock >= m_iNextContestCheck)
+		{
+			m_iNextContestCheck = m_iClock + CONTEST_CHECK_SECONDS;
+			if (UpdateContest())
+				return;
+		}
 
 		if (m_iPhase == PHASE_ALERT || m_iPhase == PHASE_WAVES)
 		{
@@ -303,6 +440,7 @@ class AROR_TownWavesComponent : ScriptComponent
 				if (m_iClock - m_iResolveSince < m_iResolveTimeout)
 					return;
 				Print(string.Format("[AROR TOWN] %1 response timed out %2s after its last wave; ended without an outcome", m_Location.GetId(), m_iResolveTimeout), LogLevel.WARNING);
+				m_sOutcome = "TIMEOUT";
 				EndResponse(true);
 				return;
 			}
@@ -310,10 +448,117 @@ class AROR_TownWavesComponent : ScriptComponent
 		if (m_aFielded.IsEmpty())
 		{
 			Print(string.Format("[AROR TOWN] %1 response ended: no wave reached the field", m_Location.GetId()), LogLevel.WARNING);
+			m_sOutcome = "NO_WAVE";
 			EndResponse(true);
 			return;
 		}
 		Repelled();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The lockdown, every few seconds: count both sides around the town. While the army outnumbers the Resistance
+	//! the clock runs up, otherwise it runs back down. True when the army has retaken the town (response ended).
+	protected bool UpdateContest()
+	{
+		CountContest();
+		m_bContestLosing = m_iScanEnemies > m_iScanFriendlies * m_fResistanceWeight;
+		if (m_bContestLosing)
+			m_iContestSeconds = Math.Min(m_iContestSeconds + CONTEST_CHECK_SECONDS, m_iLockdownSeconds);
+		else
+			m_iContestSeconds = Math.Max(m_iContestSeconds - CONTEST_CHECK_SECONDS, 0);
+		m_iPeakEnemies = Math.Max(m_iPeakEnemies, m_iScanEnemies);
+		m_iPeakFriendlies = Math.Max(m_iPeakFriendlies, m_iScanFriendlies);
+		m_iContestEnemies = m_iScanEnemies;
+		m_iContestFriendlies = m_iScanFriendlies;
+		Replication.BumpMe();
+		if (m_iClock >= m_iNextContestLog)
+		{
+			m_iNextContestLog = m_iClock + CONTEST_LOG_SECONDS;
+			Print(string.Format("[AROR BALANCE] town_contest town=%1 role=%2 enemies=%3 resistance=%4 lockdown=%5/%6 phase=%7 waves=%8", m_Location.GetId(), m_eRole, m_iScanEnemies, m_iScanFriendlies, m_iContestSeconds, m_iLockdownSeconds, m_iPhase, m_iWavesSent), LogLevel.NORMAL);
+		}
+		if (m_iContestSeconds < m_iLockdownSeconds)
+			return false;
+		Retaken("%1 RETAKEN / Enemy forces held the town. Resistance support gains lost", "RETAKEN");
+		return true;
+	}
+
+	//! Living fighters of the responding army and of the Resistance within the lockdown radius. The army's fighters
+	//! (wave troops included) are watched too, so the players' kills among them count towards escalation.
+	protected void CountContest()
+	{
+		m_iScanEnemies = 0;
+		m_iScanFriendlies = 0;
+		m_ScanRoles = AROR_FactionRolesComponent.GetInstance();
+		if (!m_ScanRoles)
+			return;
+		GetGame().GetWorld().QueryEntitiesBySphere(m_Location.GetCenter(), ContestRadius(), OnContestEntity, null, EQueryEntitiesFlags.DYNAMIC);
+	}
+
+	//! Sphere query callback (public, as engine callbacks are in the base game); true keeps the query going
+	bool OnContestEntity(IEntity entity)
+	{
+		ChimeraCharacter character = ChimeraCharacter.Cast(entity);
+		if (!character || !character.GetCharacterController() || character.GetCharacterController().IsDead())
+			return true;
+		FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(character.FindComponent(FactionAffiliationComponent));
+		if (!affiliation)
+			return true;
+		AROR_EFactionRole role;
+		if (!m_ScanRoles.GetRoleOfFaction(affiliation.GetAffiliatedFaction(), role))
+			return true;
+		if (role == AROR_EFactionRole.RESISTANCE)
+			m_iScanFriendlies++;
+		else if (role == m_eRole)
+		{
+			m_iScanEnemies++;
+			Watch(character);
+		}
+		return true;
+	}
+
+	protected float ContestRadius()
+	{
+		if (m_fContestRadius > 0)
+			return m_fContestRadius;
+		return Math.Clamp(m_Location.GetRadius(), 120, 300);
+	}
+
+	//! The army has the town back: the post is restored and the Resistance loses the support it gained since the
+	//! contact (which can flip the town back through the normal support rule)
+	protected void Retaken(string headline, string outcome)
+	{
+		AROR_SettlementComponent settlement = AROR_SettlementComponent.Cast(m_Location.GetOwner().FindComponent(AROR_SettlementComponent));
+		float support = ResistanceSupport();
+		if (settlement && support > m_fSupportAtContact)
+			settlement.SetSupport_S(AROR_EFactionRole.RESISTANCE, m_fSupportAtContact);
+		if (m_Garrison && m_Garrison.IsPostBroken())
+			m_Garrison.ReformSoon_S();
+		Print(string.Format("[AROR TOWN] %1 retaken by role %2: Resistance support %3 -> %4", m_Location.GetId(), m_eRole, support, ResistanceSupport()), LogLevel.NORMAL);
+		Headline(headline, AROR_UIColors.DANGER);
+		m_sOutcome = outcome;
+		EndResponse(true);
+	}
+
+	protected float ResistanceSupport()
+	{
+		AROR_SettlementComponent settlement = AROR_SettlementComponent.Cast(m_Location.GetOwner().FindComponent(AROR_SettlementComponent));
+		if (!settlement)
+			return 0;
+		return settlement.GetSupport(AROR_EFactionRole.RESISTANCE);
+	}
+
+	protected int ResistancePlayersNear()
+	{
+		int count;
+		array<int> players = {};
+		GetGame().GetPlayerManager().GetPlayers(players);
+		foreach (int playerId : players)
+		{
+			IEntity player = GetGame().GetPlayerManager().GetPlayerControlledEntity(playerId);
+			if (AROR_QRFSpotting.IsResistance(player) && vector.DistanceXZ(player.GetOrigin(), m_Location.GetCenter()) <= m_fAbandonDistance)
+				count++;
+		}
+		return count;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -324,6 +569,7 @@ class AROR_TownWavesComponent : ScriptComponent
 			settlement.AddSupport_S(AROR_EFactionRole.RESISTANCE, m_fRepelledSupportSwing);
 		Print(string.Format("[AROR TOWN] %1 response repelled: %2 of %3 operations fielded; Resistance support +%4", m_Location.GetId(), m_aFielded.Count(), m_aOperationIds.Count(), m_fRepelledSupportSwing), LogLevel.NORMAL);
 		Headline(RepelledLine(), AROR_UIColors.REBEL);
+		m_sOutcome = "REPELLED";
 		EndResponse(true);
 	}
 
@@ -342,16 +588,18 @@ class AROR_TownWavesComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! No Resistance near for the abandon time: waves already on the road carry on under Operations, and the army
-	//! takes back a broken garrison post at once
+	//! No Resistance near for the abandon time: the army holds the town unopposed. Waves already on the road carry on
+	//! under Operations; with retake on, the town is retaken as by the lockdown (post restored, support gains lost).
 	protected void Abandon()
 	{
 		Print(string.Format("[AROR TOWN] %1 response abandoned after %2 of %3 waves: no Resistance near", m_Location.GetId(), m_iWavesSent, m_iWaves), LogLevel.NORMAL);
-		if (m_bRetakeWhenAbandoned && m_Garrison && m_Garrison.IsPostBroken())
+		bool gained = ResistanceSupport() > m_fSupportAtContact || (m_Garrison && m_Garrison.IsPostBroken());
+		if (m_bRetakeWhenAbandoned && gained)
 		{
-			m_Garrison.ReformSoon_S();
-			Headline("%1 GARRISON RESTORED / The army has retaken the post", AROR_UIColors.DANGER);
+			Retaken("%1 RETAKEN / The Resistance pulled out. Support gains lost", "ABANDONED");
+			return;
 		}
+		m_sOutcome = "ABANDONED";
 		EndResponse(true);
 	}
 
@@ -430,6 +678,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		if (sent.IsEmpty())
 			return;
 
+		Print(string.Format("[AROR BALANCE] town_wave town=%1 role=%2 wave=%3 columns=%4 elements=%5 recipe=%6 readinessLevel=%7 crackdownLevel=%8 seconds=%9", m_Location.GetId(), m_eRole, wave, sent.Count(), elements, recipe, readiness, crackdown, m_iClock - m_iStartedAt), LogLevel.NORMAL);
 		// Reported once the first column is on the road (AnnounceWave), with its side and arrival estimate
 		foreach (int sentIndex, string sentId : sent)
 			TrackOperation(sentId, wave, sides[sentIndex]);
@@ -569,7 +818,21 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected void EndResponse(bool rearmDelay)
 	{
 		if (m_iPhase != PHASE_IDLE)
+		{
 			Print(string.Format("[AROR TOWN] %1 response ended after %2 waves", m_Location.GetId(), m_iWavesSent), LogLevel.NORMAL);
+			LogResponseEnd();
+		}
+		if (s_ActiveResponse == this)
+			s_ActiveResponse = null;
+		if (m_bContestActive)
+		{
+			m_bContestActive = false;
+			m_bContestLosing = false;
+			m_iContestSeconds = 0;
+			Replication.BumpMe();
+		}
+		m_sOutcome = string.Empty;
+		m_bDeferredReported = false;
 		ResetResponse();
 		m_iKills = 0;
 		m_aSeen.Clear();
@@ -579,6 +842,24 @@ class AROR_TownWavesComponent : ScriptComponent
 			m_iRearmAt = m_iClock + m_iRearmSeconds;
 		else
 			m_iRearmAt = m_iClock;
+	}
+
+	//! One line per response for tuning: how it went and what it did to the army and the town
+	protected void LogResponseEnd()
+	{
+		string outcome = m_sOutcome;
+		if (outcome.IsEmpty())
+			outcome = "ENDED";
+		int crackdown = -1;
+		int readiness = -1;
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		if (operations)
+		{
+			crackdown = operations.GetCrackdown(m_eRole);
+			readiness = operations.GetReadinessPressure(m_eRole);
+		}
+		Print(string.Format("[AROR BALANCE] town_response_end town=%1 role=%2 outcome=%3 seconds=%4 waves=%5 fielded=%6 kills=%7 peakEnemies=%8 peakResistance=%9", m_Location.GetId(), m_eRole, outcome, m_iClock - m_iStartedAt, m_iWavesSent, m_aFielded.Count(), m_iResponseKills, m_iPeakEnemies, m_iPeakFriendlies), LogLevel.NORMAL);
+		Print(string.Format("[AROR BALANCE] town_response_effect town=%1 role=%2 outcome=%3 support=%4->%5 crackdown=%6->%7 readiness=%8->%9", m_Location.GetId(), m_eRole, outcome, m_fSupportAtContact, ResistanceSupport(), m_iCrackdownAtStart, crackdown, m_iReadinessAtStart, readiness), LogLevel.NORMAL);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -656,9 +937,15 @@ class AROR_TownWavesComponent : ScriptComponent
 			if (watch.WasPlayerKill(KILL_CREDIT_SECONDS))
 			{
 				m_iKills++;
+				if (m_iPhase != PHASE_IDLE)
+					m_iResponseKills++;
 				if (!m_aContactPlayers.Contains(watch.m_iPlayerId))
 					m_aContactPlayers.Insert(watch.m_iPlayerId);
 				Print(string.Format("[AROR TOWN] %1 defender killed by player %2 (%3/%4)", m_Location.GetId(), watch.m_iPlayerId, m_iKills, KillThreshold()), LogLevel.NORMAL);
+				// Every enemy defeated in the town escalates its army, at once
+				AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+				if (operations && (m_iKillCrackdown > 0 || m_iKillReadiness > 0))
+					operations.RecordTownEscalation_S(m_eRole, m_iKillCrackdown, m_iKillReadiness, m_Location.GetId(), "kill");
 			}
 			watch.Detach_S();
 			m_aWatches.Remove(index);
@@ -681,15 +968,26 @@ class AROR_TownWavesComponent : ScriptComponent
 
 		foreach (IEntity defender : defenders)
 		{
-			if (!defender || IsWatched(defender))
-				continue;
-			AROR_TownCasualtyWatch added = new AROR_TownCasualtyWatch();
-			if (!added.Attach_S(defender))
-				continue;
-			m_aWatches.Insert(added);
-			if (!m_aSeen.Contains(defender))
+			if (Watch(defender) && !m_aSeen.Contains(defender))
 				m_aSeen.Insert(defender);
 		}
+	}
+
+	//! Start counting a character's death if a player causes it; true once it is watched. Wave troops met by the
+	//! lockdown scan are watched too, but only the town's own defenders count towards the trigger (m_aSeen).
+	protected bool Watch(IEntity character)
+	{
+		if (!character)
+			return false;
+		if (IsWatched(character))
+			return true;
+		if (m_aWatches.Count() >= MAX_WATCHES)
+			return false;
+		AROR_TownCasualtyWatch added = new AROR_TownCasualtyWatch();
+		if (!added.Attach_S(character))
+			return false;
+		m_aWatches.Insert(added);
+		return true;
 	}
 
 	protected bool IsWatched(IEntity entity)
@@ -716,7 +1014,11 @@ class AROR_TownWavesComponent : ScriptComponent
 		m_Location = AROR_LocationComponent.Cast(owner.FindComponent(AROR_LocationComponent));
 		m_Garrison = AROR_GarrisonComponent.Cast(owner.FindComponent(AROR_GarrisonComponent));
 		m_TownLife = AROR_TownLifeComponent.Cast(owner.FindComponent(AROR_TownLifeComponent));
-		if (!GetGame().InPlayMode() || !Replication.IsServer())
+		if (!GetGame().InPlayMode())
+			return;
+		if (!s_aTowns.Contains(this))
+			s_aTowns.Insert(this);
+		if (!Replication.IsServer())
 			return;
 		if (!m_Location)
 		{
@@ -730,8 +1032,12 @@ class AROR_TownWavesComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	override void OnDelete(IEntity owner)
 	{
-		GetGame().GetCallqueue().Remove(Tick);
+		if (GetGame())
+			GetGame().GetCallqueue().Remove(Tick);
 		ClearWatches();
+		s_aTowns.RemoveItem(this);
+		if (s_ActiveResponse == this)
+			s_ActiveResponse = null;
 		super.OnDelete(owner);
 	}
 }
