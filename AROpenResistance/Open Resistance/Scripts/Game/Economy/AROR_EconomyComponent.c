@@ -35,6 +35,9 @@ class AROR_EconomyComponent : SCR_BaseGameModeComponent
 	[Attribute("100", desc: "Personal money for a player joining the campaign for the first time", params: "0 inf", category: "Starting values")]
 	protected int m_iStartingPlayerMoney;
 
+	[Attribute("1", desc: "Multiplies every Imports (vehicle) price; the same on every machine, so the shop shows what the server charges. Keeps vehicles a multi-town goal while weapons stay a one-town purchase.", params: "0.1 10 0.05", category: "Prices")]
+	protected float m_fVehiclePriceScale;
+
 	protected static AROR_EconomyComponent s_Instance;
 
 	[RplProp(onRplName: "OnFundsReplicated")]
@@ -60,6 +63,16 @@ class AROR_EconomyComponent : SCR_BaseGameModeComponent
 
 	protected ref ScriptInvokerBase<AROR_OnFactionFundsChanged> m_OnFactionFundsChanged = new ScriptInvokerBase<AROR_OnFactionFundsChanged>();
 	protected ref ScriptInvokerBase<AROR_OnLocalPlayerMoneyChanged> m_OnLocalPlayerMoneyChanged = new ScriptInvokerBase<AROR_OnLocalPlayerMoneyChanged>();
+
+	//------------------------------------------------------------------------------------------------
+	//! Imports price for a vehicle of the given base cost
+	static int ScaleVehiclePrice(int cost)
+	{
+		if (!s_Instance)
+			return cost;
+		float scaled = cost * s_Instance.m_fVehiclePriceScale;
+		return Math.Round(scaled);
+	}
 
 	//------------------------------------------------------------------------------------------------
 	static AROR_EconomyComponent GetInstance()

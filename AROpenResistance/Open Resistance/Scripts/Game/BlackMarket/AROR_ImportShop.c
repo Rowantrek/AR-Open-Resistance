@@ -191,6 +191,8 @@ class AROR_ImportShop
 		offer.m_sPrefab = entry.GetPrefab();
 		offer.m_iCategory = category;
 		offer.m_iPrice = entry.GetCost();
+		if (vehicle)
+			offer.m_iPrice = AROR_EconomyComponent.ScaleVehiclePrice(offer.m_iPrice);
 		offer.m_iFacilities = entry.GetRequiredImportPoints();
 		offer.m_eSpecial = entry.GetImportPointRequirement();
 		offer.m_sType = AROR_TextUtils.FormatEnumName(entry.GetTypeName());

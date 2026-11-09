@@ -27,6 +27,21 @@ PerceptionManager AROR_PerceptionManager : "{028DAEAD63E056BE}Prefabs/World/Game
 }
 SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR_GameMode_Base.et" {
  components {
+  AROR_EconomyComponent "{F317694D57DF9B7A}" {
+   m_iStartingResistanceFunds 8000
+   m_iStartingPlayerMoney 600
+   m_fVehiclePriceScale 1.5
+  }
+  AROR_IncomeComponent "{3C7E9B2A51D84F06}" {
+   m_iIntervalSeconds 300
+   m_iResourceIncome 170
+   m_iMoneyPerInhabitant 9
+   m_iOccupiersExternalSupport 170
+   m_iInvadersExternalSupport 170
+   m_fPlayerShare 0.25
+   m_iManpowerPerTown 1
+   m_iManpowerPerCity 2
+  }
   AROR_InvaderCampaignComponent "{9AB2CB63D7214001}" {
    m_bInvaderCampaign 1
    m_bOccupyTowns 1
