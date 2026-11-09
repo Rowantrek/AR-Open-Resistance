@@ -40,6 +40,15 @@ modded class AROR_OperationManagerComponent
 		NotifyChanged(created);
 		return id;
 	}
+
+	//! Seconds until a town wave's first package reaches the town, or -1 before dispatch or when unknown
+	int GetTownWaveEta(string operationId)
+	{
+		AROR_Operation operation = GetOperation(operationId);
+		if (!operation)
+			return -1;
+		return operation.GetEtaRemaining(m_iClock);
+	}
 }
 
 modded class AROR_OperationExecutorComponent

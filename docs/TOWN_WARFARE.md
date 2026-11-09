@@ -40,7 +40,8 @@ an occupying presence in the streets, and a fixed three-wave response when playe
 Trigger: players kill 25% of the defenders seen (post, checkpoint guards, patrol crews), at least 3. The response
 then runs in phases, after the pattern of RC Dynamic Counter Attacks (ideas from its workshop page only; no code):
 
-1. **Alert**: headline "X GARRISON CALLS FOR HELP". The first wave forms up 30–90 s later.
+1. **Alert**: a contact report that names who hit the garrison, "CONTACT REPORT · MEAUX / Garrison engaged by
+   Jasper and Rowan. Reinforcements requested". The first wave forms up 30–90 s later.
 2. **Waves**: three, 150 s apart (±30 s). Each stages on a road 1–2 km out and drives in as a column. The lead
    vehicle stops 220 m short of the post, later vehicles 25 m behind each other, and the infantry walk in.
    - **Axes**: wave 1 comes from the side of the army's nearest base; each later wave uses a road at least 500 m from
@@ -49,9 +50,15 @@ then runs in phases, after the pattern of RC Dynamic Counter Attacks (ideas from
    - **Split last wave**: with 3+ elements, the last wave is two columns on two roads. The lead column takes the
      recipe's first (heaviest) half, the second column the rest.
 3. **Helicopter assault** (Readiness 4+): once any wave package is within 350 m of the post, the army commits one
-   joint recipe (`<army>_townair_r4`: airborne pair plus light support) from its own bases. Headline "Enemy
-   helicopters inbound". It waits its turn if another airborne response holds the airspace, and falls back to
-   ground if no air launch is clear.
+   joint recipe (`<army>_townair_r4`: airborne pair plus light support) from its own bases. It waits its turn if
+   another airborne response holds the airspace, and falls back to ground if no air launch is clear.
+   - **Response reports**: once a wave's first column (or the helicopters) is on the road, one headline answers the
+     contact report with where it comes from and when it arrives: "RESPONSE · MEAUX / Convoy 2 of 3 inbound from the
+     south-west · ETA ~3 MIN", "Two columns inbound from the north and east, wave 3 of 3", "Helicopters inbound".
+   - None of this uses the QRF wording, which stays for outposts, bases and the other campaign responses: town waves
+     raise no "QRF DISPATCHED" headline, and on the map the town gets one red ring (however many columns are out)
+     captioned "CONTACT · NATO REINFORCEMENTS FORMING", then "NATO REINFORCEMENTS INBOUND · ETA 1:20", then
+     "NATO REINFORCEMENTS IN TOWN".
 4. **Outcome**: nothing is declared while any column, armour or the assault is still out there.
    - **Repelled**: every operation has ended (destroyed or withdrawn) with the Resistance still near: +10% Resistance
      support in the town and an HQ headline from a pool ("X HOLDS / …").

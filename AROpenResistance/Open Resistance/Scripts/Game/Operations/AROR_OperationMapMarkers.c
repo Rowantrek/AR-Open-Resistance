@@ -81,6 +81,23 @@ class AROR_OperationMapMarkers
 			if (!target)
 				continue;
 
+			// A town's waves and columns share one marker: the one already moving (soonest arrival) speaks for all
+			int same = -1;
+			if (threat.m_bTownResponse)
+			{
+				foreach (int index, AROR_OperationThreatInfo other : shown)
+				{
+					if (other.m_bTownResponse && other.m_sTargetId == threat.m_sTargetId)
+						same = index;
+				}
+			}
+			if (same >= 0)
+			{
+				if (ArrivesSooner(manager, threat, shown[same]))
+					shown[same] = threat;
+				continue;
+			}
+
 			shown.Insert(threat);
 			targets.Insert(target);
 		}
@@ -129,7 +146,7 @@ class AROR_OperationMapMarkers
 			Widget root = m_aWidgets[i];
 			Widget captionRoot = m_aCaptionWidgets[i];
 			int color = AROR_UIColors.WARN;
-			if (info.m_eType == AROR_EOperationType.ATTACK)
+			if (info.m_eType == AROR_EOperationType.ATTACK || info.m_bTownResponse)
 				color = AROR_UIColors.DANGER;
 
 			// Widgets are reused when threats change order: redraw the ring when its colour changes
@@ -191,6 +208,8 @@ class AROR_OperationMapMarkers
 	static string Caption(notnull AROR_OperationThreatInfo info, int etaRemaining)
 	{
 		string army = AROR_OperationManagerComponent.ThreatArmyName(info.m_eRole);
+		if (info.m_bTownResponse)
+			return TownCaption(info, army, etaRemaining);
 		bool attack = info.m_eType == AROR_EOperationType.ATTACK;
 		if (info.m_eState != AROR_EOperationState.ACTIVE)
 		{
@@ -207,6 +226,29 @@ class AROR_OperationMapMarkers
 		if (attack)
 			return text;
 		return army + " QRF ON SITE";
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A town garrison's response, worded as the answer to a contact report: "CONTACT · NATO REINFORCEMENTS
+	//! FORMING", "NATO REINFORCEMENTS INBOUND · ETA 1:20", "NATO REINFORCEMENTS IN TOWN"
+	static string TownCaption(notnull AROR_OperationThreatInfo info, string army, int etaRemaining)
+	{
+		if (info.m_eState != AROR_EOperationState.ACTIVE)
+			return "CONTACT  ·  " + army + " REINFORCEMENTS FORMING";
+		if (etaRemaining > 0)
+			return army + " REINFORCEMENTS INBOUND  ·  " + AROR_OperationEta.Countdown(etaRemaining);
+		return army + " REINFORCEMENTS IN TOWN";
+	}
+
+	//! Of two responses to the same town, whether the first is the one to show: moving beats forming, then the
+	//! soonest arrival
+	protected static bool ArrivesSooner(notnull AROR_OperationManagerComponent manager, notnull AROR_OperationThreatInfo first, notnull AROR_OperationThreatInfo second)
+	{
+		bool firstActive = first.m_eState == AROR_EOperationState.ACTIVE;
+		bool secondActive = second.m_eState == AROR_EOperationState.ACTIVE;
+		if (firstActive != secondActive)
+			return firstActive;
+		return manager.GetThreatEtaRemaining(first) < manager.GetThreatEtaRemaining(second);
 	}
 
 	//------------------------------------------------------------------------------------------------

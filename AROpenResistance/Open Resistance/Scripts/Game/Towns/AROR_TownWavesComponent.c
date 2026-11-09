@@ -75,7 +75,11 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected ref array<ref AROR_TownCasualtyWatch> m_aWatches = {};
 	protected ref array<IEntity> m_aSeen = {};	//!< Every defender watched since the response last armed
 	protected ref array<string> m_aOperationIds = {};	//!< Every column and the assault of the running response
+	protected ref array<int> m_aOperationWaves = {};	//!< Parallel: wave number (AIR_ASSAULT_WAVE for the assault)
+	protected ref array<string> m_aOperationDirections = {};	//!< Parallel: compass side it comes from, or empty
 	protected ref array<string> m_aFielded = {};	//!< Operations of the running response that reached the field
+	protected ref array<int> m_aAnnouncedWaves = {};	//!< Waves whose response report went out
+	protected ref array<int> m_aContactPlayers = {};	//!< Players whose kills count towards (or brought) the response
 	protected ref array<vector> m_aLastAxes = {};	//!< Staging roads of the previous wave
 	protected AROR_EFactionRole m_eRole;
 	protected int m_iPhase;
@@ -159,7 +163,76 @@ class AROR_TownWavesComponent : ScriptComponent
 		m_iNextWaveAt = m_iClock + Math.RandomInt(delayMin, delayMax + 1);
 		m_iLastResistanceNear = m_iClock;
 		Print(string.Format("[AROR TOWN] %1 response triggered: %2 player kills of %3 defenders seen; first wave in %4s", m_Location.GetId(), m_iKills, m_aSeen.Count(), m_iNextWaveAt - m_iClock), LogLevel.NORMAL);
-		Headline("%1 GARRISON CALLS FOR HELP / Enemy reinforcements are forming up", AROR_UIColors.DANGER);
+		// The contact report: the garrison names who hit it before the response is on its way
+		Headline("CONTACT REPORT  ·  %1 / Garrison engaged by " + ContactNames() + ". Reinforcements requested", AROR_UIColors.DANGER);
+	}
+
+	//! "Jasper", "Jasper and Rowan", "Jasper, Rowan and 2 others", or "Resistance fighters" when nobody is known
+	protected string ContactNames()
+	{
+		array<string> names = {};
+		foreach (int playerId : m_aContactPlayers)
+		{
+			string name = GetGame().GetPlayerManager().GetPlayerName(playerId);
+			if (!name.IsEmpty())
+				names.Insert(name);
+		}
+		if (names.IsEmpty())
+			return "Resistance fighters";
+		if (names.Count() == 1)
+			return names[0];
+		if (names.Count() == 2)
+			return names[0] + " and " + names[1];
+		if (names.Count() == 3)
+			return names[0] + ", " + names[1] + " and " + names[2];
+		return names[0] + ", " + names[1] + " and " + (names.Count() - 2).ToString() + " others";
+	}
+
+	//! Compass side of a point as seen from the post: "north", "south-west"...
+	protected static string CompassSide(vector from, vector to)
+	{
+		// World X runs east and Z north, so this is a bearing clockwise from north
+		float bearing = Math.Atan2(to[0] - from[0], to[2] - from[2]) * Math.RAD2DEG;
+		if (bearing < 0)
+			bearing += 360;
+		array<string> sides = {"north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"};
+		int sector = Math.Round(bearing / 45);
+		return sides[sector % 8];
+	}
+
+	//! The response report for one wave, once its first column is on the road: where it comes from and when it
+	//! arrives. "RESPONSE · MEAUX / Convoy 2 of 3 inbound from the south-west · ETA ~3 MIN"
+	protected void AnnounceWave(int wave, string operationId)
+	{
+		if (m_aAnnouncedWaves.Contains(wave))
+			return;
+		m_aAnnouncedWaves.Insert(wave);
+		array<string> sides = {};
+		foreach (int index, string id : m_aOperationIds)
+		{
+			string side = m_aOperationDirections[index];
+			if (m_aOperationWaves[index] == wave && !side.IsEmpty() && !sides.Contains(side))
+				sides.Insert(side);
+		}
+		string text;
+		if (wave == AIR_ASSAULT_WAVE)
+			text = "Helicopters inbound";
+		else if (sides.Count() > 1)
+			text = "Two columns inbound from the " + sides[0] + " and " + sides[1] + ", wave " + wave.ToString() + " of " + m_iWaves.ToString();
+		else
+		{
+			text = "Convoy " + wave.ToString() + " of " + m_iWaves.ToString() + " inbound";
+			if (!sides.IsEmpty())
+				text += " from the " + sides[0];
+		}
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		if (operations)
+		{
+			string eta = AROR_OperationEta.Describe(operations.GetTownWaveEta(operationId));
+			if (!eta.IsEmpty())
+				text += "  ·  " + eta;
+		}
+		Headline("RESPONSE  ·  %1 / " + text, AROR_UIColors.WARN);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -200,13 +273,17 @@ class AROR_TownWavesComponent : ScriptComponent
 		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
 		if (!operations)
 			return;
-		foreach (string id : m_aOperationIds)
+		foreach (int index, string id : m_aOperationIds)
 		{
 			if (m_aFielded.Contains(id))
 				continue;
 			AROR_Operation operation = operations.GetOperation(id);
 			if (operation && (operation.GetState() == AROR_EOperationState.ACTIVE || operation.GetState() == AROR_EOperationState.SUCCEEDED))
+			{
 				m_aFielded.Insert(id);
+				// On the road: the response report goes out once per wave
+				AnnounceWave(m_aOperationWaves[index], id);
+			}
 		}
 	}
 
@@ -333,6 +410,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		if (columns == 2)
 			leadElements = (elements + 1) / 2;
 		array<string> sent = {};
+		array<string> sides = {};
 		for (int index = 0; index < columns; index++)
 		{
 			int offset = 0;
@@ -346,23 +424,27 @@ class AROR_TownWavesComponent : ScriptComponent
 			if (id.IsEmpty())
 				continue;
 			sent.Insert(id);
+			sides.Insert(CompassSide(post, stagings[index]));
 			Print(string.Format("[AROR TOWN] %1 wave %2/%3 column %4/%5 requested: %6 recipe=%7 elements=%8+%9", m_Location.GetId(), wave, m_iWaves, index + 1, columns, id, recipe, offset, limit), LogLevel.NORMAL);
 		}
 		if (sent.IsEmpty())
 			return;
 
-		foreach (string sentId : sent)
-			m_aOperationIds.Insert(sentId);
+		// Reported once the first column is on the road (AnnounceWave), with its side and arrival estimate
+		foreach (int sentIndex, string sentId : sent)
+			TrackOperation(sentId, wave, sides[sentIndex]);
 		m_aLastAxes.Copy(stagings);
 		m_iAxisIndex += columns;
 		m_iStagingFailures = 0;
 		m_iWavesSent++;
 		m_iNextWaveAt = m_iClock + NextInterval();
-		string waveText = " wave " + wave.ToString() + " of " + m_iWaves.ToString();
-		if (sent.Count() > 1)
-			Headline("%1 UNDER ATTACK / Two enemy columns inbound," + waveText, AROR_UIColors.DANGER);
-		else
-			Headline("%1 UNDER ATTACK / Enemy convoy inbound," + waveText, AROR_UIColors.DANGER);
+	}
+
+	protected void TrackOperation(string operationId, int wave, string side)
+	{
+		m_aOperationIds.Insert(operationId);
+		m_aOperationWaves.Insert(wave);
+		m_aOperationDirections.Insert(side);
 	}
 
 	protected void SkipWave()
@@ -441,9 +523,8 @@ class AROR_TownWavesComponent : ScriptComponent
 		string assault = operations.RequestTownWave_S(m_eRole, m_Location.GetId(), recipe, readiness, crackdown, vector.Zero, 0, 0);
 		if (assault.IsEmpty())
 			return;
-		m_aOperationIds.Insert(assault);
+		TrackOperation(assault, AIR_ASSAULT_WAVE, string.Empty);
 		Print(string.Format("[AROR TOWN] %1 helicopter assault requested: %2 recipe=%3", m_Location.GetId(), assault, recipe), LogLevel.NORMAL);
-		Headline("%1 UNDER ATTACK / Enemy helicopters inbound", AROR_UIColors.DANGER);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -476,7 +557,10 @@ class AROR_TownWavesComponent : ScriptComponent
 		m_iStagingFailures = 0;
 		m_bAirRequested = false;
 		m_aOperationIds.Clear();
+		m_aOperationWaves.Clear();
+		m_aOperationDirections.Clear();
 		m_aFielded.Clear();
+		m_aAnnouncedWaves.Clear();
 		m_aLastAxes.Clear();
 	}
 
@@ -489,6 +573,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		ResetResponse();
 		m_iKills = 0;
 		m_aSeen.Clear();
+		m_aContactPlayers.Clear();
 		ClearWatches();
 		if (rearmDelay)
 			m_iRearmAt = m_iClock + m_iRearmSeconds;
@@ -571,6 +656,8 @@ class AROR_TownWavesComponent : ScriptComponent
 			if (watch.WasPlayerKill(KILL_CREDIT_SECONDS))
 			{
 				m_iKills++;
+				if (!m_aContactPlayers.Contains(watch.m_iPlayerId))
+					m_aContactPlayers.Insert(watch.m_iPlayerId);
 				Print(string.Format("[AROR TOWN] %1 defender killed by player %2 (%3/%4)", m_Location.GetId(), watch.m_iPlayerId, m_iKills, KillThreshold()), LogLevel.NORMAL);
 			}
 			watch.Detach_S();

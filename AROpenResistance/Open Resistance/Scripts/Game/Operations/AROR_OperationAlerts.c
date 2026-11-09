@@ -6,6 +6,7 @@ class AROR_OperationThreatInfo
 	string m_sTargetId;
 	AROR_EOperationState m_eState;
 	int m_iEtaSeconds = -1;	//!< Seconds left when the board was received; -1 before dispatch
+	bool m_bTownResponse;	//!< A town garrison's reinforcement wave (Towns), shown as a contact response, not a QRF
 }
 
 //! Player-facing operation alerts: a headline with an arrival estimate when a QRF or attack is dispatched, and a
@@ -53,7 +54,9 @@ modded class AROR_OperationManagerComponent
 		super.NotifyChanged(operation);
 		if (!Replication.IsServer() || !operation || !operation.UsesTacticalResponse())
 			return;
-		if (operation.GetState() == AROR_EOperationState.ACTIVE)
+		// A town garrison's waves report through the town (contact report, then the response); "QRF" stays for
+		// outposts, bases and the other campaign responses
+		if (operation.GetState() == AROR_EOperationState.ACTIVE && !operation.m_bAssaultWave)
 			AnnounceDispatch_S(operation);
 		PublishThreatBoard_S(true);
 	}
@@ -115,8 +118,9 @@ modded class AROR_OperationManagerComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Row per outstanding QRF/attack: type|role|target|state|eta. force: publish now; otherwise only when the
-	//! set of operations changed, or every resync interval so late joiners' countdowns stay close.
+	//! Row per outstanding QRF/attack: type|role|target|state|town|eta (town: 1 for a town garrison's wave).
+	//! force: publish now; otherwise only when the set of operations changed, or every resync interval so late
+	//! joiners' countdowns stay close.
 	protected void PublishThreatBoard_S(bool force)
 	{
 		string board;
@@ -125,7 +129,10 @@ modded class AROR_OperationManagerComponent
 		{
 			if (operation.IsTerminal() || !operation.UsesTacticalResponse())
 				continue;
-			string row = string.Format("%1|%2|%3|%4", operation.GetType(), operation.GetRole(), operation.GetTargetLocationId(), operation.GetState());
+			int town = 0;
+			if (operation.m_bAssaultWave)
+				town = 1;
+			string row = string.Format("%1|%2|%3|%4|%5", operation.GetType(), operation.GetRole(), operation.GetTargetLocationId(), operation.GetState(), town);
 			structure += row + THREAT_ROW;
 			board += string.Format("%1|%2", row, operation.GetEtaRemaining(m_iClock)) + THREAT_ROW;
 		}
@@ -153,14 +160,15 @@ modded class AROR_OperationManagerComponent
 		{
 			array<string> fields = {};
 			row.Split(THREAT_FIELD, fields, false);
-			if (fields.Count() != 5)
+			if (fields.Count() != 6)
 				continue;
 			AROR_OperationThreatInfo info = new AROR_OperationThreatInfo();
 			info.m_eType = fields[0].ToInt();
 			info.m_eRole = fields[1].ToInt();
 			info.m_sTargetId = fields[2];
 			info.m_eState = fields[3].ToInt();
-			info.m_iEtaSeconds = fields[4].ToInt();
+			info.m_bTownResponse = fields[4].ToInt() == 1;
+			info.m_iEtaSeconds = fields[5].ToInt();
 			m_aThreatInfos.Insert(info);
 		}
 	}
