@@ -110,6 +110,14 @@ foreach ($layerFile in $layers) {
 
 	# Recipes name existing profiles
 	$profileIds = @([regex]::Matches($block, 'AROR_ForceProfile(?: "\{[0-9A-F]{16}\}")?\s*\{\s*m_sId "([^"]+)"') | ForEach-Object { $_.Groups[1].Value })
+
+	# Pool size limits in ValidatePool (an oversized pool disables the executor, e.g. 82 recipes over a limit of 64)
+	$recipeCount = ([regex]::Matches($block, 'AROR_GroundQRFRecipe(?: "\{[0-9A-F]{16}\}")?\s*\{')).Count
+	$recipeLimit = [regex]::Match($executor, 'm_aGroundQRFRecipes\.Count\(\) > (\d+)')
+	$profileLimit = [regex]::Match($executor, 'm_aForceProfiles\.Count\(\) > (\d+)')
+	if ($recipeLimit.Success -and $recipeCount -gt [int]$recipeLimit.Groups[1].Value) { $failures.Add("$scenario`: $recipeCount ground recipes exceed the executor's limit of $($recipeLimit.Groups[1].Value) (executor would be disabled)") }
+	if ($profileLimit.Success -and $profileIds.Count -gt [int]$profileLimit.Groups[1].Value) { $failures.Add("$scenario`: $($profileIds.Count) force profiles exceed the executor's limit of $($profileLimit.Groups[1].Value) (executor would be disabled)") }
+	if (!$recipeLimit.Success) { $failures.Add('could not find the ground recipe limit in ValidatePool; the test needs updating') }
 	foreach ($recipe in [regex]::Matches($block, 'AROR_GroundQRFRecipe(?: "\{[0-9A-F]{16}\}")?\s*\{(?:[^{}]|\{[^{}]*\})*\}')) {
 		$id = [regex]::Match($recipe.Value, 'm_sId "([^"]+)"').Groups[1].Value
 		$list = [regex]::Match($recipe.Value, 'm_aProfileIds\s*\{([^}]*)\}')

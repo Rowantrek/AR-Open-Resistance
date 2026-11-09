@@ -1901,8 +1901,9 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 	//! Every rejection names its reason: one failure disables all QRFs, so the log must say which
 	protected bool ValidatePool()
 	{
-		if (m_aGroundQRFRecipes.Count() > 64)
-			return PoolError(string.Format("%1 ground recipes; the limit is 64", m_aGroundQRFRecipes.Count()));
+		// A sanity bound only (town wave and assault recipes per army and Readiness band add up quickly)
+		if (m_aGroundQRFRecipes.Count() > 128)
+			return PoolError(string.Format("%1 ground recipes; the limit is 128", m_aGroundQRFRecipes.Count()));
 		array<string> recipeKeys = {};
 		foreach (AROR_GroundQRFRecipe recipe : m_aGroundQRFRecipes)
 		{
