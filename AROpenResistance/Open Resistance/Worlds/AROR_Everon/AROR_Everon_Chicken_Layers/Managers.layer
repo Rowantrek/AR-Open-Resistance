@@ -34,6 +34,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_bRegionalSupport 1
   }
   AROR_GarrisonManagerComponent "{62D6819A8BBD4DAB}" {
+   m_iMaxPersonnel 144
    m_bInfantryFallback 1
   }
   AROR_OperationExecutorComponent {
@@ -50,7 +51,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_iQRFSplitTier 5
    m_iQRFReinforcementDelay 60
    m_iQRFReserveWait 450
-   m_iQRFMaxLiveGround 10
+   m_iQRFMaxLiveGround 8
    m_iQRFMaxLiveAircraft 6
    m_iQRFTacticalDuration 600
    m_iQRFTownHoldDuration 900

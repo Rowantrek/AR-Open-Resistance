@@ -2266,69 +2266,77 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		force.m_iVehicleLossValue = profile.VehicleLossValue();
 	}
 
+	//! Logs the first tactical setting outside its allowed range, so the disabled executor names its cause
+	protected bool TacticalSettingInvalid(string check)
+	{
+		Print("[AROR] Tactical commander setting out of range: " + check, LogLevel.ERROR);
+		return false;
+	}
 	protected bool TacticalSettingsValid()
 	{
 		if (m_fAttackStagingDistance < 200 || m_fAttackStagingDistance > 1500 || m_iAttackStagingTimeout < 30 || m_iAttackStagingTimeout > 600)
-			return false;
+			return TacticalSettingInvalid("m_fAttackStagingDistance < 200 || m_fAttackStagingDistance > 1500 || m_iAttackStagingTimeout < 30 || m_iAttackStagingTimeout > 600");
 		if (m_fQRFTownSupportPerMinute < 0 || m_fQRFTownSupportPerMinute > 30)
-			return false;
+			return TacticalSettingInvalid("m_fQRFTownSupportPerMinute < 0 || m_fQRFTownSupportPerMinute > 30");
 		if (m_iOriginLaunchCooldown < 0 || m_iOriginLaunchCooldown > 3600 || m_fOriginMaxGarrisonLoss < 0 || m_fOriginMaxGarrisonLoss > 1)
-			return false;
+			return TacticalSettingInvalid("m_iOriginLaunchCooldown < 0 || m_iOriginLaunchCooldown > 3600 || m_fOriginMaxGarrisonLoss < 0 || m_fOriginMaxGarrisonLoss > 1");
 		if (m_fMinOriginDistance < 0 || m_fMinOriginDistance > 3000 || m_fOriginWaterPenalty < 1 || m_fOriginWaterPenalty > 10)
-			return false;
+			return TacticalSettingInvalid("m_fMinOriginDistance < 0 || m_fMinOriginDistance > 3000 || m_fOriginWaterPenalty < 1 || m_fOriginWaterPenalty > 10");
 		if (m_iQRFSplitTier < 1 || m_iQRFSplitTier > 5)
-			return false;
+			return TacticalSettingInvalid("m_iQRFSplitTier < 1 || m_iQRFSplitTier > 5");
 		if (m_iQRFReinforcementDelay < 15 || m_iQRFReinforcementDelay > 180)
-			return false;
+			return TacticalSettingInvalid("m_iQRFReinforcementDelay < 15 || m_iQRFReinforcementDelay > 180");
 		if (m_iQRFReserveWait < 60 || m_iQRFReserveWait > 480)
-			return false;
+			return TacticalSettingInvalid("m_iQRFReserveWait < 60 || m_iQRFReserveWait > 480");
 		if (m_iQRFReserveWait <= m_iQRFReinforcementDelay)
-			return false;
+			return TacticalSettingInvalid("m_iQRFReserveWait <= m_iQRFReinforcementDelay");
 		if (m_iQRFMaxLiveGround < 4 || m_iQRFMaxLiveGround > 8)
-			return false;
+			return TacticalSettingInvalid("m_iQRFMaxLiveGround < 4 || m_iQRFMaxLiveGround > 8");
 		if (m_iQRFMaxLiveAircraft < 6 || m_iQRFMaxLiveAircraft > 10)
-			return false;
+			return TacticalSettingInvalid("m_iQRFMaxLiveAircraft < 6 || m_iQRFMaxLiveAircraft > 10");
 		if (m_iQRFTacticalDuration < 180 || m_iQRFTacticalDuration > 720)
-			return false;
+			return TacticalSettingInvalid("m_iQRFTacticalDuration < 180 || m_iQRFTacticalDuration > 720");
 		if (m_iQRFTownHoldDuration < 0 || m_iQRFTownHoldDuration > 1800)
-			return false;
+			return TacticalSettingInvalid("m_iQRFTownHoldDuration < 0 || m_iQRFTownHoldDuration > 1800");
 		if (m_iQRFOrderInterval < 10 || m_iQRFOrderInterval > 60)
-			return false;
+			return TacticalSettingInvalid("m_iQRFOrderInterval < 10 || m_iQRFOrderInterval > 60");
 		if (m_iQRFApproachAttempts < 4 || m_iQRFApproachAttempts > 16)
-			return false;
+			return TacticalSettingInvalid("m_iQRFApproachAttempts < 4 || m_iQRFApproachAttempts > 16");
 		if (m_fQRFRoadLaunchRadius < 75 || m_fQRFRoadLaunchRadius > 300)
-			return false;
+			return TacticalSettingInvalid("m_fQRFRoadLaunchRadius < 75 || m_fQRFRoadLaunchRadius > 300");
 		if (m_fQRFVehicleArrivalTolerance < 10 || m_fQRFVehicleArrivalTolerance > 40)
-			return false;
+			return TacticalSettingInvalid("m_fQRFVehicleArrivalTolerance < 10 || m_fQRFVehicleArrivalTolerance > 40");
 		if (m_fQRFObjectiveDeliveryRadius < 50 || m_fQRFObjectiveDeliveryRadius > 150)
-			return false;
+			return TacticalSettingInvalid("m_fQRFObjectiveDeliveryRadius < 50 || m_fQRFObjectiveDeliveryRadius > 150");
 		if (m_fQRFMaximumRoadDismount < 0 || m_fQRFMaximumRoadDismount > 350)
-			return false;
+			return TacticalSettingInvalid("m_fQRFMaximumRoadDismount < 0 || m_fQRFMaximumRoadDismount > 350");
 		if (m_iQRFIngressTimeout < 120 || m_iQRFIngressTimeout > 600)
-			return false;
+			return TacticalSettingInvalid("m_iQRFIngressTimeout < 120 || m_iQRFIngressTimeout > 600");
 		if (m_iQRFDetourTimeout < 60 || m_iQRFDetourTimeout > 300)
-			return false;
+			return TacticalSettingInvalid("m_iQRFDetourTimeout < 60 || m_iQRFDetourTimeout > 300");
 		if (m_iQRFExitTimeout < 15 || m_iQRFExitTimeout > 90)
-			return false;
+			return TacticalSettingInvalid("m_iQRFExitTimeout < 15 || m_iQRFExitTimeout > 90");
 		if (m_iQRFExitRetryLimit < 0 || m_iQRFExitRetryLimit > 5)
-			return false;
+			return TacticalSettingInvalid("m_iQRFExitRetryLimit < 0 || m_iQRFExitRetryLimit > 5");
 		if (m_iQRFExitRecoveryDelay < 0 || m_iQRFExitRecoveryDelay > 20 || m_iQRFExitRecoveryDelay >= m_iQRFExitTimeout)
-			return false;
+			return TacticalSettingInvalid("m_iQRFExitRecoveryDelay < 0 || m_iQRFExitRecoveryDelay > 20 || m_iQRFExitRecoveryDelay >= m_iQRFExitTimeout");
 		if (m_iQRFInfantryLegTimeout < 60 || m_iQRFInfantryLegTimeout > 300)
-			return false;
+			return TacticalSettingInvalid("m_iQRFInfantryLegTimeout < 60 || m_iQRFInfantryLegTimeout > 300");
 		if (m_fQRFInfantryPlanningSpeed < 0.5 || m_fQRFInfantryPlanningSpeed > 3)
-			return false;
+			return TacticalSettingInvalid("m_fQRFInfantryPlanningSpeed < 0.5 || m_fQRFInfantryPlanningSpeed > 3");
 		if (m_fQRFRecoveryRadius < 20 || m_fQRFRecoveryRadius > 200 || m_fQRFVehicleRecoveryRadius < 20 || m_fQRFVehicleRecoveryRadius > 250)
-			return false;
+			return TacticalSettingInvalid("m_fQRFRecoveryRadius < 20 || m_fQRFRecoveryRadius > 200 || m_fQRFVehicleRecoveryRadius < 20 || m_fQRFVehicleRecoveryRadius > 250");
 		if (m_fQRFThreatDismount < 100 || m_fQRFThreatDismount > 350)
-			return false;
+			return TacticalSettingInvalid("m_fQRFThreatDismount < 100 || m_fQRFThreatDismount > 350");
 		if (m_fQRFWithdrawFraction < 0.1 || m_fQRFWithdrawFraction > 0.7)
-			return false;
+			return TacticalSettingInvalid("m_fQRFWithdrawFraction < 0.1 || m_fQRFWithdrawFraction > 0.7");
 		if (m_fQRFLocalWithdrawFraction < 0.1 || m_fQRFLocalWithdrawFraction > 0.8)
-			return false;
+			return TacticalSettingInvalid("m_fQRFLocalWithdrawFraction < 0.1 || m_fQRFLocalWithdrawFraction > 0.8");
 		if (m_iQRFGroundRetention < 30 || m_iQRFGroundRetention > 600)
-			return false;
-		return m_fQRFGroundCleanupDistance >= 500 && m_fQRFGroundCleanupDistance <= 2500;
+			return TacticalSettingInvalid("m_iQRFGroundRetention < 30 || m_iQRFGroundRetention > 600");
+		if (m_fQRFGroundCleanupDistance < 500 || m_fQRFGroundCleanupDistance > 2500)
+			return TacticalSettingInvalid("m_fQRFGroundCleanupDistance < 500 || m_fQRFGroundCleanupDistance > 2500");
+		return true;
 	}
 
 	protected void CreateQRFTacticalCommander(AROR_Operation operation, int packages, vector origin)
