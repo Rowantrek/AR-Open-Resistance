@@ -534,7 +534,9 @@ class AROR_TownLifeComponent : ScriptComponent
 	protected vector NextPatrolPoint(AROR_TownPatrol patrol)
 	{
 		int total = m_aStreets.Count() + m_aEntries.Count();
-		patrol.m_iNextPoint = (patrol.m_iNextPoint + 1 + Math.RandomInt(0, 2)) % Math.Max(total, 1);
+		if (total < 1)
+			total = 1;
+		patrol.m_iNextPoint = (patrol.m_iNextPoint + 1 + Math.RandomInt(0, 2)) % total;
 		if (patrol.m_iNextPoint < m_aStreets.Count())
 			return m_aStreets[patrol.m_iNextPoint];
 		return m_aEntries[patrol.m_iNextPoint - m_aStreets.Count()];
