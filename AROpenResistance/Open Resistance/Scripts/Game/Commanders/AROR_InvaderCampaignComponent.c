@@ -175,7 +175,7 @@ class AROR_InvaderCampaignComponent : SCR_BaseGameModeComponent
 		if (!target)
 			return string.Empty;
 		if (target.GetControllingRole() == AROR_EFactionRole.RESISTANCE)
-			return Order_S(target);
+			return Order_S(AROR_EFactionRole.INVADERS, target);
 		// Balance: at their goal share the Invaders consolidate instead of taking more Occupier ground
 		if (ShareOverGoal() >= 0)
 		{
@@ -186,47 +186,31 @@ class AROR_InvaderCampaignComponent : SCR_BaseGameModeComponent
 		{
 			// Where it can be seen, the push is fought for real: an attack order strong enough to take the target
 			if (m_bAttackOrders)
-				return Order_S(target);
+				return Order_S(AROR_EFactionRole.INVADERS, target);
 			return target.GetId() + " has players, a garrison or an operation nearby";
 		}
 		ResolveBattle_S(AROR_EFactionRole.INVADERS, target);
 		return string.Empty;
 	}
 
-	//! A physical attack order on the push's target, the way a player squad would go at it: launched from an Invader
-	//! base, sized to beat the defence (AttackTier), and won by holding the force advantage on the objective
-	//! (AROR_RecaptureComponent: the flag contest for military sites, the occupation contest for towns).
+	//! A physical attack order on a target, the way a player squad would go at it: launched from one of the army's
+	//! bases, sized to beat the defence (AttackOrderTier), and won by holding the force advantage on the objective
+	//! (AROR_RecaptureComponent: the flag contest for military sites, the occupation contest for towns). Used for
+	//! the Invaders' push and for the Occupiers' counter-push where players can see it.
 	//! Returns why it must wait, or empty when the order is out.
-	protected string Order_S(AROR_LocationComponent target)
+	protected string Order_S(AROR_EFactionRole role, AROR_LocationComponent target)
 	{
 		// A town already in a garrison response is the players' fight: wait for it to end
 		AROR_TownWavesComponent waves = AROR_TownWavesComponent.Cast(target.GetOwner().FindComponent(AROR_TownWavesComponent));
 		if (waves && waves.IsResponding())
 			return target.GetId() + " is fighting off a town response";
-		int tier = AttackTier(target);
-		string id = m_Operations.LaunchTerritoryAttack_S(AROR_EFactionRole.INVADERS, target.GetId(), tier);
+		int tier = m_Operations.AttackOrderTier(role, target);
+		string id = m_Operations.LaunchTerritoryAttack_S(role, target.GetId(), tier);
 		if (id.IsEmpty())
 			return "attack on " + target.GetId() + ": " + m_Operations.GetAttackFailure();
-		Print(string.Format("[AROR INVADER] attack order %1 on %2 (held by %3), tier %4", id, target.GetId(), target.GetControllingRole(), tier), LogLevel.NORMAL);
-		Print(string.Format("[AROR BALANCE] invader_attack_order target=%1 type=%2 holder=%3 tier=%4 operation=%5", target.GetId(), target.GetLocationType(), target.GetControllingRole(), tier, id), LogLevel.NORMAL);
+		Print(string.Format("[AROR INVADER] attack order %1 by role %2 on %3 (held by %4), tier %5", id, role, target.GetId(), target.GetControllingRole(), tier), LogLevel.NORMAL);
+		Print(string.Format("[AROR BALANCE] attack_order role=%1 target=%2 type=%3 holder=%4 tier=%5 operation=%6 source=front", role, target.GetId(), target.GetLocationType(), target.GetControllingRole(), tier, id), LogLevel.NORMAL);
 		return string.Empty;
-	}
-
-	//! Strong enough to take it: one tier above the target's garrison level (a town's post level from its holder's
-	//! Crackdown when not yet raised; a city one more), never below the Invaders' own Crackdown level
-	protected int AttackTier(AROR_LocationComponent target)
-	{
-		int tier = m_Operations.GetCrackdownLevel(AROR_EFactionRole.INVADERS);
-		int level;
-		AROR_GarrisonComponent garrison = AROR_GarrisonComponent.Cast(target.GetOwner().FindComponent(AROR_GarrisonComponent));
-		if (garrison)
-			level = garrison.GetLevel();
-		AROR_EFactionRole holder = target.GetControllingRole();
-		if (level <= 0 && garrison && garrison.IsSettlementPost() && AROR_GarrisonPolicy.IsEnemyRole(holder))
-			level = AROR_GarrisonPolicy.SettlementLevel(target.GetLocationType(), m_Operations.GetCrackdownLevel(holder));
-		if (holder == AROR_EFactionRole.RESISTANCE)
-			level = Math.Max(level, 2);	// Players and their recruits count double in the contest
-		return Math.Clamp(Math.Max(tier, level + 1), 1, 5);
 	}
 
 	//! Balance: while the Invaders hold more than their goal share of military sites (after losses elsewhere or a
@@ -237,8 +221,17 @@ class AROR_InvaderCampaignComponent : SCR_BaseGameModeComponent
 		if (ShareOverGoal() <= 0)
 			return;
 		AROR_LocationComponent target = SelectTarget(AROR_EFactionRole.OCCUPIERS, corridor.GetCenter(), foothold);
-		if (target)
+		if (!target)
+			return;
+		if (IsDistant(target))
+		{
 			ResolveBattle_S(AROR_EFactionRole.OCCUPIERS, target);
+			return;
+		}
+		// Where players can see it, the Occupiers fight for it: the US and USSR skirmish over the front
+		string hold = Order_S(AROR_EFactionRole.OCCUPIERS, target);
+		if (!hold.IsEmpty())
+			Print("[AROR INVADER] Occupier counter held: " + hold, LogLevel.NORMAL);
 	}
 
 	//! Invader-held share of the surveyed military sites against their goal share: positive above it, 0 at it
@@ -303,8 +296,9 @@ class AROR_InvaderCampaignComponent : SCR_BaseGameModeComponent
 			AROR_EFactionRole holder = candidate.GetControllingRole();
 			if (holder == attacker || !candidate.CanBeTakenBy(attacker))
 				continue;
-			// The Occupiers only win back Invader sites, and only out of sight; the push waits on its target instead
-			if (attacker == AROR_EFactionRole.OCCUPIERS && (holder != AROR_EFactionRole.INVADERS || !IsDistant(candidate)))
+			// The Occupiers only win back Invader sites: out of sight in the simulation, or with attack orders also
+			// where players are, by a physical attack
+			if (attacker == AROR_EFactionRole.OCCUPIERS && (holder != AROR_EFactionRole.INVADERS || (!m_bAttackOrders && !IsDistant(candidate))))
 				continue;
 			float nearest = float.MAX;
 			foreach (AROR_LocationComponent origin : m_aSites)

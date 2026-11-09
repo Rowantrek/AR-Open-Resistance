@@ -99,6 +99,8 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected int m_iContestFriendlies;
 	[RplProp()]
 	protected bool m_bContestLosing;	//!< The army outnumbers the Resistance (weighted) right now
+	[RplProp()]
+	protected int m_iContestLimit;		//!< Seconds at which the town is lost (the lockdown, or an attack order's contest)
 
 	protected static const int PHASE_IDLE = 0;
 	protected static const int PHASE_ALERT = 1;		//!< Triggered; the first wave is forming up
@@ -151,7 +153,42 @@ class AROR_TownWavesComponent : ScriptComponent
 	//! Every machine: lockdown state for the HUD
 	bool IsContestActive() { return m_bContestActive; }
 	int GetContestSeconds() { return m_iContestSeconds; }
-	int GetLockdownSeconds() { return m_iLockdownSeconds; }
+	int GetLockdownSeconds()
+	{
+		if (m_iContestLimit > 0)
+			return m_iContestLimit;
+		return m_iLockdownSeconds;
+	}
+
+	//! Server: show an AI attack order's occupation contest on this Resistance-held town (AROR_RecaptureComponent) on
+	//! the lockdown indicator, so defenders see the count and the time left. A running garrison response owns the
+	//! indicator instead.
+	void ShowAttackContest_S(int attackers, int defenders, int seconds, int limit, bool losing)
+	{
+		if (!Replication.IsServer() || m_iPhase != PHASE_IDLE)
+			return;
+		if (m_bContestActive && m_iContestEnemies == attackers && m_iContestFriendlies == defenders && m_iContestSeconds == seconds && m_bContestLosing == losing && m_iContestLimit == limit)
+			return;
+		m_bContestActive = true;
+		m_iContestEnemies = attackers;
+		m_iContestFriendlies = defenders;
+		m_iContestSeconds = seconds;
+		m_iContestLimit = limit;
+		m_bContestLosing = losing;
+		Replication.BumpMe();
+	}
+
+	//! Server: the attack order is over (or the town changed hands); hide its contest again
+	void ClearAttackContest_S()
+	{
+		if (!Replication.IsServer() || m_iPhase != PHASE_IDLE || !m_bContestActive)
+			return;
+		m_bContestActive = false;
+		m_bContestLosing = false;
+		m_iContestSeconds = 0;
+		m_iContestLimit = 0;
+		Replication.BumpMe();
+	}
 	int GetContestEnemies() { return m_iContestEnemies; }
 	int GetContestFriendlies() { return m_iContestFriendlies; }
 	bool IsContestLosing() { return m_bContestLosing; }
@@ -290,6 +327,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		}
 		m_bContestActive = true;
 		m_iContestSeconds = 0;
+		m_iContestLimit = m_iLockdownSeconds;
 		m_iContestEnemies = 0;
 		m_iContestFriendlies = 0;
 		Replication.BumpMe();
@@ -829,6 +867,7 @@ class AROR_TownWavesComponent : ScriptComponent
 			m_bContestActive = false;
 			m_bContestLosing = false;
 			m_iContestSeconds = 0;
+			m_iContestLimit = 0;
 			Replication.BumpMe();
 		}
 		m_sOutcome = string.Empty;

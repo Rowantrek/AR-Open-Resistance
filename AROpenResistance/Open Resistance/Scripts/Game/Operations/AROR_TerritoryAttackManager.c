@@ -12,6 +12,8 @@ modded class AROR_OperationManagerComponent
 	protected int m_iTerritoryAttackAfterQRF;
 	[Attribute("900", desc: "Occupier recovery time after one of their attacks ends, before the next", params: "60 7200 30")]
 	protected int m_iTerritoryAttackRest;
+	[Attribute("0", desc: "The Occupiers also attack Resistance-held towns and cities: an attack order sized to take the town, won through the town occupation contest (AI recapture). Needs territory attacks on.")]
+	protected bool m_bTownAttacks;
 	protected ref array<ref AROR_TerritoryAttackState> m_aAttackTerritories = {};
 	protected AROR_LocationManagerComponent m_AttackLocations;
 	protected int m_iAttackRestUntil;
@@ -111,7 +113,8 @@ modded class AROR_OperationManagerComponent
 			return;
 		}
 		selected.m_iNextAttempt = m_iClock + 30;
-		string id = LaunchTerritoryAttack_S(AROR_EFactionRole.OCCUPIERS, selected.m_sLocationId);
+		AROR_LocationComponent selectedTarget = m_AttackLocations.GetLocationById(selected.m_sLocationId);
+		string id = LaunchTerritoryAttack_S(AROR_EFactionRole.OCCUPIERS, selected.m_sLocationId, AttackOrderTier(AROR_EFactionRole.OCCUPIERS, selectedTarget));
 		if (id.IsEmpty())
 		{
 			HoldAttacks(m_sAttackFailure, m_sAttackFailure);
@@ -120,6 +123,8 @@ modded class AROR_OperationManagerComponent
 		m_sAttackHoldKey = string.Empty;
 		selected.m_iNextAttempt = m_iClock + Math.Max(60, m_iTerritoryAttackRest);
 		Print(string.Format("[AROR ATTACK] %1 target=%2 captureAge=%3 front=%4m", id, selected.m_sLocationId, m_iClock - selected.m_iCapturedAt, Math.Round(selectedFront)), LogLevel.NORMAL);
+		if (selectedTarget)
+			Print(string.Format("[AROR BALANCE] attack_order role=%1 target=%2 type=%3 holder=%4 tier=%5 operation=%6 source=territory", AROR_EFactionRole.OCCUPIERS, selected.m_sLocationId, selectedTarget.GetLocationType(), selectedTarget.GetControllingRole(), AttackOrderTier(AROR_EFactionRole.OCCUPIERS, selectedTarget), id), LogLevel.NORMAL);
 	}
 
 	//! Trusted server call shared by both armies' attack policies: check the launch site and funding, schedule the
@@ -179,11 +184,36 @@ modded class AROR_OperationManagerComponent
 		return m_sAttackFailure;
 	}
 
-	//! A Resistance-held military site the role could take. A stronghold returns only to its own army: an Occupier
-	//! attack on a Resistance-held Vostok could never succeed.
+	//! Strong enough to take the target, as a player squad would size its assault: one tier above its garrison level
+	//! (a town's post level from its holder's Crackdown when not yet raised; a city one more), at least level 2 for
+	//! the Resistance (players and recruits count double), never below the attacker's Crackdown level. Shared by both
+	//! armies' attack orders.
+	int AttackOrderTier(AROR_EFactionRole role, AROR_LocationComponent target)
+	{
+		int tier = GetCrackdownLevel(role);
+		if (!target)
+			return tier;
+		int level;
+		AROR_GarrisonComponent garrison = AROR_GarrisonComponent.Cast(target.GetOwner().FindComponent(AROR_GarrisonComponent));
+		if (garrison)
+			level = garrison.GetLevel();
+		AROR_EFactionRole holder = target.GetControllingRole();
+		if (level <= 0 && garrison && garrison.IsSettlementPost() && IsEnemyRole(holder))
+			level = AROR_GarrisonPolicy.SettlementLevel(target.GetLocationType(), GetCrackdownLevel(holder));
+		if (holder == AROR_EFactionRole.RESISTANCE)
+			level = Math.Max(level, 2);
+		return Math.Clamp(Math.Max(tier, level + 1), 1, 5);
+	}
+
+	//! A Resistance-held site the role could take: a military site, or with town attacks a town or city. A
+	//! stronghold returns only to its own army: an Occupier attack on a Resistance-held Vostok could never succeed.
 	bool IsAttackTerritory(AROR_LocationComponent location, AROR_EFactionRole role)
 	{
-		if (!location || location.GetControllingRole() != AROR_EFactionRole.RESISTANCE || location.IsControlFixed() || !AROR_CaptureLocationAction.IsCapturableType(location.GetLocationType()))
+		if (!location || location.GetControllingRole() != AROR_EFactionRole.RESISTANCE || location.IsControlFixed())
+			return false;
+		AROR_ELocationType type = location.GetLocationType();
+		bool town = type == AROR_ELocationType.TOWN || type == AROR_ELocationType.CITY;
+		if (!AROR_CaptureLocationAction.IsCapturableType(type) && !(town && m_bTownAttacks))
 			return false;
 		AROR_StrongholdComponent stronghold = AROR_StrongholdComponent.Cast(location.GetOwner().FindComponent(AROR_StrongholdComponent));
 		return !stronghold || stronghold.AllowsCaptureBy(role);

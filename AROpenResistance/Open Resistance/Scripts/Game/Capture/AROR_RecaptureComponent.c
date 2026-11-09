@@ -66,8 +66,33 @@ class AROR_RecaptureComponent : SCR_BaseGameModeComponent
 			if (TownAttackRole(location, operations, ordered))
 				CheckLocation(location, true, ordered);
 			else
+			{
 				EndContest(location.GetId());
+				ClearTownContest(location);
+			}
 		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Defenders of a Resistance-held town under an attack order see the contest on the lockdown indicator
+	//! (AROR_TownContestHud through the town's AROR_TownWavesComponent): both counts and the time left
+	protected void MirrorTownContest(notnull AROR_LocationComponent location, int attackers, int defenders, int seconds, int limit, bool losing)
+	{
+		if (location.GetControllingRole() != AROR_EFactionRole.RESISTANCE)
+			return;
+		AROR_TownWavesComponent waves = AROR_TownWavesComponent.Cast(location.GetOwner().FindComponent(AROR_TownWavesComponent));
+		if (waves)
+			waves.ShowAttackContest_S(attackers, defenders, seconds, limit, losing);
+	}
+
+	protected void ClearTownContest(notnull AROR_LocationComponent location)
+	{
+		AROR_ELocationType type = location.GetLocationType();
+		if (type != AROR_ELocationType.TOWN && type != AROR_ELocationType.CITY)
+			return;
+		AROR_TownWavesComponent waves = AROR_TownWavesComponent.Cast(location.GetOwner().FindComponent(AROR_TownWavesComponent));
+		if (waves)
+			waves.ClearAttackContest_S();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -116,9 +141,14 @@ class AROR_RecaptureComponent : SCR_BaseGameModeComponent
 			}
 		}
 
+		int townAttackers;
+		if (town)
+			townAttackers = forces.GetAI(ordered);
 		if (attackerWeight <= defenderWeight || !location.CanBeTakenBy(attacker) || (town && attacker != ordered))
 		{
 			EndContest(id);
+			if (town)
+				MirrorTownContest(location, townAttackers, forces.GetTotal(defender), 0, m_iTownContestSeconds, false);
 			return;
 		}
 
@@ -132,7 +162,10 @@ class AROR_RecaptureComponent : SCR_BaseGameModeComponent
 		}
 		int contestSeconds = m_iContestSeconds;
 		if (town)
+		{
 			contestSeconds = m_iTownContestSeconds;
+			MirrorTownContest(location, townAttackers, forces.GetTotal(defender), (now - m_mContestedSince.Get(id)) / 1000, contestSeconds, true);
+		}
 		if (now - m_mContestedSince.Get(id) < contestSeconds * 1000)
 			return;
 
@@ -142,6 +175,7 @@ class AROR_RecaptureComponent : SCR_BaseGameModeComponent
 			if (AROR_CaptureLocationAction.OccupyTown_S(location, attacker, m_fTownOccupationSupport))
 			{
 				EndContest(id);
+				ClearTownContest(location);
 				AnnounceOccupation(location, attacker, previous);
 				Print(string.Format("[AROR] '%1' occupied by %2 (attackers %3 vs defenders %4, held %5 s)", location.GetName(), typename.EnumToString(AROR_EFactionRole, attacker), attackerWeight, defenderWeight, contestSeconds), LogLevel.NORMAL);
 			}

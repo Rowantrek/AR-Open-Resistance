@@ -116,7 +116,28 @@ Invader campaign):
   "X LOST / USSR forces have occupied the town", a town taken from the Occupiers "X OCCUPIED".
 - An occupied town gets the Invaders' garrison post (USSR tent and flag), checkpoints and patrols, and their wave
   recipes when players attack it. A town fighting off a garrison response is not attacked until that ends.
-- Logged as `[AROR BALANCE] invader_attack_order` and `town_occupied`.
+
+## US attack orders
+
+The Occupiers fight for towns too (Chicken: `m_bTownAttacks` on the operation manager):
+
+- Their territory attacks (one at a time, the front site nearest an Occupier base first, 5 minutes after the capture,
+  15 minutes rest after each attack) now include Resistance-held towns and cities, with the same sizing as the
+  Invaders' orders and the same occupation contest. "NATO ATTACK INCOMING / Meaux · ETA ~4 MIN" announces them.
+- When the Invaders hold more than their goal share, the Occupiers win ground back from them. Far from players that
+  stays simulated; near players it is now a physical US attack order, so US and USSR forces fight over the front where
+  the players are.
+
+## Holding a town
+
+When either army's attack order hits a Resistance-held town, its defenders see the lockdown indicator: "MEAUX · ENEMY
+12 vs 5 · TOWN LOST IN 1:40" while the attackers have the advantage (defenders count double), "HOLDING" otherwise. The
+attackers must keep the advantage for 3 minutes without a break; losing it resets the clock. Both orders and
+occupations are logged as `[AROR BALANCE] attack_order` (role, target, tier, `source=front|territory`) and
+`town_occupied`.
+
+The intended loop: take towns from the US garrison posts and hold them against the counterattacks, while the Russians
+push up from the south and take towns too, so the Resistance eventually meets them on the front.
 
 ## Vehicle presets
 
