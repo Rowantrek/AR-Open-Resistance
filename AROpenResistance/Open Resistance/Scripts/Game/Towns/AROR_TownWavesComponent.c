@@ -374,7 +374,11 @@ class AROR_TownWavesComponent : ScriptComponent
 		int delayMax = Math.Max(m_iAlertDelayMin, m_iAlertDelayMax);
 		m_iNextWaveAt = m_iClock + Math.RandomInt(delayMin, delayMax + 1);
 		if (UsesShockDoctrine())
-			m_iNextWaveAt = m_iClock + Math.Max(5, (m_iNextWaveAt - m_iClock) * Math.Clamp(m_fShockTempo, 0.4, 1));
+		{
+			float shockDelay = (m_iNextWaveAt - m_iClock) * Math.Clamp(m_fShockTempo, 0.4, 1);
+			int delay = Math.Round(shockDelay);
+			m_iNextWaveAt = m_iClock + Math.Max(5, delay);
+		}
 		m_iLastResistanceNear = m_iClock;
 		s_ActiveResponse = this;
 
@@ -829,7 +833,11 @@ class AROR_TownWavesComponent : ScriptComponent
 		int jitter = Math.Max(m_iWaveIntervalJitter, 0);
 		int interval = m_iWaveInterval + Math.RandomInt(-jitter, jitter + 1);
 		if (UsesShockDoctrine())
-			interval *= Math.Clamp(m_fShockTempo, 0.4, 1);
+		{
+			// Scale in float, then round back explicitly: no int-by-float compound assignment
+			float scaled = interval * Math.Clamp(m_fShockTempo, 0.4, 1);
+			interval = Math.Round(scaled);
+		}
 		return Math.Max(30, interval);
 	}
 
@@ -1260,8 +1268,10 @@ class AROR_TownCasualtyWatch
 			return;
 		if (context.instigator.GetInstigatorType() == InstigatorType.INSTIGATOR_GM)
 			return;
-		if (!m_sReportingTownId.IsEmpty() && !ReportContact_S(context))
-			return;
+		// The contact report is best effort (it needs both sides' factions, which some weapons and vehicles do not
+		// carry); a player's hit always counts towards the kill, so the trigger and escalation never miss it
+		if (!m_sReportingTownId.IsEmpty())
+			ReportContact_S(context);
 		int playerId = context.instigator.GetInstigatorPlayerID();
 		if (playerId <= 0)
 			return;
