@@ -182,6 +182,42 @@ Pacing rules for both armies' attack orders (Chicken):
 The intended loop: take towns from the US garrison posts and hold them against the counterattacks, while the Russians
 push up from the south and take towns too, so the Resistance eventually meets them on the front.
 
+## Economy (Chicken)
+
+The aim: one held town buys rifles, a couple of towns buy vehicles. Income is paid every 5 minutes (`AROR_IncomeComponent`
+on the Chicken game mode); prices are faction funds unless noted.
+
+| Held | Faction funds per payment | Per hour | Each player's share per hour |
+|---|---|---|---|
+| 1 town (~37 people) | ~330 | ~4,000 | ~1,000 |
+| 3 towns | ~1,000 | ~12,000 | ~3,000 |
+| 1 city (100-160 people) | 900-1,400 | 11,000-17,000 | 2,700-4,300 |
+
+| Purchase | Price | What it takes |
+|---|---|---|
+| AKS-74U / AK-74 (no facility needed) | 350 / 400 | a few minutes of one town; a new player starts with 600 |
+| RPG-7, PG-7VL / PG-7VM rockets (no facility) | 900, 150 / 200 | |
+| Light car (UAZ, Imports, x1.5) | ~2,700 | 3 towns for 15 minutes; two in half an hour |
+| Armed car | ~7,200 | 3 towns for 35 minutes |
+| APC (Imports) | ~21,750 | 3 towns for ~2 hours, or a city |
+| Town garrison: infantry | 300 + 1 MP a soldier | a full team (4) is ~1,200 |
+| Town garrison: APC / armour | 12,000 / 25,000 + 3 MP | needs 1 / 2 held seaports |
+
+Manpower: 1 per town and 2 per city each payment. Resources (170), factories, ports and the armies' external support
+(170 each) are the old 15-minute rates rescaled. Vehicles keep their import facility requirements; starter weapons do not.
+
+## Town garrisons (Resistance)
+
+HICOMM → **Garrisons** lists every town and city the Resistance holds. Buy infantry (a team of up to four), APCs or
+armour; the cost is paid once and the units stay in the town, saved with the campaign, until they die or the town is
+lost. Seaports bring the heavy kit: one held seaport unlocks APCs, two unlock armour (armour only exists with RHS or
+WCS loaded; the base game has none for the Resistance). Towns hold 12 infantry and 2 vehicles, cities 20 and 3.
+
+The garrison turns out while a Resistance player is within 1,200 m or an enemy soldier within 700 m (an attack order
+arriving), holding the town on a defend waypoint; vehicles park at the roadside with a crew of two. After 90 quiet
+seconds it stands down and its survivors are written back; dead soldiers and destroyed vehicles must be bought again.
+Logged as `[AROR MILITIA]`.
+
 ## Vehicle presets
 
 Troop transports (the motorized profiles) now request `MOTOR_TRUCK`, which every enemy preset fills with plain

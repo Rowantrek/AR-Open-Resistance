@@ -133,8 +133,9 @@ Purpose: make settlements places worth fighting over: life in the streets, an oc
 - **Site audit**: `tools/Test-TownSites.ps1` statically checks a scenario's layers: every town and city has its town warfare components and capture flag, kept outposts their perimeter, and military sites near towns are reported.
 - **Balance logging**: each response writes `[AROR BALANCE]` lines (start, waves, lockdown samples, escalation, outcome and its effect on support and both scales); `tools/Export-BalanceLog.ps1` turns them into CSVs.
 - **Town life** (`AROR_TownLifeComponent`): built only while a player is near and removed when they leave. Always: civilians walking between street points (count from population; killing one costs Resistance support there) and unmanned civilian cars parked in the streets (players can take them). While an AI army holds the town: road checkpoints on the way in (sandbags and a guard team; more with Crackdown and in cities) and a crewed patrol vehicle looping the streets (its type from Readiness, a second one at high Crackdown). Wiped-out checkpoints and patrols stay gone for a respawn time.
+- **Resistance town garrisons** (`AROR_TownMilitiaComponent`, game mode; Chicken only): a Resistance Leader buys infantry, APCs and armour for a held town or city in HICOMM's Garrisons tab, a one-time faction-funds and manpower cost. Seaports gate the heavy kit (one for APCs, two for armour); towns and cities have size caps. The book of garrisons replicates and is saved (`AROR_TownMilitiaComponentSerializer`). Units are physical only while a Resistance player or an enemy soldier is near; losses are counted when they form up and stand down, and the whole garrison is lost with the town. Requests arrive through the player controller (`AROR_RequestTownGarrison`).
 - Server/client: server only; clients see replicated actors and headlines.
-- Saved: nothing; kill progress, running responses and town life are session-only. The post's roster is saved by Garrisons.
+- Saved: Resistance town garrisons (above); kill progress, running responses and town life are session-only. The post's roster is saved by Garrisons.
 - Depends on: Locations, Settlements, Garrisons, Operations, Factions (Civilians role preset for civilians and cars), Notifications.
 - Extension points: every threshold, distance, count and prefab is a component attribute; wave recipes are authored per role and Readiness band in the scenario's executor.
 - Feature detail: `docs/TOWN_WARFARE.md`.
@@ -371,7 +372,8 @@ Purpose: money and manpower for the campaign: balances, and periodic income from
   - Money = held Resources × $500 × (1 + 0.3 per held Factory + 0.5 per held Port), plus $5 per inhabitant of held towns and cities.
   - The Occupiers and Invaders also receive fixed **external support** ($500 each).
   - The Resistance gains manpower per held town and city, and every online Resistance player is paid 10% of the Resistance's money income as personal money (extra, not taken from the funds).
-  - Resistance players get an income notification. Rates and the interval are attributes.
+  - Resistance players get an income notification. Rates and the interval are attributes. Chicken pays every 5 minutes at $9 per inhabitant with a 25% player share (rates rescaled to the interval); see `docs/TOWN_WARFARE.md` → Economy.
+- `AROR_EconomyComponent` also holds a **vehicle price scale** (`m_fVehiclePriceScale`) applied to every Imports offer on every machine, so a scenario can make vehicles a multi-town goal without editing content packs (Chicken: 1.5).
 - Rules: balances never go below zero; spending succeeds only if the balance covers it. All changes happen on the server.
 - Saved: funds, manpower and player money (`AROR_EconomyComponentSerializer`); Resistance funds and manpower include the refund for living High Command squads. Income timing is not saved.
 - Used by: Operations (QRF costs), High Command (squad purchases), Missions (rewards), the phone's Bank app, admin tools.
