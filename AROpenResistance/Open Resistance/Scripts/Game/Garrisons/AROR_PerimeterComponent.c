@@ -35,14 +35,23 @@ class AROR_PerimeterComponent : ScriptComponent
 	protected static const float TOWER_INSET = 3.5;	//!< Towers stand this far inside the corner
 
 	protected ref array<IEntity> m_aPieces = {};
+	protected ref array<IEntity> m_aTowers = {};	//!< Also in m_aPieces; rebuilt for the new holder when the site changes hands
 	protected int m_iSkipped;
 	protected bool m_bRaised;
+	protected AROR_EFactionRole m_eTowerRole;
 
 	//------------------------------------------------------------------------------------------------
 	protected void Raise()
 	{
 		if (!Replication.IsServer() || m_bRaised)
 			return;
+		// A loaded campaign restores who holds the site first, so the towers match the holder
+		AROR_GameFlowComponent gameFlow = AROR_GameFlowComponent.GetInstance();
+		if (gameFlow && !gameFlow.IsPlaythroughReady())
+		{
+			GetGame().GetCallqueue().CallLater(Raise, 3000, false);
+			return;
+		}
 		m_bRaised = true;
 		IEntity owner = GetOwner();
 		vector center = owner.GetOrigin();
@@ -89,22 +98,62 @@ class AROR_PerimeterComponent : ScriptComponent
 			}
 		}
 
-		// Guard towers on two opposite corners, inside the walls
-		ResourceName tower = m_sOccupierTower;
+		RaiseTowers();
 		AROR_LocationComponent location = AROR_LocationComponent.Cast(owner.FindComponent(AROR_LocationComponent));
-		if (location && location.GetControllingRole() == AROR_EFactionRole.INVADERS)
-			tower = m_sInvaderTower;
-		if (!tower.IsEmpty())
-		{
-			float corner = m_fHalfExtent - TOWER_INSET;
-			Place(tower, center + forward * corner + right * corner, yaw + 45, TOWER_CLEARANCE, 0);
-			Place(tower, center - forward * corner - right * corner, yaw + 225, TOWER_CLEARANCE, 0);
-		}
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
+		if (locations)
+			locations.GetOnLocationControlChanged().Insert(OnLocationControlChanged);
 
 		string id = "?";
 		if (location)
 			id = location.GetId();
 		Print(string.Format("[AROR GARRISON] %1 perimeter raised: %2 pieces, %3 skipped (trees, buildings, props, roads, water or slope)", id, m_aPieces.Count(), m_iSkipped), LogLevel.NORMAL);
+	}
+
+	//! Guard towers on two opposite corners, inside the walls, in the holder's style (Invaders: USSR, else US)
+	protected void RaiseTowers()
+	{
+		foreach (IEntity old : m_aTowers)
+		{
+			m_aPieces.RemoveItem(old);
+			if (old)
+				SCR_EntityHelper.DeleteEntityAndChildren(old);
+		}
+		m_aTowers.Clear();
+		IEntity owner = GetOwner();
+		AROR_LocationComponent location = AROR_LocationComponent.Cast(owner.FindComponent(AROR_LocationComponent));
+		m_eTowerRole = AROR_EFactionRole.OCCUPIERS;
+		if (location)
+			m_eTowerRole = location.GetControllingRole();
+		ResourceName tower = m_sOccupierTower;
+		if (m_eTowerRole == AROR_EFactionRole.INVADERS)
+			tower = m_sInvaderTower;
+		if (tower.IsEmpty())
+			return;
+		vector center = owner.GetOrigin();
+		vector angles = owner.GetYawPitchRoll();
+		float yaw = angles[0];
+		vector heading[4];
+		Math3D.AnglesToMatrix(Vector(yaw, 0, 0), heading);
+		float corner = m_fHalfExtent - TOWER_INSET;
+		int before = m_aPieces.Count();
+		Place(tower, center + heading[2] * corner + heading[0] * corner, yaw + 45, TOWER_CLEARANCE, 0);
+		Place(tower, center - heading[2] * corner - heading[0] * corner, yaw + 225, TOWER_CLEARANCE, 0);
+		for (int index = before; index < m_aPieces.Count(); index++)
+			m_aTowers.Insert(m_aPieces[index]);
+	}
+
+	//! A new holder swaps the towers' style (US and Resistance share the US towers)
+	protected void OnLocationControlChanged(AROR_LocationComponent location)
+	{
+		if (!location || location.GetOwner() != GetOwner() || !m_bRaised)
+			return;
+		bool wasInvader = m_eTowerRole == AROR_EFactionRole.INVADERS;
+		bool isInvader = location.GetControllingRole() == AROR_EFactionRole.INVADERS;
+		if (wasInvader != isInvader)
+			RaiseTowers();
+		else
+			m_eTowerRole = location.GetControllingRole();
 	}
 
 	//! Pieces along one side, from -half to +half of the along axis, leaving the gate gap in the middle;
@@ -194,6 +243,10 @@ class AROR_PerimeterComponent : ScriptComponent
 	{
 		if (GetGame())
 			GetGame().GetCallqueue().Remove(Raise);
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
+		if (locations)
+			locations.GetOnLocationControlChanged().Remove(OnLocationControlChanged);
+		m_aTowers.Clear();
 		if (GetGame() && Replication.IsServer())
 		{
 			foreach (IEntity piece : m_aPieces)
