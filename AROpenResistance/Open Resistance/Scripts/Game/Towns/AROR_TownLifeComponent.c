@@ -305,11 +305,23 @@ class AROR_TownLifeComponent : ScriptComponent
 	{
 		if (!m_bParkedCars || m_aCars.Count() >= ScaledCount(m_fCarsPerResident, m_iMinCars, m_iMaxCars))
 			return;
+		// Parked at the roadside, nose along the road, never on top of another parked car
 		vector spot;
-		if (!FindSpawnSpot(3, spot))
+		float yaw;
+		bool found;
+		for (int attempt = 0; attempt < 4 && !found; attempt++)
+		{
+			vector street = m_aStreets.GetRandomElement();
+			if (!AROR_ForceSpawner.FindRoadsidePosition(street, 40, true, spot, yaw))
+				continue;
+			if (PlayerWithin(spot, m_fSpawnPlayerClearance) || !IsSeparated(spot, m_aCarSpots, 12))
+				continue;
+			found = true;
+		}
+		if (!found)
 			return;
 		ResourceName prefab = AROR_ForceSpawner.VehiclePrefab(AROR_EFactionRole.CIVILIANS, AROR_EVehicleType.MOTOR_CAR);
-		IEntity car = AROR_ForceSpawner.SpawnVehicle(AROR_EFactionRole.CIVILIANS, prefab, spot, Math.RandomFloat(0, 360));
+		IEntity car = AROR_ForceSpawner.SpawnVehicle(AROR_EFactionRole.CIVILIANS, prefab, spot, yaw);
 		if (!car)
 		{
 			// Keep the count moving so a missing preset never retries every tick
@@ -490,9 +502,16 @@ class AROR_TownLifeComponent : ScriptComponent
 					patrol.m_bSeated = true;
 					patrol.m_iNextOrderAt = m_iClock;
 				}
+				else if (m_iClock - patrol.m_iRaisedAt > PATROL_SEAT_DEADLINE && HasDriver(patrol))
+				{
+					// A blocked door or seat must not cost the whole patrol: drive with whoever got in
+					patrol.m_bSeated = true;
+					patrol.m_iNextOrderAt = m_iClock;
+					Print(string.Format("[AROR TOWN] %1 patrol boarded partly; driving with the crew aboard", m_Location.GetId()), LogLevel.NORMAL);
+				}
 				else if (m_iClock - patrol.m_iRaisedAt > PATROL_SEAT_DEADLINE)
 				{
-					Print(string.Format("[AROR TOWN] %1 patrol could not board; removed", m_Location.GetId()), LogLevel.WARNING);
+					Print(string.Format("[AROR TOWN] %1 patrol could not board (no driver); removed", m_Location.GetId()), LogLevel.WARNING);
 					patrol.Remove_S();
 					m_aPatrols.Remove(index);
 					m_aPatrolLostAt.Insert(m_iClock);
@@ -562,15 +581,29 @@ class AROR_TownLifeComponent : ScriptComponent
 		return string.Empty;
 	}
 
+	//! The patrol vehicle's driver seat is taken by one of its crew
+	protected static bool HasDriver(AROR_TownPatrol patrol)
+	{
+		if (!patrol || !patrol.m_Vehicle)
+			return false;
+		SCR_AIVehicleUsageComponent usage = SCR_AIVehicleUsageComponent.Cast(patrol.m_Vehicle.FindComponent(SCR_AIVehicleUsageComponent));
+		if (!usage || !usage.GetPilotCompartmentSlot())
+			return false;
+		return usage.GetPilotCompartmentSlot().GetOccupant() != null;
+	}
+
 	protected void SpawnPatrol(AROR_EFactionRole role)
 	{
+		// On the carriageway, lined up with the road, so doors are clear and it can drive straight off
 		vector start;
+		float yaw;
 		bool found;
 		foreach (vector street : m_aStreets)
 		{
-			if (!PlayerWithin(street, m_fSpawnPlayerClearance * 2))
+			if (PlayerWithin(street, m_fSpawnPlayerClearance * 2))
+				continue;
+			if (AROR_ForceSpawner.FindRoadsidePosition(street, 30, false, start, yaw))
 			{
-				start = street;
 				found = true;
 				break;
 			}
@@ -578,7 +611,7 @@ class AROR_TownLifeComponent : ScriptComponent
 		ResourceName prefab = PatrolVehicle(role);
 		if (!found || prefab.IsEmpty())
 			return;
-		IEntity vehicle = AROR_ForceSpawner.SpawnVehicle(role, prefab, start, Math.RandomFloat(0, 360));
+		IEntity vehicle = AROR_ForceSpawner.SpawnVehicle(role, prefab, start, yaw);
 		if (!vehicle)
 			return;
 		array<AROR_EUnitType> members = {};

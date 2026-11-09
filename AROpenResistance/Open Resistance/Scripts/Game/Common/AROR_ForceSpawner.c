@@ -149,6 +149,93 @@ class AROR_ForceSpawner
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! A spot on the nearest road to near (within searchRadius), lined up with it. yaw (degrees) runs along the
+	//! road. kerb: parked at the roadside, nose in the direction of traffic for that side (right-hand traffic);
+	//! otherwise on the carriageway. False when no road is that close or the spot is wet or blocked.
+	static bool FindRoadsidePosition(vector near, float searchRadius, bool kerb, out vector position, out float yaw)
+	{
+		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
+			return false;
+		BaseRoad road;
+		float roadDistance;
+		aiWorld.GetRoadNetworkManager().GetClosestRoad(near, road, roadDistance);
+		if (!road || roadDistance > searchRadius)
+			return false;
+		array<vector> points = {};
+		road.GetPoints(points);
+		if (points.Count() < 2)
+			return false;
+
+		// The road segment nearest the point, and the foot of the point on it
+		int best = -1;
+		float bestDistance = float.MAX;
+		vector bestFoot;
+		for (int index = 0; index + 1 < points.Count(); index++)
+		{
+			vector start = points[index];
+			vector segment = points[index + 1] - start;
+			segment[1] = 0;
+			float lengthSq = segment[0] * segment[0] + segment[2] * segment[2];
+			if (lengthSq < 0.25)
+				continue;
+			float along = ((near[0] - start[0]) * segment[0] + (near[2] - start[2]) * segment[2]) / lengthSq;
+			along = Math.Clamp(along, 0, 1);
+			vector foot = start + segment * along;
+			float footDistance = vector.DistanceXZ(foot, near);
+			if (footDistance < bestDistance)
+			{
+				bestDistance = footDistance;
+				best = index;
+				bestFoot = foot;
+			}
+		}
+		if (best < 0)
+			return false;
+
+		vector direction = points[best + 1] - points[best];
+		direction[1] = 0;
+		direction.Normalize();
+		vector right = Vector(direction[2], 0, -direction[0]);
+		float side = 1;
+		if (Math.RandomInt(0, 2) == 0)
+			side = -1;
+		vector heading = direction * side;
+		float offset = 0;
+		if (kerb)
+		{
+			float width = road.GetWidth();
+			if (width <= 0)
+				width = 6;
+			offset = width * 0.5 + 1.2;
+		}
+		vector spot = bestFoot + right * (offset * side);
+		BaseWorld world = GetGame().GetWorld();
+		spot[1] = world.GetSurfaceY(spot[0], spot[2]);
+		if (spot[1] <= world.GetOceanHeight(spot[0], spot[2]) + 0.5)
+			return false;
+		if (!IsSpotClear(spot, 1.3, 2.2))
+			return false;
+		position = spot;
+		yaw = heading.ToYaw();
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Nothing standing within halfWidth of the point up to height (terrain excluded)
+	static bool IsSpotClear(vector point, float halfWidth, float height)
+	{
+		BaseWorld world = GetGame().GetWorld();
+		TraceBox trace = new TraceBox();
+		trace.Start = Vector(point[0], world.GetSurfaceY(point[0], point[2]) + 0.4, point[2]);
+		trace.End = trace.Start + Vector(0, 0.05, 0);
+		trace.Mins = Vector(-halfWidth, 0, -halfWidth);
+		trace.Maxs = Vector(halfWidth, height, halfWidth);
+		trace.Flags = TraceFlags.ENTS;
+		return world.TraceMove(trace, null) >= 1;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! A reachable road point near a position (searching towards goal)
 	static bool FindRoadPosition(vector near, vector goal, out vector position)
 	{
