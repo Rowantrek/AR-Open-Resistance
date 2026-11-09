@@ -18,6 +18,8 @@ class AROR_CaptureFlagPlacementComponent : ScriptComponent
 	protected ResourceName m_sResistanceBuilding;
 	[Attribute("6.5", desc: "Clear radius the building needs around its centre, metres", params: "3 15 0.5", category: "Garrison post")]
 	protected float m_fBuildingRadius;
+	[Attribute("130", desc: "When no building site fits within Search Radius (dense centres, roads), the search continues outwards to this distance from the location centre; also limited to three quarters of its radius, metres", params: "0 300 10", category: "Garrison post")]
+	protected float m_fSiteOuterRadius;
 	[Attribute("1.5", desc: "Largest height difference allowed across the building's footprint, metres", params: "0.3 4 0.1", category: "Garrison post")]
 	protected float m_fBuildingMaxRelief;
 	[Attribute("10", desc: "Flag distance in front of the building's centre, metres", params: "4 25 0.5", category: "Garrison post")]
@@ -42,7 +44,8 @@ class AROR_CaptureFlagPlacementComponent : ScriptComponent
 	protected AROR_EFactionRole m_eBuildingRole;
 	protected bool m_bHooked;
 
-	protected static const int SITE_ATTEMPTS = 33;	//!< Location centre, then four rings of eight
+	protected static const int SITE_INNER_ATTEMPTS = 33;	//!< Location centre, then four rings of eight within Search Radius
+	protected static const int SITE_ATTEMPTS = 73;	//!< Then five rings of eight, between them, out to the outer radius
 	protected static const float ROAD_MARGIN = 1.5;	//!< Metres kept between the building's footprint and a road
 
 	static vector Candidate(vector center, float radius, int ordinal)
@@ -54,6 +57,41 @@ class AROR_CaptureFlagPlacementComponent : ScriptComponent
 		int sector = index - (ring - 1) * 8;
 		float angle = sector * 0.78539816;
 		return center + Vector(Math.Sin(angle), 0, Math.Cos(angle)) * (radius * ring / 4);
+	}
+
+	protected float InnerSiteRadius(AROR_LocationComponent location)
+	{
+		return Math.Min(m_fSearchRadius, location.GetRadius() * 0.5);
+	}
+
+	protected float OuterSiteRadius(AROR_LocationComponent location)
+	{
+		return Math.Min(m_fSiteOuterRadius, location.GetRadius() * 0.75);
+	}
+
+	//! The outer rings only when the location is big enough to reach past the inner ones
+	protected int SiteAttempts(AROR_LocationComponent location)
+	{
+		if (OuterSiteRadius(location) > InnerSiteRadius(location) + 5)
+			return SITE_ATTEMPTS;
+		return SITE_INNER_ATTEMPTS;
+	}
+
+	//! Building sites: the inner rings first, then rings set between the inner ones' angles further out, so a
+	//! dense or road-crossed centre still gets a post a little way off rather than none
+	protected vector SiteCandidate(AROR_LocationComponent location, int ordinal)
+	{
+		vector center = location.GetCenter();
+		float inner = InnerSiteRadius(location);
+		if (ordinal < SITE_INNER_ATTEMPTS)
+			return Candidate(center, inner, ordinal);
+		float outer = OuterSiteRadius(location);
+		int index = ordinal - SITE_INNER_ATTEMPTS;
+		int ring = index / 8;
+		int sector = index - ring * 8;
+		float angle = (sector + 0.5) * 0.78539816;
+		float distance = inner + (outer - inner) * (ring + 1) / 5;
+		return center + Vector(Math.Sin(angle), 0, Math.Cos(angle)) * distance;
 	}
 
 	protected AROR_LocationComponent FindLocation()
@@ -193,13 +231,13 @@ class AROR_CaptureFlagPlacementComponent : ScriptComponent
 		AROR_LocationComponent location = FindLocation();
 		if (!location)
 			return;
-		if (m_iSiteAttempt < SITE_ATTEMPTS && WantsBuilding(location))
+		if (m_iSiteAttempt < SiteAttempts(location) && WantsBuilding(location))
 		{
 			if (TryPlaceSite(location))
 				return;
 			m_iSiteAttempt++;
-			if (m_iSiteAttempt >= SITE_ATTEMPTS)
-				Print(string.Format("[AROR] Garrison post at %1 found no room for its building within %2 m; flag only", location.GetId(), Math.Min(m_fSearchRadius, location.GetRadius() * 0.5)), LogLevel.WARNING);
+			if (m_iSiteAttempt >= SiteAttempts(location))
+				Print(string.Format("[AROR] Garrison post at %1 found no room for its building within %2 m; flag only", location.GetId(), Math.Max(InnerSiteRadius(location), OuterSiteRadius(location))), LogLevel.WARNING);
 			GetGame().GetCallqueue().CallLater(TryPlace, 100, false);
 			return;
 		}
@@ -243,8 +281,7 @@ class AROR_CaptureFlagPlacementComponent : ScriptComponent
 	{
 		BaseWorld world = GetGame().GetWorld();
 		vector center = location.GetCenter();
-		float radius = Math.Min(m_fSearchRadius, location.GetRadius() * 0.5);
-		vector site = Candidate(center, radius, m_iSiteAttempt);
+		vector site = SiteCandidate(location, m_iSiteAttempt);
 		site[1] = world.GetSurfaceY(site[0], site[2]);
 		if (!IsSiteClear(site))
 			return false;
