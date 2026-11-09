@@ -14,6 +14,9 @@ modded class AROR_OperationManagerComponent
 	protected int m_iTerritoryAttackRest;
 	[Attribute("0", desc: "The Occupiers also attack Resistance-held towns and cities: an attack order sized to take the town, won through the town occupation contest (AI recapture). Needs territory attacks on.")]
 	protected bool m_bTownAttacks;
+	[Attribute("1800", desc: "Breathing room: seconds after a town or city changes hands (or the campaign loads) before any army's attack order targets it", params: "0 7200 60")]
+	protected int m_iTownAttackGrace;
+	protected ref map<string, int> m_mTownChangedAt = new map<string, int>();	//!< Town ID -> clock when it last changed hands
 	protected ref array<ref AROR_TerritoryAttackState> m_aAttackTerritories = {};
 	protected AROR_LocationManagerComponent m_AttackLocations;
 	protected int m_iAttackRestUntil;
@@ -36,8 +39,12 @@ modded class AROR_OperationManagerComponent
 			foreach (AROR_LocationComponent location : all)
 				OnAttackTerritoryChanged(location);
 			m_AttackLocations.GetOnLocationControlChanged().Insert(OnAttackTerritoryChanged);
+			m_AttackLocations.GetOnLocationControlChanged().Insert(OnTownControlChanged);
 			m_AttackLocations.GetOnLocationRegistered().Insert(OnAttackTerritoryChanged);
 			m_AttackLocations.GetOnLocationUnregistered().Insert(OnAttackTerritoryRemoved);
+			// A loaded campaign gives every town its breathing room too
+			foreach (AROR_LocationComponent town : all)
+				OnTownControlChanged(town);
 		}
 		if (m_iClock < m_iNextTerritoryAttackTick)
 			return;
@@ -47,8 +54,14 @@ modded class AROR_OperationManagerComponent
 			HoldAttacks("rest", string.Format("resting after the last attack for another %1s", m_iAttackRestUntil - m_iClock));
 			return;
 		}
-		// One attack at a time across the map, whichever army runs it
-		AROR_Operation busy = OutstandingAttack();
+		// Players in a town assault get no attack orders on top of it
+		if (HasTownAssault())
+		{
+			HoldAttacks("assault", "a town assault is under way");
+			return;
+		}
+		// One attack at a time across the map, or with one per army only the Occupiers' own
+		AROR_Operation busy = OutstandingAttack(AROR_EFactionRole.OCCUPIERS);
 		if (busy)
 		{
 			HoldAttacks("busy:" + busy.GetId(), string.Format("waiting for attack %1 (role=%2 target=%3 state=%4) to end", busy.GetId(), busy.GetRole(), busy.GetTargetLocationId(), busy.GetState()));
@@ -149,6 +162,18 @@ modded class AROR_OperationManagerComponent
 			if (!existing.IsTerminal() && existing.GetType() == AROR_EOperationType.ATTACK && existing.GetRole() == role && existing.GetTargetLocationId() == locationId)
 				return existing.GetId();
 		}
+		if (HasTownAssault())
+		{
+			m_sAttackFailure = "a town assault is under way; no attack orders until it ends";
+			return string.Empty;
+		}
+		int grace;
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
+		if (locations && IsTownInGrace(locations.GetLocationById(locationId), grace))
+		{
+			m_sAttackFailure = string.Format("%1 changed hands recently; breathing room for another %2s", locationId, grace);
+			return string.Empty;
+		}
 		AROR_OperationExecutorComponent executor = AROR_OperationExecutorComponent.Cast(GetOwner().FindComponent(AROR_OperationExecutorComponent));
 		if (!executor)
 		{
@@ -247,6 +272,9 @@ modded class AROR_OperationManagerComponent
 		int captureGrace = state.m_iCapturedAt + Math.Max(0, m_iTerritoryAttackGrace) - m_iClock;
 		if (captureGrace > 0)
 			return string.Format("capture grace: %1s left", captureGrace);
+		int townGrace;
+		if (m_AttackLocations && IsTownInGrace(m_AttackLocations.GetLocationById(state.m_sLocationId), townGrace))
+			return string.Format("town breathing room: %1s left", townGrace);
 		if (state.m_iQRFCompletedAt >= 0)
 		{
 			int afterQRF = state.m_iQRFCompletedAt + Math.Max(0, m_iTerritoryAttackAfterQRF) - m_iClock;
@@ -291,15 +319,47 @@ modded class AROR_OperationManagerComponent
 		}
 	}
 
-	//! The attack still in progress, if any (either army, including test attacks)
-	protected AROR_Operation OutstandingAttack()
+	//! The attack still in progress that blocks this army's next one, if any: any army's (test attacks included), or
+	//! with one attack per army only its own
+	protected AROR_Operation OutstandingAttack(AROR_EFactionRole role)
 	{
 		foreach (AROR_Operation operation : m_aOperations)
 		{
-			if (!operation.IsTerminal() && operation.GetType() == AROR_EOperationType.ATTACK)
+			if (!operation.IsTerminal() && operation.GetType() == AROR_EOperationType.ATTACK && (!m_bOneAttackPerArmy || operation.GetRole() == role))
 				return operation;
 		}
 		return null;
+	}
+
+	//! A town garrison response (Towns) is running: the players are in a town assault
+	bool HasTownAssault()
+	{
+		foreach (AROR_Operation operation : m_aOperations)
+		{
+			if (!operation.IsTerminal() && operation.m_bAssaultWave)
+				return true;
+		}
+		return false;
+	}
+
+	//! True while a town or city is in its breathing room after changing hands (or the campaign loading); remaining
+	//! is the seconds left. Military sites never are.
+	bool IsTownInGrace(AROR_LocationComponent location, out int remaining)
+	{
+		remaining = 0;
+		if (!location || m_iTownAttackGrace <= 0 || !m_mTownChangedAt.Contains(location.GetId()))
+			return false;
+		remaining = m_mTownChangedAt.Get(location.GetId()) + m_iTownAttackGrace - m_iClock;
+		return remaining > 0;
+	}
+
+	protected void OnTownControlChanged(AROR_LocationComponent location)
+	{
+		if (!Replication.IsServer() || !location)
+			return;
+		AROR_ELocationType type = location.GetLocationType();
+		if (type == AROR_ELocationType.TOWN || type == AROR_ELocationType.CITY)
+			m_mTownChangedAt.Set(location.GetId(), m_iClock);
 	}
 
 	protected int QueuedThreats(AROR_EFactionRole role)
@@ -355,6 +415,7 @@ modded class AROR_OperationManagerComponent
 		if (m_AttackLocations)
 		{
 			m_AttackLocations.GetOnLocationControlChanged().Remove(OnAttackTerritoryChanged);
+			m_AttackLocations.GetOnLocationControlChanged().Remove(OnTownControlChanged);
 			m_AttackLocations.GetOnLocationRegistered().Remove(OnAttackTerritoryChanged);
 			m_AttackLocations.GetOnLocationUnregistered().Remove(OnAttackTerritoryRemoved);
 		}

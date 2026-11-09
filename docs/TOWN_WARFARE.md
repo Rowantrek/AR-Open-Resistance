@@ -136,6 +136,15 @@ attackers must keep the advantage for 3 minutes without a break; losing it reset
 occupations are logged as `[AROR BALANCE] attack_order` (role, target, tier, `source=front|territory`) and
 `town_occupied`.
 
+Pacing rules for both armies' attack orders (Chicken):
+
+- **One attack per army**: the US and the Russians can each have one attack out at the same time
+  (`m_bOneAttackPerArmy`), never on the same target.
+- **No attacks during a town assault**: while any town garrison response is running, no attack order launches.
+- **Breathing room**: a town or city is not targeted by any attack, simulated battles included, for 30 minutes after
+  it changes hands (`m_iTownAttackGrace`; also after the campaign loads). The Russian push picks another target
+  meanwhile.
+
 The intended loop: take towns from the US garrison posts and hold them against the counterattacks, while the Russians
 push up from the south and take towns too, so the Resistance eventually meets them on the front.
 

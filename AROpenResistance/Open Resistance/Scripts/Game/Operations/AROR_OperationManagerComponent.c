@@ -472,6 +472,8 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 	protected int m_iQRFCooldown;
 	[Attribute("1", desc: "Maximum outstanding attacks per role, including planned requests; also capped at one attack globally", params: "1 16 1")]
 	protected int m_iMaxAttacks;
+	[Attribute("0", desc: "Allow one outstanding attack per army (the Occupiers and the Invaders can attack at the same time) instead of one globally; two armies never attack the same target at once")]
+	protected bool m_bOneAttackPerArmy;
 	[Attribute("1", desc: "Separate maximum outstanding QRFs per role", params: "1 16 1")]
 	protected int m_iMaxQRFs;
 	[Attribute("30", desc: "Seconds allowed for executor spawn acknowledgement", params: "1 3600 1")]
@@ -777,7 +779,8 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 		bool attackOutstanding;
 		foreach (AROR_Operation operation : m_aOperations)
 		{
-			if (!operation.IsTerminal() && operation.GetType() == AROR_EOperationType.ATTACK)
+			// One attack on the map, or with one per army only this army's own (and never the other army's target)
+			if (!operation.IsTerminal() && operation.GetType() == AROR_EOperationType.ATTACK && (!m_bOneAttackPerArmy || operation.GetRole() == role || operation.GetTargetLocationId() == targetId))
 				attackOutstanding = true;
 			// Assault waves neither take the target nor count toward the role's operation limit
 			if (operation.IsTerminal() || operation.GetRole() != role || operation.m_bAssaultWave)

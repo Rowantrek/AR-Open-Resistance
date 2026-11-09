@@ -296,6 +296,10 @@ class AROR_InvaderCampaignComponent : SCR_BaseGameModeComponent
 			AROR_EFactionRole holder = candidate.GetControllingRole();
 			if (holder == attacker || !candidate.CanBeTakenBy(attacker))
 				continue;
+			// A town that just changed hands gets its breathing room from both armies, simulated battles included
+			int grace;
+			if (m_Operations.IsTownInGrace(candidate, grace))
+				continue;
 			// The Occupiers only win back Invader sites: out of sight in the simulation, or with attack orders also
 			// where players are, by a physical attack
 			if (attacker == AROR_EFactionRole.OCCUPIERS && (holder != AROR_EFactionRole.INVADERS || (!m_bAttackOrders && !IsDistant(candidate))))

@@ -1701,6 +1701,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_bMarsEnabled 1
    m_bTerritoryAttacksEnabled 1
    m_bTownAttacks 1
+   m_bOneAttackPerArmy 1
    m_iTerritoryAttackGrace 300
    m_iTerritoryAttackAfterQRF 300
    m_iTerritoryAttackRest 900
