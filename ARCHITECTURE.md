@@ -272,7 +272,7 @@ Purpose: Resistance Leaders raise AI squads and command them through the **HICOM
 
 - `AROR_HighCommandComponent` (game mode): the Resistance Leaders (the host automatically; the host delegates others), the resistance name, a squad catalogue (unit types per squad, fielded from the Resistance faction preset) and the raised squads. Squads cost Resistance funds **and** manpower, form up at the HQ and take **attack**, **defend**, **move** (standing by on arrival) and **hold** orders. Each leader commands only their own squads; everyone sees all of them.
 - Client: the HICOMM app (see Phone) sends requests through RPCs on the player controller.
-- Server/client: everything is decided and validated on the server; a compact snapshot (leaders, name, squad summaries) replicates to clients.
+- Server/client: everything is decided and validated on the server; a compact snapshot (leaders, name, squad summaries) replicates to clients. Raised squads remain simulated away from players, subject to the engine AI budget; dormant living squads retain their roster while awaiting reactivation.
 - Saved: the resistance name (`AROR_HighCommandComponentSerializer`), set at campaign setup and fixed for the campaign. Squads are not saved: they are refunded at full cost when the campaign ends, and saved funds and manpower already include the refund for living squads.
 - Depends on: Factions, Locations, Economy, Game Flow (the HQ), Phone, Notifications.
 - Extension points: squad catalogue, per-leader cap, group/waypoint prefabs and map bounds on the component.

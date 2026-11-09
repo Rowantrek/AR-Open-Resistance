@@ -773,6 +773,12 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 		for (int i = m_aSquads.Count() - 1; i >= 0; i--)
 		{
 			AROR_HighCommandSquad squad = m_aSquads[i];
+			// Native budget virtualisation is not a casualty. Keep the roster and request its existing members.
+			if (squad.m_Group && squad.m_Group.GetPlayerCount() == 0 && squad.m_Group.IsDormant() && squad.m_Group.GetDormantAliveCount() > 0 && now >= squad.m_iNextWake)
+			{
+				squad.m_iNextWake = now + 10000;
+				squad.m_Group.RequestSpawn();
+			}
 			squad.m_iAlive = CountAlive(squad, factionKey);
 
 			if (squad.m_iAlive > 0)
@@ -857,8 +863,10 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 	//! Living members; newly spawned ones are given the Resistance faction once
 	protected int CountAlive(AROR_HighCommandSquad squad, string factionKey)
 	{
-		if (!squad.m_Group)
+		if (!Replication.IsServer() || !squad.m_Group)
 			return 0;
+		if (squad.m_Group.IsDormant())
+			return squad.m_Group.GetDormantAliveCount();
 
 		array<AIAgent> agents = {};
 		squad.m_Group.GetAgents(agents);
@@ -879,6 +887,14 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 				continue;
 
 			alive++;
+
+			// Keep campaign squads moving/fighting beyond player range. Renew before the lease expires,
+			// without bypassing the engine AI limit or taking over a player-controlled member.
+			if (GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(entity) <= 0)
+			{
+				agent.PreventMaxLOD(Math.Max(10, m_iUpdateInterval * 2));
+				agent.ActivateAI(true);
+			}
 
 			if (!squad.m_aAffiliated.Contains(entity))
 			{

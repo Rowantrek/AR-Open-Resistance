@@ -19,6 +19,7 @@ class AROR_HighCommandSquad
 	int m_iManpowerCost;
 	int m_iSize;
 	int m_iRaisedAt;	//!< World time (ms)
+	int m_iNextWake;	//!< Paced retry after native AI budget virtualisation (ms)
 
 	SCR_AIGroup m_Group;
 	AIWaypoint m_Waypoint;
