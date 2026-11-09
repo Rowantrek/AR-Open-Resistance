@@ -29,8 +29,8 @@ an occupying presence in the streets, and a fixed three-wave response when playe
 - Infantry stands in a tight ring (20 m half-size) around the flag, so in front of and beside the tent. Town ground is
   rarely flat, so posts always use the infantry-only fallback when the compound check fails.
 - Chicken's garrison personnel cap is 144 (was 96, which the extra town posts filled near Meaux).
-- **Map**: a pennant in the holding faction's colour marks each post (on the flag when zoomed in, tucked against the
-  town marker when zoomed out), drawn as an outline once the post is taken.
+- **Map**: a pennant in the holding faction's colour marks each post on its flag once zoomed in, drawn as an outline
+  once the post is taken.
 - **Taking the flag** (all hostiles within ~60 m of it dead): +30% Resistance support in that town. This may flip the
   town through the normal support rule, but the flag never changes control itself. The post is then broken: nothing
   in its roster deploys again. It re-forms 45 minutes later, once nobody is near and the army still holds the town.
@@ -60,11 +60,52 @@ then runs in phases, after the pattern of RC Dynamic Counter Attacks (ideas from
      captioned "CONTACT · NATO REINFORCEMENTS FORMING", then "NATO REINFORCEMENTS INBOUND · ETA 1:20", then
      "NATO REINFORCEMENTS IN TOWN".
 4. **Outcome**: nothing is declared while any column, armour or the assault is still out there.
-   - **Repelled**: every operation has ended (destroyed or withdrawn) with the Resistance still near: +10% Resistance
+   - **Repelled**: every operation has ended (destroyed or withdrawn) with the Resistance still near: +20% Resistance
      support in the town and an HQ headline from a pool ("X HOLDS / …").
-   - **Abandoned**: no Resistance player within 1.5 km for 3 minutes: the army retakes a taken post at once (it
-     re-forms as soon as nobody is near) with the headline "X GARRISON RESTORED".
+   - **Retaken (lockdown)**: see below.
+   - **Abandoned**: no Resistance player within 1.5 km for 3 minutes. If the Resistance had gained anything (support
+     or the post), the army retakes the town as for the lockdown ("X RETAKEN / The Resistance pulled out").
    - Unresolved 15 minutes after the last wave: ends quietly.
+
+## Lockdown
+
+While a response runs, the town counts the responding army's living fighters (garrison, checkpoints, patrol, wave
+troops) and the Resistance's (players and recruits) within its radius (120–300 m) every 5 s. While the army
+outnumbers the Resistance the lockdown clock runs up; otherwise it runs back down. At 10 minutes in total the army
+retakes the town: the Resistance support gained since the contact report is lost (which flips the town back if the
+gain had flipped it), the post is restored, and the headline reads "X RETAKEN". A response keeps running if the
+town's support flips it to the Resistance mid-fight: the lockdown decides who keeps it.
+
+Players within 700 m see an indicator at the top centre of the HUD: "MEAUX · ENEMY 14 vs 6 · TOWN LOST IN 4:10" (red,
+bar filling), "RECOVERING 2:30" (amber, bar draining) or "HOLDING" (green). `m_fResistanceWeight` makes each
+Resistance fighter count as more than one enemy if small squads lose towns too easily (default 1: plain headcount).
+
+## One response at a time
+
+Only one town response runs on the map. A second town hit meanwhile sends a contact report ending "No reinforcements
+available" and its garrison fights alone; once the first response ends, it gets its own if the attackers are still
+near and the kill threshold is met.
+
+## Escalation
+
+Town fighting moves the army's two scales directly (`RecordTownEscalation_S`):
+
+- Every enemy the players kill in or around the town (garrison, checkpoints, patrol, wave troops): **+8 Crackdown**
+  (0–1000; a level per 200) and **+4 Readiness pressure** (levels at 100, 250, 450, 700). About 25 kills raise
+  Crackdown a level. Both are per-town attributes.
+- Taking a garrison post counts as a capture: the scenario's capture escalation (Chicken: +100 Crackdown, +50
+  Readiness).
+- Each of these counts as fresh evidence, so neither scale cools while a fight goes on. After 10 quiet minutes Chicken
+  cools Crackdown by 5 and Readiness pressure by 2 per minute (Readiness never below the starting level). Crackdown
+  cooling was off in Chicken before; Readiness cooling is new (`m_iReadinessDecay`, off by default elsewhere).
+
+## Balance logging
+
+Every response writes `[AROR BALANCE]` lines to the console log: `town_response_start`, `town_wave`,
+`town_contest` (every 30 s), `town_escalation` (every kill or post), `town_response_end` (outcome, duration, waves,
+kills, peak forces), `town_response_effect` (support, Crackdown and Readiness before and after),
+`town_response_deferred` and `post_taken`. `tools/Export-BalanceLog.ps1` turns them into one CSV per event (default:
+the newest Workbench log folder).
 - **Readiness picks the kit** (wave recipes `<army>_townwave<N>_r1|r3|r5`):
 
 | Readiness | Wave 1 | Wave 2 | Wave 3 |
@@ -113,11 +154,12 @@ their own group, spawned away from players; convoys formed up along one road; ch
 
 ## Map markers
 
-Location markers are dark plates (the design system's plate) with a faction-coloured edge and glyph: a square for
-the Resistance, a diamond for the enemy, a circle for neutral sites. Size follows importance: key sites (bases,
-outposts, airfields, heliports, ports, the HQ, strongholds) are largest and carry their name in bold capitals on a
-plate to their right; factories and resources are smaller; cities and towns smallest (the map prints their names).
-HICOMM's map shares the same badge drawing.
+Location markers are kept simple: a solid shape in the holder's faction colour inside a dark keyline, with one thick
+symbol (white, or near-black on a light colour) for the type. A square for the Resistance, a diamond for the enemy,
+a circle for neutral sites. Towns and cities have no symbol. Size follows importance: key sites (bases, outposts,
+airfields, heliports, ports, the HQ, strongholds) are largest and carry their name in bold capitals on a plate to
+their right; factories and resources are smaller; cities and towns smallest (the map prints their names). A post's
+flag marker appears on the flag once zoomed in. HICOMM's map shares the same badge drawing.
 
 ## To check in Workbench
 
