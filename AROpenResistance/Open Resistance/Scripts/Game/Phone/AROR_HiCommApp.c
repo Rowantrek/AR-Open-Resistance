@@ -231,7 +231,7 @@ class AROR_HiCommApp
 	// Presentation state is restored by the phone for this client session.
 	protected AROR_EHiCommScreen m_eScreen = AROR_EHiCommScreen.LOGIN;
 	protected AROR_EHiCommScreen m_eLastScreen = -1;
-	protected int m_iLoginStart;
+	protected int m_iLoginStart = -1;
 	protected ref AROR_HiCommGlobe m_Globe = new AROR_HiCommGlobe();
 	protected ref array<int> m_aSelected = {};	//!< Selected squad IDs
 	protected AROR_EHighCommandOrder m_eSelectedOrder = AROR_EHighCommandOrder.MOVE;
@@ -399,8 +399,8 @@ class AROR_HiCommApp
 
 		bool showMap = m_eScreen == AROR_EHiCommScreen.STRATEGIC;
 
-		// The login sequence replays each time the login screen is shown
-		if (m_eScreen == AROR_EHiCommScreen.LOGIN && m_eLastScreen != AROR_EHiCommScreen.LOGIN)
+		// Start once per world session; closing the phone or logging out keeps boot progress.
+		if (m_eScreen == AROR_EHiCommScreen.LOGIN && m_iLoginStart < 0)
 			m_iLoginStart = System.GetTickCount();
 
 		m_eLastScreen = m_eScreen;
@@ -1181,6 +1181,7 @@ class AROR_HiCommApp
 	void SaveState(notnull AROR_PhoneSessionState state)
 	{
 		state.m_eHiCommScreen = m_eScreen;
+		state.m_iHiCommLoginStart = m_iLoginStart;
 		state.m_aHiCommSelected.Copy(m_aSelected);
 		state.m_eHiCommOrder = m_eSelectedOrder;
 		state.m_sHiCommTarget = m_sSelectedTarget;
@@ -1196,6 +1197,7 @@ class AROR_HiCommApp
 	{
 		// Layout still rechecks live leadership before drawing any command screen.
 		m_eScreen = state.m_eHiCommScreen;
+		m_iLoginStart = state.m_iHiCommLoginStart;
 		m_aSelected.Copy(state.m_aHiCommSelected);
 		m_eSelectedOrder = state.m_eHiCommOrder;
 		m_sSelectedTarget = state.m_sHiCommTarget;

@@ -208,9 +208,6 @@ class AROR_PhoneMenu : ChimeraMenuBase
 	protected float m_fOpen;
 	protected bool m_bClosing;
 
-	//! True while the open hotkey is held; starts true so the press that opened the phone does not close it
-	protected bool m_bHotkeyDown = true;
-
 	//! 0 = portrait, 1 = landscape
 	protected float m_fTurn;
 	protected float m_fTurnTarget;
@@ -530,7 +527,6 @@ class AROR_PhoneMenu : ChimeraMenuBase
 		m_fTurnTarget = 0;
 		m_fContentFade = 0;
 		m_bClosing = false;
-		m_bHotkeyDown = true;
 		RestoreSession();
 		m_bSessionReady = true;
 		UpdateClock();
@@ -632,18 +628,8 @@ class AROR_PhoneMenu : ChimeraMenuBase
 		if (!m_wPhonePortrait)
 			return;
 
-		// The hotkey closes the phone. Read here as well as in AROR_PhoneComponent: while a menu is open the game
-		// may leave our input context out, so keep it active and watch for the press from inside the menu.
-		InputManager inputManager = GetGame().GetInputManager();
-		inputManager.ActivateContext("AROR_Context");
-		bool hotkeyDown = inputManager.GetActionValue("AROR_OpenPhone") > 0 || inputManager.GetActionValue("AROR_OpenPhoneAlt") > 0;
-		if (hotkeyDown != m_bHotkeyDown)
-		{
-			m_bHotkeyDown = hotkeyDown;
-			Print(string.Format("[AROR] Phone menu sees hotkey %1", hotkeyDown), LogLevel.NORMAL);
-			if (hotkeyDown)
-				RequestClose();
-		}
+		// Keep the rebindable actions and raw-key fallback alive inside native menus.
+		AROR_PhoneComponent.PollInput();
 
 		// Esc is also read straight from the keyboard, in case the MenuBack action does not reach this menu
 		if (Debug.KeyState(KeyCode.KC_ESCAPE))

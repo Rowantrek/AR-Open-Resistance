@@ -46,8 +46,8 @@ function method(source, name, members = [], scope = menuScope) {
   const m = source.match(new RegExp('^\\t[^\\r\\n]*\\b' + name + '\\(([^\\r\\n]*)\\)\\r?\\n\\t\\{([\\s\\S]*?)^\\t\\}', 'm'));
   assert(m, 'Missing actual method: ' + name);
   const args = m[1].replace(/\bnotnull /g, '').replace(/\b\w+ (\w+)(?=\s*(?:=|,|$))/g, '$1');
-  let body = m[2].replace(/\b(?:bool|int|float|vector|ResourceName|string|AROR_\w+|InputManager) (\w+) =/g, 'let $1 =')
-    .replace(/super\.(\w+)\(/g, 'this.Base$1(').replace(/(?<![.\w])m_\w+/g, s => 'this.' + s)
+  let body = m[2].replace(/\b(?:bool|int|float|vector|ResourceName|string|AROR_\w+|InputManager|MenuManager) (\w+) =/g, 'let $1 =')
+    .replace(/\b(?:bool|int|float|vector) (\w+);/g, 'let $1;').replace(/super\.(\w+)\(/g, 'this.Base$1(').replace(/(?<![.\w])m_\w+/g, s => 'this.' + s)
     .replace(/(?<![.\w])s_Instance\b/g, 'scope.instance');
   for (const member of members) body = body.replace(new RegExp('(?<![.\\w])' + member + '\\b', 'g'), 'this.' + member);
   return new Function(...Object.keys(env), 'scope', `return function(${args}) {${body}}`)(...Object.values(env), scope);
@@ -127,7 +127,7 @@ check(saved && !p.m_bSessionReady && p.m_HiComm === null && p.m_Squad === null, 
 const openBody = sources.PhoneMenu.slice(sources.PhoneMenu.indexOf('override void OnMenuOpen()'), sources.PhoneMenu.indexOf('override void OnMenuClose()'));
 check(openBody.indexOf('RestoreSession();') > openBody.indexOf('m_eApp = AROR_EPhoneApp.HOME;'), 'restore follows initial Home reset');
 check(openBody.indexOf('RestoreSession();') < openBody.indexOf('UpdateLayout();'), 'restore precedes first layout');
-check(openBody.includes('m_bHotkeyDown = true;'), 'opening key is consumed again on menu reuse');
+check(sources.PhoneMenu.includes('AROR_PhoneComponent.PollInput();'), 'menu uses the component input latch and keyboard fallback');
 const market = app('BlackMarketApp'); market.m_bAwaiting = true; market.SaveState(session);
 equal(session.m_aMarketCartPrefabs, [], 'submitted checkout is not restored as an unpaid draft');
 equal(session.m_aMarketCartQuantities, [], 'submitted checkout quantities are cleared with the draft');
@@ -174,4 +174,73 @@ owner.OnPostInit(null); equal(getSession().m_eApp, apps.HOME, 'new world starts 
 owner.OnDelete(null); dedicated = true; inputCalls = []; owner.OnPostInit(null);
 equal([componentScope.instance, inputCalls], [null, []], 'dedicated server creates no client session or input hooks');
 dedicated = false; play = false; owner.OnPostInit(null); equal(componentScope.instance, null, 'editor mode creates no client session');
+
+hiComm.m_Map.SavePhoneView = () => {}; hiComm.m_Map.RestorePhoneView = () => {};
+// Boot progress survives widget destruction even before signing in, and after logout/revocation.
+let clock = 0;
+env.System = { GetTickCount: () => clock };
+for (const name of ['LOGIN_ZOOM', 'LOGIN_CENTRE_X', 'LOGIN_CENTRE_Y', 'TOP_BAR']) {
+  env[name] = Number(sources.OpsApp.match(new RegExp(name + ' = ([\\d.]+)'))[1]);
+}
+const opsLayout = method(sources.OpsApp, 'Layout', ['BeginFrame', 'Frame', 'DrawBezel', 'ZoomContent', 'DrawLogin', 'DrawBoard', 'DrawScanlines', 'EndFrame']);
+const hiBootLayout = method(sources.HiCommApp, 'Layout', ['GetLocalPlayerId', 'PlaceRaw', 'DrawLogin', 'DrawTopBar', 'DrawCommand', 'DrawStrategic', 'DrawUnits', 'CloseGameMap', 'HideUnused']);
+for (const [name, screenEnum, layout, ui] of [
+  ['HiComm', hiScreens, hiBootLayout, hiComm],
+  ['Ops', env.AROR_EOpsScreen, opsLayout, { BeginFrame() {}, Frame() {}, DrawBezel() {}, ZoomContent() {}, DrawLogin() {}, DrawBoard() {}, DrawScanlines() {}, EndFrame() {}, m_wCrest: widget(), m_wMapClip: widget(), m_wMapOverlay: widget() }]
+]) {
+  const current = app(name + 'App'); Object.assign(current, ui);
+  current.m_eScreen = screenEnum.LOGIN; current.m_eLastScreen = -1; current.m_iLoginStart = -1;
+  clock = 0; layout.call(current, 0, 0, 1);
+  equal(current.m_iLoginStart, 0, name + ' first boot can start at tick zero');
+  clock = 500; layout.call(current, 0, 0, 1);
+  equal(current.m_iLoginStart, 0, name + ' boot does not restart on the next frame');
+  const saved = freshState(); current.SaveState(saved);
+  const restored = app(name + 'App'); Object.assign(restored, ui); restored.RestoreState(saved); restored.m_eLastScreen = -1;
+  clock = 1000; layout.call(restored, 0, 0, 1);
+  equal(restored.m_iLoginStart, 0, name + ' closing midway through boot preserves progress');
+  restored.m_eScreen = name === 'HiComm' ? hiScreens.COMMAND : screenEnum.BOARD;
+  layout.call(restored, 0, 0, 1); restored.m_eScreen = screenEnum.LOGIN;
+  clock = 5000; layout.call(restored, 0, 0, 1);
+  equal(restored.m_iLoginStart, 0, name + ' logout does not replay the loading animation');
+  equal(freshState()['m_i' + name + 'LoginStart'], -1, name + ' new world starts with a fresh boot');
+}
+// Actual shared input polling and toggle methods: gameplay and menu callbacks may both sample a press.
+let keys = new Set(), actions = {}, menu = null, otherMenu = false, alive = true, opened = 0, closed = 0, activated = 0;
+const input = { ActivateContext() { activated++; }, GetActionValue: name => actions[name] || 0 };
+env.GetGame = () => ({ GetInputManager: () => input, GetMenuManager: () => ({
+  IsAnyMenuOpen: () => otherMenu, OpenMenu() { opened++; menu = { RequestClose() { closed++; } }; }
+}) });
+env.AROR_PhoneMenu = { GetInstance: () => menu };
+env.INPUT_CONTEXT = 'AROR_Context'; env.TOGGLE_COOLDOWN_MS = 250;
+env.ChimeraMenuPreset = { AROR_PhoneMenu: 1 };
+env.KeyCode = Object.fromEntries(['KC_Y', 'KC_LCONTROL', 'KC_RCONTROL', 'KC_F9'].map(x => [x, x]));
+env.Debug = { KeyState: key => keys.has(key) };
+const hotkey = { m_bHotkeyDown: false, m_iLastToggleMs: -250, IsLocalPlayerAlive: () => alive };
+hotkey.TogglePhone = method(sources.PhoneComponent, 'TogglePhone', ['IsLocalPlayerAlive']);
+hotkey.Update = method(sources.PhoneComponent, 'Update', ['TogglePhone']);
+componentScope.instance = hotkey;
+const pollInput = method(sources.PhoneComponent, 'PollInput', [], componentScope);
+const sample = () => { hotkey.Update(); pollInput(); };
+clock = 10000; actions.AROR_OpenPhone = 1; keys = new Set(['KC_Y', 'KC_LCONTROL']); sample();
+equal([opened, closed], [1, 0], 'action and keyboard fallback together open once');
+clock += 1000; sample(); equal([opened, closed], [1, 0], 'holding past cooldown cannot close the newly opened phone');
+actions = {}; keys.clear(); sample(); clock += 300;
+keys = new Set(['KC_Y', 'KC_RCONTROL']); pollInput();
+equal(closed, 1, 'menu-only polling closes via right Ctrl+Y when action values are unavailable');
+clock += 1000; sample(); equal(closed, 1, 'holding the close press cannot request another toggle');
+menu = null; keys.clear(); sample(); clock += 300;
+actions.AROR_OpenPhone = 1; sample(); equal(opened, 2, 'rebound action alone opens the phone');
+actions = {}; sample(); clock += 300; actions.AROR_OpenPhoneAlt = 1; sample();
+equal(closed, 2, 'alternate action closes through the same latch');
+menu = null; actions = {}; sample(); clock += 300; keys.add('KC_F9'); sample();
+equal(opened, 3, 'F9 keyboard fallback works without action delivery');
+menu = null; keys.clear(); sample(); clock += 300; keys.add('KC_Y'); sample();
+equal(opened, 3, 'Y alone does not open');
+keys.clear(); sample(); clock += 300; keys = new Set(['KC_Y', 'KC_LCONTROL']); otherMenu = true; sample();
+equal(opened, 3, 'other menus still block opening');
+keys.clear(); sample(); clock += 300; keys.add('KC_F9'); otherMenu = false; alive = false; sample();
+equal(opened, 3, 'dead player still cannot open');
+check(activated > 0, 'both update routes activate the shared input context');
+componentScope.instance = null; pollInput();
+
 console.log(JSON.stringify({ assertions, note: 'Actual presentation/lifecycle bodies with native services mocked. Workbench compile, phone input/rendering and real map lifecycle still required.' }));
