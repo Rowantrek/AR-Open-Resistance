@@ -32,7 +32,7 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	[Attribute("1", desc: "Mark each town's garrison post with a flag in the holding faction's colour (outline once taken)", category: "Marker tiers")]
 	protected bool m_bPostMarkers;
 
-	[Attribute("18", desc: "Garrison post flag size in reference pixels", params: "8 48 1", category: "Marker tiers")]
+	[Attribute("22", desc: "Garrison post flag size in reference pixels", params: "8 48 1", category: "Marker tiers")]
 	protected float m_fPostMarkerSize;
 
 	[Attribute("1", desc: "Draw locations as military-frame symbols (rectangle ours, diamond enemy) instead of the icon textures")]
@@ -475,7 +475,15 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 		float screenFlagX = workspace.DPIUnscale(flagX);
 		float screenFlagY = workspace.DPIUnscale(flagY);
 		float apart = Math.Sqrt((screenFlagX - iconX) * (screenFlagX - iconX) + (screenFlagY - iconY) * (screenFlagY - iconY));
-		widget.SetVisible(apart > size * 0.5 + m_fPostMarkerSize * 0.5);
+		// Always shown: on the flag once zoomed in enough to tell it apart, otherwise against the town marker's
+		// top-right so it never hides under it
+		if (apart <= size * 0.5 + m_fPostMarkerSize * 0.5)
+		{
+			screenFlagX = iconX + size * 0.4;
+			screenFlagY = iconY - size * 0.1;
+		}
+		widget.SetVisible(true);
+		widget.SetZOrder(3);
 		FrameSlot.SetPos(widget, screenFlagX, screenFlagY);
 	}
 
@@ -590,13 +598,29 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 			commands = new array<ref CanvasWidgetCommand>();
 			m_mFrameCommands.Set(frame, commands);
 		}
-		if (location.GetOwner().FindComponent(AROR_StrongholdComponent))
+		ResourceName iconSet;
+		string iconName;
+		bool stronghold = location.GetOwner().FindComponent(AROR_StrongholdComponent) != null;
+		bool baseIcon = !stronghold && AROR_MapFrameIcon.IconFor(location.GetLocationType(), iconSet, iconName);
+		if (stronghold)
 			DrawStrongholdFlag(frame, commands, location, color);
 		else
-			AROR_MapFrameIcon.Draw(frame, commands, workspace.DPIScale(IconSize(location)), workspace.DPIScale(1), location.GetLocationType(), location.GetControllingRole(), color);
+			AROR_MapFrameIcon.Draw(frame, commands, workspace.DPIScale(IconSize(location)), workspace.DPIScale(1), location.GetLocationType(), location.GetControllingRole(), color, !baseIcon);
 
 		// Only once the frame has drawn: if drawing fails, the texture icon stays visible
-		image.SetVisible(false);
+		if (!baseIcon)
+		{
+			image.SetVisible(false);
+			return;
+		}
+		// The base game's own map icon for the type, tinted for contrast and drawn over the badge
+		image.LoadImageFromSet(0, iconSet, iconName);
+		image.SetColor(AROR_MapFrameIcon.GlyphColor(AROR_MapFrameIcon.StrokeColor(color)));
+		float inset = IconSize(location) * AROR_MapFrameIcon.ICON_INSET;
+		FrameSlot.SetOffsets(image, inset, inset, inset, inset);
+		frame.SetZOrder(1);
+		image.SetZOrder(2);
+		image.SetVisible(true);
 	}
 
 	//------------------------------------------------------------------------------------------------

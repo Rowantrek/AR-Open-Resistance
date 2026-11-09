@@ -1,17 +1,43 @@
-//! Map badge for a location, drawn on a CanvasWidget (no textures). Kept simple so it reads at a glance on the
-//! busy terrain map: a solid shape in the holder's faction colour inside a dark keyline, and one thick symbol in
-//! white (or near-black on a light colour) for the location type. Towns and cities carry no symbol: the map prints
-//! their names. The shape says friend or foe the way the design system's glyphs do: a square for the Resistance
-//! (ours), a diamond for the enemy (Occupiers or Invaders), a circle for anyone else (neutral).
+//! Map badge for a location: a solid shape in the holder's faction colour inside a dark keyline, drawn on a
+//! CanvasWidget, with the location type's icon on top. The game map uses the base game's own map icons (IconFor:
+//! Conflict's monochrome building icons and the topographic set), tinted white or near-black for contrast; HICOMM
+//! and any type without an icon draw a thick stroke symbol instead. Towns and cities carry neither: the map prints
+//! their names. The shape says ours or not: a square for the Resistance, a circle for everyone else.
 class AROR_MapFrameIcon
 {
 	protected static const float GRID = 24;		//!< Glyph design grid
 	protected static const float LIGHT_FILL = 0.62;	//!< Fills brighter than this (luma) take a dark symbol
+	static const ResourceName CONFLICT_ICONS = "{F7E8D4834A3AFF2F}UI/Imagesets/Conflict/conflict-icons-bw.imageset";
+	static const ResourceName TOPOGRAPHIC_ICONS = "{BCD5479864D1A79A}UI/Textures/Map/topographicIcons/icons_topographic_map.imageset";
+	static const float ICON_INSET = 0.2;	//!< Share of the badge left around a base-game icon on each side
+
+	//------------------------------------------------------------------------------------------------
+	//! The base-game map icon for a location type (imageset and image name); false for towns, cities and anything
+	//! without one, which draw the stroke symbol (or nothing)
+	static bool IconFor(AROR_ELocationType type, out ResourceName imageset, out string name)
+	{
+		imageset = CONFLICT_ICONS;
+		switch (type)
+		{
+			case AROR_ELocationType.MILITARY_BASE: name = "Barracks"; return true;
+			case AROR_ELocationType.OUTPOST: name = "Fortification"; return true;
+			case AROR_ELocationType.HQ: name = "HQ"; return true;
+			case AROR_ELocationType.HELIPORT: name = "Heli_Pad"; return true;
+			case AROR_ELocationType.FACTORY: name = "VehicleWorkshop"; return true;
+			case AROR_ELocationType.RESOURCES: name = "SupplyDepot"; return true;
+			case AROR_ELocationType.AIRPORT: imageset = TOPOGRAPHIC_ICONS; name = "airport"; return true;
+			case AROR_ELocationType.PORT: imageset = TOPOGRAPHIC_ICONS; name = "anchorage"; return true;
+		}
+		imageset = string.Empty;
+		name = string.Empty;
+		return false;
+	}
 
 	//------------------------------------------------------------------------------------------------
 	//! size: canvas pixels (square); pixel: canvas pixels per reference pixel (line widths).
 	//! commands: owned by the caller and kept while the icon exists: the canvas does not keep its own copy.
-	static void Draw(notnull CanvasWidget canvas, notnull array<ref CanvasWidgetCommand> commands, float size, float pixel, AROR_ELocationType type, AROR_EFactionRole owner, Color factionColor)
+	//! glyph: draw the stroke symbol (off when a base-game icon image sits on top)
+	static void Draw(notnull CanvasWidget canvas, notnull array<ref CanvasWidgetCommand> commands, float size, float pixel, AROR_ELocationType type, AROR_EFactionRole owner, Color factionColor, bool glyph = true)
 	{
 		commands.Clear();
 		Color stroke = StrokeColor(factionColor);
@@ -24,12 +50,15 @@ class AROR_MapFrameIcon
 		body.m_Vertices = frame;
 		commands.Insert(body);
 
-		int glyph = GlyphColor(stroke).PackToInt();
-		array<ref array<float>> strokes = {};
-		GlyphStrokes(type, owner, 0, 0, size, strokes);
-		foreach (array<float> strokeLine : strokes)
+		if (glyph)
 		{
-			commands.Insert(Line(strokeLine, glyph, GLYPH_WIDTH * pixel, false));
+			int glyphColor = GlyphColor(stroke).PackToInt();
+			array<ref array<float>> strokes = {};
+			GlyphStrokes(type, owner, 0, 0, size, strokes);
+			foreach (array<float> strokeLine : strokes)
+			{
+				commands.Insert(Line(strokeLine, glyphColor, GLYPH_WIDTH * pixel, false));
+			}
 		}
 
 		canvas.SetDrawCommands(commands);
@@ -146,12 +175,11 @@ class AROR_MapFrameIcon
 	static void FrameOutline(AROR_EFactionRole owner, float left, float top, float size, notnull array<float> outPoints)
 	{
 		array<float> fractions;
+		// Ours is a square; every other holder a circle, which leaves the most room for the icon
 		if (owner == AROR_EFactionRole.RESISTANCE)
-			fractions = Points("0.12 0.12 0.88 0.12 0.88 0.88 0.12 0.88");
-		else if (owner == AROR_EFactionRole.OCCUPIERS || owner == AROR_EFactionRole.INVADERS)
-			fractions = Points("0.5 0.04 0.96 0.5 0.5 0.96 0.04 0.5");
+			fractions = Points("0.1 0.1 0.9 0.1 0.9 0.9 0.1 0.9");
 		else
-			fractions = Circle(0.5, 0.5, 0.4, 20);
+			fractions = Circle(0.5, 0.5, 0.45, 24);
 
 		for (int i = 0; i + 1 < fractions.Count(); i += 2)
 		{
