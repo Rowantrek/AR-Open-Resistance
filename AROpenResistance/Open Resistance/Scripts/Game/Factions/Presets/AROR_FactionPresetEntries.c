@@ -21,6 +21,12 @@ class AROR_FactionPresetEntry
 		return m_sPrefab;
 	}
 
+	//! Default priority for a vehicle picker; units do not use this selection policy.
+	int GetSelectionPriority()
+	{
+		return 0;
+	}
+
 	//------------------------------------------------------------------------------------------------
 	AROR_EFactionPresetCategory GetCategory()
 	{
@@ -124,6 +130,13 @@ class AROR_FactionPresetVehicle : AROR_FactionPresetEntry
 {
 	[Attribute("0", UIWidgets.ComboBox, desc: "Vehicle type", enums: ParamEnumArray.FromEnum(AROR_EVehicleType))]
 	protected AROR_EVehicleType m_eType;
+	[Attribute("0", desc: "Vehicle selection priority within this type. Highest available priority wins; equal priorities remain random. Lets compatibility addons prefer their vehicles without removing saved preset entries.", params: "0 100 1")]
+	protected int m_iSelectionPriority;
+
+	override int GetSelectionPriority()
+	{
+		return m_iSelectionPriority;
+	}
 
 	//------------------------------------------------------------------------------------------------
 	override AROR_EFactionPresetCategory GetCategory()

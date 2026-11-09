@@ -88,7 +88,7 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 		}
 		// Losing a garrison post escalates the holder like losing a location (through Towns: Capture compiles before
 		// the Operations file that adds the escalation call)
-		AROR_TownWavesComponent.RecordPostTaken_S(location, holder);
+		AROR_TownWavesComponent.RecordPostTaken_S(location, holder, supportBefore);
 		string name = location.GetName();
 		name.ToUpper();
 		string text = string.Format("%1 GARRISON POST TAKEN / Support for the Resistance rises", name);

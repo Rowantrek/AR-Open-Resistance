@@ -174,7 +174,8 @@ if (require.main === module) {
       tier: k.tier, weight: k.weight, referenceCount: k.references.length,
       statuses: Object.fromEntries([...new Set(k.references.map(r => r.status))].map(s => [s, k.references.filter(r => r.status === s).length]))
     })) })) })) };
-  fs.writeFileSync(path.join(root, 'docs/validation/WCS_ASSET_AUDIT_2026-11-07.json'), JSON.stringify(saved, null, 2) + '\n');
+  const output = process.argv[2] || 'docs/validation/WCS_ASSET_AUDIT_2026-11-07.json';
+  fs.writeFileSync(path.resolve(root, output), JSON.stringify(saved, null, 2) + '\n');
   console.log(JSON.stringify({ ...report.summary, missingDependencies: report.missingDependencies, skippedGroups: report.skippedGroups,
     catalogue: report.catalogue, presets: report.presets.map(p => ({ id: p.id, units: p.units.length, vehicles: p.vehicles.length, missingCoreTypes: p.missingCoreTypes })),
     unresolved: report.references.filter(r => r.status === 'unresolved').map(r => ({ guid: r.guid, resource: r.resource, owners: r.owners })) }, null, 2));

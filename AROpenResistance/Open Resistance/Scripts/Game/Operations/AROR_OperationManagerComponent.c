@@ -896,12 +896,12 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 				AROR_LocationComponent target;
 				if (locations)
 					target = locations.GetLocationById(operation.GetTargetLocationId());
-				if (!target || target.GetControllingRole() != AROR_EFactionRole.RESISTANCE)
+				if (!IsHostileAttackTarget(operation, target))
 				{
 					if (target && target.GetControllingRole() == operation.GetRole() && operation.GetType() == AROR_EOperationType.ATTACK && operation.GetState() == AROR_EOperationState.ACTIVE)
 						ChangeState_S(operation, AROR_EOperationState.SUCCEEDED, "Target captured through canonical territory rules");
 					else
-						ChangeState_S(operation, AROR_EOperationState.CANCELLED, "Target is no longer Rebel-owned territory");
+						ChangeState_S(operation, AROR_EOperationState.CANCELLED, "Target is no longer hostile attack territory");
 					continue;
 				}
 			}
@@ -914,6 +914,21 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 			else if (operation.GetState() == AROR_EOperationState.ACTIVE && m_iClock - operation.GetStateSince() >= ActiveTimeoutFor(operation))
 				ChangeState_S(operation, AROR_EOperationState.FAILED, "Operation timed out");
 		}
+	}
+
+	//! Campaign armies can attack each other; manual/debug dispatch retains its Resistance-target restriction.
+	protected bool IsHostileAttackTarget(AROR_Operation operation, AROR_LocationComponent target)
+	{
+		if (!operation || !target || target.GetControllingRole() == operation.GetRole())
+			return false;
+		if (operation.m_bDebugRequest && target.GetControllingRole() != AROR_EFactionRole.RESISTANCE)
+			return false;
+		AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
+		if (!roles)
+			return false;
+		Faction attacker = roles.GetFaction(operation.GetRole());
+		Faction defender = roles.GetFaction(target.GetControllingRole());
+		return attacker && defender && attacker.IsFactionEnemy(defender);
 	}
 
 	//! Evidence/losses change short-term crackdown; equipment progress never decays here.

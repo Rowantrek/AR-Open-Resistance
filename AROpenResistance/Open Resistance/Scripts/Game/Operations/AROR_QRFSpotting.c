@@ -95,7 +95,10 @@ class AROR_QRFSpotting
 			if (old.m_bConfirmed)
 				last = old.m_iLastSeen;
 			// A vehicle the Resistance has since taken stops being reported straight away
-			if (now - last > lifetime || AROR_ResistanceFleet.IsClaimed(old.m_Entity))
+			int expiry = lifetime;
+			if (!old.m_bConfirmed)
+				expiry = 15;
+			if (now - last > expiry || AROR_ResistanceFleet.IsClaimed(old.m_Entity))
 				m_aSightings.Remove(index);
 		}
 		array<IEntity> vehicles = {};
@@ -144,16 +147,15 @@ class AROR_QRFSpotting
 				continue;
 			ChimeraCharacter observer = ChimeraCharacter.Cast(GetGame().GetPlayerManager().GetPlayerControlledEntity(playerId));
 			IEntity vehicle = vehicles[vehicleIndex];
-			if (!IsResistance(observer) || !vehicle)
+			if (!IsResistance(observer) || !vehicle || AROR_ResistanceFleet.IsClaimed(vehicle))
 				continue;
 			FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(vehicle.FindComponent(FactionAffiliationComponent));
-			if (affiliation && affiliation.GetAffiliatedFaction())
-			{
-				AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
-				Faction resistance = roles.GetFaction(AROR_EFactionRole.RESISTANCE);
-				if (!resistance || !resistance.IsFactionEnemy(affiliation.GetAffiliatedFaction()))
-					continue;
-			}
+			AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
+			Faction resistance;
+			if (roles)
+				resistance = roles.GetFaction(AROR_EFactionRole.RESISTANCE);
+			if (!affiliation || !affiliation.GetAffiliatedFaction() || !resistance || !resistance.IsFactionEnemy(affiliation.GetAffiliatedFaction()))
+				continue;
 			DamageManagerComponent damage = DamageManagerComponent.Cast(vehicle.FindComponent(DamageManagerComponent));
 			if (damage && damage.IsDestroyed())
 				continue;
@@ -162,6 +164,14 @@ class AROR_QRFSpotting
 				continue;
 			vector eye = observer.EyePosition();
 			vector target = vehicle.GetOrigin() + Vector(0, 1.5, 0);
+			ChimeraCharacter targetCharacter = ChimeraCharacter.Cast(vehicle);
+			if (targetCharacter)
+			{
+				if (!targetCharacter.GetCharacterController() || targetCharacter.GetCharacterController().IsDead())
+					continue;
+				// Trace the actual stance-aware head, not empty space above a prone soldier's cover.
+				target = targetCharacter.EyePosition();
+			}
 			vector delta = target - eye;
 			float distance = delta.Length();
 			vector direction = head.GetAimingDirectionWorld();

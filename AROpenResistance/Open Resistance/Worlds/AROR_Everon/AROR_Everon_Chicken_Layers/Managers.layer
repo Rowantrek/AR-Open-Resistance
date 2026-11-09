@@ -47,7 +47,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_bReaperQRFTest 0
    m_bAllowAirborneResponses 1
    m_bAllowJointResponses 1
-   m_iJointTransportPercent 50
+   m_iJointTransportPercent 100
    m_bQRFTacticalCommander 1
    m_bQRFTwoWaves 1
    m_iQRFSplitTier 5
@@ -263,7 +263,6 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_aProfileIds {
       "us_motorized"
       "us_motorized"
-      "us_motorized"
       "us_light_support"
      }
     }
@@ -403,7 +402,6 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
-      "ussr_motorized"
       "ussr_motorized"
       "ussr_motorized"
       "ussr_light_support"
@@ -711,7 +709,6 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
       "us_airborne"
       "us_motorized"
       "us_motorized"
-      "us_motorized"
       "us_light_support"
      }
     }
@@ -871,7 +868,6 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sFactionKey "AROR_INVADERS"
      m_aProfileIds {
       "ussr_airborne"
-      "ussr_motorized"
       "ussr_motorized"
       "ussr_motorized"
       "ussr_light_support"
@@ -1318,7 +1314,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sId "occupier_townair_r4"
      m_eResponseType 7
      m_iLevel 1
-     m_iMinimumReadinessLevel 4
+     m_iMinimumReadinessLevel 1
      m_iMaximumReadinessLevel 5
      m_eRole 1
      m_sFactionKey "AROR_OCCUPIERS"
@@ -1332,7 +1328,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sId "invader_townair_r4"
      m_eResponseType 7
      m_iLevel 1
-     m_iMinimumReadinessLevel 4
+     m_iMinimumReadinessLevel 1
      m_iMaximumReadinessLevel 5
      m_eRole 2
      m_sFactionKey "AROR_INVADERS"
@@ -1719,7 +1715,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_iQRFTierOverhead 10
    m_iQRFThreatLifetime 180
    m_bQRFSpotting 1
-   m_bQRFDebugMarkers 1
+   m_bQRFDebugMarkers 0
    m_fQRFSpotGroundRange 800
    m_fQRFSpotAirRange 1500
    m_fQRFSpotMinimumDot 0.9

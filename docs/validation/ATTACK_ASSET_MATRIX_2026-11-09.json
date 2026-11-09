@@ -1,0 +1,176 @@
+{
+  "nativeVerified": false,
+  "audit": "docs/validation/WCS_ASSET_AUDIT_2026-11-09.json",
+  "selection": "Actual preset selector, BASE_GAME/RHS/WCS offered. Highest priority per role and vehicle type; first equal-priority ticket shown.",
+  "infantry": "Combined RHS kits with WCS specialist equipment. REAPER pilots retain dedicated flight equipment.",
+  "armies": [
+    {
+      "role": "OCCUPIERS",
+      "preset": "RHS_USAF_FORECON",
+      "vehicles": [
+        {
+          "type": "ARMED_CAR",
+          "prefab": "{0F200E9F3D3AD905}Prefabs/Vehicles/Wheeled/JLTV/OGPK/M2HB/JLTV_OGPK_M2HB_Woodland.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "MOTOR_CAR",
+          "prefab": "{CBC466F92C9E1AE6}Prefabs/Vehicles/Wheeled/JLTV/Unarmed/JLTV_Unarmed_Woodland.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "MOTOR_TRUCK",
+          "prefab": "{ACCF3C5D1629AF7F}Prefabs/Vehicles/Wheeled/M1083/M1083_Transport_Covered_Woodland.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "APC",
+          "prefab": "{F2307260A1B40F43}Prefabs/Vehicles/Wheeled/Stryker/M1126/Stryker_APC_MERDC.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{ACCF3C5D1629AF7F}Prefabs/Vehicles/Wheeled/M1083/M1083_Transport_Covered_Woodland.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "ARMED_TRUCK",
+          "prefab": "{A815C3244E04D61A}Prefabs/Vehicles/Wheeled/M1083/Armed/M1083_Transport_Covered_M2HB_Woodland.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "HELI_TRANSPORT",
+          "prefab": "{AF950919C81D91B4}Prefabs/Vehicles/Helicopters/AH6M/MH6M.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{72C04A6EABC12143}Prefabs/Vehicles/Helicopters/AH6M/AH6M_M134_X2.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "STATIC_MG_LOW",
+          "prefab": "{73530808E4B455BA}Prefabs/Weapons/Tripods/Tripod_M3_M2HB.et",
+          "pack": "BASE_GAME"
+        },
+        {
+          "type": "STATIC_AT",
+          "prefab": "{023236B2A390BA5B}Prefabs/Weapons/Tripods/BGM71_TOW/Tripod_BGM71_TOW.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "STATIC_MORTAR",
+          "prefab": "{8094D99689ABE241}Prefabs/Weapons/Mortars/M252/Mortar_M252.et",
+          "pack": "BASE_GAME"
+        },
+        {
+          "type": "STATIC_AA",
+          "prefab": "{3DCACB48619AA029}Prefabs/Weapons/Tripods/ZU23/WeaponTripod_ZU23_US.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "AA_VEHICLE",
+          "prefab": "{80D859914FD8CA7F}Prefabs/Vehicles/Wheeled/M923A1/M923A1_ZU23_MERDC.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "TANK",
+          "prefab": "{A76DCC7AD6494682}Prefabs/Vehicles/Wheeled/Stryker/M1128/Stryker_MGS_MERDC.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "IFV",
+          "prefab": "{D5BECC338A58208D}Prefabs/Vehicles/Wheeled/Stryker/M1296/Stryker_Dragoon_MERDC.et",
+          "pack": "WCS"
+        }
+      ],
+      "specialistEquipment": [
+        {
+          "type": "AA",
+          "wcsItems": [
+            "{3DF204EEE0534EF2}Prefabs/Weapons/Launchers/FIM92_Stinger/Launcher_FIM92_Stinger.et"
+          ]
+        }
+      ]
+    },
+    {
+      "role": "INVADERS",
+      "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+      "vehicles": [
+        {
+          "type": "MOTOR_CAR",
+          "prefab": "{259EE7B78C51B624}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469.et",
+          "pack": "BASE_GAME"
+        },
+        {
+          "type": "ARMED_CAR",
+          "prefab": "{8C1F2A99E9B1466F}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_NSV.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{D9B91FAB817A6033}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport_covered.et",
+          "pack": "BASE_GAME"
+        },
+        {
+          "type": "MOTOR_TRUCK",
+          "prefab": "{D9B91FAB817A6033}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport_covered.et",
+          "pack": "BASE_GAME"
+        },
+        {
+          "type": "APC",
+          "prefab": "{09B071FCB865C208}Prefabs/Vehicles/Wheeled/BTR70/BTR70_KBA105_Green.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "HELI_TRANSPORT",
+          "prefab": "{F889C67BFCAD2CF7}Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Transport.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{7FF511EDC4034D9F}Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_UB1657_X4.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "STATIC_MG_LOW",
+          "prefab": "{723870DBB19D30B0}Prefabs/Weapons/Tripods/Tripod_6T5_PKM.et",
+          "pack": "BASE_GAME"
+        },
+        {
+          "type": "STATIC_MG_HIGH",
+          "prefab": "{29F0CC704A582154}Prefabs/Weapons/Tripods/6T7/Tripod_6T7_NSV.et",
+          "pack": "BASE_GAME"
+        },
+        {
+          "type": "STATIC_MORTAR",
+          "prefab": "{D1FFE458E8AC4BDB}Prefabs/Weapons/Mortars/2B14/Mortar_2B14.et",
+          "pack": "BASE_GAME"
+        },
+        {
+          "type": "ARMED_TRUCK",
+          "prefab": "{F203E2146C425605}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_ZU23.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "STATIC_AA",
+          "prefab": "{AF4613B2B820E34D}Prefabs/Weapons/Tripods/ZU23/WeaponTripod_ZU23_USSR.et",
+          "pack": "WCS"
+        },
+        {
+          "type": "STATIC_AT",
+          "prefab": "{E8F0DA0C05A8FED4}Prefabs/Weapons/Tripods/9M133_Kornet/Tripod_9M133_Kornet.et",
+          "pack": "WCS"
+        }
+      ],
+      "specialistEquipment": [
+        {
+          "type": "AA",
+          "wcsItems": [
+            "{962C400354E4BD6C}Prefabs/Weapons/Launchers/9K38_IGLA/Launcher_9K38_IGLA.et"
+          ]
+        }
+      ]
+    }
+  ]
+}

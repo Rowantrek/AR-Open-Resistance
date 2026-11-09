@@ -4,7 +4,7 @@
 function runCapturePlacementTests(sources) {
   let assertions=0;
   const check=(ok,msg)=>{assertions++;if(!ok)throw Error(msg);};
-  const env={LAST_RESORT_ROAD_RADIUS:600,Math:{Min:Math.min,Max:Math.max},vector:{DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])},
+  const env={LAST_RESORT_ROAD_RADIUS:600,Math3D:{AnglesToMatrix:()=>{}},Vector:(...v)=>v,Math:{Min:Math.min,Max:Math.max},vector:{DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])},
     AROR_GroundOperationForce:{Cast:x=>x},Print:()=>{},string:{Format:()=>''},LogLevel:{NORMAL:0,WARNING:1}};
   function compile(source,name,returnOutput=false){
     const m=source.match(new RegExp('^\\t[^\\r\\n]*\\b'+name+'\\(([^\\r\\n]*)\\)\\r?\\n\\t\\{([\\s\\S]*?)^\\t\\}', 'm'));
@@ -15,7 +15,7 @@ function runCapturePlacementTests(sources) {
       .replace(/foreach \(\w+ (\w+) : ([^)]+)\)/g,'for(const $1 of $2)')
       .replace(/\b(?:float|int|bool|vector|AROR_\w+)\s+(\w+)/g,'let $1')
       .replace(/(?<![.\w])m_\w+/g,x=>'this.'+x);
-    for(const method of ['TacticalRoadPoint','GetOwner'])body=body.replace(new RegExp('(?<![.\\w])'+method+'\\(', 'g'),'this.'+method+'(');
+    for(const method of ['TacticalRoadPoint','GetOwner','ApplyFlagMaterial'])body=body.replace(new RegExp('(?<![.\\w])'+method+'\\(', 'g'),'this.'+method+'(');
     if(returnOutput)body=body.replace(/return true;/g,'return {ok:true,point:approach};').replace(/return false;/g,'return {ok:false};');
     return new Function(...Object.keys(env),'return function('+args+'){'+body+'}')( ...Object.values(env));
   }
@@ -39,7 +39,7 @@ function runCapturePlacementTests(sources) {
   const apply=compile(sources.flag,'ApplyPlacement');
   let position=null,updates=0;
   const owner={GetWorldTransform:t=>{t[3]=[10,-50,20];},SetWorldTransform:t=>{position=t[3];},Update:()=>updates++};
-  const component={m_bPlaced:false,m_vPlacedPosition:[10,85.1,20],GetOwner:()=>owner};
+  const component={m_bPlaced:false,m_fPlacedYaw:0,m_vPlacedPosition:[10,85.1,20],GetOwner:()=>owner,ApplyFlagMaterial(){}};
   apply.call(component);check(position===null,'unreplicated placement not applied');
   component.m_bPlaced=true;apply.call(component);
   check(position[1]===85.1&&updates===1,'flag child world height and static collision committed');

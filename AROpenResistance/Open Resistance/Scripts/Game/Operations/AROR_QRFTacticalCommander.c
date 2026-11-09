@@ -25,6 +25,11 @@ class AROR_QRFTacticalCommander
 	bool m_bAssault;	//!< An attack: stage at rally points, then assault on two axes
 	bool m_bJointResponse;	//!< One authored response sharing ground and airborne packages
 	bool m_bConvoy;	//!< Launch in a column along the road and stop together short of the objective
+	bool m_bTownDoctrine;	//!< Opt-in town response/attack policy; native AI still owns individual combat
+	bool m_bShockAssault;
+	int m_iContactMaxAge;
+	float m_fFlankDistance;
+	float m_fCoverDistance;
 	float m_fConvoyDismount;	//!< Lead vehicle's stop, metres short of the objective
 	bool m_bAssaultReleased;
 	int m_iStagingDeadline = -1;	//!< Executor clock when the assault goes even if not every package has staged
@@ -62,6 +67,10 @@ class AROR_QRFTacticalCommander
 		m_bAssault = false;
 		m_bAssaultReleased = false;
 		m_bJointResponse = false;
+		m_bConvoy = false;
+		m_bTownDoctrine = false;
+		m_bShockAssault = false;
+		m_iContactMaxAge = 0;
 		m_iStagingDeadline = -1;
 		m_iContactSequence = 0;
 		m_iContactVersion = 0;
@@ -383,6 +392,8 @@ class AROR_QRFTacticalCommander
 	}
 	vector InfantryPoint(int index, int step)
 	{
+		if (m_bTownDoctrine)
+			return TownInfantryPoint(index, step);
 		// Retaking: every fireteam converges on the objective (the flag area), spread a little per package
 		if (IsTargetLost())
 		{
@@ -408,6 +419,66 @@ class AROR_QRFTacticalCommander
 			point = m_vTown + (point - m_vTown) * (limit / distance);
 		return point;
 	}
+
+	//! A deliberate assault keeps a covering team only when at least two other teams can advance.
+	bool IsTownCoverElement(int index)
+	{
+		int rank = ActiveSectorIndex(index);
+		return m_bTownDoctrine && !m_bShockAssault && m_bHasContact && ActiveSectorCount() >= 3 && Math.Mod(rank, 3) == 0;
+	}
+
+	//! Report-driven pincer: one team fixes the contact, others move via lateral points before closing.
+	//! No report means secure the objective in separate sectors, rather than inventing enemy positions.
+	vector TownInfantryPoint(int index, int step)
+	{
+		int rank = ActiveSectorIndex(index);
+		int count = ActiveSectorCount();
+		vector center = m_vTown;
+		if (m_bHasContact)
+			center = m_vContact;
+		// Contact is an ingress task. After closing on it, assault teams still have to take the objective.
+		if (step >= 2 && IsTargetLost() && !IsTownCoverElement(index))
+			center = m_vTown;
+		vector heading = m_vOrigin - center;
+		heading[1] = 0;
+		if (heading.Length() < 1)
+			heading = "0 0 1";
+		else
+			heading.Normalize();
+		vector right = Vector(heading[2], 0, -heading[0]);
+		vector point;
+		if (IsTownCoverElement(index))
+			point = center + heading * m_fCoverDistance + right * ((rank - (count - 1) * 0.5) * 20);
+		else if (m_bHasContact && step == 0 && count > 1 && Math.Mod(rank, 3) != 0)
+		{
+			float side = 1;
+			if (Math.Mod(rank, 2) == 1)
+				side = -1;
+			float flank = m_fFlankDistance * (1 + rank * 0.15);
+			point = center + heading * (m_fFlankDistance * 0.35) + right * (side * flank);
+		}
+		else
+		{
+			float radius = Math.Min(m_fTownRadius * 0.5, 80);
+			if (m_bHasContact || IsTargetLost())
+				radius = 12;
+			float angle = Math.Atan2(heading[0], heading[2]) + rank * Math.PI2 / count;
+			point = center + Vector(Math.Sin(angle), 0, Math.Cos(angle)) * radius;
+		}
+		return BoundTownPoint(point);
+	}
+
+	vector BoundTownPoint(vector point)
+	{
+		float distance = vector.DistanceXZ(point, m_vTown);
+		float limit = m_fTownRadius + m_fMargin;
+		if (m_fSecurityRadius > 0)
+			limit = Math.Min(limit, m_fSecurityRadius);
+		if (distance > limit && distance > 0)
+			point = m_vTown + (point - m_vTown) * (limit / distance);
+		return point;
+	}
+
 	vector SupportPoint(int index)
 	{
 		vector center = m_vTown;
@@ -420,7 +491,10 @@ class AROR_QRFTacticalCommander
 		else
 			heading = heading.Normalized();
 		vector right = Vector(heading[2], 0, -heading[0]);
-		vector point = center + heading * Math.Min(60, Math.Max(30, m_fThreatStandoff * 0.6));
+		float standoff = Math.Min(60, Math.Max(30, m_fThreatStandoff * 0.6));
+		if (m_bTownDoctrine && !m_bShockAssault)
+			standoff = m_fCoverDistance;
+		vector point = center + heading * standoff;
 		point += right * ((ActiveSectorIndex(index) - (ActiveSectorCount() - 1) * 0.5) * 30);
 		float distance = vector.DistanceXZ(point, m_vTown);
 		float limit = m_fTownRadius + m_fMargin;

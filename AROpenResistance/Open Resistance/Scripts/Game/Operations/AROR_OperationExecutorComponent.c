@@ -335,28 +335,45 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			return;
 		foreach (AROR_OperationForce force : m_aForces)
 		{
-			AROR_GroundOperationForce ground = AROR_GroundOperationForce.Cast(force);
+			if (!force || force.m_bReservation)
+				continue;
 			AROR_Operation operation = m_Operations.GetOperation(force.m_sOperationId);
-			if (!ground || !ground.m_Profile || force.m_bReservation || !operation || !operation.UsesTacticalResponse())
+			if (!operation || !operation.UsesTacticalResponse())
 				continue;
 			Faction campaignFaction = roles.GetFaction(operation.GetRole());
 			if (!campaignFaction || !resistance.IsFactionEnemy(campaignFaction))
 				continue;
 			// A vehicle the Resistance has taken is theirs now, not an enemy asset
-			if (ground.m_Vehicle && !AROR_ResistanceFleet.IsClaimed(ground.m_Vehicle))
-			{
-				vehicles.Insert(ground.m_Vehicle);
-				kinds.Insert(ground.m_Profile.GetSpottingKind());
-				sides.Insert(operation.GetRole());
-			}
+			AROR_GroundOperationForce ground = AROR_GroundOperationForce.Cast(force);
+			if (ground && ground.m_Profile)
+				AddSpottingAsset(ground.m_Vehicle, ground.m_Profile.GetSpottingKind(), operation.GetRole(), vehicles, kinds, sides);
 			AROR_ReaperAirForce air = AROR_ReaperAirForce.Cast(force);
-			if (air && air.m_Escort && air.m_Escort.m_Vehicle && !AROR_ResistanceFleet.IsClaimed(air.m_Escort.m_Vehicle))
+			if (air && air.m_Escort)
+				AddSpottingAsset(air.m_Escort.m_Vehicle, 4, operation.GetRole(), vehicles, kinds, sides);
+			// One last-seen marker per deployed dismounted group, not one per soldier or seated passenger.
+			if (force.m_bOrdersIssued && force.m_Group)
 			{
-				vehicles.Insert(air.m_Escort.m_Vehicle);
-				kinds.Insert(4);
-				sides.Insert(operation.GetRole());
+				IEntity leader = force.m_Group.GetLeaderEntity();
+				if (!leader)
+					continue;
+				CompartmentAccessComponent access = CompartmentAccessComponent.Cast(leader.FindComponent(CompartmentAccessComponent));
+				if (!access || !access.IsInCompartment())
+					AddSpottingAsset(leader, 6, operation.GetRole(), vehicles, kinds, sides);
 			}
 		}
+	}
+
+	//! Keep the three candidate arrays aligned; destroyed, claimed and duplicate assets never become sightings.
+	protected void AddSpottingAsset(IEntity entity, int kind, AROR_EFactionRole role, array<IEntity> entities, array<int> kinds, array<int> sides)
+	{
+		if (!entity || entities.Contains(entity) || AROR_ResistanceFleet.IsClaimed(entity))
+			return;
+		DamageManagerComponent damage = DamageManagerComponent.Cast(entity.FindComponent(DamageManagerComponent));
+		if (damage && damage.IsDestroyed())
+			return;
+		entities.Insert(entity);
+		kinds.Insert(kind);
+		sides.Insert(role);
 	}
 	protected ref array<ref AROR_OperationForce> m_aForces = {};
 	protected ref map<string, string> m_mWaitReasons = new map<string, string>();
@@ -2360,6 +2377,12 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		commander.m_vOrigin = origin;
 		commander.m_eRole = operation.GetRole();
 		commander.m_bAssault = operation.GetType() == AROR_EOperationType.ATTACK;
+		if (operation.m_bAssaultWave || commander.m_bAssault)
+		{
+			AROR_TownWavesComponent town = AROR_TownWavesComponent.Cast(target.GetOwner().FindComponent(AROR_TownWavesComponent));
+			if (town)
+				town.ConfigureCommander_S(commander);
+		}
 		array<AROR_LocationComponent> outposts = {};
 		locations.GetLocations(outposts);
 		foreach (AROR_LocationComponent outpost : outposts)
@@ -2596,7 +2619,10 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 					RetargetWithdrawalOrigin(operation, commander, locations);
 				}
 			}
-			AROR_CombatContact report = m_Operations.GetRecentCombatContact(operation.GetRole(), commander.m_vTown, commander.m_fTownRadius + commander.m_fMargin, m_iQRFContactMaxAge);
+			int contactAge = m_iQRFContactMaxAge;
+			if (commander.m_bTownDoctrine)
+				contactAge = commander.m_iContactMaxAge;
+			AROR_CombatContact report = m_Operations.GetRecentCombatContact(operation.GetRole(), commander.m_vTown, commander.m_fTownRadius + commander.m_fMargin, contactAge);
 			commander.UpdateContact_S(report, m_iExecutorClock);
 			commander.RefreshRoster(m_iExecutorClock);
 			if (commander.ShouldWithdraw(m_iExecutorClock, HasPendingQRF(operation.GetId())) && !wasWithdrawing)
@@ -3318,7 +3344,10 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 	protected bool ReportDefenders(AROR_Operation operation, AROR_LocationComponent target)
 	{
 		// An assault does not reveal hidden defenders. Reuse only attributed, fresh reports.
-		AROR_CombatContact contact = m_Operations.GetRecentCombatContact(operation.GetRole(), target.GetCenter(), target.GetRadius() + m_fQRFSearchMargin, m_iQRFContactMaxAge);
+		int contactAge = m_iQRFContactMaxAge;
+		if (operation.m_TacticalCommander && operation.m_TacticalCommander.m_bTownDoctrine)
+			contactAge = operation.m_TacticalCommander.m_iContactMaxAge;
+		AROR_CombatContact contact = m_Operations.GetRecentCombatContact(operation.GetRole(), target.GetCenter(), target.GetRadius() + m_fQRFSearchMargin, contactAge);
 		if (!contact || !operation.m_TacticalCommander)
 			return false;
 		operation.m_TacticalCommander.UpdateContact_S(contact, m_iExecutorClock);
@@ -3330,6 +3359,12 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 	//! back to its army, and the town flips back through the normal support rules
 	protected void PacifyTown(AROR_Operation operation, AROR_LocationComponent target)
 	{
+		// Waves use lockdown; attack orders use the occupation contest. Neither also pacifies via QRF ticks.
+		if (operation.m_bAssaultWave || operation.GetType() == AROR_EOperationType.ATTACK)
+			return;
+		AROR_TownWavesComponent town = AROR_TownWavesComponent.Cast(target.GetOwner().FindComponent(AROR_TownWavesComponent));
+		if (town && town.IsResponding())
+			return;
 		if (m_fQRFTownSupportPerMinute <= 0 || target.GetControllingRole() == operation.GetRole())
 			return;
 		AROR_SettlementComponent settlement = AROR_SettlementComponent.Cast(target.GetOwner().FindComponent(AROR_SettlementComponent));
@@ -3368,6 +3403,9 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		{
 			force.m_iTacticalContactVersion = commander.m_iContactVersion;
 			force.m_iTacticalSearchStep = 0;
+			// A fresh shared report must not wait behind the previous security task's 60-second dwell.
+			if (commander.m_bTownDoctrine)
+				force.m_iTacticalNextOrder = Math.Min(force.m_iTacticalNextOrder, m_iExecutorClock);
 		}
 		if (m_iExecutorClock < force.m_iTacticalNextOrder)
 			return;
@@ -3400,9 +3438,11 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		ResourceName prefab = m_sMoveWaypointPrefab;
 		if (step >= 5)
 			prefab = m_sQRFWaypointPrefab;
+		if (commander.IsTownCoverElement(force.m_iPackageIndex))
+			prefab = m_sQRFWaypointPrefab;
 		// Every delivered fireteam investigates contact/town first, then fans out into sectors.
 		vector point = commander.InfantryPoint(force.m_iPackageIndex, step);
-		force.m_iTacticalNextOrder = m_iExecutorClock + m_iQRFOrderInterval;
+		force.m_iTacticalNextOrder = m_iExecutorClock + commander.m_iRetaskSeconds;
 		if (!ReplaceTacticalWaypoint(force, false, prefab, point))
 			return;
 		float walkingDistance = 0;

@@ -5,7 +5,7 @@ const suites=[
  'Test-MarsAndAttacks.js','Test-OperationAlerts.js','Test-QRFReleaseLifecycle.js','Test-QRFInterruptions.js','Test-StrongholdIntegration.js','Test-QRFManagerSoak.js','Test-QRFMutations.js','Test-QRFRouteAudit.js',
  'Test-QRFStrategy.js','Test-QRFProgression.js','Test-QRFResponseMix.js','Test-ReaperLandingSearch.js',
  'Test-QRFBoarding.js','Test-QRFIngress.js','Test-QRFUnloading.js','Test-QRFRetention.js',
- 'Test-QRFSupportAndHeadlines.js','Test-QRFVehicleFaction.js','Test-QRFTownHold.js',
+ 'Test-QRFSupportAndHeadlines.js','Test-QRFVehicleFaction.js','Test-QRFTownHold.js','Test-TownDoctrine.js','Test-SpottingAndAirResponse.js',
  'Test-EveronQRFIntegration.js','Test-InvaderCampaign.js','Test-RebIntel.js','Test-MissionLifecycle.js',
  'Test-CapturePlacement.js','Test-GarrisonsAndSupport.js','Test-GarrisonCrew.js',
  'Test-OutpostEquipment.js','Test-PostsAndPads.js','Test-DefenceLayout.js','Test-FortifiedOutpostLayouts.js',
@@ -23,7 +23,7 @@ const results=suites.map(name=>{
  return {name,passed,assertions,elapsedMs:Date.now()-began,exitCode:result.status,output,error:result.error?.message};
 });
 const sourceHashes={};
-for(const folder of ['Scripts/Game','Scripts/WorkbenchGame','Prefabs','Worlds/AROR_Everon/AROR_Everon_Chicken_Layers','UI','Configs']){
+for(const folder of ['Scripts/Game','Scripts/WorkbenchGame','Prefabs','Worlds/AROR_Everon/AROR_Everon_Chicken_Layers','Worlds/AROR_Everon/AROR_Everon_Layers','UI','Configs']){
  const dir=path.join(root,'AROpenResistance/Open Resistance',folder);
  function visit(directory){for(const entry of fs.readdirSync(directory,{withFileTypes:true})){
   const file=path.join(directory,entry.name);
@@ -33,6 +33,10 @@ for(const folder of ['Scripts/Game','Scripts/WorkbenchGame','Prefabs','Worlds/AR
  visit(dir);
 }
 for(const name of fs.readdirSync(__dirname))if(/\.(js|ps1)$/.test(name))sourceHashes['tools/'+name]=crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,name))).digest('hex');
+for(const name of ['AROR_Preset_RHS_USAF_FORECON.conf','AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf']){
+ const file='OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/'+name;
+ sourceHashes[file]=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
+}
 for(const name of ['FORCE_ASSETS.json','MILITARY_DEFENCE_PRESETS.json','EVERON_CAMPAIGN_LOCATIONS.csv','QRF_PRICES.csv'])sourceHashes['docs/'+name]=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'docs',name))).digest('hex');
 const artifactHashes={};
 for(const name of fs.readdirSync(path.join(root,'docs/validation')))if(name!=='QRF_AUTOMATED_RESULTS.json'&&/\.(csv|json)$/.test(name))artifactHashes[name]=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'docs/validation',name))).digest('hex');

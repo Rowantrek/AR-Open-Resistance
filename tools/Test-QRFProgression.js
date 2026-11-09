@@ -106,13 +106,13 @@ function runQRFProgressionTests(sources) {
   const init=compile(sources.manager,'OnPostInit');
   const defaults=()=>Object.fromEntries([...sources.manager.matchAll(/\[Attribute\("([\d.]+)",[^\r\n]*\)\]\s*(?:protected )?(int|float|bool) (m_\w+)/g)].map(m=>[m[3],Number(m[1])]));
   const fresh=Object.assign(makeManager(),defaults());init.call(fresh,{});
-  check(scheduled===1&&fresh.HasThreatState()&&fresh.GetReadinessLevel(1)===1&&fresh.GetCrackdown(1)===0&&fresh.GetCrackdownLevel(1)===1,'real component defaults start new campaigns at readiness one and response tier one');
+  check(scheduled===1&&fresh.HasThreatState()&&fresh.GetReadinessLevel(1)===2&&fresh.GetCrackdown(1)===200&&fresh.GetCrackdownLevel(1)===2,'real component defaults start new campaigns at readiness two and response tier two; scenario overrides are separate');
   for(const role of [1,2]){
     const paced=Object.assign(makeManager(),defaults());paced.SetCrackdown_S(1,0);paced.SetCrackdown_S(2,0);
     for(let captures=1;captures<=20;captures++){
       paced.RecordCaptureEscalation_S(role);
-      check(paced.GetCrackdownLevel(role)===Math.min(5,1+Math.floor(captures/4)),'capture-only intensity advances one tier every four losses: '+[role,captures]);
-      check(paced.GetReadinessPressure(role)===captures*25,'linear intensity retains independent equipment progression');
+      check(paced.GetCrackdownLevel(role)===Math.min(5,1+Math.floor(captures/2)),'capture-only intensity advances one tier every two losses: '+[role,captures]);
+      check(paced.GetReadinessPressure(role)===captures*50,'linear intensity retains independent equipment progression');
       check(paced.GetCrackdown(role===1?2:1)===0,'one army capture escalation cannot raise the other army');
     }
   }
@@ -134,16 +134,17 @@ function runQRFProgressionTests(sources) {
     const r={m_iMinimumReadinessLevel:1,m_iMaximumReadinessLevel:5,...fields(m[1]),m_aProfileIds:[...m[1].match(/m_aProfileIds\s*\{([^}]*)\}/)[1].matchAll(/"([^"]+)"/g)].map(v=>v[1])};
     for(const n of ['IsValid','AllowsReadinessLevel','Resolve'])r[n]=compile(sources.recipe,n);return r;
   });
-  check(profiles.length===12&&recipes.length===62,'Chicken contains light/escorted air profiles and complete ground/joint readiness bands');
-  check(/m_iStartingCrackdown\s+0\b/.test(sources.layer)&&/m_iCaptureCrackdown\s+50\b/.test(sources.layer),'Chicken overrides agree with the tier-one linear pacing defaults');
+  check(profiles.length===12&&recipes.length===82,'Chicken contains light/escorted air profiles, town recipes and complete ground/joint readiness bands');
+  check(/m_iStartingCrackdown\s+20\b/.test(sources.layer)&&/m_iCaptureCrackdown\s+100\b/.test(sources.layer),'Chicken starts at tier two and advances intensity every two capture losses');
   for(const role of [1,2])for(const band of ['light','mechanized','ground','joint_r2','joint_r3','joint']){
     const prefix=(role===1?'occupier':'invader')+'_'+band+'_l';let lastPersonnel=0,lastCollateral=0;
     for(let tier=1;tier<=5;tier++){
       const recipe=recipes.find(r=>r.m_eRole===role&&r.m_sId===prefix+tier),elements=[];
       check(recipe&&recipe.Resolve(profiles,role,role===1?'AROR_OCCUPIERS':'AROR_INVADERS',elements,recipe.m_iMinimumReadinessLevel),'each army has a complete linear recipe band');
-      check(elements.length===tier+(['ground','joint_r2','joint_r3','joint'].includes(band)?1:0),'each successive tier adds exactly one complete package: '+[role,band,tier]);
+      const expected=band==='light'?[3,3,4,5,6][tier-1]:(band==='joint_r2'?[4,4,5,6,7][tier-1]:(band.startsWith('joint')?tier+2:tier+1));
+      check(elements.length===expected,'authored package counts preserve initial combined-arms minimums and finite progression: '+[role,band,tier]);
       const personnel=elements.reduce((sum,p)=>sum+p.m_iPersonnelBudget,0),collateral=elements.reduce((sum,p)=>sum+p.ReplacementQuote(),0);
-      check(personnel>lastPersonnel&&collateral>lastCollateral,'each tier mounts in funded strength rather than shrinking or merely relabelling a force');
+      check(personnel>=lastPersonnel&&collateral>=lastCollateral,'successive tiers never shrink funded personnel or collateral');
       check(elements.filter(p=>p.m_eType!==3&&p.m_eType!==4).every(p=>p.m_bFillPassengerSeats),'linear tiers keep full-load ground profiles');
       lastPersonnel=personnel;lastCollateral=collateral;
     }
@@ -206,7 +207,7 @@ function runQRFProgressionTests(sources) {
   previewContext.m_iReadinessLevel=0;check(!preview(recipes,profiles,1,'AROR_OCCUPIERS',previewContext,availability,100).m_Recipe,'preview rejects an invalid equipment state');
   env.AROR_EconomyComponent={GetInstance:()=>({})};
   const air=compile(sources.reaper,'AffordableReaperTier'),helicopter=profiles.find(p=>p.m_sId==='us_airborne');
-  check(air.call(context,helicopter,5,1)===0,'even an explicitly configured air adapter cannot buy locked aircraft through high crackdown');
+  check(air.call(context,helicopter,5,1)===5,'enabled escorted aircraft support is available at readiness one within paid capacity limits');
   check(air.call(context,helicopter,5,5)===5,'unlocked experimental air path retains existing paid intensity/capacity limits');
   check(sources.app.includes('AROR_EThreatScale.READINESS')&&sources.app.includes('AROR_EThreatScale.CRACKDOWN')&&sources.app.includes('AROR_ThreatLabels'),'phone binds independent equipment and intensity cards using army threat labels');
   check(!sources.app.includes('SetCrackdown_S('),'phone remains read-only');

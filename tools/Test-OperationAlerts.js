@@ -105,7 +105,7 @@ function runOperationAlertsTests(sources) {
  const published=bumps;manager.m_iClock=105;manager.m_iThreatBoardResync=5;manager.PublishThreatBoard_S(false);
  check(bumps===published,'a countdown alone does not republish between resyncs');
  manager.m_iThreatBoardResync=0;manager.PublishThreatBoard_S(false);
- check(bumps===published+1&&manager.m_sThreatBoard.includes('1|1|levie|2|235'),'the resync republishes the countdown for late joiners');
+ check(bumps===published+1&&manager.m_sThreatBoard.includes('1|1|levie|2|0|235'),'the resync republishes the countdown and town-wave flag for late joiners');
  attack.state=states.FAILED;manager.m_iThreatBoardResync=5;manager.PublishThreatBoard_S(false);manager.GetThreats(infos);
  check(infos.length===1&&infos[0].m_sTargetId==='levie','a finished response leaves the board at once');
  qrf.state=states.CANCELLED;manager.PublishThreatBoard_S(false);manager.GetThreats(infos);

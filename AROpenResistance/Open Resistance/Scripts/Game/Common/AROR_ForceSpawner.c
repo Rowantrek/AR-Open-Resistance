@@ -346,18 +346,17 @@ class AROR_ForceSpawner
 		if (entries.IsEmpty())
 			return string.Empty;
 
-		array<ResourceName> allowed = {};
+		array<AROR_FactionPresetEntry> allowed = {};
 		foreach (AROR_FactionPresetEntry candidate : entries)
 		{
 			if (AROR_ContentPacksComponent.IsAvailableAtReadiness(candidate.GetPrefab(), role))
-				allowed.Insert(candidate.GetPrefab());
+				allowed.Insert(candidate);
 		}
 
 		if (!allowed.IsEmpty())
-			return allowed.GetRandomElement();
+			return AROR_FactionPresetsComponent.PickVehicleEntry(allowed);
 
-		AROR_FactionPresetEntry entry = entries.GetRandomElement();
-		return entry.GetPrefab();
+		return AROR_FactionPresetsComponent.PickVehicleEntry(entries);
 	}
 
 	//------------------------------------------------------------------------------------------------

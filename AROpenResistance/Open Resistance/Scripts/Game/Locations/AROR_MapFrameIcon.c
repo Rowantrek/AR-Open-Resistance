@@ -58,6 +58,81 @@ class AROR_MapFrameIcon
 		canvas.SetDrawCommands(commands);
 	}
 
+	//! Last-seen asset badge. Kinds are the spotting wire format, independent of location types.
+	static void DrawContact(notnull CanvasWidget canvas, notnull array<ref CanvasWidgetCommand> commands, float size, float pixel, int kind, AROR_EFactionRole owner, Color factionColor)
+	{
+		commands.Clear();
+		array<float> frame = {};
+		FrameOutline(owner, 0, 0, size, frame);
+		commands.Insert(Line(frame, KeylineColor().PackToInt(), KEYLINE_WIDTH * pixel, true));
+		PolygonDrawCommand body = new PolygonDrawCommand();
+		body.m_iColor = FillColor(factionColor).PackToInt();
+		body.m_Vertices = frame;
+		commands.Insert(body);
+		array<ref array<float>> strokes = {};
+		ContactGlyph(kind, strokes);
+		foreach (array<float> stroke : strokes)
+		{
+			array<float> points = {};
+			for (int index = 0; index + 1 < stroke.Count(); index += 2)
+			{
+				points.Insert(size * (0.2 + stroke[index] / GRID * 0.6));
+				points.Insert(size * (0.2 + stroke[index + 1] / GRID * 0.6));
+			}
+			commands.Insert(Line(points, GlyphColor(factionColor).PackToInt(), 2 * pixel, false));
+		}
+		canvas.SetDrawCommands(commands);
+	}
+
+	//! A distinct silhouette for each asset, including a rotor on both helicopter classes.
+	static void ContactGlyph(int kind, notnull array<ref array<float>> strokes)
+	{
+		if (kind == 3 || kind == 4)
+		{
+			strokes.Insert(Points("2 4 22 4"));
+			strokes.Insert(Points("12 4 12 8"));
+			strokes.Insert(Points("7 9 15 9 19 15 7 15 7 9"));
+			strokes.Insert(Points("7 12 2 12 2 7"));
+			strokes.Insert(Points("9 15 9 19 19 19"));
+			if (kind == 3)
+				strokes.Insert(Points("11 9 11 15"));
+			else
+			{
+				strokes.Insert(Points("15 15 22 18"));
+				strokes.Insert(Points("3 18 7 22 11 18"));
+			}
+			return;
+		}
+		switch (kind)
+		{
+			case 1: // IFV: tracked hull with infantry cross
+				strokes.Insert(Points("3 16 21 16 21 21 3 21 3 16"));
+				strokes.Insert(Points("5 13 5 5 19 13"));
+				strokes.Insert(Points("19 5 5 13"));
+				return;
+			case 2: // Armour: track oval and long gun
+				strokes.Insert(Arc(12, 15, 9, 0, 360, 12));
+				strokes.Insert(Points("8 12 16 12 16 18 8 18 8 12"));
+				strokes.Insert(Points("12 12 12 1"));
+				return;
+			case 5: // Light armed vehicle: wheels and weapon
+				strokes.Insert(Points("3 16 3 10 17 10 21 16 3 16"));
+				strokes.Insert(Points("9 10 9 5 20 5"));
+				strokes.Insert(Points("6 17 6 21"));
+				strokes.Insert(Points("18 17 18 21"));
+				return;
+			case 6: // Dismounted squad: infantry cross
+				strokes.Insert(Points("4 4 20 20"));
+				strokes.Insert(Points("20 4 4 20"));
+				return;
+		}
+		// Transport truck: cargo body, cab and wheels
+		strokes.Insert(Points("2 6 14 6 14 17 2 17 2 6"));
+		strokes.Insert(Points("14 11 19 11 22 17 14 17"));
+		strokes.Insert(Points("6 17 6 21"));
+		strokes.Insert(Points("18 17 18 21"));
+	}
+
 	//------------------------------------------------------------------------------------------------
 	// Shared geometry: HICOMM's map draws the same symbols with its own canvas helpers
 	//------------------------------------------------------------------------------------------------
@@ -201,7 +276,7 @@ class AROR_MapFrameIcon
 		for (int i = 0; i <= 10; i++)
 		{
 			float radius = outer;
-			if (i % 2 == 1)
+			if (Math.Mod(i, 2) == 1)
 				radius = inner;
 			float angle = (-90 + i * 36) * Math.DEG2RAD;
 			points.Insert(centreX + Math.Cos(angle) * radius);

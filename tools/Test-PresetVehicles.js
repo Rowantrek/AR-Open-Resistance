@@ -21,7 +21,7 @@ const env = {
   Replication: {IsServer: () => server},
   FactionAffiliationComponent: {Cast: value => value},
   SCR_ResourceNameUtils: {GetPrefabName: entity => entity.prefab},
-  string: {Empty: ''}, Math: {Mod: (a, b) => a % b, RandomInt: (a, b) => { randomCalls++; return b - 1; }}
+  string: {Empty: ''}, Math: {Max:Math.max,Mod: (a, b) => a % b, RandomInt: (a, b) => { randomCalls++; return b - 1; }}
 };
 function method(source, name, members = []) {
   const match = source.match(new RegExp('^\\t[^\\r\\n]*\\b' + name + '\\(([^\\r\\n]*)\\)\\r?\\n\\t\\{([\\s\\S]*?)^\\t\\}', 'm'));
@@ -43,7 +43,7 @@ const garrisonSource = read('Scripts/Game/Garrisons/AROR_GarrisonComponent.c');
 let replacements = {}, enabled = new Set();
 const entry = (type, prefab) => ({
   GetListedPrefab: () => prefab, GetPrefab: () => replacements[prefab] || prefab,
-  GetTypeValue: () => type, IsKnownType: () => type >= 0
+  GetTypeValue: () => type, IsKnownType: () => type >= 0,GetSelectionPriority:()=>0
 });
 function preset(entries) {
   return {
@@ -59,7 +59,8 @@ const armies = {1: rhs, 2: us};
 selected = {
   m_aPresets: [us, rhs], GetPreset: role => armies[role],
   GetVehicleType: method(componentSource, 'GetVehicleType'),
-  PickVehicle: method(componentSource, 'PickVehicle', ['GetPreset']),
+  PickVehicle: method(componentSource, 'PickVehicle', ['GetPreset','PickVehicleEntry']),
+  PickVehicleEntry:method(componentSource,'PickVehicleEntry'),
   ResolveVehicle: method(componentSource, 'ResolveVehicle', ['PickVehicle', 'GetVehicleType']),
   InitializeVehicleFaction_S: method(componentSource, 'InitializeVehicleFaction_S', ['GetPreset'])
 };

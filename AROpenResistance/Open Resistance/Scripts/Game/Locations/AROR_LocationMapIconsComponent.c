@@ -8,7 +8,7 @@ class AROR_LocationMapIconsComponentClass : SCR_BaseGameModeComponentClass
 //! Follows the location registry, so spawned locations (the HQ) get icons too. Never runs on a dedicated server.
 class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 {
-	[Attribute("{6E2BA15FAEED49D7}UI/Layouts/Map/AROR_MapIcon.layout", UIWidgets.ResourceNamePicker, desc: "Layout for one icon; must contain an ImageWidget named 'Icon'", params: "layout")]
+	[Attribute("{6E2BA15FAEED49D7}UI/Layouts/Map/AROR_MapIcon.layout", UIWidgets.ResourceNamePicker, desc: "Shared icon layout: ImageWidget 'Icon', CanvasWidget 'Frame' for spotting silhouettes, RichTextWidget 'QRFLabel' for contact labels", params: "layout")]
 	protected ResourceName m_sIconLayout;
 
 	[Attribute("40", UIWidgets.Slider, desc: "Icon size of key sites (bases, outposts, airfields, ports, HQ, strongholds) in reference pixels; other locations scale from it", params: "8 128 1")]
@@ -108,11 +108,12 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	protected void OnMapOpen(MapConfiguration config)
 	{
+		// A phone/HICOMM map still obscures observation even when it draws its own location layer.
+		SetQRFObserverMapOpen(true);
 		if (s_bSuppressed)
 			return;
 
 		m_bHandlingMap = true;
-		SetQRFObserverMapOpen(true);
 		SCR_MapEntity mapEntity = SCR_MapEntity.GetMapInstance();
 		if (!mapEntity || !mapEntity.GetMapWidget())
 			return;
@@ -168,11 +169,11 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	protected void OnMapClose(MapConfiguration config)
 	{
+		SetQRFObserverMapOpen(false);
 		if (!m_bHandlingMap)
 			return;
 
 		m_bHandlingMap = false;
-		SetQRFObserverMapOpen(false);
 		GetGame().GetCallqueue().Remove(UpdateIconPositions);
 
 		AROR_LocationManagerComponent locationManager = AROR_LocationManagerComponent.GetInstance();

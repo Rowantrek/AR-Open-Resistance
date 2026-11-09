@@ -14,7 +14,7 @@ function runQRFIngressTests(sources) {
       .replace(/new TraceBox\(\)/g,'({})')
       .replace(/foreach \(\w+ (\w+) : ([^)]+)\)/g,'for(const $1 of $2)')
       .replace(/vector (\w+);/g,'let $1=[0,0,0];')
-      .replace(/\b(?:bool|float|int|vector|IEntity|ResourceName|Resource|NavmeshWorldComponent|ChimeraAIWorld|BaseWorld|CompartmentAccessComponent|ChimeraCharacter|BaseCompartmentSlot|BaseCompartmentManagerComponent|SCR_AIVehicleUsageComponent|AROR_\w+|TraceBox)\s+(\w+)/g,'let $1')
+      .replace(/\b(?:bool|float|int|vector|IEntity|ResourceName|Resource|FactionAffiliationComponent|NavmeshWorldComponent|ChimeraAIWorld|BaseWorld|CompartmentAccessComponent|ChimeraCharacter|BaseCompartmentSlot|BaseCompartmentManagerComponent|SCR_AIVehicleUsageComponent|AROR_\w+|TraceBox)\s+(\w+)/g,'let $1')
       .replace(/let (\w+);/g,'let $1=0;')
       .replace(/(?<![.\w])m_\w+/g,x=>'this.'+x);
     for(const method of methods)body=body.replace(new RegExp('(?<![.\\w])'+method+'\\(', 'g'),'this.'+method+'(');
@@ -44,6 +44,11 @@ function runQRFIngressTests(sources) {
     m_aPassengers:[person],IsSeatedInOwnVehicle:e=>ownSeat.call(force,e)};
   let pilot=person;
   const usage={GetPilotCompartmentSlot:()=>({GetOccupant:()=>pilot})};
+  methods.push('GetMountRejection');
+  env.string={Empty:''};
+  Object.defineProperty(String.prototype,'IsEmpty',{value(){return !this.length;},configurable:true});
+  env.AROR_ForceSpawner={IsAlive:e=>!!e?.GetCharacterController&&!e.GetCharacterController().IsDead()};
+  force.GetMountRejection=compile(sources.ground,'GetMountRejection');
   const complete=compile(sources.ground,'IsMountComplete');
   check(!complete.call(force),'no readiness before initial seat request');
   force.m_bMountRequested=true;check(complete.call(force),'driver and all members in own seats allow readiness');

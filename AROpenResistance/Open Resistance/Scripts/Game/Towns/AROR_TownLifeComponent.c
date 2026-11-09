@@ -463,7 +463,7 @@ class AROR_TownLifeComponent : ScriptComponent
 		AROR_Formations.GetUnits(AROR_EFormation.RIFLE_FIRE_TEAM, units);
 		array<AROR_EUnitType> guards = {};
 		for (int guard = 0; guard < m_iCheckpointGuards && !units.IsEmpty(); guard++)
-			guards.Insert(units[guard % units.Count()]);
+			guards.Insert(units[guard - (guard / units.Count()) * units.Count()]);
 		vector stand = point - outward * 8;
 		vector clear;
 		if (AROR_ForceSpawner.FindClearPosition(stand, 10, 1, clear))
@@ -555,7 +555,8 @@ class AROR_TownLifeComponent : ScriptComponent
 		int total = m_aStreets.Count() + m_aEntries.Count();
 		if (total < 1)
 			total = 1;
-		patrol.m_iNextPoint = (patrol.m_iNextPoint + 1 + Math.RandomInt(0, 2)) % total;
+		int nextPoint = patrol.m_iNextPoint + 1 + Math.RandomInt(0, 2);
+		patrol.m_iNextPoint = nextPoint - (nextPoint / total) * total;
 		if (patrol.m_iNextPoint < m_aStreets.Count())
 			return m_aStreets[patrol.m_iNextPoint];
 		return m_aEntries[patrol.m_iNextPoint - m_aStreets.Count()];
@@ -620,7 +621,7 @@ class AROR_TownLifeComponent : ScriptComponent
 		array<AROR_EUnitType> riflemen = {};
 		AROR_Formations.GetUnits(AROR_EFormation.RIFLE_FIRE_TEAM, riflemen);
 		for (int rider = 0; rider < Math.Min(m_iPatrolRiders, CargoSeats(vehicle)) && !riflemen.IsEmpty(); rider++)
-			members.Insert(riflemen[rider % riflemen.Count()]);
+			members.Insert(riflemen[rider - (rider / riflemen.Count()) * riflemen.Count()]);
 		vector side = start;
 		vector clear;
 		if (AROR_ForceSpawner.FindClearPosition(start, 12, 1, clear))

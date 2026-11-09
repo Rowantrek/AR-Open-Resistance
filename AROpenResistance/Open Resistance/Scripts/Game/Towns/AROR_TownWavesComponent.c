@@ -1,12 +1,12 @@
-[ComponentEditorProps(category: "OpenResistance/Locations", description: "Town garrison response: once players kill a share of a town's defenders (post, checkpoints, patrol), the holding army sends convoy waves from roads nearby, a helicopter assault once they press the post, and ends repelled or holding. Separate from QRFs. Put on a town or city location with a settlement garrison post.")]
+[ComponentEditorProps(category: "OpenResistance/Locations", description: "Town garrison response: player casualties or a taken post trigger finite ground waves and a transport insertion with gunship support. Role doctrines control the assault. Separate from ordinary QRFs. Put on a town or city with a settlement garrison post.")]
 class AROR_TownWavesComponentClass : ScriptComponentClass {}
 
 //! Server logic for one town's wave response, in phases:
 //! - ALERT: the trigger kill; the first wave forms up after a short random delay.
 //! - WAVES: each wave is the holding army's wave recipe at its current Readiness (equipment), sized by its Crackdown
 //!   (element count), paid by the scenario, driven as a convoy from a road 1-2 km out that dismounts short of the post.
-//!   Waves come in on different roads (axes); the last one splits into two columns on two roads.
-//! - A helicopter assault (joint recipe) commits once a wave is pressing the post, at high Readiness.
+//!   Waves use different roads; the role doctrine controls tempo, splitting, dismount and infantry tasks.
+//! - A transport/gunship insertion (joint recipe) commits with the first ground wave by default; timing is configurable.
 //! - RESOLVING: once every wave and the assault have ended, the town holds: a support reward and an HQ headline.
 //! - LOCKDOWN, throughout: the army's fighters and the Resistance's are counted around the town. Outnumbered for the
 //!   lockdown time in total and the army retakes the town: the post is restored and the Resistance support gained
@@ -17,6 +17,29 @@ class AROR_TownWavesComponentClass : ScriptComponentClass {}
 //! Waves go through Operations (RequestTownWave_S). Session-only: kill progress and a running response are not saved.
 class AROR_TownWavesComponent : ScriptComponent
 {
+	[Attribute("1", desc: "Role doctrines for this town's waves and attack orders: Invaders use fast split shock assaults; Occupiers use deliberate convoy assaults. Disable for the original shared tactics.", category: "Doctrine")]
+	protected bool m_bFactionDoctrine;
+	[Attribute("0.65", desc: "Invader alert and wave interval multiplier (same finite force budget)", params: "0.4 1 0.05", category: "Doctrine")]
+	protected float m_fShockTempo;
+	[Attribute("1", desc: "Invader waves split from this wave onwards, when the split element threshold is met", params: "1 5 1", category: "Doctrine")]
+	protected int m_iShockSplitFromWave;
+	[Attribute("160", desc: "Invader convoy dismount distance, metres; still subject to safe road and foot-access checks", params: "100 290 10", category: "Doctrine")]
+	protected float m_fShockDismountDistance;
+	[Attribute("10", desc: "Minimum seconds between Invader tactical retasks", params: "5 60 5", category: "Doctrine")]
+	protected int m_iShockRetaskSeconds;
+	[Attribute("25", desc: "Minimum seconds between Occupier tactical retasks", params: "5 60 5", category: "Doctrine")]
+	protected int m_iDeliberateRetaskSeconds;
+	[Attribute("45", desc: "Town doctrine contact reports expire after this many seconds; no live enemy tracking", params: "15 120 5", category: "Doctrine")]
+	protected int m_iDoctrineContactMaxAge;
+	[Attribute("70", desc: "Infantry flank offset from a reported contact, metres (bounded to the objective vicinity)", params: "30 120 10", category: "Doctrine")]
+	protected float m_fDoctrineFlankDistance;
+	[Attribute("100", desc: "Occupier covering element and vehicle support standoff from a reported contact, metres", params: "40 180 10", category: "Doctrine")]
+	protected float m_fDeliberateSupportDistance;
+	[Attribute("0.25", desc: "Invader withdrawal threshold: surviving share without reserves", params: "0.1 0.6 0.05", category: "Doctrine")]
+	protected float m_fShockWithdrawFraction;
+	[Attribute("0.45", desc: "Occupier withdrawal threshold: surviving share without reserves", params: "0.1 0.6 0.05", category: "Doctrine")]
+	protected float m_fDeliberateWithdrawFraction;
+
 	[Attribute("8", desc: "Army crackdown points per enemy killed in the town (0-1000 scale, 200 per level)", params: "0 100 1", category: "Escalation")]
 	protected int m_iKillCrackdown;
 	[Attribute("4", desc: "Army readiness pressure per enemy killed in the town (levels at 100, 250, 450, 700)", params: "0 100 1", category: "Escalation")]
@@ -54,11 +77,13 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected float m_fDismountDistance;
 	[Attribute("0", desc: "Extra wave elements on top of the Crackdown size; cities always add one", params: "0 4 1")]
 	protected int m_iExtraElements;
-	[Attribute("3", desc: "The last wave splits into two columns on two roads when it has at least this many elements (0 = never)", params: "0 8 1")]
+	[Attribute("3", desc: "A split-eligible wave needs at least this many elements to use two columns (0 = never). Final wave for Occupiers/shared tactics; shock split setting for Invaders.", params: "0 8 1")]
 	protected int m_iSplitMinElements;
-	[Attribute("4", desc: "Lowest Readiness at which a helicopter assault joins the response (0 = never). Uses the army's wave 9 recipe.", params: "0 5 1")]
+	[Attribute("1", desc: "Lowest Readiness at which a transport insertion with gunship support joins the response (0 = never). Uses the army's wave 9 recipe.", params: "0 5 1")]
 	protected int m_iAirAssaultReadiness;
-	[Attribute("350", desc: "A wave package this close to the post is pressing it; that commits the helicopter assault, metres", params: "100 1000 25")]
+	[Attribute("1", desc: "Request the helicopter insertion when the first ground wave is committed, so every town response plans a troop drop. Disable to wait until ground forces press the post.")]
+	protected bool m_bAirOnFirstWave;
+	[Attribute("350", desc: "A wave package this close to the post commits the helicopter insertion when first-wave timing is disabled, metres", params: "100 1000 25")]
 	protected float m_fPressingDistance;
 	[Attribute("20", desc: "Resistance support gained in the town when the whole response is beaten off, percent", params: "0 50 1")]
 	protected float m_fRepelledSupportSwing;
@@ -132,7 +157,10 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected int m_iLastResistanceNear;
 	protected int m_iStagingFailures;
 	protected bool m_bAirRequested;
+	protected int m_iNextAirAttempt;
 	protected bool m_bDeferredReported;	//!< The "no reinforcements available" contact report went out this arming
+	protected bool m_bPostTakenTrigger;	//!< Preserve a relief request even if taking the flag flips support immediately
+	protected float m_fPostSupportBefore;
 	protected string m_sOutcome;		//!< Set before a response ends, for the balance log
 	// Balance log snapshot of the running response
 	protected int m_iStartedAt;
@@ -206,12 +234,21 @@ class AROR_TownWavesComponent : ScriptComponent
 	}
 
 	//! Server: a taken garrison post escalates the holding army like a lost location (called by Location Capture)
-	static void RecordPostTaken_S(AROR_LocationComponent location, AROR_EFactionRole holder)
+	static void RecordPostTaken_S(AROR_LocationComponent location, AROR_EFactionRole holder, float supportBefore = -1)
 	{
 		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
 		if (!Replication.IsServer() || !operations || !location)
 			return;
 		operations.RecordTownEscalation_S(holder, 0, 0, location.GetId(), "post_taken", true);
+		AROR_TownWavesComponent town = AROR_TownWavesComponent.Cast(location.GetOwner().FindComponent(AROR_TownWavesComponent));
+		if (town && town.m_iPhase == PHASE_IDLE && town.m_iClock >= town.m_iRearmAt)
+		{
+			town.m_eRole = holder;
+			town.m_bPostTakenTrigger = true;
+			town.m_fPostSupportBefore = supportBefore;
+			if (supportBefore < 0)
+				town.m_fPostSupportBefore = town.ResistanceSupport();
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -226,6 +263,33 @@ class AROR_TownWavesComponent : ScriptComponent
 
 	bool IsResponding() { return m_iPhase != PHASE_IDLE; }
 
+	//! Applied only to this town's responses and attack orders, never to ordinary QRFs or player groups.
+	void ConfigureCommander_S(AROR_QRFTacticalCommander commander)
+	{
+		if (!Replication.IsServer() || !m_bFactionDoctrine || !commander)
+			return;
+		commander.m_bTownDoctrine = true;
+		commander.m_bShockAssault = commander.m_eRole == AROR_EFactionRole.INVADERS;
+		commander.m_iContactMaxAge = Math.Clamp(m_iDoctrineContactMaxAge, 15, 120);
+		commander.m_fFlankDistance = Math.Clamp(m_fDoctrineFlankDistance, 30, 120);
+		commander.m_fCoverDistance = Math.Clamp(m_fDeliberateSupportDistance, 40, 180);
+		if (commander.m_bShockAssault)
+		{
+			commander.m_iRetaskSeconds = Math.Clamp(m_iShockRetaskSeconds, 5, 60);
+			commander.m_fWithdrawFraction = Math.Clamp(m_fShockWithdrawFraction, 0.1, 0.6);
+		}
+		else
+		{
+			commander.m_iRetaskSeconds = Math.Clamp(m_iDeliberateRetaskSeconds, 5, 60);
+			commander.m_fWithdrawFraction = Math.Clamp(m_fDeliberateWithdrawFraction, 0.1, 0.6);
+		}
+	}
+
+	protected bool UsesShockDoctrine()
+	{
+		return m_bFactionDoctrine && m_eRole == AROR_EFactionRole.INVADERS;
+	}
+
 	//------------------------------------------------------------------------------------------------
 	protected void Tick()
 	{
@@ -237,6 +301,8 @@ class AROR_TownWavesComponent : ScriptComponent
 		m_iClock++;
 
 		AROR_EFactionRole role = m_Location.GetControllingRole();
+		if (m_iPhase == PHASE_IDLE && m_bPostTakenTrigger && role == AROR_EFactionRole.RESISTANCE)
+			role = m_eRole;
 		// A running response stays with its army even when the town's support flips it to the Resistance mid-fight:
 		// the lockdown decides who keeps it. Only another army taking the town ends it.
 		if (m_iPhase != PHASE_IDLE)
@@ -270,7 +336,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		RefreshWatches();
 		if (m_iClock < m_iRearmAt)
 			return;
-		if (m_iKills < KillThreshold())
+		if (!m_bPostTakenTrigger && m_iKills < KillThreshold())
 			return;
 		// One town response on the map at a time: the garrison here fights on alone until that one ends
 		if (s_ActiveResponse && s_ActiveResponse != this && s_ActiveResponse.IsResponding())
@@ -307,6 +373,8 @@ class AROR_TownWavesComponent : ScriptComponent
 		int delayMin = Math.Min(m_iAlertDelayMin, m_iAlertDelayMax);
 		int delayMax = Math.Max(m_iAlertDelayMin, m_iAlertDelayMax);
 		m_iNextWaveAt = m_iClock + Math.RandomInt(delayMin, delayMax + 1);
+		if (UsesShockDoctrine())
+			m_iNextWaveAt = m_iClock + Math.Max(5, (m_iNextWaveAt - m_iClock) * Math.Clamp(m_fShockTempo, 0.4, 1));
 		m_iLastResistanceNear = m_iClock;
 		s_ActiveResponse = this;
 
@@ -318,6 +386,9 @@ class AROR_TownWavesComponent : ScriptComponent
 		m_iNextContestCheck = m_iClock;
 		m_iNextContestLog = m_iClock + CONTEST_LOG_SECONDS;
 		m_fSupportAtContact = ResistanceSupport();
+		if (m_bPostTakenTrigger)
+			m_fSupportAtContact = m_fPostSupportBefore;
+		m_bPostTakenTrigger = false;
 		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
 		if (operations)
 		{
@@ -366,7 +437,7 @@ class AROR_TownWavesComponent : ScriptComponent
 			bearing += 360;
 		array<string> sides = {"north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"};
 		int sector = Math.Round(bearing / 45);
-		return sides[sector % 8];
+		return sides[sector - (sector / 8) * 8];
 	}
 
 	//! The response report for one wave, once its first column is on the road: where it comes from and when it
@@ -435,8 +506,7 @@ class AROR_TownWavesComponent : ScriptComponent
 				}
 			}
 		}
-		if (m_iClock % PRESSING_CHECK_SECONDS == 0)
-			TryAirAssault();
+		TryAirAssault();
 		if (m_iPhase == PHASE_RESOLVING)
 			TryResolve();
 	}
@@ -538,6 +608,8 @@ class AROR_TownWavesComponent : ScriptComponent
 		ChimeraCharacter character = ChimeraCharacter.Cast(entity);
 		if (!character || !character.GetCharacterController() || character.GetCharacterController().IsDead())
 			return true;
+		if (AROR_LocationForces.IsInAircraft(character))
+			return true;
 		FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(character.FindComponent(FactionAffiliationComponent));
 		if (!affiliation)
 			return true;
@@ -626,8 +698,8 @@ class AROR_TownWavesComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! No Resistance near for the abandon time: the army holds the town unopposed. Waves already on the road carry on
-	//! under Operations; with retake on, the town is retaken as by the lockdown (post restored, support gains lost).
+	//! No Resistance near for the abandon time: end outstanding waves through Operations retention. With retake on,
+	//! the town is retaken as by the lockdown (post restored, support gains lost).
 	protected void Abandon()
 	{
 		Print(string.Format("[AROR TOWN] %1 response abandoned after %2 of %3 waves: no Resistance near", m_Location.GetId(), m_iWavesSent, m_iWaves), LogLevel.NORMAL);
@@ -650,6 +722,14 @@ class AROR_TownWavesComponent : ScriptComponent
 		AROR_OperationExecutorComponent executor = Executor();
 		m_iPhase = PHASE_WAVES;
 		m_iNextWaveAt = m_iClock + STAGING_RETRY_SECONDS;
+		// Bound all rejection paths, including missing services and rejected requests, not just road searches.
+		m_iStagingFailures++;
+		if (m_iStagingFailures > STAGING_ATTEMPTS)
+		{
+			Print(string.Format("[AROR TOWN] %1 wave %2 exhausted its launch attempts; skipped", m_Location.GetId(), wave), LogLevel.WARNING);
+			SkipWave();
+			return;
+		}
 		if (!operations || !executor)
 			return;
 
@@ -665,7 +745,10 @@ class AROR_TownWavesComponent : ScriptComponent
 
 		int elements = WaveElements(wave, crackdown);
 		int columns = 1;
-		if (wave >= m_iWaves && m_iSplitMinElements > 0 && elements >= m_iSplitMinElements)
+		int splitFrom = m_iWaves;
+		if (UsesShockDoctrine())
+			splitFrom = Math.Clamp(m_iShockSplitFromWave, 1, m_iWaves);
+		if (wave >= splitFrom && m_iSplitMinElements > 0 && elements >= m_iSplitMinElements)
 			columns = 2;
 
 		// One staging road per column, each on its own axis away from the previous wave's roads
@@ -683,10 +766,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		}
 		if (stagings.IsEmpty())
 		{
-			m_iStagingFailures++;
 			Print(string.Format("[AROR TOWN] %1 wave %2 has no safe road staging %3-%4m out (attempt %5)", m_Location.GetId(), wave, m_fStagingMinDistance, m_fStagingMaxDistance, m_iStagingFailures), LogLevel.WARNING);
-			if (m_iStagingFailures >= STAGING_ATTEMPTS)
-				SkipWave();
 			return;
 		}
 		columns = stagings.Count();
@@ -706,7 +786,10 @@ class AROR_TownWavesComponent : ScriptComponent
 				offset = leadElements;
 				limit = elements - leadElements;
 			}
-			string id = operations.RequestTownWave_S(m_eRole, m_Location.GetId(), recipe, readiness, crackdown, stagings[index], limit, m_fDismountDistance, offset);
+			float dismount = m_fDismountDistance;
+			if (UsesShockDoctrine())
+				dismount = Math.Clamp(m_fShockDismountDistance, 100, 290);
+			string id = operations.RequestTownWave_S(m_eRole, m_Location.GetId(), recipe, readiness, crackdown, stagings[index], limit, dismount, offset);
 			if (id.IsEmpty())
 				continue;
 			sent.Insert(id);
@@ -744,7 +827,10 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected int NextInterval()
 	{
 		int jitter = Math.Max(m_iWaveIntervalJitter, 0);
-		return Math.Max(30, m_iWaveInterval + Math.RandomInt(-jitter, jitter + 1));
+		int interval = m_iWaveInterval + Math.RandomInt(-jitter, jitter + 1);
+		if (UsesShockDoctrine())
+			interval *= Math.Clamp(m_fShockTempo, 0.4, 1);
+		return Math.Max(30, interval);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -760,7 +846,8 @@ class AROR_TownWavesComponent : ScriptComponent
 		if (heading.Length() > 1)
 			bearing = Math.Atan2(heading[0], heading[2]);
 		array<float> offsets = {0.0, 90.0, -90.0, 45.0, -45.0, 135.0};
-		float offset = offsets[axis % offsets.Count()] * m_iAxisSide * Math.DEG2RAD;
+		int slot = axis - (axis / offsets.Count()) * offsets.Count();
+		float offset = offsets[slot] * m_iAxisSide * Math.DEG2RAD;
 		vector towards = post + Vector(Math.Sin(bearing + offset), 0, Math.Cos(bearing + offset)) * AXIS_PREFERENCE_DISTANCE;
 		float maxDistance = Math.Max(m_fStagingMinDistance, m_fStagingMaxDistance);
 		if (executor.FindWaveStaging_S(post, towards, m_fStagingMinDistance, maxDistance, staging, avoid, m_fAxisSeparation))
@@ -773,12 +860,13 @@ class AROR_TownWavesComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! At high Readiness, once a wave is pressing the post, the army commits one helicopter assault (its wave 9 joint
-	//! recipe) from its own bases, as an ordinary airborne response would launch
+	//! Commit one transport/gunship insertion from owned bases once a ground wave is sent (or presses the post when
+	//! configured). Physical launch, occupancy and landing safety remain owned by the airborne executor.
 	protected void TryAirAssault()
 	{
-		if (m_bAirRequested || m_iAirAssaultReadiness <= 0 || m_iPhase == PHASE_ALERT)
+		if (m_bAirRequested || m_iAirAssaultReadiness <= 0 || m_iPhase == PHASE_ALERT || m_iClock < m_iNextAirAttempt)
 			return;
+		m_iNextAirAttempt = m_iClock + PRESSING_CHECK_SECONDS;
 		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
 		AROR_OperationExecutorComponent executor = Executor();
 		if (!operations || !executor)
@@ -787,22 +875,25 @@ class AROR_TownWavesComponent : ScriptComponent
 		if (readiness < m_iAirAssaultReadiness)
 			return;
 		vector post = PostPosition();
-		bool pressing;
-		foreach (string id : m_aOperationIds)
+		bool pressing = m_bAirOnFirstWave && m_iWavesSent > 0;
+		if (!pressing)
 		{
-			if (executor.CountPressingPackages_S(id, post, m_fPressingDistance) > 0)
+			foreach (string id : m_aOperationIds)
 			{
-				pressing = true;
-				break;
+				if (executor.CountPressingPackages_S(id, post, m_fPressingDistance) > 0)
+				{
+					pressing = true;
+					break;
+				}
 			}
 		}
 		if (!pressing)
 			return;
 
-		m_bAirRequested = true;
 		string recipe = executor.FindTownWaveRecipeId_S(m_eRole, AIR_ASSAULT_WAVE, readiness);
 		if (recipe.IsEmpty())
 		{
+			m_bAirRequested = true;
 			Print(string.Format("[AROR TOWN] %1 has no helicopter assault recipe for role %2 at readiness %3", m_Location.GetId(), m_eRole, readiness), LogLevel.NORMAL);
 			return;
 		}
@@ -810,6 +901,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		string assault = operations.RequestTownWave_S(m_eRole, m_Location.GetId(), recipe, readiness, crackdown, vector.Zero, 0, 0);
 		if (assault.IsEmpty())
 			return;
+		m_bAirRequested = true;
 		TrackOperation(assault, AIR_ASSAULT_WAVE, string.Empty);
 		Print(string.Format("[AROR TOWN] %1 helicopter assault requested: %2 recipe=%3", m_Location.GetId(), assault, recipe), LogLevel.NORMAL);
 	}
@@ -843,6 +935,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		m_iAxisIndex = 0;
 		m_iStagingFailures = 0;
 		m_bAirRequested = false;
+		m_iNextAirAttempt = 0;
 		m_aOperationIds.Clear();
 		m_aOperationWaves.Clear();
 		m_aOperationDirections.Clear();
@@ -851,7 +944,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		m_aLastAxes.Clear();
 	}
 
-	//! End the response (operations already on the road carry on under Operations); kills count again after the
+	//! End the response and cancel its outstanding children through normal Operations retention; kills count after the
 	//! rearm time when it ran, at once when the town changed hands
 	protected void EndResponse(bool rearmDelay)
 	{
@@ -859,6 +952,17 @@ class AROR_TownWavesComponent : ScriptComponent
 		{
 			Print(string.Format("[AROR TOWN] %1 response ended after %2 waves", m_Location.GetId(), m_iWavesSent), LogLevel.NORMAL);
 			LogResponseEnd();
+		}
+		// Abandonment, handover and timeout must not leave queued reinforcements launching after the town slot frees.
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		if (operations)
+		{
+			foreach (string id : m_aOperationIds)
+			{
+				AROR_Operation operation = operations.GetOperation(id);
+				if (operation && !operation.IsTerminal())
+					operations.ResolveOperation_S(id, AROR_EOperationState.CANCELLED, "Town response ended: " + m_sOutcome);
+			}
 		}
 		if (s_ActiveResponse == this)
 			s_ActiveResponse = null;
@@ -872,6 +976,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		}
 		m_sOutcome = string.Empty;
 		m_bDeferredReported = false;
+		m_bPostTakenTrigger = false;
 		ResetResponse();
 		m_iKills = 0;
 		m_aSeen.Clear();
@@ -975,7 +1080,8 @@ class AROR_TownWavesComponent : ScriptComponent
 				continue;
 			if (watch.WasPlayerKill(KILL_CREDIT_SECONDS))
 			{
-				m_iKills++;
+				if (m_iPhase != PHASE_IDLE || m_iClock >= m_iRearmAt)
+					m_iKills++;
 				if (m_iPhase != PHASE_IDLE)
 					m_iResponseKills++;
 				if (!m_aContactPlayers.Contains(watch.m_iPlayerId))
@@ -1007,7 +1113,7 @@ class AROR_TownWavesComponent : ScriptComponent
 
 		foreach (IEntity defender : defenders)
 		{
-			if (Watch(defender) && !m_aSeen.Contains(defender))
+			if (Watch(defender) && m_iClock >= m_iRearmAt && !m_aSeen.Contains(defender))
 				m_aSeen.Insert(defender);
 		}
 	}
@@ -1018,6 +1124,12 @@ class AROR_TownWavesComponent : ScriptComponent
 	{
 		if (!character)
 			return false;
+		// A support flip may replace the post with Resistance troops while the original army's response continues.
+		AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
+		FactionAffiliationComponent affiliation = FactionAffiliationComponent.Cast(character.FindComponent(FactionAffiliationComponent));
+		AROR_EFactionRole role;
+		if (!roles || !affiliation || !roles.GetRoleOfFaction(affiliation.GetAffiliatedFaction(), role) || role != m_eRole)
+			return false;
 		if (IsWatched(character))
 			return true;
 		if (m_aWatches.Count() >= MAX_WATCHES)
@@ -1025,6 +1137,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		AROR_TownCasualtyWatch added = new AROR_TownCasualtyWatch();
 		if (!added.Attach_S(character))
 			return false;
+		added.BindContact_S(m_eRole, m_Location.GetId());
 		m_aWatches.Insert(added);
 		return true;
 	}
@@ -1071,6 +1184,11 @@ class AROR_TownWavesComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	override void OnDelete(IEntity owner)
 	{
+		if (GetGame() && Replication.IsServer() && m_iPhase != PHASE_IDLE)
+		{
+			m_sOutcome = "REMOVED";
+			EndResponse(false);
+		}
 		if (GetGame())
 			GetGame().GetCallqueue().Remove(Tick);
 		ClearWatches();
@@ -1089,6 +1207,16 @@ class AROR_TownCasualtyWatch
 	int m_iPlayerId;
 	int m_iHitAt;
 	protected SCR_DamageManagerComponent m_DamageManager;
+	protected AROR_EFactionRole m_eReportingRole;
+	protected string m_sReportingTownId;	//!< Empty for civilian watches: they never send combat reports
+
+	void BindContact_S(AROR_EFactionRole role, string townId)
+	{
+		if (!Replication.IsServer())
+			return;
+		m_eReportingRole = role;
+		m_sReportingTownId = townId;
+	}
 
 	static int NowSeconds()
 	{
@@ -1126,15 +1254,44 @@ class AROR_TownCasualtyWatch
 
 	protected void OnDamage(BaseDamageContext context)
 	{
-		if (!context || !context.instigator || context.damageValue <= 0)
+		if (!Replication.IsServer() || !context || !context.instigator || context.damageValue <= 0)
 			return;
 		if (context.damageType == EDamageType.HEALING || context.damageType == EDamageType.REGENERATION)
+			return;
+		if (context.instigator.GetInstigatorType() == InstigatorType.INSTIGATOR_GM)
+			return;
+		if (!m_sReportingTownId.IsEmpty() && !ReportContact_S(context))
 			return;
 		int playerId = context.instigator.GetInstigatorPlayerID();
 		if (playerId <= 0)
 			return;
 		m_iPlayerId = playerId;
 		m_iHitAt = NowSeconds();
+	}
+
+	//! Damage-source snapshot, not a visual sighting. Shared with every friendly column through Operations.
+	//! Validate affiliation/diplomacy like QRFDefense; AI-on-AI contacts may report too, but never award player kills.
+	protected bool ReportContact_S(BaseDamageContext context)
+	{
+		if (m_sReportingTownId.IsEmpty() || !m_Entity)
+			return false;
+		IEntity attacker = context.instigator.GetInstigatorEntity();
+		if (!attacker || attacker == m_Entity)
+			return false;
+		FactionAffiliationComponent victimAffiliation = FactionAffiliationComponent.Cast(m_Entity.FindComponent(FactionAffiliationComponent));
+		FactionAffiliationComponent attackerAffiliation = FactionAffiliationComponent.Cast(attacker.FindComponent(FactionAffiliationComponent));
+		AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
+		if (!roles || !victimAffiliation || !attackerAffiliation)
+			return false;
+		Faction victimFaction = victimAffiliation.GetAffiliatedFaction();
+		Faction attackerFaction = attackerAffiliation.GetAffiliatedFaction();
+		AROR_EFactionRole victimRole;
+		if (!victimFaction || !attackerFaction || !roles.GetRoleOfFaction(victimFaction, victimRole) || victimRole != m_eReportingRole || !victimFaction.IsFactionEnemy(attackerFaction))
+			return false;
+		AROR_OperationManagerComponent operations = AROR_OperationManagerComponent.GetInstance();
+		if (operations)
+			operations.ReportCombatContact_S(m_eReportingRole, m_sReportingTownId, attacker.GetOrigin(), false);
+		return true;
 	}
 
 	void Detach_S()

@@ -3,6 +3,10 @@
 Status: written 2026-11-09, **not compiled or play-tested**. Chicken only; every new behaviour is off unless a
 location carries the new components (base Everon is unchanged).
 
+Reviewed and refined 2026-11-09: [town AI review](TOWN_AI_REVIEW.md) defines the role doctrines and the exact
+response lifecycle; [validation](validation/TOWN_WARFARE_VALIDATION_2026-11-09.md) records the automated checks
+and outstanding native tests. Individual soldier combat still uses native AI.
+
 The fight moves from outposts in fields into towns. Each town and city has a garrison post the Resistance can take,
 an occupying presence in the streets, and a fixed three-wave response when players attack its defenders.
 
@@ -37,21 +41,33 @@ an occupying presence in the streets, and a fixed three-wave response when playe
 
 ## Wave response
 
-Trigger: players kill 25% of the defenders seen (post, checkpoint guards, patrol crews), at least 3. The response
+Trigger: players kill 25% of the defenders seen (post, checkpoint guards, patrol crews), at least 3, or take the
+garrison post. The post preserves its relief request if the support reward immediately flips control. The response
 then runs in phases, after the pattern of RC Dynamic Counter Attacks (ideas from its workshop page only; no code):
 
 1. **Alert**: a contact report that names who hit the garrison, "CONTACT REPORT · MEAUX / Garrison engaged by
-   Jasper and Rowan. Reinforcements requested". The first wave forms up 30–90 s later.
-2. **Waves**: three, 150 s apart (±30 s). Each stages on a road 1–2 km out and drives in as a column. The lead
-   vehicle stops 220 m short of the post, later vehicles 25 m behind each other, and the infantry walk in.
+   Jasper and Rowan. Reinforcements requested". The first wave forms up 30–90 s later for Occupiers; Invaders use
+   0.65 times that delay (approximately 20–60 s).
+2. **Waves**: three, 150 s apart (±30 s) for Occupiers; Invaders use 0.65 times that interval (78–117 s). Each stages
+   on a road 1–2 km out and drives in as a column. The lead vehicle prefers a stop 220 m short of the post for
+   Occupiers or 160 m for Invaders, later vehicles 25 m behind each other, and the infantry walk in.
    - **Axes**: wave 1 comes from the side of the army's nearest base; each later wave uses a road at least 500 m from
      the previous wave's (preferred bearings rotate 0°, 90° one way, 90° the other, then the diagonals). If no such
      road is safe, a repeated road beats no wave.
-   - **Split last wave**: with 3+ elements, the last wave is two columns on two roads. The lead column takes the
-     recipe's first (heaviest) half, the second column the rest.
-3. **Helicopter assault** (Readiness 4+): once any wave package is within 350 m of the post, the army commits one
-   joint recipe (`<army>_townair_r4`: airborne pair plus light support) from its own bases. It waits its turn if
-   another airborne response holds the airspace, and falls back to ground if no air launch is clear.
+   - **Split attacks**: with 3+ elements, Occupiers split the last wave and Invaders can split from wave 1. The
+     lead column takes the recipe's first (heaviest) half, the second the rest. A second safe road is required;
+     otherwise one column carries the complete wave. The split never doubles its element budget.
+   - **Infantry doctrine**: both armies share attributed hostile-damage reports, accepted for 45 s and expired at
+     the next allowed retask. Invaders push via lateral ingress points, then close; Occupiers retain covering
+     elements when enough packages are present. Teams retaking a lost town return to its objective after their
+     contact task. Native AI handles perception, firing, cover and movement. See the review for tuning attributes.
+3. **Helicopter assault** (Readiness 1+): when the first ground wave is committed, the army requests one joint
+   insertion from its own bases: normally two troop transports, one gunship and one light ground-support element.
+   Capacity can reduce extra transports to one primary transport plus gunship. The existing recipe IDs
+   (`<army>_townair_r4`) are retained for compatibility, with their equipment window expanded to Readiness 1–5.
+   It waits if live aircraft reserve the airspace; unsafe launches or landing sites remain subject to normal failure
+   and cleanup. `m_bAirOnFirstWave = 0` restores the option to wait until a wave presses within 350 m of the post;
+   `m_iAirAssaultReadiness = 0` disables the insertion. See [air response](SPOTTING_AND_AIR_RESPONSE.md).
    - **Response reports**: once a wave's first column (or the helicopters) is on the road, one headline answers the
      contact report with where it comes from and when it arrives: "RESPONSE · MEAUX / Convoy 2 of 3 inbound from the
      south-west · ETA ~3 MIN", "Two columns inbound from the north and east, wave 3 of 3", "Helicopters inbound".
@@ -65,7 +81,8 @@ then runs in phases, after the pattern of RC Dynamic Counter Attacks (ideas from
    - **Retaken (lockdown)**: see below.
    - **Abandoned**: no Resistance player within 1.5 km for 3 minutes. If the Resistance had gained anything (support
      or the post), the army retakes the town as for the lockdown ("X RETAKEN / The Resistance pulled out").
-   - Unresolved 15 minutes after the last wave: ends quietly.
+   - Unresolved 15 minutes after the last wave: ends quietly. All end paths cancel outstanding child operations
+     through Operations' existing retention rules, preventing later launches after the town response slot frees.
 
 ## Lockdown
 

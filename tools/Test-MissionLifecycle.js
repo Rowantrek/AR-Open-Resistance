@@ -12,6 +12,8 @@ function runMissionLifecycleTests(sources) {
   const deleted = [], replies = [];
   let server = true;
   const env = {
+    AROR_ResistanceFleet:{IsClaimed:()=>false},
+    AROR_ForceSpawner:{FindRoadPosition:()=>false,IsDestroyed:x=>!x||x.destroyed,CountLiving:(g,out)=>{out.push(...(g?.members || []).filter(x=>!x.dead));return out.length;}},
     AROR_EMissionResult:result, AROR_EMissionType:{CONVOY_AMBUSH:1},
     AROR_MissionBoardComponent:{IsDestroyed:x=>!x||x.destroyed,
       CountLiving:(g,out)=>{out.push(...(g?.members || []).filter(x=>!x.dead));return out.length;}},

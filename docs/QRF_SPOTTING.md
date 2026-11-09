@@ -1,27 +1,27 @@
 # Resistance spotting of QRFs
 
-Status: implemented in source; **native visibility, client rendering and multiplayer acceptance are pending**. Chicken enables it on `AROR_OperationManagerComponent` with `m_bQRFSpotting = 1`. Other scenarios default off.
+Status: implemented in source; **native visibility, client rendering and multiplayer acceptance are pending**. Both shipped Everon scenarios enable it on `AROR_OperationManagerComponent` with `m_bQRFSpotting = 1`; debug reveal is disabled. See [spotting and air response](SPOTTING_AND_AIR_RESPONSE.md) for the current implementation and checks.
 
 ## Player behavior
 
-Temporary Chicken debug mode: `m_bQRFDebugMarkers = 1` shows all spawned QRF vehicle contacts on living Resistance players' maps, updating positions every five seconds without spotting, range or visibility checks. Blue/red colouring and vehicle designations remain. Contacts stay refreshed while the vehicle is tracked, including retained hulls; cleanup removes them from the next snapshot. This performs no visibility traces. Set the flag to `0` to restore observation-based spotting; other scenarios default to `0`.
+`m_bQRFDebugMarkers = 0` in both shipped scenarios. Setting it to `1` is an explicit debugging override that reveals tracked contacts without visibility checks; it is not the gameplay spotting mechanic.
 
-A living Resistance player looks toward a QRF vehicle. A second valid observation by that player confirms the sighting. The server then shares a last-seen marker with living Resistance players. Once confirmed, any valid Resistance observation can refresh it.
+A living Resistance player looks toward a hostile response vehicle or a dismounted squad leader. A second valid observation by that player confirms the sighting. The server then shares a last-seen marker with living Resistance players. Once confirmed, any valid Resistance observation can refresh it.
 
-Markers distinguish **TRANSPORT VEHICLE, LIGHT ARMED VEHICLE, IFV, ARMOURED VEHICLE, TRANSPORT HELICOPTER and GUNSHIP**, with a 40-pixel contact icon, an 18-pixel type label and last-seen age. Occupier/US contacts are blue; Invader/USSR contacts are red. Server snapshots include the operation role, preserving side identification for empty transports. They use the existing map icon layout/coordinate conversion, so map pan and zoom continue to work. The icon is currently a shared military-contact image plus a type label, not separate vehicle silhouettes. Profile `m_bLightVehicle` classifies the crew-only Humvee/UAZ escorts independently from their mounted-support execution policy. Contact kind 5 is light armed ground transport and uses the ground spotting range; kinds 0–4 retain their existing meanings. Server and clients must run matching scripts. Foot squads are not marked by this first vehicle-intelligence implementation.
+Markers distinguish **TRANSPORT VEHICLE, LIGHT ARMED VEHICLE, IFV, ARMOURED VEHICLE, TRANSPORT HELICOPTER, GUNSHIP and INFANTRY SQUAD** with seven distinct vector silhouettes, a 40-pixel badge, an 18-pixel type label and last-seen age. Occupier/US contacts are blue; Invader/USSR contacts are red, using the UI colour tokens. Server snapshots include the operation role, preserving side identification for empty transports. The existing map layout and coordinate conversion handle pan and zoom. Reused widgets redraw both their silhouette and faction when snapshot ordering changes, and refresh labels immediately. Profile `m_bLightVehicle` classifies light armed vehicles as kind 5; kind 6 is a deployed dismounted squad leader. Kinds 0–4 retain their previous meanings. Server and clients must run matching scripts. Squad markers follow the observed leader's last-seen position, not an omniscient group centroid.
 
 Positions are snapshots. When observers turn away, lose line of sight, die or leave range, the marker stays at the last report, fades and expires. No unseen entity is followed on the client. A destroyed/disappeared vehicle's last report can remain until expiry; removal does not give the player an unseen kill confirmation.
 
 ## Server rules and limits
 
-- Only operation-owned QRF vehicles are candidates. The server never sends that full candidate list to clients.
+- Only operation-owned QRF/attack vehicles and deployed dismounted group leaders are candidates. Seated passengers do not create infantry markers. The server never sends that full candidate list to clients.
 - Observers and recipients must be living characters in the shared Resistance role faction, rather than a hard-coded FIA asset faction key.
 - Sightings require range, a head-view cone and a native world/entity/visibility-occluder trace from the character's actual eye position. A clear trace or first hit on the target/root permits an observation. Friendly-affiliated captured vehicles are excluded from new observations.
-- Pending confirmation needs two observations by the same player within a 15-second continuity window. Another observer cannot complete that first glance. Reports cap at 32.
+- Pending confirmation needs two observations by the same player within a 15-second continuity window. Another observer cannot complete that first glance. Unconfirmed contacts expire after that window; confirmed reports cap at 32 and retain their normal lifetime.
 - Round-robin work checks at most 64 player/vehicle pairs and performs at most eight native traces per server second in Chicken. Cheap range/view failures do not consume trace budget. At large player/vehicle counts, confirmation/refresh can take longer.
 - Filtered snapshots are delivered every five seconds using reliable owner-targeted player-controller RPCs. There is no client request RPC accepting arbitrary target coordinates or entity IDs. New recipients receive current shared intelligence on the next snapshot.
 - Opening a map suppresses that player's observations until it closes. An owned-controller RPC carries only this suppression bit; the server derives the player ID from the controller and still owns all sighting/visibility decisions. Disconnected observation flags are pruned. Reading the map does not provide a live target feed, although other FIA players can still refresh shared reports.
-- Client caches store IDs, kinds, ages and positions only; they clear across world initialization and when rendering detects a non-Resistance/dead viewer. Map close removes widgets. Labels/images reuse the existing map layout; the new optional label child is blank for normal location icons.
+- Client caches store IDs, kinds, ages and positions only; they clear across world initialization and when rendering detects a non-Resistance/dead viewer. Map close removes widgets and their owned canvas commands. The shared layout contains `Icon`, `Frame` and `QRFLabel`; custom layouts need the `Frame` canvas for contact silhouettes. Duplicate IDs, unsupported kinds and invalid lifetimes are rejected.
 
 | Manager attribute | Chicken value |
 |---|---:|
@@ -41,6 +41,6 @@ The visibility trace is a conservative prototype of player observation. It does 
 3. Turn away or go behind a building. Keep watching the map: the marker must stop moving, age, fade and disappear after 90 seconds without fresh observations by any FIA player. Watching the map alone must not refresh it.
 4. Verify no new sighting through terrain/buildings, outside range or behind the observer. Check prone stance and smoke separately.
 5. Verify a non-Resistance client receives no intelligence packet, and a dead/non-Resistance local viewer cannot render cached contacts. Test late join and map close/reopen.
-6. Air contacts require a separate explicit airborne fixture: clear the fixed ground recipe override and enable REAPER. Spot transport and gunship separately. Keep Invader admission disabled for this isolated Occupier air test; normal Chicken enables both roles' ground capture responses.
+6. Trigger a Chicken town response at Readiness 1. Spot its transport helicopters and gunship separately, then spot the delivered squad after it unloads. Before spotting, no precise aircraft or infantry marker should appear. Repeat for Invaders and test a late joiner.
 
 Source-adapted checks cover view geometry, confirmation/refresh, packet bounds and expiry filtering. They do not replace those multiplayer and native trace tests.
