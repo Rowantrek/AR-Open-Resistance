@@ -16,6 +16,14 @@ an occupying presence in the streets, and a fixed three-wave response when playe
   are now `MILITARY_BASE` garrisons (level 3, plus two extra infantry teams, compound size kept at 18 m). Removed:
   Ironworks, Grey Quarry, Barley Field, Gull Point, Raven Ridge, Pinewood Lake, Stag Hill, Regina Heights, Fox Valley,
   Hawk Ridge and Crow Hill. Saved campaigns simply stop loading the removed sites.
+- **The kept outposts are walled in** (`AROR_PerimeterComponent`, three extra infantry teams each): at play start the
+  server raises a 44 m square of high sandbag walls around each compound with a gate front and back, barbed wire 7 m
+  outside, hedgehogs across the gates and a guard tower (US or USSR by holder) on two opposite corners. Every piece
+  snaps to the terrain and is skipped where trees, buildings, props, roads, water or a steep step are in the way
+  (logged as `[AROR GARRISON] ... perimeter raised: N pieces, M skipped`). Chicken only; IDs hand-written.
+- **The Montignac Ridge Depot moved** (it sat 186 m from Montignac, overlapping the town): it is now the Grey Quarry
+  Depot on the old Grey Quarry outpost site (8606, 3389), 1.7 km from the nearest military site. Same ID, so saved
+  campaigns keep its state. Base Everon keeps it at Montignac.
 - **All 18 settlements** get `AROR_GarrisonComponent` (`m_bSettlementPost 1`), `AROR_TownWavesComponent`,
   `AROR_TownLifeComponent` and a capture flag that auto-places on a clear spot near the centre at play start.
   Component and entity IDs in the layer were hand-written; Workbench may rewrite them on save.
@@ -23,7 +31,8 @@ an occupying presence in the streets, and a fixed three-wave response when playe
 ## Garrison post
 
 - **The site**: at play start the server looks for room for a building within 60 m of the town centre (6.5 m clear
-  radius, at most 1.5 m height difference, nothing standing in it; the centre first, then four rings of eight). It
+  radius, at most 1.5 m height difference, nothing standing in it and clear of every road; the flag stays off roads
+  too; the centre first, then four rings of eight). It
   raises the holding army's barracks tent there (`Tent_Barracks_US_01`, `_USSR_01`, `_FIA_01`; swapped when the town
   changes hands) and stands the flag 10 m in front of it. The flag is a full flagpole whose cloth shows the holding
   faction. No room anywhere: flag only, logged as a warning. Each of these is an attribute on the flag's placement
@@ -33,8 +42,8 @@ an occupying presence in the streets, and a fixed three-wave response when playe
 - Infantry stands in a tight ring (20 m half-size) around the flag, so in front of and beside the tent. Town ground is
   rarely flat, so posts always use the infantry-only fallback when the compound check fails.
 - Chicken's garrison personnel cap is 144 (was 96, which the extra town posts filled near Meaux).
-- **Map**: a pennant in the holding faction's colour marks each post on its flag once zoomed in, drawn as an outline
-  once the post is taken.
+- **Map**: a pennant in the holding faction's colour always marks each post: on the flag once zoomed in, against the
+  town marker's top-right when zoomed out. Drawn as an outline once the post is taken.
 - **Taking the flag** (all hostiles within ~60 m of it dead): +30% Resistance support in that town. This may flip the
   town through the normal support rule, but the flag never changes control itself. The post is then broken: nothing
   in its roster deploys again. It re-forms 45 minutes later, once nobody is near and the army still holds the town.
@@ -86,9 +95,16 @@ then runs in phases, after the pattern of RC Dynamic Counter Attacks (ideas from
 
 ## Lockdown
 
-While a response runs, the town counts the responding army's living fighters (garrison, checkpoints, patrol, wave
-troops) and the Resistance's (players and recruits) within its radius (120–300 m) every 5 s. While the army
-outnumbers the Resistance the lockdown clock runs up; otherwise it runs back down. At 10 minutes in total the army
+The town capture (lockdown) starts when the Resistance takes the post's flag during a response (immediately, when
+taking the flag is what brought the response). From then on the town counts, within its radius (120–300 m) every
+5 s, the Resistance's fighters (players and recruits) against **only the response's own reinforcements** (wave and
+helicopter troops): the garrison, checkpoints and patrol that were already in town never count, so leftover
+defenders cannot retake it. While the reinforcements outnumber the Resistance the lockdown clock runs up; otherwise
+it runs back down.
+
+A town held by an army with a standing garrison post never passes to the Resistance on support alone (a repelled
+response, regional support, missions): its flag must be taken first. Taking it breaks the post and adds the support
+swing, which flips the town then. At 10 minutes in total the army
 retakes the town: the Resistance support gained since the contact report is lost (which flips the town back if the
 gain had flipped it), the post is restored, and the headline reads "X RETAKEN". A response keeps running if the
 town's support flips it to the Resistance mid-fight: the lockdown decides who keeps it.
@@ -229,9 +245,11 @@ their own group, spawned away from players; convoys formed up along one road; ch
 
 ## Map markers
 
-Location markers are kept simple: a solid shape in the holder's faction colour inside a dark keyline, with one thick
-symbol (white, or near-black on a light colour) for the type. A square for the Resistance, a diamond for the enemy,
-a circle for neutral sites. Towns and cities have no symbol. Size follows importance: key sites (bases, outposts,
+Location markers are a solid badge in the holder's faction colour inside a dark keyline (a square for the
+Resistance, a circle for everyone else) with the base game's own map icon on top, tinted white or near-black for
+contrast: Conflict's building icons (`Barracks` for bases, `Fortification` for outposts, `HQ`, `Heli_Pad`,
+`VehicleWorkshop` for factories, `SupplyDepot` for resources) and the topographic `airport` and `anchorage`.
+Towns and cities are plain dots. Size follows importance: key sites (bases, outposts,
 airfields, heliports, ports, the HQ, strongholds) are largest and carry their name in bold capitals on a plate to
 their right; factories and resources are smaller; cities and towns smallest (the map prints their names). A post's
 flag marker appears on the flag once zoomed in. HICOMM's map shares the same badge drawing.
