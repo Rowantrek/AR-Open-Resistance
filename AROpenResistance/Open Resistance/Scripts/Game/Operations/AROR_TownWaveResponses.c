@@ -181,11 +181,29 @@ modded class AROR_OperationExecutorComponent
 		{
 			if (!force || force.m_sOperationId != operationId)
 				continue;
-			AddGroupMembers(force.m_Group, members);
-			AROR_GroundOperationForce ground = AROR_GroundOperationForce.Cast(force);
-			if (ground)
-				AddGroupMembers(ground.m_CrewGroup, members);
+			AddForceMembers(force, members);
+			// A helicopter package's ground escort is its own force object, outside the executor's list
+			AROR_ReaperAirForce air = AROR_ReaperAirForce.Cast(force);
+			if (air && air.m_Escort)
+				AddForceMembers(air.m_Escort, members);
 		}
+	}
+
+	//! The force's own roster (soldiers it spawned, even after leaving their group, e.g. dismounted or landed)
+	//! and whoever is in its groups now
+	protected static void AddForceMembers(AROR_OperationForce force, notnull array<IEntity> members)
+	{
+		array<IEntity> owned = {};
+		force.GetOwnedMembers(owned);
+		foreach (IEntity soldier : owned)
+		{
+			if (soldier && !members.Contains(soldier))
+				members.Insert(soldier);
+		}
+		AddGroupMembers(force.m_Group, members);
+		AROR_GroundOperationForce ground = AROR_GroundOperationForce.Cast(force);
+		if (ground)
+			AddGroupMembers(ground.m_CrewGroup, members);
 	}
 
 	protected static void AddGroupMembers(SCR_AIGroup group, notnull array<IEntity> members)
