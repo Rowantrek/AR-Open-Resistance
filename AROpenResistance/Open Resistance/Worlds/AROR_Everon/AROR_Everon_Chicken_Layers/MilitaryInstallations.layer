@@ -11,7 +11,9 @@ $grp GenericEntity : "{0404245051C211B2}Prefabs/Compositions/Locations/AROR_Defe
    }
    AROR_GarrisonComponent "{66D30571F98F4BE3}" {
     m_fDefenceHalfExtent 18
-    m_iExtraInfantryTeams 2
+    m_iExtraInfantryTeams 3
+   }
+   AROR_PerimeterComponent "{6B2F0C11A7E10001}" {
    }
   }
   coords 3871.236 159.52 4298.125
@@ -244,7 +246,9 @@ $grp GenericEntity : "{0404245051C211B2}Prefabs/Compositions/Locations/AROR_Defe
    }
    AROR_GarrisonComponent "{66D30571F98F4BE3}" {
     m_fDefenceHalfExtent 18
-    m_iExtraInfantryTeams 2
+    m_iExtraInfantryTeams 3
+   }
+   AROR_PerimeterComponent "{6B2F0C11A7E10002}" {
    }
   }
   coords 7244.953 1.576 8954.843
@@ -5982,15 +5986,15 @@ GenericEntity AROR_Location_everon_resources_north_ridge_west : "{C3CE3C983BD347
  components {
   AROR_LocationComponent "{6AA28237301A1CF9}" {
    m_sId "everon_resources_north_ridge_west"
-   m_sName "Montignac Ridge Depot"
+   m_sName "Grey Quarry Depot"
    m_eType RESOURCES
    m_fRadius 250
    m_bGroundOnInit 0
    m_eInitialControllingRole OCCUPIERS
   }
  }
- coords 4862.57 165.071 7250.94
- angles 0 315 0
+ coords 8605.86 141.588 3388.95
+ angles 0 0 0
  {
   GenericEntity {
    ID "6AACA42C07095538"
@@ -6337,7 +6341,9 @@ $grp GenericEntity : "{FD619B71CFAFEAA9}Prefabs/Compositions/Locations/AROR_Defe
    }
    AROR_GarrisonComponent "{66D30571F98F4BE3}" {
     m_fDefenceHalfExtent 18
-    m_iExtraInfantryTeams 2
+    m_iExtraInfantryTeams 3
+   }
+   AROR_PerimeterComponent "{6B2F0C11A7E10003}" {
    }
   }
   coords 3151.86 120.073 5296.5

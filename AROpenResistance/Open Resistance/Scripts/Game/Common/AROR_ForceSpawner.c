@@ -222,6 +222,25 @@ class AROR_ForceSpawner
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! True when the nearest road's carriageway comes within clearance of the point (the road's half width is added
+	//! to the distance the road network reports from its centre line). Roads are terrain, so traces never see them.
+	static bool IsNearRoad(vector point, float clearance)
+	{
+		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
+			return false;
+		BaseRoad road;
+		float distance;
+		aiWorld.GetRoadNetworkManager().GetClosestRoad(point, road, distance);
+		if (!road)
+			return false;
+		float halfWidth = road.GetWidth() * 0.5;
+		if (halfWidth <= 0)
+			halfWidth = 3;
+		return distance < halfWidth + clearance;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Nothing standing within halfWidth of the point up to height (terrain excluded)
 	static bool IsSpotClear(vector point, float halfWidth, float height)
 	{

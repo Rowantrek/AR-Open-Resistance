@@ -43,6 +43,7 @@ class AROR_CaptureFlagPlacementComponent : ScriptComponent
 	protected bool m_bHooked;
 
 	protected static const int SITE_ATTEMPTS = 33;	//!< Location centre, then four rings of eight
+	protected static const float ROAD_MARGIN = 1.5;	//!< Metres kept between the building's footprint and a road
 
 	static vector Candidate(vector center, float radius, int ordinal)
 	{
@@ -122,6 +123,9 @@ class AROR_CaptureFlagPlacementComponent : ScriptComponent
 		}
 		if (highest - lowest > m_fBuildingMaxRelief)
 			return false;
+		// Roads are terrain, not entities, so the trace below cannot see them: keep the footprint off every road
+		if (IsNearRoad(site, m_fBuildingRadius + ROAD_MARGIN))
+			return false;
 		TraceBox trace = new TraceBox();
 		trace.Start = Vector(site[0], highest + 0.3, site[2]);
 		trace.End = trace.Start + Vector(0, 0.05, 0);
@@ -130,6 +134,11 @@ class AROR_CaptureFlagPlacementComponent : ScriptComponent
 		trace.Exclude = GetOwner();
 		trace.Flags = TraceFlags.ENTS;
 		return world.TraceMove(trace, null) >= 1;
+	}
+
+	protected static bool IsNearRoad(vector point, float clearance)
+	{
+		return AROR_ForceSpawner.IsNearRoad(point, clearance);
 	}
 
 	//! 1 walkable, 0 not, -1 navmesh tile still loading (asked to load; try again later)
@@ -251,7 +260,7 @@ class AROR_CaptureFlagPlacementComponent : ScriptComponent
 			Math3D.AnglesToMatrix(Vector(yaw, 0, 0), facing);
 			vector flag = site + facing[2] * m_fFlagFront;
 			flag[1] = world.GetSurfaceY(flag[0], flag[2]) + 0.1;
-			if (!IsClear(flag))
+			if (!IsClear(flag) || IsNearRoad(flag, 1))
 				continue;
 			int walkable = Walkable(flag);
 			if (walkable == -1 && m_iTileWaits < 40)
