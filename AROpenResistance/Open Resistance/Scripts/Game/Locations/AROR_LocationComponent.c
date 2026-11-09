@@ -188,6 +188,10 @@ class AROR_LocationComponent : ScriptComponent
 			}
 		}
 
+		// The Invaders' faction name can resolve to a Russian string; show the English role name, styled Cyrillic
+		if (role == AROR_EFactionRole.INVADERS)
+			factionName = AROR_TextUtils.Cyrillicize(AROR_FactionRoles.GetDisplayName(role));
+
 		string text = string.Format("%1 captured by %2", m_sName, factionName);
 		AROR_NotificationManagerComponent.Send_S(new AROR_Notification(AROR_ENotificationType.NOTIFICATION, text, m_sMapIcon, color, "Location captured"));
 	}
