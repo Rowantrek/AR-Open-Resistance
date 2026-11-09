@@ -32,7 +32,8 @@ an occupying presence in the streets, and a fixed three-wave response when playe
 
 - **The site**: at play start the server looks for room for a building within 60 m of the town centre (6.5 m clear
   radius, at most 1.5 m height difference, nothing standing in it and clear of every road; the flag stays off roads
-  too; the centre first, then four rings of eight). It
+  too; the centre first, then four rings of eight; if none fits, five more rings between them out to 130 m, capped at
+  three quarters of the town radius). It
   raises the holding army's barracks tent there (`Tent_Barracks_US_01`, `_USSR_01`, `_FIA_01`; swapped when the town
   changes hands) and stands the flag 10 m in front of it. The flag is a full flagpole whose cloth shows the holding
   faction. No room anywhere: flag only, logged as a warning. Each of these is an attribute on the flag's placement
@@ -105,8 +106,8 @@ it runs back down.
 A town held by an army with a standing garrison post never passes to the Resistance on support alone (a repelled
 response, regional support, missions): its flag must be taken first. Taking it breaks the post and adds the support
 swing, which flips the town then. At 10 minutes in total the army
-retakes the town: the Resistance support gained since the contact report is lost (which flips the town back if the
-gain had flipped it), the post is restored, and the headline reads "X RETAKEN". A response keeps running if the
+retakes the town: the Resistance support gained since the contact report is lost, the army is given a bare majority
+and control even inside the Resistance's flip cooldown (so the post can re-form), and the headline reads "X RETAKEN". A response keeps running if the
 town's support flips it to the Resistance mid-fight: the lockdown decides who keeps it.
 
 Players within 700 m see an indicator at the top centre of the HUD: "MEAUX · ENEMY 14 vs 6 · TOWN LOST IN 4:10" (red,
@@ -256,9 +257,11 @@ flag marker appears on the flag once zoomed in. HICOMM's map shares the same bad
 
 ## To check in Workbench
 
-1. Script Editor compile. Run `tools/Test-ExecutorSettings.ps1` first: it fails if an executor value would disable
+1. Script Editor compile. Run `tools/Test-ExecutorSettings.ps1` and `tools/Test-TownSites.ps1` first: the first fails if
+   an executor value would disable
    Operations (this is what silenced the first Meaux test: the console showed `Invalid tactical commander settings`,
-   and now also names the setting).
+   and now also names the setting); the second checks every town has its components and flag, kept outposts their
+   perimeter, and reports military sites close to a town.
 2. Open `AROR_Everon_Chicken.ent` and save once so Workbench rewrites the edited layers. Check a town shows the three
    components and a flag child.
 3. In play, look for `[AROR] Garrison post site:` lines (or the "no room" warning) and check a town has the tent with
