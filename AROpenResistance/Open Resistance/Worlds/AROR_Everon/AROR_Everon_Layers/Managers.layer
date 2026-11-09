@@ -92,7 +92,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iQRFWeight 40
      m_iCrewCount 1
      m_sVehicle "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_Transport.et"
-     m_eVehicleType SUPPLY_TRUCK
+     m_eVehicleType MOTOR_TRUCK
      m_iPersonnelBudget 22
      m_fDismountDistance 150
      m_iPersonnelLossValue 25
@@ -175,7 +175,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_iQRFWeight 40
      m_iCrewCount 1
      m_sVehicle "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_Transport.et"
-     m_eVehicleType SUPPLY_TRUCK
+     m_eVehicleType MOTOR_TRUCK
      m_iPersonnelBudget 22
      m_fDismountDistance 150
      m_iPersonnelLossValue 25

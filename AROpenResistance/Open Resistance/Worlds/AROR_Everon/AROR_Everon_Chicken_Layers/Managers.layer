@@ -1425,7 +1425,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{E1CB513B8B9B08F4}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Crew.et"
      m_iCrewCount 1
      m_sVehicle "{F1FBD0972FA5FE09}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport.et"
-     m_eVehicleType SUPPLY_TRUCK
+     m_eVehicleType MOTOR_TRUCK
      m_iPersonnelBudget 22
      m_fDismountDistance 150
     }
@@ -1516,7 +1516,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
      m_sCrewCharacter "{9FFEF10757E742EB}Prefabs/Characters/Factions/OPFOR/USSR_Army/Character_USSR_Crew.et"
      m_iCrewCount 1
      m_sVehicle "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et"
-     m_eVehicleType SUPPLY_TRUCK
+     m_eVehicleType MOTOR_TRUCK
      m_iPersonnelBudget 22
      m_fDismountDistance 150
     }

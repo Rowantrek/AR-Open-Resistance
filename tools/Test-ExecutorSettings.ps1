@@ -69,6 +69,23 @@ function Get-Values([string]$block) {
 	return $values
 }
 
+$warnings = New-Object System.Collections.Generic.List[string]
+
+# Every faction preset shipped by the mod and its compat addons: id, usable roles and vehicles (type, prefab).
+# A preset without an m_eType on a vehicle defaults it to MOTOR_CAR.
+$presets = foreach ($file in @(Get-ChildItem (Join-Path $addonRoot 'Configs/FactionPresets') -Recurse -Filter 'AROR_Preset_*.conf') + @(Get-ChildItem (Join-Path $repoRoot 'OptionalAddons') -Recurse -Filter 'AROR_Preset_*.conf')) {
+	$text = Read-RepoFile $file.FullName
+	$rolesBlock = [regex]::Match($text, 'm_aUsableRoles\s*\{([^}]*)\}').Groups[1].Value
+	$vehicles = foreach ($part in ($text -split 'AROR_FactionPresetVehicle') | Select-Object -Skip 1) {
+		$head = $part.Substring(0, [Math]::Min($part.Length, 400))
+		$type = [regex]::Match($head, 'm_eType (\w+)').Groups[1].Value
+		if (!$type) { $type = 'MOTOR_CAR' }
+		[pscustomobject]@{ Type = $type; Prefab = [regex]::Match($head, '\}([^"]+\.et)"').Groups[1].Value }
+	}
+	$addon = ($file.FullName.Substring($repoRoot.Length + 1) -split '[\\/]')[1]
+	[pscustomobject]@{ Id = [regex]::Match($text, 'm_sId "([^"]+)"').Groups[1].Value; Addon = $addon; Roles = @([regex]::Matches($rolesBlock, '\b(OCCUPIERS|INVADERS|RESISTANCE|CIVILIANS)\b') | ForEach-Object { $_.Value }); Vehicles = @($vehicles) }
+}
+
 $gameMode = Read-RepoFile ((Join-Path $addonRoot 'Prefabs/GameModes/AROR_GameMode_Base.et'))
 $prefabValues = Get-Values (Get-Block $gameMode 'AROR_OperationExecutorComponent')
 
@@ -92,8 +109,8 @@ foreach ($layerFile in $layers) {
 	}
 
 	# Recipes name existing profiles
-	$profileIds = @([regex]::Matches($block, 'AROR_ForceProfile[^{]*\{\s*m_sId "([^"]+)"') | ForEach-Object { $_.Groups[1].Value })
-	foreach ($recipe in [regex]::Matches($block, 'AROR_GroundQRFRecipe\s*\{(?:[^{}]|\{[^{}]*\})*\}')) {
+	$profileIds = @([regex]::Matches($block, 'AROR_ForceProfile(?: "\{[0-9A-F]{16}\}")?\s*\{\s*m_sId "([^"]+)"') | ForEach-Object { $_.Groups[1].Value })
+	foreach ($recipe in [regex]::Matches($block, 'AROR_GroundQRFRecipe(?: "\{[0-9A-F]{16}\}")?\s*\{(?:[^{}]|\{[^{}]*\})*\}')) {
 		$id = [regex]::Match($recipe.Value, 'm_sId "([^"]+)"').Groups[1].Value
 		$list = [regex]::Match($recipe.Value, 'm_aProfileIds\s*\{([^}]*)\}')
 		foreach ($p in [regex]::Matches($list.Groups[1].Value, '"([^"]+)"')) {
@@ -103,7 +120,7 @@ foreach ($layerFile in $layers) {
 
 	# Town waves: each army, waves 1-3, every Readiness level, plus the helicopter assault
 	if ($block -match 'm_iAssaultWave') {
-		$recipes = foreach ($recipe in [regex]::Matches($block, 'AROR_GroundQRFRecipe\s*\{(?:[^{}]|\{[^{}]*\})*\}')) {
+		$recipes = foreach ($recipe in [regex]::Matches($block, 'AROR_GroundQRFRecipe(?: "\{[0-9A-F]{16}\}")?\s*\{(?:[^{}]|\{[^{}]*\})*\}')) {
 			$r = $recipe.Value
 			$wave = [regex]::Match($r, 'm_iAssaultWave (\d+)')
 			if (!$wave.Success) { continue }
@@ -120,8 +137,33 @@ foreach ($layerFile in $layers) {
 			if (!($recipes | Where-Object { $_.Role -eq $role -and $_.Wave -eq 9 })) { $failures.Add("$scenario`: role $role has no helicopter assault (wave 9) recipe") }
 		}
 	}
-	Write-Host "$scenario`: $($checks.Count) validator terms, $($own.Count) layer overrides checked"
+	# Vehicles: every profile's vehicle type must be filled by every enemy preset its army can use (presets are
+	# picked per campaign: base game, RHS, WCS+RHS). Ground transports must not draw logistics trucks.
+	$profileCount = 0
+	foreach ($profileMatch in [regex]::Matches($block, 'AROR_ForceProfile(?: "\{[0-9A-F]{16}\}")?\s*\{\s*m_sId "([^"]+)"((?:(?!AROR_ForceProfile)[\s\S])*?)\r?\n    \}')) {
+		$profileId = $profileMatch.Groups[1].Value
+		$body = $profileMatch.Groups[2].Value
+		$roleName = @{ '1' = 'OCCUPIERS'; '2' = 'INVADERS'; 'OCCUPIERS' = 'OCCUPIERS'; 'INVADERS' = 'INVADERS' }[[regex]::Match($body, 'm_eRole (\w+)').Groups[1].Value]
+		$vehicleType = [regex]::Match($body, 'm_eVehicleType (\w+)').Groups[1].Value
+		if (!$roleName -or !$vehicleType) { continue }
+		$profileCount++
+		foreach ($preset in $presets) {
+			if ($roleName -notin $preset.Roles -or $preset.Vehicles.Count -eq 0) { continue }
+			$matching = @($preset.Vehicles | Where-Object { $_.Type -eq $vehicleType })
+			if ($matching.Count -eq 0) { $failures.Add("$scenario`: profile $profileId wants $vehicleType, which preset $($preset.Id) ($($preset.Addon)) has none of") ; continue }
+			if ($vehicleType -eq 'MOTOR_TRUCK' -or $vehicleType -eq 'SUPPLY_TRUCK') {
+				$logistics = @($matching | Where-Object { $_.Prefab -match '(?i)arsenal|ammo|repair|engineer|command|tanker' })
+				if ($logistics.Count) { $failures.Add("$scenario`: profile $profileId ($vehicleType) can draw logistics trucks from $($preset.Id): $(($logistics.Prefab | ForEach-Object { Split-Path $_ -Leaf }) -join ', ')") }
+			}
+			if ($matching.Count -eq 1) { $warnings.Add("$scenario`: profile $profileId always gets $(Split-Path $matching[0].Prefab -Leaf) from $($preset.Id) (one $vehicleType)") }
+		}
+	}
+	Write-Host "$scenario`: $($checks.Count) validator terms, $($own.Count) layer overrides, $profileCount vehicle profiles checked against $($presets.Count) presets"
 }
 
+foreach ($preset in $presets | Where-Object { $_.Vehicles.Count -eq 0 -and ($_.Roles -contains 'OCCUPIERS' -or $_.Roles -contains 'INVADERS') }) {
+	$warnings.Add("preset $($preset.Id) ($($preset.Addon)) has no vehicles of its own: an army using it spawns no ground or air responses unless another addon overrides it")
+}
+$warnings | Sort-Object -Unique | ForEach-Object { Write-Host "WARN $_" -ForegroundColor Yellow }
 if ($failures.Count) { $failures | ForEach-Object { Write-Host "FAIL $_" -ForegroundColor Red }; throw "$($failures.Count) executor setting failure(s)" }
 Write-Host 'Executor settings OK'
