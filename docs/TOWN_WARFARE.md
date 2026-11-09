@@ -18,10 +18,19 @@ an occupying presence in the streets, and a fixed three-wave response when playe
 
 ## Garrison post
 
+- **The site**: at play start the server looks for room for a building within 60 m of the town centre (6.5 m clear
+  radius, at most 1.5 m height difference, nothing standing in it; the centre first, then four rings of eight). It
+  raises the holding army's barracks tent there (`Tent_Barracks_US_01`, `_USSR_01`, `_FIA_01`; swapped when the town
+  changes hands) and stands the flag 10 m in front of it. The flag is a full flagpole whose cloth shows the holding
+  faction. No room anywhere: flag only, logged as a warning. Each of these is an attribute on the flag's placement
+  component (`m_fBuildingYawOffset` turns the tent 180° if its door ends up facing away from the flag).
 - Raised when players first come near, sized by the holding army's **Crackdown**: level 1 (2 teams), level 2 from
   Crackdown 3 (4 teams, one gun), level 3 at Crackdown 5 (6 teams, two guns, a manned vehicle); cities one level more.
-- Infantry stands in a tight ring (20 m half-size) around the flag. Town ground is rarely flat, so posts always use the
-  infantry-only fallback when the compound check fails.
+- Infantry stands in a tight ring (20 m half-size) around the flag, so in front of and beside the tent. Town ground is
+  rarely flat, so posts always use the infantry-only fallback when the compound check fails.
+- Chicken's garrison personnel cap is 144 (was 96, which the extra town posts filled near Meaux).
+- **Map**: a pennant in the holding faction's colour marks each post (on the flag when zoomed in, tucked against the
+  town marker when zoomed out), drawn as an outline once the post is taken.
 - **Taking the flag** (all hostiles within ~60 m of it dead): +30% Resistance support in that town. This may flip the
   town through the normal support rule, but the flag never changes control itself. The post is then broken: nothing
   in its roster deploys again. It re-forms 45 minutes later, once nobody is near and the army still holds the town.
@@ -60,7 +69,8 @@ then runs in phases, after the pattern of RC Dynamic Counter Attacks (ideas from
 - **Crackdown picks the size**: 2 vehicles at levels 1–2, 3 at 3–4, 4 at 5. The third wave and cities each add one.
   Recipes list elements in priority order and the response takes the first N.
 - Funded by the scenario, not the army's bank. Executor capacity still applies (Chicken's live ground cap is raised
-  from 6 to 10 packages and its vehicle reservation cap from 12 to 16 so waves can overlap).
+  from 6 to 8 packages, the validator's maximum, and its vehicle reservation cap from 12 to 16 so waves can overlap).
+  `tools/Test-ExecutorSettings.ps1` checks every scenario's executor values against the validator before play.
 - Re-arms 30 minutes after it ends.
 - **No capture QRF** for these towns: the waves are the whole response.
 
@@ -70,11 +80,14 @@ Spawned while a player is within 900 m; removed half a minute after everyone is 
 
 - **Civilians**: 15% of population (3–10), one per group, walking between street road points. A player killing one
   costs 3% Resistance support there and gets a hint.
-- **Parked cars**: 8% of population (2–6) from the Civilians preset; players can take them. Moved cars are left alone.
+- **Parked cars**: 8% of population (2–6) from the Civilians preset; players can take them. Each is parked on the
+  roadside of the nearest road, lined up with it and facing the traffic direction for its side, at least 12 m from
+  the next. Moved cars are left alone.
 - **Checkpoints** (AI-held towns): 1, 2 from Crackdown 3, 3 at Crackdown 5, one more in a city, on roads where they
   cross the town edge. Two sandbag walls and a guard team holding the spot.
-- **Patrol vehicle** (AI-held towns): one (two from Crackdown 4), Readiness picks armed car, then APC, then IFV. The
-  crew loops the town's road points.
+- **Patrol vehicle** (AI-held towns): one (two from Crackdown 4), Readiness picks armed car, then APC, then IFV. It
+  spawns on the road, lined up with it. The crew loops the town's road points; if someone cannot board within 90 s
+  it drives with whoever got in, as long as the driver did.
 - Wiped-out checkpoints and patrols stay gone for 45 minutes.
 
 ## Also changed
@@ -91,18 +104,30 @@ behaviour its workshop page describes (alert delay, several axes, air committing
 Freedom Fighters (Johnny Kerner) is APL-ND: none of its code is used. Ideas taken from its design: civilians each in
 their own group, spawned away from players; convoys formed up along one road; checkpoints at town approaches.
 
+## Map markers
+
+Location markers are dark plates (the design system's plate) with a faction-coloured edge and glyph: a square for
+the Resistance, a diamond for the enemy, a circle for neutral sites. Size follows importance: key sites (bases,
+outposts, airfields, heliports, ports, the HQ, strongholds) are largest and carry their name in bold capitals on a
+plate to their right; factories and resources are smaller; cities and towns smallest (the map prints their names).
+HICOMM's map shares the same badge drawing.
+
 ## To check in Workbench
 
-1. Script Editor compile. The new files are `Operations/AROR_TownWaveResponses.c` and `Towns/*.c`.
+1. Script Editor compile. Run `tools/Test-ExecutorSettings.ps1` first: it fails if an executor value would disable
+   Operations (this is what silenced the first Meaux test: the console showed `Invalid tactical commander settings`,
+   and now also names the setting).
 2. Open `AROR_Everon_Chicken.ent` and save once so Workbench rewrites the edited layers. Check a town shows the three
    components and a flag child.
-3. Play near Meaux: civilians, cars, a checkpoint and the patrol should appear (`[AROR TOWN]` log lines). Kill three
+3. In play, look for `[AROR] Garrison post site:` lines (or the "no room" warning) and check a town has the tent with
+   the faction flag in front and defenders around it. Open the map: new markers, bold key-site names, post pennants.
+4. Play near Meaux: civilians, cars parked along the road, a checkpoint and the patrol should appear (`[AROR TOWN]` log lines). Kill three
    defenders: expect `response triggered`, the alert headline, then `[AROR] Town wave` lines 30–90 s later and a
    column arriving from a road 1–2 km away. Check waves 2 and 3 come from different roads and wave 3 logs two
    columns. With Readiness 4+ (debug), expect `helicopter assault requested` once a column reaches the town. Kill
    everything: expect `response repelled` and an "X HOLDS" headline. Run off 1.5 km instead: expect `abandoned`.
-4. Clear the post and take the flag: expect the headline and a support jump, and no QRF.
-5. Watch server FPS with a wave, a QRF and town life at once.
+5. Clear the post and take the flag: expect the headline and a support jump, and no QRF.
+6. Watch server FPS with a wave, a QRF and town life at once.
 
 Known gaps: the patrol has no speed cap (no `SetCruiseSpeed` call); checkpoint placement is a road-snap estimate;
 civilians do not react to combat beyond native AI; kill progress and town life are not saved.
