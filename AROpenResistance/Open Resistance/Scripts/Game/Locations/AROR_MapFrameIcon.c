@@ -1,12 +1,12 @@
-//! Map badge for a location, drawn on a CanvasWidget (no textures), in the design system's plate style: a dark
-//! plate, a faction-coloured edge and a faction-coloured stroke glyph for the location type. The plate's shape says
-//! friend or foe the way the design system's glyphs do: a square for the Resistance (ours), a diamond for the enemy
-//! (Occupiers or Invaders), a circle for anyone else (neutral). A dark keyline outside keeps it readable on land
-//! and sea alike.
+//! Map badge for a location, drawn on a CanvasWidget (no textures). Kept simple so it reads at a glance on the
+//! busy terrain map: a solid shape in the holder's faction colour inside a dark keyline, and one thick symbol in
+//! white (or near-black on a light colour) for the location type. Towns and cities carry no symbol: the map prints
+//! their names. The shape says friend or foe the way the design system's glyphs do: a square for the Resistance
+//! (ours), a diamond for the enemy (Occupiers or Invaders), a circle for anyone else (neutral).
 class AROR_MapFrameIcon
 {
 	protected static const float GRID = 24;		//!< Glyph design grid
-	protected static const float GLYPH_LIGHTEN = 0.2;	//!< Glyph is the faction colour mixed this far towards white
+	protected static const float LIGHT_FILL = 0.62;	//!< Fills brighter than this (luma) take a dark symbol
 
 	//------------------------------------------------------------------------------------------------
 	//! size: canvas pixels (square); pixel: canvas pixels per reference pixel (line widths).
@@ -23,7 +23,6 @@ class AROR_MapFrameIcon
 		body.m_iColor = FillColor(stroke).PackToInt();
 		body.m_Vertices = frame;
 		commands.Insert(body);
-		commands.Insert(Line(frame, stroke.PackToInt(), BORDER_WIDTH * pixel, true));
 
 		int glyph = GlyphColor(stroke).PackToInt();
 		array<ref array<float>> strokes = {};
@@ -46,7 +45,7 @@ class AROR_MapFrameIcon
 		array<float> pole = {size * 0.3, size * 0.92, size * 0.3, size * 0.08};
 		array<float> pennant = {size * 0.3, size * 0.1, size * 0.9, size * 0.3, size * 0.3, size * 0.5};
 		commands.Insert(Line(pole, KeylineColor().PackToInt(), (GLYPH_WIDTH + 2) * pixel, false));
-		commands.Insert(Line(pennant, KeylineColor().PackToInt(), (BORDER_WIDTH + 2) * pixel, true));
+		commands.Insert(Line(pennant, KeylineColor().PackToInt(), (PENNANT_EDGE + 2) * pixel, true));
 		if (!hollow)
 		{
 			PolygonDrawCommand cloth = new PolygonDrawCommand();
@@ -54,7 +53,7 @@ class AROR_MapFrameIcon
 			cloth.m_Vertices = pennant;
 			commands.Insert(cloth);
 		}
-		commands.Insert(Line(pennant, stroke.PackToInt(), BORDER_WIDTH * pixel, true));
+		commands.Insert(Line(pennant, stroke.PackToInt(), PENNANT_EDGE * pixel, true));
 		commands.Insert(Line(pole, stroke.PackToInt(), GLYPH_WIDTH * pixel, false));
 		canvas.SetDrawCommands(commands);
 	}
@@ -62,9 +61,10 @@ class AROR_MapFrameIcon
 	//------------------------------------------------------------------------------------------------
 	// Shared geometry: HICOMM's map draws the same symbols with its own canvas helpers
 	//------------------------------------------------------------------------------------------------
-	static const float KEYLINE_WIDTH = 5;	//!< Reference pixels; drawn under the border, so half shows outside
-	static const float BORDER_WIDTH = 2;
-	static const float GLYPH_WIDTH = 2.2;
+	static const float KEYLINE_WIDTH = 4;	//!< Reference pixels; drawn under the fill, so half shows outside
+	static const float BORDER_WIDTH = 0;	//!< No separate border: the fill is the faction colour
+	static const float GLYPH_WIDTH = 3.2;
+	protected static const float PENNANT_EDGE = 2;
 
 	//------------------------------------------------------------------------------------------------
 	//! The frame for an owner, as x, y pairs in the square at (left, top) of the given size
@@ -91,9 +91,9 @@ class AROR_MapFrameIcon
 	{
 		float box = size * 0.5;
 		if (owner == AROR_EFactionRole.RESISTANCE)
-			box = size * 0.52;
+			box = size * 0.56;
 		else if (owner == AROR_EFactionRole.OCCUPIERS || owner == AROR_EFactionRole.INVADERS)
-			box = size * 0.46;
+			box = size * 0.48;
 
 		float scale = box / GRID;
 		float offsetX = left + (size - box) * 0.5;
@@ -121,17 +121,20 @@ class AROR_MapFrameIcon
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The design system's plate inside the frame (the faction colour lives on the edge and the glyph)
+	//! Solid faction colour
 	static Color FillColor(notnull Color stroke)
 	{
-		return Color.FromRGBA(8, 11, 9, 235);
+		return new Color(stroke.R(), stroke.G(), stroke.B(), 1);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The glyph: the faction colour a little lighter, so it reads on the dark plate
+	//! The symbol: white on a dark or saturated fill, near-black on a light one (rebel green, neutral grey)
 	static Color GlyphColor(notnull Color stroke)
 	{
-		return new Color(Math.Lerp(stroke.R(), 1, GLYPH_LIGHTEN), Math.Lerp(stroke.G(), 1, GLYPH_LIGHTEN), Math.Lerp(stroke.B(), 1, GLYPH_LIGHTEN), 1);
+		float luma = 0.299 * stroke.R() + 0.587 * stroke.G() + 0.114 * stroke.B();
+		if (luma > LIGHT_FILL)
+			return Color.FromRGBA(6, 17, 10, 255);
+		return Color.FromRGBA(255, 255, 255, 255);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -147,14 +150,8 @@ class AROR_MapFrameIcon
 		switch (type)
 		{
 			case AROR_ELocationType.CITY:
-				strokes.Insert(Points("3 22 3 11 9 11 9 22"));
-				strokes.Insert(Points("9 22 9 6 15 6 15 22"));
-				strokes.Insert(Points("15 22 15 2 21 2 21 22"));
-				strokes.Insert(Points("2 22 22 22"));
-				return;
 			case AROR_ELocationType.TOWN:
-				strokes.Insert(Points("4 22 4 11 12 4 20 11 20 22 4 22"));
-				strokes.Insert(Points("10 22 10 16 14 16 14 22"));
+				// Plain shape: the map prints settlement names, and many small symbols only add noise
 				return;
 			case AROR_ELocationType.HQ:
 				strokes.Insert(Points("6 22 6 2"));

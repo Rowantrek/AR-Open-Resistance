@@ -1958,15 +1958,15 @@ class AROR_HiCommApp
 
 		array<float> frame = {};
 		AROR_MapFrameIcon.FrameOutline(owner, left, top, size, frame);
-		m_Map.DrawPolygon(frame, AROR_MapFrameIcon.FillColor(stroke));
 		m_Map.DrawPolyline(frame, AROR_MapFrameIcon.KeylineColor(), AROR_MapFrameIcon.KEYLINE_WIDTH * lineScale, true);
-		m_Map.DrawPolyline(frame, stroke, AROR_MapFrameIcon.BORDER_WIDTH * lineScale, true);
+		m_Map.DrawPolygon(frame, AROR_MapFrameIcon.FillColor(stroke));
 
+		Color glyph = AROR_MapFrameIcon.GlyphColor(stroke);
 		array<ref array<float>> strokes = {};
 		AROR_MapFrameIcon.GlyphStrokes(type, owner, left, top, size, strokes);
 		foreach (array<float> strokeLine : strokes)
 		{
-			m_Map.DrawPolyline(strokeLine, stroke, AROR_MapFrameIcon.GLYPH_WIDTH * lineScale, false);
+			m_Map.DrawPolyline(strokeLine, glyph, AROR_MapFrameIcon.GLYPH_WIDTH * lineScale, false);
 		}
 	}
 

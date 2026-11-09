@@ -431,8 +431,8 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The garrison post's flag: on the flag itself when zoomed in far enough to tell it from the town marker,
-	//! otherwise tucked against the marker's top-right corner. Redrawn when the holder or taken state changes.
+	//! The garrison post's flag, on the flag itself, shown once zoomed in far enough to tell it from the town marker.
+	//! Redrawn when the holder or taken state changes.
 	protected void UpdatePostMarker(int index, notnull SCR_MapEntity mapEntity, notnull WorkspaceWidget workspace, float iconX, float iconY)
 	{
 		Widget widget = m_aPostWidgets[index];
@@ -445,7 +445,6 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 			widget.SetVisible(false);
 			return;
 		}
-		widget.SetVisible(true);
 		int state = location.GetControllingRole() * 2;
 		if (post.IsPostBroken())
 			state++;
@@ -467,21 +466,16 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 			}
 		}
 
+		// Only once zoomed in far enough that the flag stands clear of the town marker: zoomed out it is clutter
 		float size = IconSize(location);
-		float x = iconX + size * 0.45;
-		float y = iconY - size * 0.2;
 		vector flag = post.GetDefenceCenter();
 		int flagX, flagY;
 		mapEntity.WorldToScreen(flag[0], flag[2], flagX, flagY, true);
 		float screenFlagX = workspace.DPIUnscale(flagX);
 		float screenFlagY = workspace.DPIUnscale(flagY);
 		float apart = Math.Sqrt((screenFlagX - iconX) * (screenFlagX - iconX) + (screenFlagY - iconY) * (screenFlagY - iconY));
-		if (apart > size * 0.5 + m_fPostMarkerSize)
-		{
-			x = screenFlagX;
-			y = screenFlagY;
-		}
-		FrameSlot.SetPos(widget, x, y);
+		widget.SetVisible(apart > size * 0.5 + m_fPostMarkerSize * 0.5);
+		FrameSlot.SetPos(widget, screenFlagX, screenFlagY);
 	}
 
 	//------------------------------------------------------------------------------------------------
