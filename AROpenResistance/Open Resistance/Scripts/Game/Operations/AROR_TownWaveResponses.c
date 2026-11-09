@@ -171,6 +171,39 @@ modded class AROR_OperationExecutorComponent
 		return false;
 	}
 
+	//! The soldiers an operation fielded (infantry and vehicle crews), so a town's lockdown counts only the
+	//! reinforcements that arrived and never the defenders who were already there
+	void GetOperationMembers_S(string operationId, notnull array<IEntity> members)
+	{
+		if (!Replication.IsServer() || operationId.IsEmpty())
+			return;
+		foreach (AROR_OperationForce force : m_aForces)
+		{
+			if (!force || force.m_sOperationId != operationId)
+				continue;
+			AddGroupMembers(force.m_Group, members);
+			AROR_GroundOperationForce ground = AROR_GroundOperationForce.Cast(force);
+			if (ground)
+				AddGroupMembers(ground.m_CrewGroup, members);
+		}
+	}
+
+	protected static void AddGroupMembers(SCR_AIGroup group, notnull array<IEntity> members)
+	{
+		if (!group)
+			return;
+		array<AIAgent> agents = {};
+		group.GetAgents(agents);
+		foreach (AIAgent agent : agents)
+		{
+			if (!agent)
+				continue;
+			IEntity soldier = agent.GetControlledEntity();
+			if (soldier && !members.Contains(soldier))
+				members.Insert(soldier);
+		}
+	}
+
 	//! Whether a staging point found earlier can still launch the next wave
 	bool IsWaveStagingSafe_S(vector staging, vector target)
 	{

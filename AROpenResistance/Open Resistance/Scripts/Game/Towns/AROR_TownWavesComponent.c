@@ -175,6 +175,8 @@ class AROR_TownWavesComponent : ScriptComponent
 	// Lockdown scan scratch
 	protected int m_iScanEnemies;
 	protected int m_iScanFriendlies;
+	protected ref array<IEntity> m_aScanReinforcements = {};	//!< This response's own soldiers, refreshed each scan
+	protected bool m_bCaptureStarted;	//!< The flag was taken during this response: the lockdown runs
 	protected AROR_FactionRolesComponent m_ScanRoles;
 
 	//------------------------------------------------------------------------------------------------
@@ -241,6 +243,9 @@ class AROR_TownWavesComponent : ScriptComponent
 			return;
 		operations.RecordTownEscalation_S(holder, 0, 0, location.GetId(), "post_taken", true);
 		AROR_TownWavesComponent town = AROR_TownWavesComponent.Cast(location.GetOwner().FindComponent(AROR_TownWavesComponent));
+		// Taking the flag starts the town capture: during a running response the lockdown begins now
+		if (town && town.m_iPhase != PHASE_IDLE)
+			town.BeginCapture_S();
 		if (town && town.m_iPhase == PHASE_IDLE && town.m_iClock >= town.m_iRearmAt)
 		{
 			town.m_eRole = holder;
@@ -390,6 +395,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		m_iNextContestCheck = m_iClock;
 		m_iNextContestLog = m_iClock + CONTEST_LOG_SECONDS;
 		m_fSupportAtContact = ResistanceSupport();
+		bool flagTaken = m_bPostTakenTrigger;
 		if (m_bPostTakenTrigger)
 			m_fSupportAtContact = m_fPostSupportBefore;
 		m_bPostTakenTrigger = false;
@@ -400,12 +406,10 @@ class AROR_TownWavesComponent : ScriptComponent
 			m_iReadinessAtStart = operations.GetReadinessPressure(m_eRole);
 			Print(string.Format("[AROR BALANCE] town_response_start town=%1 role=%2 readinessLevel=%3 crackdownLevel=%4 readiness=%5 crackdown=%6 players=%7 defenders=%8 kills=%9", m_Location.GetId(), m_eRole, operations.GetReadinessLevel(m_eRole), operations.GetCrackdownLevel(m_eRole), m_iReadinessAtStart, m_iCrackdownAtStart, ResistancePlayersNear(), m_aSeen.Count(), m_iKills), LogLevel.NORMAL);
 		}
-		m_bContestActive = true;
-		m_iContestSeconds = 0;
-		m_iContestLimit = m_iLockdownSeconds;
-		m_iContestEnemies = 0;
-		m_iContestFriendlies = 0;
-		Replication.BumpMe();
+		// The lockdown (town capture) only starts once the flag is taken; a response brought by kills waits for it
+		m_bCaptureStarted = false;
+		if (flagTaken)
+			BeginCapture_S();
 		Print(string.Format("[AROR TOWN] %1 response triggered: %2 player kills of %3 defenders seen; first wave in %4s", m_Location.GetId(), m_iKills, m_aSeen.Count(), m_iNextWaveAt - m_iClock), LogLevel.NORMAL);
 		// The contact report: the garrison names who hit it before the response is on its way
 		Headline("CONTACT REPORT  ·  %1 / Garrison engaged by " + ContactNames() + ". Reinforcements requested", AROR_UIColors.DANGER);
@@ -573,6 +577,9 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected bool UpdateContest()
 	{
 		CountContest();
+		// Before the flag is taken there is no town capture to hold: the scan only watches the army's soldiers
+		if (!m_bCaptureStarted)
+			return false;
 		m_bContestLosing = m_iScanEnemies > m_iScanFriendlies * m_fResistanceWeight;
 		if (m_bContestLosing)
 			m_iContestSeconds = Math.Min(m_iContestSeconds + CONTEST_CHECK_SECONDS, m_iLockdownSeconds);
@@ -594,16 +601,41 @@ class AROR_TownWavesComponent : ScriptComponent
 		return true;
 	}
 
-	//! Living fighters of the responding army and of the Resistance within the lockdown radius. The army's fighters
-	//! (wave troops included) are watched too, so the players' kills among them count towards escalation.
+	//! Living fighters within the lockdown radius: the Resistance's, and of the army only the response's own
+	//! reinforcements (wave and helicopter troops). The garrison, checkpoints and patrol already in town when the
+	//! capture began never count. Every army soldier in the radius is still watched, so kills escalate.
 	protected void CountContest()
 	{
 		m_iScanEnemies = 0;
 		m_iScanFriendlies = 0;
+		m_aScanReinforcements.Clear();
 		m_ScanRoles = AROR_FactionRolesComponent.GetInstance();
 		if (!m_ScanRoles)
 			return;
+		AROR_OperationExecutorComponent executor = Executor();
+		if (executor)
+		{
+			foreach (string id : m_aOperationIds)
+				executor.GetOperationMembers_S(id, m_aScanReinforcements);
+		}
 		GetGame().GetWorld().QueryEntitiesBySphere(m_Location.GetCenter(), ContestRadius(), OnContestEntity, null, EQueryEntitiesFlags.DYNAMIC);
+	}
+
+	//! Server: the flag is taken: the town capture (lockdown) starts and nearby players see the indicator
+	void BeginCapture_S()
+	{
+		if (!Replication.IsServer() || m_bCaptureStarted)
+			return;
+		m_bCaptureStarted = true;
+		m_bContestActive = true;
+		m_bContestLosing = false;
+		m_iContestSeconds = 0;
+		m_iContestLimit = m_iLockdownSeconds;
+		m_iContestEnemies = 0;
+		m_iContestFriendlies = 0;
+		m_iNextContestCheck = m_iClock;
+		Replication.BumpMe();
+		Print(string.Format("[AROR TOWN] %1 capture started: lockdown counts only arriving reinforcements", m_Location.GetId()), LogLevel.NORMAL);
 	}
 
 	//! Sphere query callback (public, as engine callbacks are in the base game); true keeps the query going
@@ -624,7 +656,8 @@ class AROR_TownWavesComponent : ScriptComponent
 			m_iScanFriendlies++;
 		else if (role == m_eRole)
 		{
-			m_iScanEnemies++;
+			if (m_aScanReinforcements.Contains(character))
+				m_iScanEnemies++;
 			Watch(character);
 		}
 		return true;
@@ -943,6 +976,7 @@ class AROR_TownWavesComponent : ScriptComponent
 		m_iAxisIndex = 0;
 		m_iStagingFailures = 0;
 		m_bAirRequested = false;
+		m_bCaptureStarted = false;
 		m_iNextAirAttempt = 0;
 		m_aOperationIds.Clear();
 		m_aOperationWaves.Clear();
