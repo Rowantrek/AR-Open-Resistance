@@ -24,10 +24,20 @@ class AROR_InvaderCampaignPolicy
 		int advantage = Math.Round(25 * (attack - defence) / commitment);
 		return Math.Clamp(50 + advantage + Math.Clamp(attackIndustry, 0, 15) - Math.Clamp(defenceIndustry, 0, 15), 15, 85);
 	}
-	static int Cost(AROR_ELocationType type, int baseline)
+	//! towns: towns and cities are targets too (a scenario's town occupation); otherwise they cost nothing and are
+	//! never fought over
+	static int Cost(AROR_ELocationType type, int baseline, bool towns = false)
 	{
 		switch (type)
 		{
+			case AROR_ELocationType.TOWN:
+				if (towns)
+					return Math.Round(baseline * 0.6);
+				return 0;
+			case AROR_ELocationType.CITY:
+				if (towns)
+					return Math.Round(baseline * 1.0);
+				return 0;
 			case AROR_ELocationType.OUTPOST: return Math.Round(baseline * 0.7);
 			case AROR_ELocationType.MILITARY_BASE: return Math.Round(baseline * 1.2);
 			case AROR_ELocationType.RESOURCES: return Math.Round(baseline * 0.9);

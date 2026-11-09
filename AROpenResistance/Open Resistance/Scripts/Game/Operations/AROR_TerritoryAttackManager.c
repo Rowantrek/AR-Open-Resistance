@@ -124,8 +124,9 @@ modded class AROR_OperationManagerComponent
 
 	//! Trusted server call shared by both armies' attack policies: check the launch site and funding, schedule the
 	//! attack and freeze its metrics. Returns the operation id (an existing one when the same attack is already
-	//! outstanding), or empty with the reason in GetAttackFailure().
-	string LaunchTerritoryAttack_S(AROR_EFactionRole role, string locationId)
+	//! outstanding), or empty with the reason in GetAttackFailure(). minimumTier: an attack order sized to its target
+	//! (the Invaders' push) asks for at least this tier; otherwise the role's Crackdown level sets it.
+	string LaunchTerritoryAttack_S(AROR_EFactionRole role, string locationId, int minimumTier = 0)
 	{
 		m_sAttackFailure = string.Empty;
 		if (!IsReady() || !IsEnemyRole(role))
@@ -154,7 +155,7 @@ modded class AROR_OperationManagerComponent
 			m_sAttackFailure = string.Format("no safe launch site for role %1 against %2", role, locationId);
 			return string.Empty;
 		}
-		int tier = GetCrackdownLevel(role);
+		int tier = Math.Clamp(Math.Max(GetCrackdownLevel(role), minimumTier), 1, 5);
 		if (m_bQRFStrategicEconomy && !executor.CanFundQRFThreat_S(role, tier, false, locationId))
 		{
 			m_sAttackFailure = string.Format("role %1 cannot fund a tier %2 attack on %3", role, tier, locationId);

@@ -99,6 +99,34 @@ Town fighting moves the army's two scales directly (`RecordTownEscalation_S`):
   cools Crackdown by 5 and Readiness pressure by 2 per minute (Readiness never below the starting level). Crackdown
   cooling was off in Chicken before; Readiness cooling is new (`m_iReadinessDecay`, off by default elsewhere).
 
+## Invader attack orders and town occupation
+
+The Invaders (USSR) now take towns as well as military sites (Chicken: `m_bOccupyTowns`, `m_bAttackOrders` on the
+Invader campaign):
+
+- Their periodic push (every 15 minutes, on the southernmost target within reach of their front) includes towns and
+  cities. Far from players the battle stays simulated and a win occupies the town through support (60% Invader
+  support, which flips control).
+- Near players or an active garrison, instead of waiting, they issue an **attack order**: a physical attack launched
+  from an Invader base, sized to take the target (at least one tier above its garrison level, a city one more, never
+  below their Crackdown level). Resistance-held targets always get one.
+- The attack wins by holding the force advantage on the objective (defenders count double): 60 s for a military site
+  (AI recapture), 3 minutes for a town (occupation contest, only while the attack order is out, so a passing patrol
+  never flips a town). Players defending a Resistance town see "TERRITORY UNDER ATTACK"; a lost town reads
+  "X LOST / USSR forces have occupied the town", a town taken from the Occupiers "X OCCUPIED".
+- An occupied town gets the Invaders' garrison post (USSR tent and flag), checkpoints and patrols, and their wave
+  recipes when players attack it. A town fighting off a garrison response is not attacked until that ends.
+- Logged as `[AROR BALANCE] invader_attack_order` and `town_occupied`.
+
+## Vehicle presets
+
+Troop transports (the motorized profiles) now request `MOTOR_TRUCK`, which every enemy preset fills with plain
+transport trucks, following Rowan's FORECON preset (a truck listed once per job). Before, they drew from
+`SUPPLY_TRUCK`, which also holds arsenal, ammo, repair, command and engineer trucks, so a wave could arrive in an
+arsenal truck. The USSR and civilian fuel tankers were typed `TANK` and are now `FUEL_TRUCK`. With WCS+RHS, the
+armies use Rowan's presets in `OpenResistanceWCSRHSCompat` (WCS vehicles: KBA-105 BTR, NSV and Kornet UAZ,
+Ural ZU-23, Mi-24, Ka-52, Strykers, JLTVs, AH-6); the RHS-only presets carry no vehicles of their own.
+
 ## Balance logging
 
 Every response writes `[AROR BALANCE]` lines to the console log: `town_response_start`, `town_wave`,

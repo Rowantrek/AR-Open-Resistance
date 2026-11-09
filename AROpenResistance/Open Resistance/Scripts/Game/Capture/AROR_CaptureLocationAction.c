@@ -37,6 +37,27 @@ class AROR_CaptureLocationAction : ScriptedUserAction
 		return location.SetControllingRole_S(role);
 	}
 
+	//! An AI army occupies a town or city (an Invader attack order or simulated battle): towns follow support, so the
+	//! army's support there is raised to at least the given share, which flips control through the normal rule. The
+	//! garrison, town life, flag and building follow the new holder on their own. True when the army now holds it.
+	static bool OccupyTown_S(AROR_LocationComponent location, AROR_EFactionRole role, float support)
+	{
+		if (!Replication.IsServer() || !location || !AROR_GarrisonPolicy.IsEnemyRole(role) || location.GetControllingRole() == role || !location.CanBeTakenBy(role))
+			return false;
+		AROR_ELocationType type = location.GetLocationType();
+		if (type != AROR_ELocationType.TOWN && type != AROR_ELocationType.CITY)
+			return false;
+		AROR_SettlementComponent settlement = AROR_SettlementComponent.Cast(location.GetOwner().FindComponent(AROR_SettlementComponent));
+		if (!settlement)
+			return false;
+		AROR_EFactionRole previous = location.GetControllingRole();
+		float before = settlement.GetSupport(role);
+		settlement.SetSupport_S(role, Math.Max(before, support));
+		bool occupied = location.GetControllingRole() == role;
+		Print(string.Format("[AROR BALANCE] town_occupied town=%1 role=%2 previous=%3 support=%4->%5 occupied=%6", location.GetId(), role, previous, before, settlement.GetSupport(role), occupied), LogLevel.NORMAL);
+		return occupied;
+	}
+
 	//! A town or city's garrison post, if the location has one (see AROR_GarrisonComponent.IsSettlementPost)
 	static AROR_GarrisonComponent GetSettlementPost(AROR_LocationComponent location)
 	{

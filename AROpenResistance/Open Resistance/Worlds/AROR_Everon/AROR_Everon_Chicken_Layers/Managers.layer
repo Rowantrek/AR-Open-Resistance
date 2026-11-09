@@ -29,6 +29,8 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
  components {
   AROR_InvaderCampaignComponent "{9AB2CB63D7214001}" {
    m_bInvaderCampaign 1
+   m_bOccupyTowns 1
+   m_bAttackOrders 1
   }
   AROR_RegionalSupportComponent "{3E3586CD181A4E9A}" {
    m_bRegionalSupport 1

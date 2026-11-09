@@ -1,4 +1,4 @@
-[ComponentEditorProps(category: "OpenResistance/Commanders", description: "Optional resource-funded Invader push north from the support corridor: distant US/USSR battles are simulated, Resistance-held sites get a physical attack. No second bank.")]
+[ComponentEditorProps(category: "OpenResistance/Commanders", description: "Optional resource-funded Invader push north from the support corridor: distant US/USSR battles are simulated; Resistance-held sites, and with attack orders any target near players, get a physical attack order strong enough to take them. Towns can be occupied. No second bank.")]
 class AROR_InvaderCampaignComponentClass : SCR_BaseGameModeComponentClass {}
 
 class AROR_InvaderCampaignComponent : SCR_BaseGameModeComponent
@@ -29,6 +29,12 @@ class AROR_InvaderCampaignComponent : SCR_BaseGameModeComponent
 	protected int m_iFundingPerReadiness;
 	[Attribute("30", desc: "Additional support per crackdown percentage point, paid only by the existing Income system.", params: "0 10000 1")]
 	protected int m_iFundingPerCrackdown;
+	[Attribute("0", desc: "Towns and cities are push targets too: the Invaders occupy them (support raised to the occupation share, which flips control), simulated when distant or by an attack order", category: "Attack orders")]
+	protected bool m_bOccupyTowns;
+	[Attribute("0", desc: "When the push's target is near players or an active garrison, issue a physical attack order against it (as a player would attack) instead of waiting; Resistance-held targets always get one", category: "Attack orders")]
+	protected bool m_bAttackOrders;
+	[Attribute("60", desc: "Invader support share in a town they occupy, percent (above 50 flips control)", params: "51 100 1", category: "Attack orders")]
+	protected float m_fOccupationSupport;
 
 	protected static AROR_InvaderCampaignComponent s_Instance;
 	protected AROR_CommanderManagerComponent m_Commanders;
@@ -169,13 +175,7 @@ class AROR_InvaderCampaignComponent : SCR_BaseGameModeComponent
 		if (!target)
 			return string.Empty;
 		if (target.GetControllingRole() == AROR_EFactionRole.RESISTANCE)
-		{
-			string id = m_Operations.LaunchTerritoryAttack_S(AROR_EFactionRole.INVADERS, target.GetId());
-			if (id.IsEmpty())
-				return "attack on " + target.GetId() + ": " + m_Operations.GetAttackFailure();
-			Print(string.Format("[AROR INVADER] push: physical attack %1 on Resistance-held %2", id, target.GetId()), LogLevel.NORMAL);
-			return string.Empty;
-		}
+			return Order_S(target);
 		// Balance: at their goal share the Invaders consolidate instead of taking more Occupier ground
 		if (ShareOverGoal() >= 0)
 		{
@@ -183,9 +183,50 @@ class AROR_InvaderCampaignComponent : SCR_BaseGameModeComponent
 			return string.Empty;
 		}
 		if (!IsDistant(target))
+		{
+			// Where it can be seen, the push is fought for real: an attack order strong enough to take the target
+			if (m_bAttackOrders)
+				return Order_S(target);
 			return target.GetId() + " has players, a garrison or an operation nearby";
+		}
 		ResolveBattle_S(AROR_EFactionRole.INVADERS, target);
 		return string.Empty;
+	}
+
+	//! A physical attack order on the push's target, the way a player squad would go at it: launched from an Invader
+	//! base, sized to beat the defence (AttackTier), and won by holding the force advantage on the objective
+	//! (AROR_RecaptureComponent: the flag contest for military sites, the occupation contest for towns).
+	//! Returns why it must wait, or empty when the order is out.
+	protected string Order_S(AROR_LocationComponent target)
+	{
+		// A town already in a garrison response is the players' fight: wait for it to end
+		AROR_TownWavesComponent waves = AROR_TownWavesComponent.Cast(target.GetOwner().FindComponent(AROR_TownWavesComponent));
+		if (waves && waves.IsResponding())
+			return target.GetId() + " is fighting off a town response";
+		int tier = AttackTier(target);
+		string id = m_Operations.LaunchTerritoryAttack_S(AROR_EFactionRole.INVADERS, target.GetId(), tier);
+		if (id.IsEmpty())
+			return "attack on " + target.GetId() + ": " + m_Operations.GetAttackFailure();
+		Print(string.Format("[AROR INVADER] attack order %1 on %2 (held by %3), tier %4", id, target.GetId(), target.GetControllingRole(), tier), LogLevel.NORMAL);
+		Print(string.Format("[AROR BALANCE] invader_attack_order target=%1 type=%2 holder=%3 tier=%4 operation=%5", target.GetId(), target.GetLocationType(), target.GetControllingRole(), tier, id), LogLevel.NORMAL);
+		return string.Empty;
+	}
+
+	//! Strong enough to take it: one tier above the target's garrison level (a town's post level from its holder's
+	//! Crackdown when not yet raised; a city one more), never below the Invaders' own Crackdown level
+	protected int AttackTier(AROR_LocationComponent target)
+	{
+		int tier = m_Operations.GetCrackdownLevel(AROR_EFactionRole.INVADERS);
+		int level;
+		AROR_GarrisonComponent garrison = AROR_GarrisonComponent.Cast(target.GetOwner().FindComponent(AROR_GarrisonComponent));
+		if (garrison)
+			level = garrison.GetLevel();
+		AROR_EFactionRole holder = target.GetControllingRole();
+		if (level <= 0 && garrison && garrison.IsSettlementPost() && AROR_GarrisonPolicy.IsEnemyRole(holder))
+			level = AROR_GarrisonPolicy.SettlementLevel(target.GetLocationType(), m_Operations.GetCrackdownLevel(holder));
+		if (holder == AROR_EFactionRole.RESISTANCE)
+			level = Math.Max(level, 2);	// Players and their recruits count double in the contest
+		return Math.Clamp(Math.Max(tier, level + 1), 1, 5);
 	}
 
 	//! Balance: while the Invaders hold more than their goal share of military sites (after losses elsewhere or a
@@ -220,7 +261,7 @@ class AROR_InvaderCampaignComponent : SCR_BaseGameModeComponent
 		m_Locations.GetLocations(locations);
 		foreach (AROR_LocationComponent location : locations)
 		{
-			if (location && !location.IsControlFixed() && AROR_InvaderCampaignPolicy.Cost(location.GetLocationType(), m_iBattleCost) > 0)
+			if (location && !location.IsControlFixed() && AROR_InvaderCampaignPolicy.Cost(location.GetLocationType(), m_iBattleCost, m_bOccupyTowns) > 0)
 				m_aSites.Insert(location);
 		}
 		m_aPlayers.Clear();
@@ -310,7 +351,7 @@ class AROR_InvaderCampaignComponent : SCR_BaseGameModeComponent
 		AROR_EFactionRole defender = target.GetControllingRole();
 		if (!AROR_GarrisonPolicy.IsEnemyRole(defender) || defender == attacker)
 			return;
-		int cost = AROR_InvaderCampaignPolicy.Cost(target.GetLocationType(), m_iBattleCost);
+		int cost = AROR_InvaderCampaignPolicy.Cost(target.GetLocationType(), m_iBattleCost, m_bOccupyTowns);
 		AROR_QRFFinance finance = m_Operations.GetQRFFinance();
 		if (!finance || finance.Available(attacker) < cost || !m_Economy.SpendFactionFunds_S(attacker, cost))
 			return;
@@ -319,8 +360,16 @@ class AROR_InvaderCampaignComponent : SCR_BaseGameModeComponent
 			defence = 0;
 		int chance = AROR_InvaderCampaignPolicy.BattleChance(cost, defence, Industry(attacker), Industry(defender));
 		bool captured;
+		AROR_ELocationType type = target.GetLocationType();
+		bool settlement = type == AROR_ELocationType.TOWN || type == AROR_ELocationType.CITY;
 		if (Math.RandomInt(0, 100) < chance)
-			captured = target.SetControllingRole_S(attacker);
+		{
+			// Towns follow support: the winner occupies them; military sites change hands directly
+			if (settlement)
+				captured = AROR_CaptureLocationAction.OccupyTown_S(target, attacker, m_fOccupationSupport);
+			else
+				captured = target.SetControllingRole_S(attacker);
+		}
 		Print(string.Format("[AROR INVADER] simulated target=%1 attacker=%2 attackCost=%3 defenceCost=%4 chance=%5 captured=%6", target.GetId(), attacker, cost, defence, chance, captured), LogLevel.NORMAL);
 	}
 
