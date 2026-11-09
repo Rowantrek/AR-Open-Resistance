@@ -12,7 +12,7 @@ class AROR_TownContestHud
 	protected static const float WIDTH = 460;
 	protected static const float HEIGHT = 34;
 	protected static const float BAR_HEIGHT = 5;
-	protected static const float TOP = 128;		//!< Below the compass and the headline banner
+	protected static const float TOP = 236;		//!< Clear of the headline banner (from 96, up to ~200 with two lines)
 	protected static const int FONT = 16;
 	protected static const float EDGE = 4;
 	protected static const float INSET = 12;
