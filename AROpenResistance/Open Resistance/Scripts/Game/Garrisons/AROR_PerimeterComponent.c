@@ -77,9 +77,10 @@ class AROR_PerimeterComponent : ScriptComponent
 				sideYaw = yaw + 90;
 				gated = false;
 			}
-			BuildLine(m_sWallPrefab, center + normal * m_fHalfExtent, along, m_fHalfExtent, m_fWallSpacing, sideYaw, gated, WALL_CLEARANCE);
+			// The front and back walls fill the corners; the side walls stop short of them
+			BuildLine(m_sWallPrefab, center + normal * m_fHalfExtent, along, m_fHalfExtent, m_fWallSpacing, sideYaw, gated, WALL_CLEARANCE, !gated);
 			if (!m_sWirePrefab.IsEmpty())
-				BuildLine(m_sWirePrefab, center + normal * wire, along, wire, m_fWireSpacing, sideYaw, gated, WALL_CLEARANCE);
+				BuildLine(m_sWirePrefab, center + normal * wire, along, wire, m_fWireSpacing, sideYaw, gated, WALL_CLEARANCE, !gated);
 			// Hedgehogs across each gate, just outside it: vehicles stop, infantry walk through
 			if (gated && m_fGateWidth > 0 && !m_sObstaclePrefab.IsEmpty())
 			{
@@ -106,18 +107,24 @@ class AROR_PerimeterComponent : ScriptComponent
 		Print(string.Format("[AROR GARRISON] %1 perimeter raised: %2 pieces, %3 skipped (trees, buildings, props, roads, water or slope)", id, m_aPieces.Count(), m_iSkipped), LogLevel.NORMAL);
 	}
 
-	//! Pieces along one side, from -half to +half of the along axis, leaving the gate gap in the middle
-	protected void BuildLine(ResourceName prefab, vector middle, vector along, float half, float spacing, float yaw, bool gated, float clearance)
+	//! Pieces along one side, from -half to +half of the along axis, leaving the gate gap in the middle;
+	//! skipEnds leaves out the two end pieces where another line already turns the corner
+	protected void BuildLine(ResourceName prefab, vector middle, vector along, float half, float spacing, float yaw, bool gated, float clearance, bool skipEnds = false)
 	{
 		if (prefab.IsEmpty() || spacing <= 0)
 			return;
-		int count = Math.Floor(half * 2 / spacing);
+		// Evenly spaced, no wider than spacing, so both ends land on the corners
+		float pieces = Math.Ceil(half * 2 / spacing);
+		int count = Math.Max(1, pieces);
+		float step = half * 2 / count;
 		for (int index = 0; index <= count; index++)
 		{
-			float offset = -half + index * spacing;
+			if (skipEnds && (index == 0 || index == count))
+				continue;
+			float offset = -half + index * step;
 			if (gated && m_fGateWidth > 0 && Math.AbsFloat(offset) < m_fGateWidth * 0.5)
 				continue;
-			Place(prefab, middle + along * offset, yaw, clearance, spacing * 0.5);
+			Place(prefab, middle + along * offset, yaw, clearance, step * 0.5);
 		}
 	}
 
@@ -145,7 +152,8 @@ class AROR_PerimeterComponent : ScriptComponent
 			}
 		}
 		point[1] = height;
-		if (!AROR_ForceSpawner.IsSpotClear(point, clearance, 2))
+		// Its own pieces never block the next one: neighbours along a wall may overlap the check box slightly
+		if (!AROR_ForceSpawner.IsSpotClear(point, clearance, 2, m_aPieces))
 		{
 			m_iSkipped++;
 			return;

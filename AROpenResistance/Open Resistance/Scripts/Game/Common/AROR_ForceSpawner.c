@@ -241,8 +241,8 @@ class AROR_ForceSpawner
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Nothing standing within halfWidth of the point up to height (terrain excluded)
-	static bool IsSpotClear(vector point, float halfWidth, float height)
+	//! Nothing standing within halfWidth of the point up to height (terrain excluded); exclude: entities to ignore
+	static bool IsSpotClear(vector point, float halfWidth, float height, array<IEntity> exclude = null)
 	{
 		BaseWorld world = GetGame().GetWorld();
 		TraceBox trace = new TraceBox();
@@ -251,6 +251,8 @@ class AROR_ForceSpawner
 		trace.Mins = Vector(-halfWidth, 0, -halfWidth);
 		trace.Maxs = Vector(halfWidth, height, halfWidth);
 		trace.Flags = TraceFlags.ENTS;
+		if (exclude)
+			trace.ExcludeArray = exclude;
 		return world.TraceMove(trace, null) >= 1;
 	}
 
