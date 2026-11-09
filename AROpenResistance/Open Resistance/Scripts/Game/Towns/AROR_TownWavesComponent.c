@@ -108,6 +108,7 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected static const int CONTEST_CHECK_SECONDS = 5;
 	protected static const int CONTEST_LOG_SECONDS = 30;
 	protected static const int MAX_WATCHES = 250;
+	protected static const float RETAKE_MAJORITY = 50;	//!< Settlement control majority; a retaking army is set just above it
 	protected static const float AXIS_PREFERENCE_DISTANCE = 1000;
 
 	protected static AROR_TownWavesComponent s_ActiveResponse;	//!< Server: the one town response running on the map
@@ -678,6 +679,17 @@ class AROR_TownWavesComponent : ScriptComponent
 		float support = ResistanceSupport();
 		if (settlement && support > m_fSupportAtContact)
 			settlement.SetSupport_S(AROR_EFactionRole.RESISTANCE, m_fSupportAtContact);
+		// Reverting the gains alone can leave the Resistance in control (support at contact may already have been
+		// high, or no army may hold a majority), and a post never re-forms in a Resistance town. The army that
+		// won the lockdown takes the town back outright.
+		if (settlement && AROR_GarrisonPolicy.IsEnemyRole(m_eRole) && m_Location.GetControllingRole() != m_eRole)
+		{
+			if (settlement.GetSupport(m_eRole) <= RETAKE_MAJORITY)
+				settlement.SetSupport_S(m_eRole, RETAKE_MAJORITY + 1);
+			// The Resistance flip cooldown must not keep a town the army has just won back
+			if (m_Location.GetControllingRole() != m_eRole && !m_Location.IsControlFixed())
+				m_Location.ForceControllingRole_S(m_eRole);
+		}
 		if (m_Garrison && m_Garrison.IsPostBroken())
 			m_Garrison.ReformSoon_S();
 		Print(string.Format("[AROR TOWN] %1 retaken by role %2: Resistance support %3 -> %4", m_Location.GetId(), m_eRole, support, ResistanceSupport()), LogLevel.NORMAL);
