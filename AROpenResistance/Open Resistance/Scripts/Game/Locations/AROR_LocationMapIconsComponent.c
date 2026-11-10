@@ -438,7 +438,7 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The garrison post's flag, on the flag itself, shown once zoomed in far enough to tell it from the town marker.
+	//! The garrison post's flag marker, at the flag itself, beside the town's own marker at the town centre.
 	//! Redrawn when the holder or taken state changes.
 	protected void UpdatePostMarker(int index, notnull SCR_MapEntity mapEntity, notnull WorkspaceWidget workspace, float iconX, float iconY)
 	{
@@ -473,20 +473,13 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 			}
 		}
 
-		// Only once zoomed in far enough that the flag stands clear of the town marker: zoomed out it is clutter
-		float size = IconSize(location);
+		// Always where the flag actually stands, so the town reads as two markers: the house for the town and the
+		// flag for the garrison post to take or defend
 		vector flag = post.GetDefenceCenter();
 		int flagX, flagY;
 		mapEntity.WorldToScreen(flag[0], flag[2], flagX, flagY, true);
 		float screenFlagX = workspace.DPIUnscale(flagX);
 		float screenFlagY = workspace.DPIUnscale(flagY);
-		float apart = Math.Sqrt((screenFlagX - iconX) * (screenFlagX - iconX) + (screenFlagY - iconY) * (screenFlagY - iconY));
-		// Zoomed out the town marker says enough; a flag beside every house is clutter
-		if (apart <= size * 0.5 + m_fPostMarkerSize * 0.5)
-		{
-			widget.SetVisible(false);
-			return;
-		}
 		widget.SetVisible(true);
 		widget.SetZOrder(3);
 		FrameSlot.SetPos(widget, screenFlagX, screenFlagY);
