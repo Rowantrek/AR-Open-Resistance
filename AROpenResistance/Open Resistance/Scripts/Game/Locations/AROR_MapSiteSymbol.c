@@ -36,12 +36,12 @@ class AROR_MapSiteSymbol
 
 		foreach (array<float> piece : placed)
 		{
-			commands.Insert(Polygon(piece, fill));
+			commands.Insert(FillCommand(piece, fill));
 		}
 
 		foreach (array<float> cut : cuts)
 		{
-			commands.Insert(Polygon(Place(cut, left, top, scale), dark));
+			commands.Insert(FillCommand(Place(cut, left, top, scale), dark));
 		}
 	}
 
@@ -52,95 +52,95 @@ class AROR_MapSiteSymbol
 		switch (type)
 		{
 			case AROR_ELocationType.MILITARY_BASE:	// Fort: wall, three merlons, arched gate
-				body.Insert(Shape("R 3 10 21 21"));
-				body.Insert(Shape("R 3 5 7.5 10.5"));
-				body.Insert(Shape("R 9.75 5 14.25 10.5"));
-				body.Insert(Shape("R 16.5 5 21 10.5"));
-				cuts.Insert(Shape("R 9.8 15.5 14.2 21"));
-				cuts.Insert(Shape("C 12 15.5 2.2"));
+				body.Insert(Piece("R 3 10 21 21"));
+				body.Insert(Piece("R 3 5 7.5 10.5"));
+				body.Insert(Piece("R 9.75 5 14.25 10.5"));
+				body.Insert(Piece("R 16.5 5 21 10.5"));
+				cuts.Insert(Piece("R 9.8 15.5 14.2 21"));
+				cuts.Insert(Piece("C 12 15.5 2.2"));
 				return;
 
 			case AROR_ELocationType.OUTPOST:		// Bunker: dome on a footing, firing slit
 				body.Insert(ArcPolygon(12, 15, 9.5, 180, 360, 16));
-				body.Insert(Shape("R 1.5 14.5 22.5 18.5"));
-				cuts.Insert(Shape("R 7 10 17 12.2"));
+				body.Insert(Piece("R 1.5 14.5 22.5 18.5"));
+				cuts.Insert(Piece("R 7 10 17 12.2"));
 				return;
 
 			case AROR_ELocationType.AIRPORT:		// Aircraft from above
-				body.Insert(Shape("R 10.6 3.5 13.4 20.5"));
-				body.Insert(Shape("C 12 3.6 1.4"));
-				body.Insert(Shape("P 2 13 10.6 8 10.6 12.5 2 15.5"));
-				body.Insert(Shape("P 13.4 8 22 13 22 15.5 13.4 12.5"));
-				body.Insert(Shape("P 6.5 21 10.6 18 10.6 20.5 6.5 22.5"));
-				body.Insert(Shape("P 13.4 18 17.5 21 17.5 22.5 13.4 20.5"));
+				body.Insert(Piece("R 10.6 3.5 13.4 20.5"));
+				body.Insert(Piece("C 12 3.6 1.4"));
+				body.Insert(Piece("P 2 13 10.6 8 10.6 12.5 2 15.5"));
+				body.Insert(Piece("P 13.4 8 22 13 22 15.5 13.4 12.5"));
+				body.Insert(Piece("P 6.5 21 10.6 18 10.6 20.5 6.5 22.5"));
+				body.Insert(Piece("P 13.4 18 17.5 21 17.5 22.5 13.4 20.5"));
 				return;
 
 			case AROR_ELocationType.HELIPORT:		// Helipad: disc with an H
-				body.Insert(Shape("C 12 12 10"));
-				cuts.Insert(Shape("R 7.5 6.5 10 17.5"));
-				cuts.Insert(Shape("R 14 6.5 16.5 17.5"));
-				cuts.Insert(Shape("R 10 10.8 14 13.2"));
+				body.Insert(Piece("C 12 12 10"));
+				cuts.Insert(Piece("R 7.5 6.5 10 17.5"));
+				cuts.Insert(Piece("R 14 6.5 16.5 17.5"));
+				cuts.Insert(Piece("R 10 10.8 14 13.2"));
 				return;
 
 			case AROR_ELocationType.PORT:			// Anchor: ring, stock, shank, curved arms with flukes
-				body.Insert(Shape("C 12 4.5 3.2"));
-				body.Insert(Shape("R 10.8 6.5 13.2 20.5"));
-				body.Insert(Shape("R 6.5 9 17.5 11.2"));
+				body.Insert(Piece("C 12 4.5 3.2"));
+				body.Insert(Piece("R 10.8 6.5 13.2 20.5"));
+				body.Insert(Piece("R 6.5 9 17.5 11.2"));
 				ArcBand(body, 12, 12, 9.5, 7.2, 20, 160, 8);
-				body.Insert(Shape("P 0.8 15 4.2 10.5 6.2 15.5"));
-				body.Insert(Shape("P 23.2 15 17.8 15.5 19.8 10.5"));
-				cuts.Insert(Shape("C 12 4.5 1.4"));
+				body.Insert(Piece("P 0.8 15 4.2 10.5 6.2 15.5"));
+				body.Insert(Piece("P 23.2 15 17.8 15.5 19.8 10.5"));
+				cuts.Insert(Piece("C 12 4.5 1.4"));
 				return;
 
 			case AROR_ELocationType.FACTORY:		// Sawtooth roof, chimney, windows
-				body.Insert(Shape("R 2 13 22 21"));
-				body.Insert(Shape("P 2 13 2 7.5 8 13"));
-				body.Insert(Shape("P 8 13 8 7.5 14 13"));
-				body.Insert(Shape("P 14 13 14 7.5 20 13"));
-				body.Insert(Shape("R 18.5 3 21.5 13"));
-				cuts.Insert(Shape("R 4.5 15.5 7.5 18.5"));
-				cuts.Insert(Shape("R 10.5 15.5 13.5 18.5"));
-				cuts.Insert(Shape("R 16.5 15.5 19.5 18.5"));
+				body.Insert(Piece("R 2 13 22 21"));
+				body.Insert(Piece("P 2 13 2 7.5 8 13"));
+				body.Insert(Piece("P 8 13 8 7.5 14 13"));
+				body.Insert(Piece("P 14 13 14 7.5 20 13"));
+				body.Insert(Piece("R 18.5 3 21.5 13"));
+				cuts.Insert(Piece("R 4.5 15.5 7.5 18.5"));
+				cuts.Insert(Piece("R 10.5 15.5 13.5 18.5"));
+				cuts.Insert(Piece("R 16.5 15.5 19.5 18.5"));
 				return;
 
 			case AROR_ELocationType.RESOURCES:		// Stacked supply crates
-				body.Insert(Shape("R 2 12.5 11.25 21"));
-				body.Insert(Shape("R 12.75 12.5 22 21"));
-				body.Insert(Shape("R 7.4 3.5 16.6 11"));
-				cuts.Insert(Shape("R 2 16.25 11.25 17.25"));
-				cuts.Insert(Shape("R 12.75 16.25 22 17.25"));
-				cuts.Insert(Shape("R 7.4 6.75 16.6 7.75"));
+				body.Insert(Piece("R 2 12.5 11.25 21"));
+				body.Insert(Piece("R 12.75 12.5 22 21"));
+				body.Insert(Piece("R 7.4 3.5 16.6 11"));
+				cuts.Insert(Piece("R 2 16.25 11.25 17.25"));
+				cuts.Insert(Piece("R 12.75 16.25 22 17.25"));
+				cuts.Insert(Piece("R 7.4 6.75 16.6 7.75"));
 				return;
 
 			case AROR_ELocationType.HQ:				// Flag on a pole
-				body.Insert(Shape("R 4.5 2 7 22"));
-				body.Insert(Shape("R 7 3 20 12"));
-				body.Insert(Shape("R 2.5 20.5 9 22.5"));
+				body.Insert(Piece("R 4.5 2 7 22"));
+				body.Insert(Piece("R 7 3 20 12"));
+				body.Insert(Piece("R 2.5 20.5 9 22.5"));
 				return;
 
 			case AROR_ELocationType.TOWN:			// House
-				body.Insert(Shape("P 2 11.5 12 3 22 11.5"));
-				body.Insert(Shape("R 4.5 11 19.5 21"));
-				cuts.Insert(Shape("R 10.5 15 13.5 21"));
+				body.Insert(Piece("P 2 11.5 12 3 22 11.5"));
+				body.Insert(Piece("R 4.5 11 19.5 21"));
+				cuts.Insert(Piece("R 10.5 15 13.5 21"));
 				return;
 
 			case AROR_ELocationType.CITY:			// Skyline of three blocks with windows
-				body.Insert(Shape("R 2 10 8.5 21"));
-				body.Insert(Shape("R 8.5 4 15.5 21"));
-				body.Insert(Shape("R 15.5 8 22 21"));
-				cuts.Insert(Shape("R 10.75 7 13.25 9.5"));
-				cuts.Insert(Shape("R 10.75 12 13.25 14.5"));
-				cuts.Insert(Shape("R 4 13 6.5 15.5"));
-				cuts.Insert(Shape("R 17.5 11 20 13.5"));
+				body.Insert(Piece("R 2 10 8.5 21"));
+				body.Insert(Piece("R 8.5 4 15.5 21"));
+				body.Insert(Piece("R 15.5 8 22 21"));
+				cuts.Insert(Piece("R 10.75 7 13.25 9.5"));
+				cuts.Insert(Piece("R 10.75 12 13.25 14.5"));
+				cuts.Insert(Piece("R 4 13 6.5 15.5"));
+				cuts.Insert(Piece("R 17.5 11 20 13.5"));
 				return;
 		}
 
-		body.Insert(Shape("C 12 12 6"));
+		body.Insert(Piece("C 12 12 6"));
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! "R left top right bottom", "C x y radius" or "P x y x y ..." (convex) to a polygon's x, y pairs
-	protected static array<float> Shape(string spec)
+	protected static array<float> Piece(string spec)
 	{
 		array<string> parts = {};
 		spec.Split(" ", parts, true);
@@ -223,7 +223,7 @@ class AROR_MapSiteSymbol
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected static PolygonDrawCommand Polygon(array<float> points, int color)
+	protected static PolygonDrawCommand FillCommand(array<float> points, int color)
 	{
 		PolygonDrawCommand polygon = new PolygonDrawCommand();
 		polygon.m_iColor = color;
