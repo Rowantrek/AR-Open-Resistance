@@ -197,6 +197,7 @@ on the Chicken game mode); prices are faction funds unless noted.
 |---|---|---|
 | AKS-74U / AK-74 (no facility needed) | 350 / 400 | a few minutes of one town; a new player starts with 600 |
 | RPG-7, PG-7VL / PG-7VM rockets (no facility) | 900, 150 / 200 | |
+| Early FIA kit (no facility): Sa-58P/V, SVD, UK-59, RPG-75, PM, RGD-5 | 150-2,200 | the FIA's own arsenal, available from the start |
 | Light car (UAZ, Imports, x1.5) | ~2,700 | 3 towns for 15 minutes; two in half an hour |
 | Armed car | ~7,200 | 3 towns for 35 minutes |
 | APC (Imports) | ~21,750 | 3 towns for ~2 hours, or a city |
