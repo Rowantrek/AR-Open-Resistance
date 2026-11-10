@@ -43,8 +43,8 @@ an occupying presence in the streets, and a fixed three-wave response when playe
 - Infantry stands in a tight ring (20 m half-size) around the flag, so in front of and beside the tent. Town ground is
   rarely flat, so posts always use the infantry-only fallback when the compound check fails.
 - Chicken's garrison personnel cap is 144 (was 96, which the extra town posts filled near Meaux).
-- **Map**: a pennant in the holding faction's colour always marks each post: on the flag once zoomed in, against the
-  town marker's top-right when zoomed out. Drawn as an outline once the post is taken.
+- **Map**: a pennant in the holding faction's colour marks each post where its flag actually stands, separate from the
+  town marker at the town centre. Drawn as an outline once the post is taken.
 - **Taking the flag** (all hostiles within ~60 m of it dead): +30% Resistance support in that town. This may flip the
   town through the normal support rule, but the flag never changes control itself. The post is then broken: nothing
   in its roster deploys again. It re-forms 45 minutes later, once nobody is near and the army still holds the town.
@@ -283,14 +283,13 @@ their own group, spawned away from players; convoys formed up along one road; ch
 
 ## Map markers
 
-Location markers are a solid badge in the holder's faction colour inside a dark keyline (a square for the
-Resistance, a circle for everyone else) with the base game's own map icon on top, tinted white or near-black for
-contrast: Conflict's building icons (`Barracks` for bases, `Fortification` for outposts, `HQ`, `Heli_Pad`,
-`VehicleWorkshop` for factories, `SupplyDepot` for resources) and the topographic `airport` and `anchorage`.
-Towns and cities are plain dots. Size follows importance: key sites (bases, outposts,
-airfields, heliports, ports, the HQ, strongholds) are largest and carry their name in bold capitals on a plate to
-their right; factories and resources are smaller; cities and towns smallest (the map prints their names). A post's
-flag marker appears on the flag once zoomed in. HICOMM's map shares the same badge drawing.
+Each location is drawn as a silhouette of its type, filled in the holder's faction colour inside a dark keyline, so
+the type reads at a glance (`AROR_MapSiteSymbol`): a fort for bases, a bunker for outposts, a plane for airfields, an
+H pad for heliports, an anchor for ports, a sawtooth roof for factories, crates for resources, a flag for the HQ, a
+house for towns and a skyline for cities. Size follows importance: key sites (bases, outposts, airfields, heliports,
+ports, the HQ, strongholds) are largest with their name in bold capitals on a plate; other sites carry a smaller
+plate. Towns and cities also show their garrison post's pennant where the flag stands. HICOMM's map shares the same
+drawing.
 
 ## To check in Workbench
 
