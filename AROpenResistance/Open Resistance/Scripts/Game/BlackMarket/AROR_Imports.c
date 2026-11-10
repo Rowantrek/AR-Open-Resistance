@@ -15,6 +15,7 @@ class AROR_Imports
 	//! Tab labels, in tab order. Index = AROR_ShopOffer.m_iCategory.
 	static void GetCategoryNames(notnull array<string> outNames)
 	{
+		outNames.Insert("Cars");
 		outNames.Insert("Light vehicles");
 		outNames.Insert("Trucks");
 		outNames.Insert("Armoured");
@@ -22,29 +23,31 @@ class AROR_Imports
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Tab for a preset vehicle type, or -1 for types Imports does not sell (static weapons, boats)
+	//! Tab for a preset vehicle type, or -1 for types Imports does not sell (static weapons, boats).
+	//! Cars are the unarmed ones; light vehicles are armed cars.
 	protected static int GetCategoryOf(int vehicleType)
 	{
 		switch (vehicleType)
 		{
 			case AROR_EVehicleType.MOTOR_CAR:
-			case AROR_EVehicleType.ARMED_CAR:
 			case AROR_EVehicleType.AMBULANCE:
 				return 0;
+			case AROR_EVehicleType.ARMED_CAR:
+				return 1;
 			case AROR_EVehicleType.MOTOR_TRUCK:
 			case AROR_EVehicleType.ARMED_TRUCK:
 			case AROR_EVehicleType.SUPPLY_TRUCK:
 			case AROR_EVehicleType.FUEL_TRUCK:
-				return 1;
+				return 2;
 			case AROR_EVehicleType.APC:
 			case AROR_EVehicleType.IFV:
 			case AROR_EVehicleType.TANK:
 			case AROR_EVehicleType.AA_VEHICLE:
 			case AROR_EVehicleType.RADAR_AA_VEHICLE:
-				return 2;
+				return 3;
 			case AROR_EVehicleType.HELI_TRANSPORT:
 			case AROR_EVehicleType.HELI_ATTACK:
-				return 3;
+				return 4;
 		}
 
 		return -1;

@@ -18,6 +18,9 @@ class AROR_HighCommandSquadType
 	[Attribute("6", desc: "Resistance manpower taken when the squad is raised", params: "0 inf")]
 	int m_iManpowerCost;
 
+	[Attribute("0", desc: "Mechanized: raised with a vehicle the leader picks from the Resistance garage, which is brought out at the HQ and boarded")]
+	bool m_bMechanized;
+
 	//------------------------------------------------------------------------------------------------
 	int GetSize()
 	{

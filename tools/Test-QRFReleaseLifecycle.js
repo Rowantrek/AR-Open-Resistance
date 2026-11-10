@@ -16,7 +16,7 @@ Object.defineProperty(String.prototype,'IsEmpty',{value(){return !this.length},c
 const states={PLANNED:0,SPAWNING:1,ACTIVE:2,SUCCEEDED:3,FAILED:4,CANCELLED:5};
 const env={Replication:{IsServer:()=>server},AROR_EOperationState:states,AROR_EFactionRole:{RESISTANCE:0,OCCUPIERS:1,INVADERS:2},
  AROR_EOperationType:{ATTACK:0,QRF:1},AROR_EForceType:{MOTORIZED:0,MECHANIZED:1,ARMOUR:2,AIRBORNE:3,INFANTRY:4},
- AROR_EResponseType:{AIR_GROUND:7},Math:{Max:Math.max,Min:Math.min},Print(){},LogLevel:{NORMAL:0},
+ AROR_EResponseType:{AIR_GROUND:7},Math:{Round:Math.round,Max:Math.max,Min:Math.min},Print(){},LogLevel:{NORMAL:0},
  string:{Empty:'',Format:()=>''},PilotCompartmentSlot:{Cast:x=>x?.pilot?x:null},
  CargoCompartmentSlot:{Cast:x=>x?.cargo?x:null},BaseCompartmentManagerComponent:{Cast:x=>x},
  CompartmentAccessComponent:{Cast:x=>x},ECloseDoorAfterActions:{CLOSE_DOOR:1},
@@ -131,6 +131,7 @@ env.AROR_CommanderManagerComponent={GetInstance:()=>({GetCommander:()=>({GetFact
 env.AROR_LocationManagerComponent={GetInstance:()=>({GetLocationById:()=>({GetName:()=> 'site',GetControllingRole:()=>0,GetCenter:()=>[1000,0,1000],GetRadius:()=>150})})};
 env.AROR_ReaperFlightGeometry={Direction:()=>[0,0,1],FormationPoint:()=>[100,0,100],IsAirspaceClear:()=>true};
 env.Vector=(...v)=>v;
+env.vector={DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])};
 env.AROR_ReaperAirForce=class {static Cast(x){return x?.air?x:null} static HasPlayerOccupant(x){return !!x?.player} constructor(){this.air=true}};
 env.AROR_QRFDeferredForce=class {};
 env.AROR_OperationForce=class {};
@@ -138,7 +139,7 @@ const jointSource=src.reaper.replace(/#ifdef WORKBENCH[\s\S]*?#endif/g,'');
 const jointStart=compile(jointSource,'StartReaperQRF');
 const makeProfile=(type,personnel)=>({m_sId:'p'+type,m_eType:type,m_eRole:1,m_sFactionKey:'AROR_OCCUPIERS',
  m_bEnabled:true,m_iEscortCount:1,m_iMinimumReadinessLevel:5,m_iPersonnelBudget:personnel,GetWeight:()=>1,
- IsValid:()=>true,GetGroupBudget:compile(src.profile,'GetGroupBudget'),GetVehicleBudget:compile(src.profile,'GetVehicleBudget')});
+ IsValid:()=>true,HasPresetVehicles:()=>true,TransportQuote:()=>0,GetGroupBudget:compile(src.profile,'GetGroupBudget'),GetVehicleBudget:compile(src.profile,'GetVehicleBudget')});
 const airProfile=makeProfile(3,20),truckProfile=makeProfile(0,8),apcProfile=makeProfile(1,10);
 for(const escortCount of [0,1])for(const opType of [0,1])for(const debug of [false,true])for(const blocking of ['none','groups','members','vehicles','landing','funding','origin']){
  airProfile.m_iEscortCount=escortCount;
@@ -148,6 +149,8 @@ for(const escortCount of [0,1])for(const opType of [0,1])for(const debug of [fal
  m_sRequestedProfileId:'',GetId:()=> 'joint',GetTargetLocationId:()=> 'site',GetRole:()=>1,GetType:()=>opType,
  BindGroundRecipe_S(id,tier,count){check(id==='joint'&&tier===2&&count===3,'joint binds authored tier and total count once');bound++;return true}};
  const ctx={m_aForces:[],m_aForceProfiles:elements,m_bAllowAirborneResponses:true,
+ HasReaperAirTraffic:()=>false,JointExtraTransports:()=>0,IsLaunchClear:()=>true,
+ ReaperLaunchPoint:()=>[0,0,0],ReleaseReaperLandingPlan(){},
  m_iMaxGroups:20,m_iMaxMembers:128,m_iMaxVehicles:10,m_iQRFMaxLiveGround:6,m_iQRFMaxLiveAircraft:6,
  m_fReaperHoldingDistance:700,m_fReaperInsertionHeight:80,m_fReaperGunshipHeight:300,m_fReaperGunshipBand:20,
  FindForce:()=>null,HasMarsOrigin_S:()=>blocking!=='origin',ReaperSettingsValid:()=>true,QRFPoolReadinessLevel:()=>5,
@@ -285,7 +288,7 @@ server=false;check(!boardPilot(group,vehicle)&&seatRequests===1,'clients cannot 
   ReaperOrder(){effects++;return true},InsertReaperAircraft(){effects++;return true}};
  const make=()=>({m_Vehicle:{alive:true},m_Escort:{m_Vehicle:{alive:true},CountCrew:()=>escortCrew},
   CountInfantry:()=>infantry,CountCrew:()=>crew,BoardPackage_S:()=>occupancy,
-  ReleaseAircraft_S(){effects++},m_iPackageIndex:0,m_iPackageCount:1});
+  ReleaseAircraft_S(){effects++},m_vLaunch:[0,0,0],m_vAirApproach:[1000,0,0],m_iPackageIndex:0,m_iPackageCount:1});
  for(const state of ['transportLost','escortLost','infantryLost','pilotLost','escortPilotLost','occupancyLost']){
   const force=make();effects=0;infantry=4;crew=1;escortCrew=1;occupancy=true;
   if(state==='transportLost')force.m_Vehicle.alive=false;
@@ -298,7 +301,7 @@ server=false;check(!boardPilot(group,vehicle)&&seatRequests===1,'clients cannot 
  }
  infantry=4;crew=1;escortCrew=1;occupancy=true;effects=0;
  const force=make();
- check(dispatch.call(ctx,force)&&effects===5&&force.m_bOrdersIssued&&force.m_iFlightDeadline===40,'healthy occupied aircraft retain normal dispatch');
+ check(dispatch.call(ctx,force)&&effects===5&&force.m_bOrdersIssued&&force.m_iFlightDeadline===112,'healthy occupied aircraft retain normal dispatch with finite inbound travel allowance');
  const light={...make(),m_bUnescorted:true,m_Escort:null};effects=0;
  check(dispatch.call(ctx,light)&&effects===3&&light.m_bOrdersIssued,'unescorted dispatch touches only transport physics, orders and insertion');
 }
@@ -341,7 +344,8 @@ server=false;check(!boardPilot(group,vehicle)&&seatRequests===1,'clients cannot 
  env.AROR_LocationForces={Count:()=>({GetAI:r=>counts[r],GetTotal:r=>counts[r]})};
  env.TACTICAL_CHECK_SECONDS=5;
  const target={GetControllingRole:()=>0,GetOwner:()=>({FindComponent:()=>settlement})};
- const op={GetRole:()=>1},ctx={m_fQRFTownSupportPerMinute:6};
+ env.AROR_TownWavesComponent={Cast:()=>null};
+ const op={GetRole:()=>1,GetType:()=>1},ctx={m_fQRFTownSupportPerMinute:6};
  const pacify=compile(src.executor,'PacifyTown');
  pacify.call(ctx,op,target);check(support.length===0,'ties against the combined hostile force do not pacify a town');
  counts[1]=5;pacify.call(ctx,op,target);check(support.length===1&&support[0][0]===1&&support[0][1]===0.5,'one five-second step shifts the configured six points per minute');
@@ -411,6 +415,7 @@ server=false;check(!boardPilot(group,vehicle)&&seatRequests===1,'clients cannot 
 {
  const defaults=Object.fromEntries([...src.executor.matchAll(/\[Attribute\("([-\d.]+)",[^\r\n]*\)\]\s*(?:protected )?(?:int|float|bool) (m_\w+)/g)].map(m=>[m[2],Number(m[1])]));
  const valid=compile(src.executor,'TacticalSettingsValid');
+ defaults.TacticalSettingInvalid=compile(src.executor,'TacticalSettingInvalid');
  const body=src.executor.match(/\tprotected bool TacticalSettingsValid\(\)\r?\n\t\{([\s\S]*?)^\t\}/m)[1];
  check([...new Set(body.match(/m_\w+/g))].every(n=>n in defaults),'every validated numeric setting has a real source default');
  check(valid.call(defaults),'source defaults remain a valid tactical configuration');

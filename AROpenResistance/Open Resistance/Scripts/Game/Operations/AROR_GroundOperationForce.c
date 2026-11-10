@@ -261,7 +261,7 @@ class AROR_GroundOperationForce : AROR_OperationForce
 		infantryMix.Copy(m_aInfantryTypes);
 		m_aInfantryTypes.Clear();
 		for (int i = 0; i < passengers; i++)
-			m_aInfantryTypes.Insert(infantryMix[i % infantryMix.Count()]);
+			m_aInfantryTypes.Insert(infantryMix[Math.Mod(i, infantryMix.Count())]);
 		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
 		return presets && presets.FillGroup_S(m_Group, m_Profile.m_eRole, m_aInfantryTypes) == passengers;
 	}

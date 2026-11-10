@@ -84,7 +84,7 @@ class AROR_OpsApp : AROR_PhonePooledApp
 	// Presentation state is restored by the phone for this client session.
 	protected AROR_EOpsScreen m_eScreen = AROR_EOpsScreen.LOGIN;
 	protected AROR_EOpsScreen m_eLastScreen = -1;
-	protected int m_iLoginStart;
+	protected int m_iLoginStart = -1;
 	protected int m_iVerifyStart;
 	protected string m_sCategory;			//!< Empty for all
 	protected int m_iSelectedId = -1;
@@ -98,6 +98,7 @@ class AROR_OpsApp : AROR_PhonePooledApp
 	void SaveState(notnull AROR_PhoneSessionState state)
 	{
 		state.m_eOpsScreen = m_eScreen;
+		state.m_iOpsLoginStart = m_iLoginStart;
 		state.m_sOpsCategory = m_sCategory;
 		state.m_iOpsSelected = m_iSelectedId;
 	}
@@ -105,6 +106,7 @@ class AROR_OpsApp : AROR_PhonePooledApp
 	void RestoreState(notnull AROR_PhoneSessionState state)
 	{
 		m_eScreen = state.m_eOpsScreen;
+		m_iLoginStart = state.m_iOpsLoginStart;
 		m_sCategory = state.m_sOpsCategory;
 		m_iSelectedId = state.m_iOpsSelected;
 	}
@@ -142,8 +144,8 @@ class AROR_OpsApp : AROR_PhonePooledApp
 
 		m_iLastFrameMs = now;
 
-		// The boot log replays each time the login screen is shown
-		if (m_eScreen == AROR_EOpsScreen.LOGIN && m_eLastScreen != AROR_EOpsScreen.LOGIN)
+		// Start once per world session; closing the phone or logging out keeps boot progress.
+		if (m_eScreen == AROR_EOpsScreen.LOGIN && m_iLoginStart < 0)
 			m_iLoginStart = now;
 
 		m_eLastScreen = m_eScreen;

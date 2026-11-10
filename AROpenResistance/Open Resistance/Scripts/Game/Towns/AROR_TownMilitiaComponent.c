@@ -1,0 +1,787 @@
+//! What a Resistance town garrison can hold
+enum AROR_EMilitiaKind
+{
+	INFANTRY,	//!< Bought as a team of up to four soldiers
+	APC,		//!< Needs one held seaport
+	ARMOUR		//!< Needs two held seaports
+}
+
+[ComponentEditorProps(category: "OpenResistance/Towns", description: "Resistance town garrisons bought in HICOMM: a one-time cost per unit, saved with the campaign, raised in the town while players or enemies are near. Attach once to the game mode.")]
+class AROR_TownMilitiaComponentClass : ScriptComponentClass {}
+
+//! Server-only runtime of one town's garrison while it is raised
+class AROR_MilitiaPost : Managed
+{
+	string m_sTownId;
+	ref array<ref AROR_MilitiaTeam> m_aGroups = {};
+	ref array<IEntity> m_aVehicles = {};
+	ref array<int> m_aVehicleKinds = {};
+	ref array<SCR_AIGroup> m_aCrews = {};
+	ref array<AIWaypoint> m_aCrewWaypoints = {};
+	ref array<bool> m_aSeated = {};
+	ref array<SCR_AIGroup> m_aDismountedCrews = {};
+	ref array<AIWaypoint> m_aDismountedWaypoints = {};
+	ref array<IEntity> m_aWrecks = {};
+	int m_iRaisedAt;
+	int m_iLastBusy;
+	int m_iNextRetry;
+	int m_iNextWake;
+}
+
+//! Resistance town garrisons (see ARCHITECTURE.md -> Towns). A Resistance Leader buys infantry, APCs and armour for a
+//! held town in HICOMM with faction funds and manpower; what is bought stays in the town (saved) until it dies or the
+//! town is lost. Seaports bring the heavy kit: one held seaport unlocks APCs, two unlock armour. The units are only
+//! physical while Resistance players or enemy soldiers are near the town; losses are counted when they despawn.
+class AROR_TownMilitiaComponent : ScriptComponent
+{
+	[Attribute("300", desc: "Faction funds per infantry soldier (a team is up to four)", params: "0 100000 10", category: "Prices")]
+	protected int m_iSoldierCost;
+	[Attribute("1", desc: "Manpower per infantry soldier", params: "0 20 1", category: "Prices")]
+	protected int m_iSoldierManpower;
+	[Attribute("12000", desc: "Faction funds per APC, crew included", params: "0 1000000 100", category: "Prices")]
+	protected int m_iApcCost;
+	[Attribute("25000", desc: "Faction funds per armoured vehicle, crew included", params: "0 1000000 100", category: "Prices")]
+	protected int m_iArmourCost;
+	[Attribute("3", desc: "Manpower per vehicle (its crew)", params: "0 20 1", category: "Prices")]
+	protected int m_iVehicleManpower;
+
+	[Attribute("12", desc: "Most infantry a town holds", params: "0 60 1", category: "Size")]
+	protected int m_iTownInfantry;
+	[Attribute("20", desc: "Most infantry a city holds", params: "0 60 1", category: "Size")]
+	protected int m_iCityInfantry;
+	[Attribute("2", desc: "Most vehicles (APCs and armour together) a town holds", params: "0 10 1", category: "Size")]
+	protected int m_iTownVehicles;
+	[Attribute("3", desc: "Most vehicles a city holds", params: "0 10 1", category: "Size")]
+	protected int m_iCityVehicles;
+	[Attribute("1", desc: "Held seaports needed to buy APCs", params: "0 10 1", category: "Size")]
+	protected int m_iApcPorts;
+	[Attribute("2", desc: "Held seaports needed to buy armour", params: "0 10 1", category: "Size")]
+	protected int m_iArmourPorts;
+
+	[Attribute("1200", desc: "The garrison is raised while a Resistance player is this close to the town, metres", params: "300 3000 50", category: "Activation")]
+	protected float m_fPlayerDistance;
+	[Attribute("700", desc: "...or while an enemy soldier is this close (an attack on the town), metres", params: "100 2000 50", category: "Activation")]
+	protected float m_fEnemyDistance;
+	[Attribute("90", desc: "Seconds with nobody near before the garrison is stood down (survivors are kept)", params: "30 900 10", category: "Activation")]
+	protected int m_iStandDownSeconds;
+	[Attribute("{000CD338713F2B5A}Prefabs/AI/Groups/Group_Base.et", UIWidgets.ResourceNamePicker, desc: "Empty AI group prefab", params: "et", category: "Activation")]
+	protected ResourceName m_sGroupPrefab;
+	[Attribute("{93291E72AC23930F}Prefabs/AI/Waypoints/AIWaypoint_Defend.et", UIWidgets.ResourceNamePicker, desc: "Defend waypoint the garrison holds the town with", params: "et", category: "Activation")]
+	protected ResourceName m_sDefendWaypoint;
+
+	protected static const int UPDATE_SECONDS = 5;
+	protected static const int FORM_UP_SECONDS = 30;	//!< Losses are only read once the groups have spawned
+	protected static const int TEAM_SIZE = 4;
+
+	// Replicated garrison book: one row per town with a garrison
+	[RplProp(onRplName: "OnBookReplicated")]
+	protected ref array<string> m_aTownIds = {};
+	[RplProp()]
+	protected ref array<int> m_aInfantry = {};
+	[RplProp()]
+	protected ref array<int> m_aApcs = {};
+	[RplProp()]
+	protected ref array<int> m_aArmour = {};
+
+	protected ref array<ref AROR_MilitiaPost> m_aPosts = {};	//!< Server: raised garrisons
+	protected int m_iClock;
+	protected int m_iRevision;
+
+	protected static AROR_TownMilitiaComponent s_Instance;
+
+	//------------------------------------------------------------------------------------------------
+	static AROR_TownMilitiaComponent GetInstance()
+	{
+		return s_Instance;
+	}
+
+	int GetRevision() { return m_iRevision; }
+	int GetSoldierCost() { return m_iSoldierCost; }
+	int GetSoldierManpower() { return m_iSoldierManpower; }
+	int GetVehicleManpower() { return m_iVehicleManpower; }
+
+	//------------------------------------------------------------------------------------------------
+	//! Every machine: the town's garrison
+	void GetGarrison(string townId, out int infantry, out int apcs, out int armour)
+	{
+		int row = m_aTownIds.Find(townId);
+		if (row < 0)
+			return;
+		infantry = m_aInfantry[row];
+		apcs = m_aApcs[row];
+		armour = m_aArmour[row];
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every machine: whether the Resistance can garrison a site: towns, cities and every capturable site (outposts,
+	//! bases, ports, airfields, heliports, factories, resources). Not the HQ.
+	static bool CanGarrison(AROR_LocationComponent site)
+	{
+		if (!site)
+			return false;
+
+		AROR_ELocationType type = site.GetLocationType();
+		return type == AROR_ELocationType.TOWN || type == AROR_ELocationType.CITY || AROR_CaptureLocationAction.IsCapturableType(type);
+	}
+
+	//! Cities, military bases and airfields hold the larger garrison
+	static bool IsLargeSite(AROR_LocationComponent site)
+	{
+		if (!site)
+			return false;
+
+		AROR_ELocationType type = site.GetLocationType();
+		return type == AROR_ELocationType.CITY || type == AROR_ELocationType.MILITARY_BASE || type == AROR_ELocationType.AIRPORT;
+	}
+
+	int GetMaxInfantry(AROR_LocationComponent town)
+	{
+		if (IsLargeSite(town))
+			return m_iCityInfantry;
+		return m_iTownInfantry;
+	}
+
+	int GetMaxVehicles(AROR_LocationComponent town)
+	{
+		if (IsLargeSite(town))
+			return m_iCityVehicles;
+		return m_iTownVehicles;
+	}
+
+	int GetVehicleCost(AROR_EMilitiaKind kind)
+	{
+		if (kind == AROR_EMilitiaKind.ARMOUR)
+			return m_iArmourCost;
+		return m_iApcCost;
+	}
+
+	int GetPortsNeeded(AROR_EMilitiaKind kind)
+	{
+		if (kind == AROR_EMilitiaKind.ARMOUR)
+			return m_iArmourPorts;
+		if (kind == AROR_EMilitiaKind.APC)
+			return m_iApcPorts;
+		return 0;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every machine: the vehicle the Resistance would field for a kind (its preset first, then any enabled pack
+	//! vehicle the Resistance may buy); empty when none exists (armour in the base game)
+	static ResourceName VehicleFor(AROR_EMilitiaKind kind)
+	{
+		array<AROR_EVehicleType> types = {};
+		if (kind == AROR_EMilitiaKind.ARMOUR)
+		{
+			types.Insert(AROR_EVehicleType.TANK);
+			types.Insert(AROR_EVehicleType.IFV);
+		}
+		else if (kind == AROR_EMilitiaKind.APC)
+		{
+			types.Insert(AROR_EVehicleType.APC);
+		}
+		foreach (AROR_EVehicleType type : types)
+		{
+			ResourceName prefab = AROR_ForceSpawner.VehiclePrefab(AROR_EFactionRole.RESISTANCE, type);
+			if (!prefab.IsEmpty())
+				return prefab;
+		}
+		AROR_ContentPacksComponent packs = AROR_ContentPacksComponent.GetInstance();
+		if (!packs)
+			return string.Empty;
+		array<AROR_ContentPackEntry> entries = {};
+		packs.GetEnabledEntries(AROR_EFactionPresetCategory.VEHICLES, entries);
+		foreach (AROR_EVehicleType wanted : types)
+		{
+			foreach (AROR_ContentPackEntry entry : entries)
+			{
+				if (entry && entry.CanResistancePurchase() && entry.GetTypeValue() == wanted)
+					return entry.GetPrefab();
+			}
+		}
+		return string.Empty;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every machine: why the Resistance cannot buy one of this kind for the town now; empty when it can
+	string WhyNot(AROR_LocationComponent town, AROR_EMilitiaKind kind)
+	{
+		if (!town || town.GetControllingRole() != AROR_EFactionRole.RESISTANCE)
+			return "Town not held";
+		int infantry, apcs, armour;
+		GetGarrison(town.GetId(), infantry, apcs, armour);
+		if (kind == AROR_EMilitiaKind.INFANTRY)
+		{
+			if (infantry >= GetMaxInfantry(town))
+				return "Full";
+			return string.Empty;
+		}
+		if (apcs + armour >= GetMaxVehicles(town))
+			return "Full";
+		int ports = GetPortsNeeded(kind);
+		if (AROR_ImportPoints.CountPorts(AROR_EFactionRole.RESISTANCE) < ports)
+			return string.Format("Needs %1 seaport(s)", ports);
+		if (VehicleFor(kind).IsEmpty())
+			return "None available";
+		return string.Empty;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Soldiers one infantry purchase adds: a team, or what is left of the town's room
+	int InfantryToBuy(AROR_LocationComponent town)
+	{
+		int infantry, apcs, armour;
+		if (town)
+			GetGarrison(town.GetId(), infantry, apcs, armour);
+		int room = GetMaxInfantry(town) - infantry;
+		if (room > TEAM_SIZE)
+			room = TEAM_SIZE;
+		if (room < 0)
+			room = 0;
+		return room;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	// Server: purchases (arrive through the player controller)
+	//------------------------------------------------------------------------------------------------
+	void RequestBuy_S(int playerId, string townId, AROR_EMilitiaKind kind)
+	{
+		if (!Replication.IsServer())
+			return;
+		if (kind != AROR_EMilitiaKind.INFANTRY && kind != AROR_EMilitiaKind.APC && kind != AROR_EMilitiaKind.ARMOUR)
+			return;
+		AROR_HighCommandComponent highCommand = AROR_HighCommandComponent.GetInstance();
+		if (!highCommand || !highCommand.IsLeader(playerId))
+		{
+			AROR_NotificationManagerComponent.SendHint_S(playerId, "Only a Resistance Leader can buy garrisons");
+			return;
+		}
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
+		AROR_EconomyComponent economy = AROR_EconomyComponent.GetInstance();
+		AROR_LocationComponent town;
+		if (locations)
+			town = locations.GetLocationById(townId);
+		if (!economy || !CanGarrison(town))
+			return;
+		string reason = WhyNot(town, kind);
+		if (!reason.IsEmpty())
+		{
+			AROR_NotificationManagerComponent.SendHint_S(playerId, string.Format("%1: %2", town.GetName(), reason));
+			return;
+		}
+
+		int count = 1;
+		int funds = GetVehicleCost(kind);
+		int manpower = m_iVehicleManpower;
+		if (kind == AROR_EMilitiaKind.INFANTRY)
+		{
+			count = InfantryToBuy(town);
+			funds = count * m_iSoldierCost;
+			manpower = count * m_iSoldierManpower;
+		}
+		if (economy.GetFactionFunds(AROR_EFactionRole.RESISTANCE) < funds || economy.GetManpower() < manpower)
+		{
+			AROR_NotificationManagerComponent.SendHint_S(playerId, string.Format("Not enough resources: needs %1 and %2 MP", AROR_EconomyComponent.FormatMoney(funds), manpower));
+			return;
+		}
+		if (!economy.SpendFactionFunds_S(AROR_EFactionRole.RESISTANCE, funds))
+			return;
+		if (!economy.SpendManpower_S(manpower))
+		{
+			economy.AddFactionFunds_S(AROR_EFactionRole.RESISTANCE, funds);
+			return;
+		}
+
+		int row = Row_S(townId);
+		if (kind == AROR_EMilitiaKind.INFANTRY)
+			m_aInfantry[row] = m_aInfantry[row] + count;
+		else if (kind == AROR_EMilitiaKind.APC)
+			m_aApcs[row] = m_aApcs[row] + 1;
+		else
+			m_aArmour[row] = m_aArmour[row] + 1;
+		Changed_S();
+
+		// A raised garrison gets the new unit straight away
+		AROR_MilitiaPost post = FindPost(townId);
+		if (post)
+		{
+			if (kind == AROR_EMilitiaKind.INFANTRY)
+				RaiseInfantry_S(post, town, count);
+			else
+				RaiseVehicle_S(post, town, kind);
+		}
+
+		string what = "an APC";
+		if (kind == AROR_EMilitiaKind.ARMOUR)
+			what = "armour";
+		else if (kind == AROR_EMilitiaKind.INFANTRY)
+			what = string.Format("%1 soldiers", count);
+		Print(string.Format("[AROR MILITIA] player %1 garrisoned %2 with %3 for %4 and %5 MP", playerId, townId, what, funds, manpower), LogLevel.NORMAL);
+		AROR_NotificationManagerComponent.SendHint_S(playerId, string.Format("%1 garrisoned with %2", town.GetName(), what));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server: the town's row, created on first use
+	protected int Row_S(string townId)
+	{
+		int row = m_aTownIds.Find(townId);
+		if (row >= 0)
+			return row;
+		m_aTownIds.Insert(townId);
+		m_aInfantry.Insert(0);
+		m_aApcs.Insert(0);
+		m_aArmour.Insert(0);
+		return m_aTownIds.Count() - 1;
+	}
+
+	protected void Changed_S()
+	{
+		// Empty rows go so the book only lists garrisoned towns
+		for (int row = m_aTownIds.Count() - 1; row >= 0; row--)
+		{
+			if (m_aInfantry[row] <= 0 && m_aApcs[row] <= 0 && m_aArmour[row] <= 0 && !FindPost(m_aTownIds[row]))
+			{
+				m_aTownIds.Remove(row);
+				m_aInfantry.Remove(row);
+				m_aApcs.Remove(row);
+				m_aArmour.Remove(row);
+			}
+		}
+		m_iRevision++;
+		Replication.BumpMe();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	// Server: raising and standing down
+	//------------------------------------------------------------------------------------------------
+	protected void Update_S()
+	{
+		m_iClock += UPDATE_SECONDS;
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
+		if (!locations)
+			return;
+		bool changed;
+		for (int row = m_aTownIds.Count() - 1; row >= 0; row--)
+		{
+			string townId = m_aTownIds[row];
+			AROR_LocationComponent town = locations.GetLocationById(townId);
+			AROR_MilitiaPost post = FindPost(townId);
+			bool busy;
+			if (!town || town.GetControllingRole() != AROR_EFactionRole.RESISTANCE)
+			{
+				// The town is lost and its garrison with it; anyone still standing fights on unsaved until it is quiet
+				if (m_aInfantry[row] > 0 || m_aApcs[row] > 0 || m_aArmour[row] > 0)
+				{
+					Print(string.Format("[AROR MILITIA] %1 lost: garrison of %2 infantry, %3 APC, %4 armour gone", townId, m_aInfantry[row], m_aApcs[row], m_aArmour[row]), LogLevel.NORMAL);
+					m_aInfantry[row] = 0;
+					m_aApcs[row] = 0;
+					m_aArmour[row] = 0;
+					changed = true;
+				}
+				if (!post)
+					continue;
+				if (town)
+					busy = IsBusy(town);
+				if (busy)
+				{
+					post.m_iLastBusy = m_iClock;
+					RenewPost_S(post);
+				}
+				else if (m_iClock - post.m_iLastBusy >= m_iStandDownSeconds)
+				{
+					StandDown_S(post);
+					changed = true;
+				}
+				continue;
+			}
+			busy = IsBusy(town);
+			if (!post)
+			{
+				if (busy)
+					Raise_S(town, row);
+				continue;
+			}
+			if (busy)
+			{
+				post.m_iLastBusy = m_iClock;
+				RenewPost_S(post);
+			}
+			SeatCrews_S(post);
+			if (CountLosses_S(post, row))
+				changed = true;
+			if (busy && m_iClock >= post.m_iNextRetry)
+				Reconcile_S(post, town, row);
+			if (m_iClock - post.m_iLastBusy >= m_iStandDownSeconds)
+			{
+				StandDown_S(post);
+				changed = true;
+			}
+		}
+		if (changed)
+			Changed_S();
+	}
+
+	//! Keep an active front simulated without replacing its dormant or queued soldiers.
+	protected void RenewPost_S(AROR_MilitiaPost post)
+	{
+		array<SCR_AIGroup> groups = {};
+		foreach (AROR_MilitiaTeam team : post.m_aGroups)
+			groups.Insert(team.m_Group);
+		groups.InsertAll(post.m_aCrews);
+		groups.InsertAll(post.m_aDismountedCrews);
+		foreach (SCR_AIGroup group : groups)
+		{
+			AROR_ForceSpawner.RenewSimulation_S(group);
+			if (group && m_iClock >= post.m_iNextWake && group.IsDormant() && group.GetDormantAliveCount() > 0)
+				group.RequestSpawn();
+		}
+		if (m_iClock >= post.m_iNextWake)
+			post.m_iNextWake = m_iClock + 30;
+	}
+
+	//! A Resistance player, commanded squad, or enemy soldier is near the town
+	protected bool IsBusy(AROR_LocationComponent town)
+	{
+		vector center = town.GetCenter();
+		if (AROR_ResistancePresence.Nearest(center) <= m_fPlayerDistance)
+			return true;
+		Faction resistance = GetGame().GetFactionManager().GetFactionByKey(AROR_ForceSpawner.FactionKey(AROR_EFactionRole.RESISTANCE));
+		return resistance && AROR_HostilesQuery.HasHostilesInRadius(resistance, center, m_fEnemyDistance);
+	}
+
+	//! Physical or native-virtual defenders keep a contested town defended without a nearby human.
+	bool HasDefenders_S(string townId)
+	{
+		return CountDefenders_S(townId) > 0;
+	}
+
+	int CountDefenders_S(string townId)
+	{
+		if (!Replication.IsServer())
+			return 0;
+		AROR_MilitiaPost post = FindPost(townId);
+		if (!post)
+			return 0;
+		int count;
+		foreach (AROR_MilitiaTeam team : post.m_aGroups)
+		{
+			count += AROR_ForceSpawner.CountStrength(team.m_Group);
+		}
+		foreach (SCR_AIGroup crew : post.m_aCrews)
+		{
+			count += AROR_ForceSpawner.CountStrength(crew);
+		}
+		foreach (SCR_AIGroup dismounted : post.m_aDismountedCrews)
+		{
+			count += AROR_ForceSpawner.CountStrength(dismounted);
+		}
+		return count;
+	}
+
+	//! Missing deliveries remain in the purchased book and retry at a bounded rate, rather than becoming losses.
+	protected void Reconcile_S(AROR_MilitiaPost post, AROR_LocationComponent town, int row)
+	{
+		post.m_iNextRetry = m_iClock + FORM_UP_SECONDS;
+		int assigned;
+		for (int index = post.m_aGroups.Count() - 1; index >= 0; index--)
+		{
+			AROR_MilitiaTeam team = post.m_aGroups[index];
+			bool stalled = m_iClock - team.m_iRaisedAt > 180 && team.m_aMembers.IsEmpty() && AROR_ForceSpawner.CountStrength(team.m_Group) == 0;
+			if ((!team.m_Group || stalled || team.GetStrength() == 0) && team.Remove_S())
+			{
+				post.m_aGroups.Remove(index);
+				continue;
+			}
+			assigned += team.GetStrength();
+		}
+		if (assigned < m_aInfantry[row])
+			RaiseInfantry_S(post, town, m_aInfantry[row] - assigned);
+		int apcs, armour;
+		foreach (int kind : post.m_aVehicleKinds)
+		{
+			if (kind == AROR_EMilitiaKind.ARMOUR)
+				armour++;
+			else
+				apcs++;
+		}
+		if (apcs < m_aApcs[row])
+			RaiseVehicle_S(post, town, AROR_EMilitiaKind.APC);
+		if (armour < m_aArmour[row])
+			RaiseVehicle_S(post, town, AROR_EMilitiaKind.ARMOUR);
+	}
+
+	protected AROR_MilitiaPost FindPost(string townId)
+	{
+		foreach (AROR_MilitiaPost post : m_aPosts)
+		{
+			if (post.m_sTownId == townId)
+				return post;
+		}
+		return null;
+	}
+
+	protected void Raise_S(AROR_LocationComponent town, int row)
+	{
+		AROR_MilitiaPost post = new AROR_MilitiaPost();
+		post.m_sTownId = town.GetId();
+		post.m_iRaisedAt = m_iClock;
+		post.m_iLastBusy = m_iClock;
+		m_aPosts.Insert(post);
+		RaiseInfantry_S(post, town, m_aInfantry[row]);
+		for (int apc = 0; apc < m_aApcs[row]; apc++)
+			RaiseVehicle_S(post, town, AROR_EMilitiaKind.APC);
+		for (int armour = 0; armour < m_aArmour[row]; armour++)
+			RaiseVehicle_S(post, town, AROR_EMilitiaKind.ARMOUR);
+		Print(string.Format("[AROR MILITIA] %1 garrison raised: %2 infantry, %3 APC, %4 armour", town.GetId(), m_aInfantry[row], m_aApcs[row], m_aArmour[row]), LogLevel.NORMAL);
+	}
+
+	//! Teams of up to four, each holding the town around its centre
+	protected void RaiseInfantry_S(AROR_MilitiaPost post, AROR_LocationComponent town, int soldiers)
+	{
+		vector center = town.GetCenter();
+		while (soldiers > 0)
+		{
+			array<AROR_EUnitType> units = {AROR_EUnitType.TEAMLEADER, AROR_EUnitType.RIFLEMAN, AROR_EUnitType.AUTORIFLEMAN, AROR_EUnitType.LAT};
+			int size = TEAM_SIZE;
+			if (soldiers < size)
+				size = soldiers;
+			units.Resize(size);
+			soldiers -= size;
+			vector position;
+			if (!AROR_ForceSpawner.FindClearPosition(center, 60, 1.5, position))
+				position = center;
+			SCR_AIGroup group = AROR_ForceSpawner.SpawnGroup(m_sGroupPrefab, AROR_EFactionRole.RESISTANCE, units, position);
+			if (!group)
+				continue;
+			AROR_MilitiaTeam team = new AROR_MilitiaTeam();
+			team.Attach(group, size, m_iClock);
+			team.m_Waypoint = AROR_ForceSpawner.AddWaypoint(group, m_sDefendWaypoint, center, Math.Min(town.GetRadius() * 0.5, 120));
+			post.m_aGroups.Insert(team);
+		}
+		post.m_iRaisedAt = m_iClock;
+	}
+
+	//! A vehicle parked at the roadside with a crew of two that boards it and holds the town
+	protected void RaiseVehicle_S(AROR_MilitiaPost post, AROR_LocationComponent town, AROR_EMilitiaKind kind)
+	{
+		ResourceName prefab = VehicleFor(kind);
+		if (prefab.IsEmpty())
+			return;
+		vector position;
+		float yaw;
+		if (!AROR_ForceSpawner.FindRoadsidePosition(town.GetCenter(), 150, true, position, yaw))
+		{
+			if (!AROR_ForceSpawner.FindClearPosition(town.GetCenter(), 120, 4, position))
+				return;
+		}
+		IEntity vehicle = AROR_ForceSpawner.SpawnVehicle(AROR_EFactionRole.RESISTANCE, prefab, position, yaw);
+		if (!vehicle)
+			return;
+		array<AROR_EUnitType> crew = {AROR_EUnitType.CREW, AROR_EUnitType.CREW};
+		SCR_AIGroup group = AROR_ForceSpawner.SpawnGroup(m_sGroupPrefab, AROR_EFactionRole.RESISTANCE, crew, position);
+		if (!group)
+		{
+			SCR_EntityHelper.DeleteEntityAndChildren(vehicle);
+			return;
+		}
+		post.m_aVehicles.Insert(vehicle);
+		post.m_aVehicleKinds.Insert(kind);
+		post.m_aCrews.Insert(group);
+		post.m_aCrewWaypoints.Insert(null);
+		post.m_aSeated.Insert(false);
+		post.m_iRaisedAt = m_iClock;
+	}
+
+	protected void SeatCrews_S(AROR_MilitiaPost post)
+	{
+		foreach (int index, IEntity vehicle : post.m_aVehicles)
+		{
+			if (post.m_aSeated[index] || !vehicle || !post.m_aCrews[index])
+				continue;
+			if (AROR_ForceSpawner.SeatGroup(post.m_aCrews[index], vehicle, 2))
+			{
+				post.m_aSeated[index] = true;
+				post.m_aCrewWaypoints[index] = AROR_ForceSpawner.AddWaypoint(post.m_aCrews[index], m_sDefendWaypoint, vehicle.GetOrigin(), 60);
+			}
+		}
+	}
+
+	//! Survivors replace the book's numbers (never raise them); destroyed vehicles are gone. True if anything changed.
+	protected bool CountLosses_S(AROR_MilitiaPost post, int row)
+	{
+		bool changed;
+		foreach (AROR_MilitiaTeam team : post.m_aGroups)
+		{
+			int losses = team.TakeLosses();
+			if (losses > 0)
+			{
+				m_aInfantry[row] = Math.Max(0, m_aInfantry[row] - losses);
+				changed = true;
+			}
+		}
+		for (int index = post.m_aVehicles.Count() - 1; index >= 0; index--)
+		{
+			IEntity vehicle = post.m_aVehicles[index];
+			if (vehicle && !AROR_ForceSpawner.IsDestroyed(vehicle) && !AROR_ForceSpawner.IsVehicleInUse(vehicle))
+				continue;
+			if (post.m_aVehicleKinds[index] == AROR_EMilitiaKind.ARMOUR)
+			{
+				if (m_aArmour[row] > 0)
+					m_aArmour[row] = m_aArmour[row] - 1;
+			}
+			else if (m_aApcs[row] > 0)
+				m_aApcs[row] = m_aApcs[row] - 1;
+			if (post.m_aCrews[index])
+			{
+				post.m_aDismountedCrews.Insert(post.m_aCrews[index]);
+				post.m_aDismountedWaypoints.Insert(post.m_aCrewWaypoints[index]);
+			}
+			else if (post.m_aCrewWaypoints[index])
+				SCR_EntityHelper.DeleteEntityAndChildren(post.m_aCrewWaypoints[index]);
+			if (vehicle && !AROR_ForceSpawner.IsVehicleInUse(vehicle))
+				post.m_aWrecks.Insert(vehicle);
+			post.m_aVehicles.Remove(index);
+			post.m_aVehicleKinds.Remove(index);
+			post.m_aCrews.Remove(index);
+			post.m_aCrewWaypoints.Remove(index);
+			post.m_aSeated.Remove(index);
+			changed = true;
+		}
+		return changed;
+	}
+
+	//! Survivors are kept in the book; the bodies and vehicles leave the world
+	protected void StandDown_S(AROR_MilitiaPost post)
+	{
+		int row = m_aTownIds.Find(post.m_sTownId);
+		if (row >= 0)
+			CountLosses_S(post, row);
+		for (int index = post.m_aGroups.Count() - 1; index >= 0; index--)
+		{
+			if (post.m_aGroups[index].Remove_S())
+				post.m_aGroups.Remove(index);
+		}
+		// Keep the post as cleanup owner when a crew is being used in a claimed/occupied vehicle.
+		for (int crew = post.m_aDismountedCrews.Count() - 1; crew >= 0; crew--)
+		{
+			if (AROR_ForceSpawner.RemoveGroup_S(post.m_aDismountedCrews[crew]))
+			{
+				if (post.m_aDismountedWaypoints[crew])
+					SCR_EntityHelper.DeleteEntityAndChildren(post.m_aDismountedWaypoints[crew]);
+				post.m_aDismountedCrews.Remove(crew);
+				post.m_aDismountedWaypoints.Remove(crew);
+			}
+		}
+		for (int active = post.m_aVehicles.Count() - 1; active >= 0; active--)
+		{
+			IEntity vehicle = post.m_aVehicles[active];
+			if (AROR_ForceSpawner.IsVehicleInUse(vehicle) || !AROR_ForceSpawner.RemoveGroup_S(post.m_aCrews[active]))
+				continue;
+			if (vehicle)
+				SCR_EntityHelper.DeleteEntityAndChildren(vehicle);
+			if (post.m_aCrewWaypoints[active])
+				SCR_EntityHelper.DeleteEntityAndChildren(post.m_aCrewWaypoints[active]);
+			post.m_aVehicles.Remove(active);
+			post.m_aVehicleKinds.Remove(active);
+			post.m_aCrews.Remove(active);
+			post.m_aCrewWaypoints.Remove(active);
+			post.m_aSeated.Remove(active);
+		}
+		for (int wreckIndex = post.m_aWrecks.Count() - 1; wreckIndex >= 0; wreckIndex--)
+		{
+			IEntity wreck = post.m_aWrecks[wreckIndex];
+			if (AROR_ForceSpawner.IsVehicleInUse(wreck))
+				continue;
+			if (wreck)
+				SCR_EntityHelper.DeleteEntityAndChildren(wreck);
+			post.m_aWrecks.Remove(wreckIndex);
+		}
+		if (!post.m_aGroups.IsEmpty() || !post.m_aDismountedCrews.IsEmpty() || !post.m_aVehicles.IsEmpty() || !post.m_aWrecks.IsEmpty())
+			return;
+		m_aPosts.RemoveItem(post);
+		Print(string.Format("[AROR MILITIA] %1 garrison stood down", post.m_sTownId), LogLevel.NORMAL);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	// Saving
+	//------------------------------------------------------------------------------------------------
+	//! Server: the book as it stands, survivors of raised garrisons counted
+	void GetBook_S(notnull array<string> townIds, notnull array<int> infantry, notnull array<int> apcs, notnull array<int> armour)
+	{
+		if (!Replication.IsServer())
+			return;
+		bool changed;
+		foreach (AROR_MilitiaPost post : m_aPosts)
+		{
+			int row = m_aTownIds.Find(post.m_sTownId);
+			if (row >= 0 && CountLosses_S(post, row))
+				changed = true;
+		}
+		if (changed)
+			Changed_S();
+		townIds.Copy(m_aTownIds);
+		infantry.Copy(m_aInfantry);
+		apcs.Copy(m_aApcs);
+		armour.Copy(m_aArmour);
+	}
+
+	void RestoreBook_S(array<string> townIds, array<int> infantry, array<int> apcs, array<int> armour)
+	{
+		if (!Replication.IsServer() || !townIds || !infantry || !apcs || !armour)
+			return;
+		int count = townIds.Count();
+		if (infantry.Count() < count)
+			count = infantry.Count();
+		if (apcs.Count() < count)
+			count = apcs.Count();
+		if (armour.Count() < count)
+			count = armour.Count();
+		m_aTownIds.Clear();
+		m_aInfantry.Clear();
+		m_aApcs.Clear();
+		m_aArmour.Clear();
+		for (int row = 0; row < count; row++)
+		{
+			m_aTownIds.Insert(townIds[row]);
+			m_aInfantry.Insert(infantry[row]);
+			m_aApcs.Insert(apcs[row]);
+			m_aArmour.Insert(armour[row]);
+		}
+		// Sent as a change later, never at init (see the RplProp note in AROR_TownWavesComponent's notes)
+		GetGame().GetCallqueue().CallLater(Changed_S, 1000, false);
+	}
+
+	bool IsEmpty()
+	{
+		return m_aTownIds.IsEmpty();
+	}
+
+	protected void OnBookReplicated()
+	{
+		m_iRevision++;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override void OnPostInit(IEntity owner)
+	{
+		super.OnPostInit(owner);
+		if (!GetGame().InPlayMode())
+			return;
+		s_Instance = this;
+		if (Replication.IsServer())
+			GetGame().GetCallqueue().CallLater(Update_S, UPDATE_SECONDS * 1000, true);
+	}
+
+	override void OnDelete(IEntity owner)
+	{
+		foreach (AROR_MilitiaPost post : m_aPosts)
+		{
+			foreach (AROR_MilitiaTeam team : post.m_aGroups)
+				team.Detach();
+		}
+		if (GetGame())
+			GetGame().GetCallqueue().Remove(Update_S);
+		if (s_Instance == this)
+			s_Instance = null;
+		super.OnDelete(owner);
+	}
+}

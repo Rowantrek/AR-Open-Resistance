@@ -5,6 +5,7 @@ class AROR_PhoneSessionState
 	bool m_bCaptured;
 	AROR_EPhoneApp m_eApp = AROR_EPhoneApp.HOME;
 	AROR_EHiCommScreen m_eHiCommScreen = AROR_EHiCommScreen.LOGIN;
+	int m_iHiCommLoginStart = -1;
 	ref array<int> m_aHiCommSelected = {};
 	AROR_EHighCommandOrder m_eHiCommOrder = AROR_EHighCommandOrder.MOVE;
 	string m_sHiCommTarget;
@@ -17,6 +18,7 @@ class AROR_PhoneSessionState
 	vector m_vHiCommMapCentre;
 	float m_fHiCommMapZoom = 1;
 	AROR_EOpsScreen m_eOpsScreen = AROR_EOpsScreen.LOGIN;
+	int m_iOpsLoginStart = -1;
 	string m_sOpsCategory;
 	int m_iOpsSelected = -1;
 	AROR_EFactionRole m_eRebIntelRole;

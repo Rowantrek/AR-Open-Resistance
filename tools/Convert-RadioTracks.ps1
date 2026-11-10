@@ -16,9 +16,13 @@
   So: run it, register Sounds/Radio and UI/Textures/Radio in Workbench's Resource Browser so the .meta files and the
   .edds exist, then run it again.
 
+  Tracks are numbered in the file names ("1. Title"); WAVs and bank indices follow that numbering. -AlbumOrder makes the
+  station play them in that order (interludes where the album puts them) instead of shuffling the songs with an
+  interlude every -SongsPerInterlude songs. -Titles corrects a title taken from a file name, e.g. a typo.
+
 .EXAMPLE
   .\Convert-RadioTracks.ps1 -Source 'C:\Music\Radio Free Altis'
-  .\Convert-RadioTracks.ps1 -Source 'C:\Music\Everon Underground' -Station 1 -Slug AROR_EveronUnderground -StationName 'Everon Underground 94.5'
+  .\Convert-RadioTracks.ps1 -Source 'C:\Music\Everon Underground' -Station 1 -Slug AROR_EveronUnderground -StationName 'Everon Underground 94.5' -AlbumOrder -InterludePattern '^(Interlude \d+|Everon Underground)$' -Titles @{ 'Everon Undergound' = 'Everon Underground' }
 #>
 param(
 	[Parameter(Mandatory = $true)][string]$Source,
@@ -27,6 +31,8 @@ param(
 	[string]$Slug = 'AROR_Radio',
 	[string]$InterludePattern = '^(Interlude \d+|Intro .*|Radio Free Altis)$',
 	[int]$SongsPerInterlude = 3,
+	[switch]$AlbumOrder,
+	[hashtable]$Titles = @{},
 	[int]$ArtSize = 256
 )
 
@@ -281,6 +287,7 @@ $bankIndex = 0
 foreach ($mp3 in $sources)
 {
 	$title = ($mp3.BaseName -replace '^\d+\.\s*', '').Trim()
+	if ($Titles.ContainsKey($title)) { $title = $Titles[$title] }
 	# Accented letters keep their base letter in the file name: the title itself is kept as it is
 	$fileSlug = ($title.Normalize([Text.NormalizationForm]::FormD) -replace "[^A-Za-z0-9]", '')
 	$wavName = '{0}_{1:00}_{2}.wav' -f $Slug, ($bankIndex + 1), $fileSlug
@@ -334,7 +341,9 @@ if ($artGuid) { $art = "{$artGuid}UI/Textures/Radio/$Slug.edds" }
 $block = New-Object Text.StringBuilder
 $stationId = '6D1A7E2C4000{0:X4}' -f (0x100 + $Station)
 [void]$block.Append("  ORRadio_Station `"{$stationId}`" {`n")
-[void]$block.Append("   m_sName `"$StationName`"`n   m_sAlbumArt `"$art`"`n   m_sAudioProject `"$project`"`n   m_iSongsPerInterlude $SongsPerInterlude`n   m_aTracks {`n")
+[void]$block.Append("   m_sName `"$StationName`"`n   m_sAlbumArt `"$art`"`n   m_sAudioProject `"$project`"`n   m_iSongsPerInterlude $SongsPerInterlude`n")
+if ($AlbumOrder) { [void]$block.Append("   m_bAlbumOrder 1`n") }
+[void]$block.Append("   m_aTracks {`n")
 foreach ($track in $tracks)
 {
 	$id = '6D1A7E2C40{0:X2}{1:X4}' -f ($Station + 1), $track.Bank

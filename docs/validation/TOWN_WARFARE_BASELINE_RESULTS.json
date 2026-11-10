@@ -1,0 +1,271 @@
+{
+  "baseline": "bfac81a18a7c77288843775d49817b466cc58d16",
+  "method": "Existing test suites with the five edited Enforce sources read from HEAD; native services remain mocked.",
+  "allResultsUnchanged": true,
+  "results": [
+    {
+      "name": "Test-MarsAndAttacks.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "TypeError: this.GetAvailableProfiles is not a function"
+    },
+    {
+      "name": "Test-OperationAlerts.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "Error: the resync republishes the countdown for late joiners"
+    },
+    {
+      "name": "Test-QRFReleaseLifecycle.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "TypeError: candidate.HasPresetVehicles is not a function"
+    },
+    {
+      "name": "Test-QRFInterruptions.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "ReferenceError: AROR_EUnitType is not defined"
+    },
+    {
+      "name": "Test-StrongholdIntegration.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 95,
+      "error": ""
+    },
+    {
+      "name": "Test-QRFManagerSoak.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 60024,
+      "error": ""
+    },
+    {
+      "name": "Test-QRFMutations.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "Error: Mutation baseline failed: Test-QRFInterruptions.js"
+    },
+    {
+      "name": "Test-QRFRouteAudit.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 147,
+      "error": ""
+    },
+    {
+      "name": "Test-QRFStrategy.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "ReferenceError: GetAvailableProfiles is not defined"
+    },
+    {
+      "name": "Test-QRFProgression.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "Error: real component defaults start new campaigns at readiness one and response tier one"
+    },
+    {
+      "name": "Test-QRFResponseMix.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 1842,
+      "error": ""
+    },
+    {
+      "name": "Test-ReaperLandingSearch.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 159,
+      "error": ""
+    },
+    {
+      "name": "Test-QRFBoarding.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "Error: Missing ReplaceIntoSeat"
+    },
+    {
+      "name": "Test-QRFIngress.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "ReferenceError: GetMountRejection is not defined"
+    },
+    {
+      "name": "Test-QRFUnloading.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 42,
+      "error": ""
+    },
+    {
+      "name": "Test-QRFRetention.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 10,
+      "error": ""
+    },
+    {
+      "name": "Test-QRFSupportAndHeadlines.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 94,
+      "error": ""
+    },
+    {
+      "name": "Test-QRFVehicleFaction.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 14,
+      "error": ""
+    },
+    {
+      "name": "Test-QRFTownHold.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 22,
+      "error": ""
+    },
+    {
+      "name": "Test-EveronQRFIntegration.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "Error: action visibility uses the military-only gate"
+    },
+    {
+      "name": "Test-InvaderCampaign.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "Error: Expected all 27 actual military locations including seaports and the stronghold"
+    },
+    {
+      "name": "Test-RebIntel.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "SyntaxError: Unexpected identifier 'playerController'"
+    },
+    {
+      "name": "Test-MissionLifecycle.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "ReferenceError: AROR_ForceSpawner is not defined"
+    },
+    {
+      "name": "Test-CapturePlacement.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "ReferenceError: Math3D is not defined"
+    },
+    {
+      "name": "Test-GarrisonsAndSupport.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "Error: Missing InfantryPrefab"
+    },
+    {
+      "name": "Test-GarrisonCrew.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "ReferenceError: AROR_ResistanceFleet is not defined"
+    },
+    {
+      "name": "Test-OutpostEquipment.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 27,
+      "error": ""
+    },
+    {
+      "name": "Test-PostsAndPads.js",
+      "baselinePassed": false,
+      "currentPassed": false,
+      "sameResult": true,
+      "assertions": 0,
+      "error": "Error: Missing actual method InfantryPrefab"
+    },
+    {
+      "name": "Test-DefenceLayout.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 177,
+      "error": ""
+    },
+    {
+      "name": "Test-FortifiedOutpostLayouts.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 1477,
+      "error": ""
+    },
+    {
+      "name": "Test-DefenceSiteAudit.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 61,
+      "error": ""
+    },
+    {
+      "name": "Test-DefenceWallGrounding.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 21,
+      "error": ""
+    },
+    {
+      "name": "Test-CampaignFlagEditor.js",
+      "baselinePassed": true,
+      "currentPassed": true,
+      "sameResult": true,
+      "assertions": 14,
+      "error": ""
+    }
+  ]
+}

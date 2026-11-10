@@ -44,6 +44,18 @@ class AROR_Operation
 	vector m_vOriginOverride;
 	//! Always hold half the packages back as a second wave, whatever the scenario's wave settings.
 	bool m_bForceTwoWaves;
+	//! One wave of a town garrison's response (AROR_TownWavesComponent): runs beside the other waves at the same
+	//! target, launches from a road staging point and never absorbs or blocks an ordinary QRF.
+	bool m_bAssaultWave;
+	//! Drive as one column from the launch point and stop together this far short of the objective (metres, 0 = the
+	//! normal per-package approach). Infantry walk the rest.
+	bool m_bConvoy;
+	float m_fConvoyDismount;
+	//! Deploy only the first N elements of the named recipe (0 = all). Lets one recipe scale with Crackdown.
+	int m_iElementLimit;
+	//! Skip the recipe's first N elements before the limit applies (ground recipes only). Lets a wave split one
+	//! recipe into two columns on different roads.
+	int m_iElementOffset;
 	//! Estimated seconds from dispatch until the first package reaches the objective (-1 unknown), and the
 	//! scheduler clock when it was estimated. Drives the dispatch headline and map marker.
 	int m_iEtaSeconds = -1;

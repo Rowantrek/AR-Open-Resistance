@@ -1,0 +1,379 @@
+{
+  "generatedAt": "2026-11-10T09:25:53.091Z",
+  "snapshot": "4034ff485ea8bb09ea18b5b9643b69511a050d23",
+  "nativeVerified": false,
+  "scope": "Current working tree: actual-source policy/lifecycle regressions and existing mocked/static suites. No native compilation or dedicated-server stress test.",
+  "results": [
+    {
+      "name": "Test-MarsAndAttacks.js",
+      "passed": true,
+      "assertions": 1744,
+      "elapsedMs": 93,
+      "exitCode": 0,
+      "output": "{\"assertions\":1744,\"note\":\"Native AI, REAPER flight, UI and replication require Workbench compile and Play.\"}"
+    },
+    {
+      "name": "Test-OperationAlerts.js",
+      "passed": true,
+      "assertions": 33,
+      "elapsedMs": 55,
+      "exitCode": 0,
+      "output": "{\"assertions\":33,\"note\":\"Native headlines, map widgets and replication require Workbench Play.\"}"
+    },
+    {
+      "name": "Test-QRFReleaseLifecycle.js",
+      "passed": true,
+      "assertions": 20588,
+      "elapsedMs": 70,
+      "exitCode": 0,
+      "output": "{\"assertions\":20588,\"note\":\"Actual-source state transitions and dispatch/boarding policy; native AI, route reachability and replication remain unverified.\"}"
+    },
+    {
+      "name": "Test-QRFInterruptions.js",
+      "passed": true,
+      "assertions": 958,
+      "elapsedMs": 102,
+      "exitCode": 0,
+      "output": "{\"assertions\":958,\"settingsEvidence\":[{\"fixture\":\"source defaults\",\"values\":{\"m_fAttackStagingDistance\":500,\"m_iAttackStagingTimeout\":180,\"m_fQRFTownSupportPerMinute\":6,\"m_iOriginLaunchCooldown\":600,\"m_fOriginMaxGarrisonLoss\":0.5,\"m_fMinOriginDistance\":600,\"m_fOriginWaterPenalty\":2,\"m_iQRFSplitTier\":3,\"m_iQRFReinforcementDelay\":60,\"m_iQRFReserveWait\":300,\"m_iQRFMaxLiveGround\":6,\"m_iQRFMaxLiveAircraft\":6,\"m_iQRFTacticalDuration\":600,\"m_iQRFTownHoldDuration\":900,\"m_iQRFOrderInterval\":15,\"m_iQRFApproachAttempts\":12,\"m_fQRFRoadLaunchRadius\":150,\"m_fQRFVehicleArrivalTolerance\":20,\"m_fQRFObjectiveDeliveryRadius\":100,\"m_fQRFMaximumRoadDismount\":300,\"m_iQRFIngressTimeout\":600,\"m_iQRFDetourTimeout\":90,\"m_iQRFExitTimeout\":30,\"m_iQRFExitRetryLimit\":2,\"m_iQRFExitRecoveryDelay\":10,\"m_iQRFInfantryLegTimeout\":180,\"m_fQRFInfantryPlanningSpeed\":1.5,\"m_fQRFRecoveryRadius\":100,\"m_fQRFVehicleRecoveryRadius\":125,\"m_fQRFThreatDismount\":200,\"m_fQRFWithdrawFraction\":0.4,\"m_fQRFLocalWithdrawFraction\":0.5,\"m_iQRFGroundRetention\":120,\"m_fQRFGroundCleanupDistance\":1200,\"m_iReaperPreparationTimeout\":120,\"m_iReaperFlightTimeout\":180,\"m_fReaperInsertionHeight\":120,\"m_fReaperTransportSpeed\":160,\"m_fReaperTransportHeight\":60,\"m_fReaperHoldingDistance\":700,\"m_iReaperTouchdownTicks\":2,\"m_fReaperDepartureSpeed\":180,\"m_vReaperLZOffset\":[0,0,0],\"m_fReaperLZSearchRadius\":400,\"m_fReaperLandingSeparation\":90,\"m_fReaperLZFallbackRadius\":1200,\"m_fReaperLZAdjustmentRadius\":60,\"m_fReaperPadClearance\":18,\"m_fReaperFormationSpacing\":75,\"m_fReaperCleanupDistance\":1500,\"m_iReaperRetainSeconds\":600,\"m_iReaperSupportSeconds\":300,\"m_fReaperFriendlyClearance\":100,\"m_fReaperSupportRadius\":2000,\"m_iReaperContactAge\":90,\"m_fReaperGunshipHeight\":210,\"m_fReaperGunshipBand\":35,\"m_fReaperGunshipRunHeight\":110,\"m_fReaperGunshipRunBand\":20,\"m_fReaperGunshipRunRadius\":450,\"m_fReaperTrafficClearance\":100}},{\"fixture\":\"Worlds/AROR_Everon/AROR_Everon_Chicken_Layers/Managers.layer\",\"values\":{\"m_fAttackStagingDistance\":500,\"m_iAttackStagingTimeout\":180,\"m_fQRFTownSupportPerMinute\":6,\"m_iOriginLaunchCooldown\":600,\"m_fOriginMaxGarrisonLoss\":0.5,\"m_fMinOriginDistance\":600,\"m_fOriginWaterPenalty\":2,\"m_iQRFSplitTier\":5,\"m_iQRFReinforcementDelay\":60,\"m_iQRFReserveWait\":450,\"m_iQRFMaxLiveGround\":8,\"m_iQRFMaxLiveAircraft\":6,\"m_iQRFTacticalDuration\":600,\"m_iQRFTownHoldDuration\":900,\"m_iQRFOrderInterval\":15,\"m_iQRFApproachAttempts\":12,\"m_fQRFRoadLaunchRadius\":300,\"m_fQRFVehicleArrivalTolerance\":20,\"m_fQRFObjectiveDeliveryRadius\":100,\"m_fQRFMaximumRoadDismount\":300,\"m_iQRFIngressTimeout\":600,\"m_iQRFDetourTimeout\":90,\"m_iQRFExitTimeout\":30,\"m_iQRFExitRetryLimit\":2,\"m_iQRFExitRecoveryDelay\":10,\"m_iQRFInfantryLegTimeout\":180,\"m_fQRFInfantryPlanningSpeed\":1.5,\"m_fQRFRecoveryRadius\":100,\"m_fQRFVehicleRecoveryRadius\":125,\"m_fQRFThreatDismount\":200,\"m_fQRFWithdrawFraction\":0.4,\"m_fQRFLocalWithdrawFraction\":0.5,\"m_iQRFGroundRetention\":120,\"m_fQRFGroundCleanupDistance\":1200,\"m_iReaperPreparationTimeout\":120,\"m_iReaperFlightTimeout\":180,\"m_fReaperInsertionHeight\":120,\"m_fReaperTransportSpeed\":160,\"m_fReaperTransportHeight\":60,\"m_fReaperHoldingDistance\":700,\"m_iReaperTouchdownTicks\":2,\"m_fReaperDepartureSpeed\":180,\"m_vReaperLZOffset\":[0,0,0],\"m_fReaperLZSearchRadius\":400,\"m_fReaperLandingSeparation\":90,\"m_fReaperLZFallbackRadius\":1200,\"m_fReaperLZAdjustmentRadius\":60,\"m_fReaperPadClearance\":18,\"m_fReaperFormationSpacing\":75,\"m_fReaperCleanupDistance\":1500,\"m_iReaperRetainSeconds\":600,\"m_iReaperSupportSeconds\":120,\"m_fReaperFriendlyClearance\":100,\"m_fReaperSupportRadius\":2000,\"m_iReaperContactAge\":90,\"m_fReaperGunshipHeight\":210,\"m_fReaperGunshipBand\":35,\"m_fReaperGunshipRunHeight\":110,\"m_fReaperGunshipRunBand\":20,\"m_fReaperGunshipRunRadius\":450,\"m_fReaperTrafficClearance\":100}},{\"fixture\":\"Worlds/AROR_Everon/AROR_Everon_Layers/Managers.layer\",\"values\":{\"m_fAttackStagingDistance\":500,\"m_iAttackStagingTimeout\":180,\"m_fQRFTownSupportPerMinute\":6,\"m_iOriginLaunchCooldown\":600,\"m_fOriginMaxGarrisonLoss\":0.5,\"m_fMinOriginDistance\":600,\"m_fOriginWaterPenalty\":2,\"m_iQRFSplitTier\":3,\"m_iQRFReinforcementDelay\":60,\"m_iQRFReserveWait\":300,\"m_iQRFMaxLiveGround\":6,\"m_iQRFMaxLiveAircraft\":6,\"m_iQRFTacticalDuration\":600,\"m_iQRFTownHoldDuration\":900,\"m_iQRFOrderInterval\":15,\"m_iQRFApproachAttempts\":12,\"m_fQRFRoadLaunchRadius\":150,\"m_fQRFVehicleArrivalTolerance\":20,\"m_fQRFObjectiveDeliveryRadius\":100,\"m_fQRFMaximumRoadDismount\":300,\"m_iQRFIngressTimeout\":600,\"m_iQRFDetourTimeout\":90,\"m_iQRFExitTimeout\":30,\"m_iQRFExitRetryLimit\":2,\"m_iQRFExitRecoveryDelay\":10,\"m_iQRFInfantryLegTimeout\":180,\"m_fQRFInfantryPlanningSpeed\":1.5,\"m_fQRFRecoveryRadius\":100,\"m_fQRFVehicleRecoveryRadius\":125,\"m_fQRFThreatDismount\":200,\"m_fQRFWithdrawFraction\":0.4,\"m_fQRFLocalWithdrawFraction\":0.5,\"m_iQRFGroundRetention\":120,\"m_fQRFGroundCleanupDistance\":1200,\"m_iReaperPreparationTimeout\":120,\"m_iReaperFlightTimeout\":180,\"m_fReaperInsertionHeight\":120,\"m_fReaperTransportSpeed\":160,\"m_fReaperTransportHeight\":60,\"m_fReaperHoldingDistance\":700,\"m_iReaperTouchdownTicks\":2,\"m_fReaperDepartureSpeed\":180,\"m_vReaperLZOffset\":[0,0,0],\"m_fReaperLZSearchRadius\":400,\"m_fReaperLandingSeparation\":90,\"m_fReaperLZFallbackRadius\":1200,\"m_fReaperLZAdjustmentRadius\":60,\"m_fReaperPadClearance\":18,\"m_fReaperFormationSpacing\":75,\"m_fReaperCleanupDistance\":1500,\"m_iReaperRetainSeconds\":600,\"m_iReaperSupportSeconds\":300,\"m_fReaperFriendlyClearance\":100,\"m_fReaperSupportRadius\":2000,\"m_iReaperContactAge\":90,\"m_fReaperGunshipHeight\":210,\"m_fReaperGunshipBand\":35,\"m_fReaperGunshipRunHeight\":110,\"m_fReaperGunshipRunBand\":20,\"m_fReaperGunshipRunRadius\":450,\"m_fReaperTrafficClearance\":100}}],\"note\":\"Actual-source interruption, optional-escort, retention and Economy checks; native physics, spawn queues and multiplayer still require Workbench.\"}"
+    },
+    {
+      "name": "Test-StrongholdIntegration.js",
+      "passed": true,
+      "assertions": 95,
+      "elapsedMs": 55,
+      "exitCode": 0,
+      "output": "{\"assertions\":95,\"note\":\"Actual-source scripted admission, funding, wave, stronghold lifecycle and save policy. Native placement, flight, garrison queues and multiplayer remain unverified.\"}"
+    },
+    {
+      "name": "Test-QRFManagerSoak.js",
+      "passed": true,
+      "assertions": 60024,
+      "elapsedMs": 75,
+      "exitCode": 0,
+      "output": "{\"assertions\":60024,\"simulatedTicks\":10000,\"admittedOrDeduplicated\":2082,\"rejected\":27918,\"notifications\":6053,\"maxCallbackDepth\":1,\"note\":\"Deterministic mocked scheduler soak; no native driving, combat, network or real-time performance evidence.\"}"
+    },
+    {
+      "name": "Test-QRFMutations.js",
+      "passed": true,
+      "assertions": 60,
+      "elapsedMs": 1015,
+      "exitCode": 0,
+      "output": "{\"assertions\":60,\"results\":[{\"name\":\"airborne passengers fabricate town lockdown\",\"suite\":\"Test-SpottingAndAirResponse.js\",\"killed\":true,\"error\":\"Error: Seated helicopter squad cannot progress town lockdown\"},{\"name\":\"campaign AI armies cannot fight each other\",\"suite\":\"Test-SpottingAndAirResponse.js\",\"killed\":true,\"error\":\"Error: Attack admission respects diplomacy and debug target policy 2,1,false\"},{\"name\":\"gunship station timer extends on every check\",\"suite\":\"Test-SpottingAndAirResponse.js\",\"killed\":true,\"error\":\"Error: Repeated near-town checks cannot extend support forever\"},{\"name\":\"airborne share ignores running history\",\"suite\":\"Test-QRFResponseMix.js\",\"killed\":true,\"error\":\"Error: running share stays at nearest attainable quota\"},{\"name\":\"dispatch history counts duplicate ACTIVE callbacks\",\"suite\":\"Test-QRFResponseMix.js\",\"killed\":true,\"error\":\"Error: duplicate ACTIVE handling cannot double-count\"},{\"name\":\"airborne construction loses its mix classification\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: both standalone air profiles mark the operation for actual-dispatch mix accounting\"},{\"name\":\"new campaigns lose tier two starting intensity\",\"suite\":\"Test-QRFProgression.js\",\"killed\":true,\"error\":\"Error: real component defaults start new campaigns at readiness two and response tier two; scenario overrides are separate\"},{\"name\":\"capture escalation returns to early maximum intensity\",\"suite\":\"Test-QRFProgression.js\",\"killed\":true,\"error\":\"Error: capture-only intensity advances one tier every two losses: 1,3\"},{\"name\":\"linear recipe adds two packages in one tier\",\"suite\":\"Test-QRFProgression.js\",\"killed\":true,\"error\":\"Error: authored package counts preserve initial combined-arms minimums and finite progression: 1,light,4\"},{\"name\":\"air passengers race for one unreserved seat\",\"suite\":\"Test-QRFReleaseLifecycle.js\",\"killed\":true,\"error\":\"Error: asynchronous boarding assigns distinct seats even before native reservations update\"},{\"name\":\"ground crew retry races for the first free seat\",\"suite\":\"Test-QRFBoarding.js\",\"killed\":true,\"error\":\"Error: stuck driver and all passengers receive recovery and a fresh seat request\"},{\"name\":\"global spawn timeout cuts short air preparation\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: landing search and five paced constructions retain the full 120-second boarding allowance\"},{\"name\":\"unsafe coastal seed bypasses safe road search\",\"suite\":\"Test-QRFIngress.js\",\"killed\":true,\"error\":\"Error: unsafe coastal formation seed still reaches the bounded safe-road planner before delivery preflight\"},{\"name\":\"full vehicle ignores native passenger capacity\",\"suite\":\"Test-QRFBoarding.js\",\"killed\":true,\"error\":\"Error: every passenger seat receives an infantry slot\"},{\"name\":\"full load overruns personnel reservation\",\"suite\":\"Test-QRFBoarding.js\",\"killed\":true,\"error\":\"Error: under-reserved full load is rejected before changing spawn queues\"},{\"name\":\"asynchronous pilot requests treated as paused=false\",\"suite\":\"Test-QRFReleaseLifecycle.js\",\"killed\":true,\"error\":\"Error: pilot boarding works outside player simulation bubble\"},{\"name\":\"unready reserve dispatched\",\"suite\":\"Test-QRFReleaseLifecycle.js\",\"killed\":true,\"error\":\"Error: unready reserve aircraft never dispatched\"},{\"name\":\"ground staging bypassed\",\"suite\":\"Test-QRFReleaseLifecycle.js\",\"killed\":true,\"error\":\"Error: first physical rally arrival waits for the other package\"},{\"name\":\"town pacification disconnected\",\"suite\":\"Test-QRFReleaseLifecycle.js\",\"killed\":true,\"error\":\"Error: multiple ticks and packages cannot multiply town support gain\"},{\"name\":\"capture activation recorded after subscribers\",\"suite\":\"Test-QRFReleaseLifecycle.js\",\"killed\":true,\"error\":\"Error: nested terminal callback retains physical activation evidence\"},{\"name\":\"debug damage escalates campaign\",\"suite\":\"Test-QRFReleaseLifecycle.js\",\"killed\":true,\"error\":\"Error: debug damage contact explicitly suppresses strategic evidence\"},{\"name\":\"admin mutation loses role gate\",\"suite\":\"Test-QRFReleaseLifecycle.js\",\"killed\":true,\"error\":\"Error: ordinary player cannot invoke GiveMoney_S\"},{\"name\":\"unbuilt collateral refunded twice\",\"suite\":\"Test-QRFReleaseLifecycle.js\",\"killed\":true,\"error\":\"Error: stale monitor snapshots cannot release virtual collateral twice\"},{\"name\":\"air group budget undercounted\",\"suite\":\"Test-MarsAndAttacks.js\",\"killed\":true,\"error\":\"Error: preview reserves actual infantry/pilot/escort groups, vehicles and personnel\"},{\"name\":\"unknown operation types admitted\",\"suite\":\"Test-MarsAndAttacks.js\",\"killed\":true,\"error\":\"Error: unsupported operation types cannot create immortal scheduler records\"},{\"name\":\"withdrawal dispatches ready reserves\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: withdrawal suppresses ready-package activation\"},{\"name\":\"empty gunner accepted while crew sit in cargo\",\"suite\":\"Test-QRFBoarding.js\",\"killed\":true,\"error\":\"Error: empty gunner cannot satisfy dispatch readiness\"},{\"name\":\"mounted cargo-style weapon omitted from crew seats\",\"suite\":\"Test-QRFBoarding.js\",\"killed\":true,\"error\":\"Error: assigned gunner occupies attached weapon before dispatch\"},{\"name\":\"foreign driver accepted as ready\",\"suite\":\"Test-QRFBoarding.js\",\"killed\":true,\"error\":\"Error: foreign driver cannot satisfy readiness while assigned crew sit elsewhere\"},{\"name\":\"unissued infantry group skipped by retention\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: retention follows physical ownership, not only issued orders: group\"},{\"name\":\"aborted materialized aircraft deleted immediately\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: pre-dispatch abort retains held hull without dropping an uncrewed aircraft\"},{\"name\":\"queued ground origin is not rechecked\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: lost origin cancels queued ground construction before spawning in state 1\"},{\"name\":\"air construction ignores changed player clearance\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: optional-escort construction/failure outcome false,airspace\"},{\"name\":\"funding shortage becomes configuration failure\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: funding shortages wait instead of becoming configuration failures: 1,1,none,false,REAPER response requires a valid airborne profile with zero or one escort\"},{\"name\":\"player aircraft occupancy ignored\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: player in any compartment is detected even without crew-group ownership\"},{\"name\":\"activation overhead charged twice\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: overhead and losses reconcile exactly once across external spending\"},{\"name\":\"closed account keeps unbuilt collateral\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: closed, settled deployment releases all collateral\"},{\"name\":\"fixed-task exits retry without a bound\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: exit retries reach finite package withdrawal at configured limit 0\"},{\"name\":\"nested finance traversal removes an account twice\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: nested reconciliation cannot remove a closed account twice\"},{\"name\":\"reserve window expires before gunship egress\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: first heavy reserve pair may construct when two live-frame slots open\"},{\"name\":\"partially validated aircraft have no boarding hold\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: partial construction failures hold owned hulls before validation can abort\"},{\"name\":\"empty failed construction keeps its collateral\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: failed empty ground releases quote once even after its construction flag was consumed\"},{\"name\":\"unused partial-package collateral never released\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: partial cleanup preserves later waves and player-owned spawn queues: healthy\"},{\"name\":\"virtual proxy retains package finalization ownership\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: conversion transfers quote finalization from virtual to physical owner\"},{\"name\":\"escort child finalizes transport collateral\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: escort child cannot finalize the shared package before transport queues are cancelled\"},{\"name\":\"player-owned pending spawn queue releases collateral early\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: partial cleanup preserves later waves and player-owned spawn queues: playerGroup\"},{\"name\":\"escort player queue not propagated to package owner\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: transport finalization inherits preserved escort spawn queues\"},{\"name\":\"retirement orders unissued escort to fly\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: retirement issues egress only for already-dispatched aircraft\"},{\"name\":\"active dispatch failure terminates healthy packages\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: one active dispatch failure degrades only its package\"},{\"name\":\"active reserve boarding loses its preparation deadline\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: initial or reserve boarding expires exactly at its own deadline\"},{\"name\":\"unobserved removal is labelled recovered\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: an unobserved missing pilot is not labelled recovered\"},{\"name\":\"headline width and row estimates diverge\",\"suite\":\"Test-QRFSupportAndHeadlines.js\",\"killed\":true,\"error\":\"Error: natural width uses the same estimate as wrapping\"},{\"name\":\"scripted coast is treated as safe friendly recovery\",\"suite\":\"Test-StrongholdIntegration.js\",\"killed\":true,\"error\":\"Error: only an owned base can qualify as a safe return\"},{\"name\":\"scripted admission overlaps an ordinary target operation\",\"suite\":\"Test-StrongholdIntegration.js\",\"killed\":true,\"error\":\"Error: scripted admission also preserves ordinary operation target conflicts\"},{\"name\":\"stronghold loses dispatch receipt between polls\",\"suite\":\"Test-StrongholdIntegration.js\",\"killed\":true,\"error\":\"Error: deployment receipt distinguishes normal cooldown from construction retry\"},{\"name\":\"retired garrison defender fabricates a retaliation kill\",\"suite\":\"Test-StrongholdIntegration.js\",\"killed\":true,\"error\":\"Error: retired defender cannot trigger a retaliation\"},{\"name\":\"forced scripted waves disconnected from construction\",\"suite\":\"Test-StrongholdIntegration.js\",\"killed\":true,\"error\":\"Error: normal tactical construction and requested two-wave policy remain connected\"},{\"name\":\"recipe script default overwrites authored response family\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: attributed AROR_GroundQRFRecipe fields cannot overwrite authored values with script initializers\"},{\"name\":\"profile script default overwrites authored vehicle price\",\"suite\":\"Test-QRFInterruptions.js\",\"killed\":true,\"error\":\"Error: attributed AROR_ForceProfile fields cannot overwrite authored values with script initializers\"},{\"name\":\"retaliation banner announced before deployment\",\"suite\":\"Test-StrongholdIntegration.js\",\"killed\":true,\"error\":\"Error: deployment receipt distinguishes normal cooldown from construction retry\"}],\"note\":\"Intentional mutations in isolated source snapshots; no native behavior or source-file edits.\"}"
+    },
+    {
+      "name": "Test-QRFRouteAudit.js",
+      "passed": true,
+      "assertions": 147,
+      "elapsedMs": 54,
+      "exitCode": 0,
+      "output": "{\"assertions\":147,\"note\":\"Audit scheduling and coverage only. Run the sweep in Workbench for native planning evidence.\"}"
+    },
+    {
+      "name": "Test-QRFStrategy.js",
+      "passed": true,
+      "assertions": 7254,
+      "elapsedMs": 75,
+      "exitCode": 0,
+      "output": "{\n  assertions: 7254,\n  note: 'Actual-source bodies; native lifecycle, perception, replication and serialization remain mocked/unverified.'\n}"
+    },
+    {
+      "name": "Test-QRFProgression.js",
+      "passed": true,
+      "assertions": 3949,
+      "elapsedMs": 96,
+      "exitCode": 0,
+      "output": "{\n  assertions: 3949,\n  note: 'Actual source and all Chicken readiness/intensity cells; native compile, driving, crew, replication and balance remain unverified.'\n}"
+    },
+    {
+      "name": "Test-QRFResponseMix.js",
+      "passed": true,
+      "assertions": 1842,
+      "elapsedMs": 80,
+      "exitCode": 0,
+      "output": "{\"assertions\":1842,\"note\":\"Actual-source mix, routing, accounting and save checks; native execution remains mocked.\"}"
+    },
+    {
+      "name": "Test-ReaperLandingSearch.js",
+      "passed": true,
+      "assertions": 159,
+      "elapsedMs": 51,
+      "exitCode": 0,
+      "output": "{\"assertions\":159,\"note\":\"Native Lamentin terrain and REAPER landings still require Workbench Play.\"}"
+    },
+    {
+      "name": "Test-QRFBoarding.js",
+      "passed": true,
+      "assertions": 97,
+      "elapsedMs": 55,
+      "exitCode": 0,
+      "output": "{\"assertions\":97,\"note\":\"Native paused simulation/queue cancellation must be verified in Workbench Play.\"}"
+    },
+    {
+      "name": "Test-QRFIngress.js",
+      "passed": true,
+      "assertions": 53,
+      "elapsedMs": 71,
+      "exitCode": 0,
+      "output": "{\"assertions\":53,\"note\":\"Mocked native services; Workbench compile and airport driving/unloading required.\"}"
+    },
+    {
+      "name": "Test-QRFUnloading.js",
+      "passed": true,
+      "assertions": 42,
+      "elapsedMs": 55,
+      "exitCode": 0,
+      "output": "{\"assertions\":42,\"note\":\"Native clearance, animation and replication mocked; compile and Play required.\"}"
+    },
+    {
+      "name": "Test-QRFRetention.js",
+      "passed": true,
+      "assertions": 10,
+      "elapsedMs": 56,
+      "exitCode": 0,
+      "output": "{\"assertions\":10,\"note\":\"Native distance culling, AI dormancy and deletion require Workbench Play.\"}"
+    },
+    {
+      "name": "Test-QRFSupportAndHeadlines.js",
+      "passed": true,
+      "assertions": 94,
+      "elapsedMs": 58,
+      "exitCode": 0,
+      "output": "{\"assertions\":94,\"note\":\"Native banner rendering, terrain flight, target spotting and road navigation require Workbench compile and Play.\"}"
+    },
+    {
+      "name": "Test-QRFVehicleFaction.js",
+      "passed": true,
+      "assertions": 14,
+      "elapsedMs": 49,
+      "exitCode": 0,
+      "output": "{\"assertions\":14,\"note\":\"Compile and combat test required; no vehicle re-factioning or loss-price changes.\"}"
+    },
+    {
+      "name": "Test-QRFTownHold.js",
+      "passed": true,
+      "assertions": 22,
+      "elapsedMs": 54,
+      "exitCode": 0,
+      "output": "{\"assertions\":22,\"note\":\"Native navigation, dismounting and town occupation still require Play verification.\"}"
+    },
+    {
+      "name": "Test-TownDoctrine.js",
+      "passed": true,
+      "assertions": 496,
+      "elapsedMs": 137,
+      "exitCode": 0,
+      "output": "{\"assertions\":496,\"nativeVerified\":false,\"note\":\"Actual-source policy tests; Workbench compile, navigation, combat and dedicated-server replication remain unverified.\"}"
+    },
+    {
+      "name": "Test-SpottingAndAirResponse.js",
+      "passed": true,
+      "assertions": 89,
+      "elapsedMs": 59,
+      "exitCode": 0,
+      "output": "{\"assertions\":89,\"nativeVerified\":false,\"note\":\"Actual-source spotting, map widget, insertion and gunship policy checks. Native traces, renderer, REAPER flight and dedicated replication remain unverified.\"}"
+    },
+    {
+      "name": "Test-EveronQRFIntegration.js",
+      "passed": true,
+      "assertions": 50,
+      "elapsedMs": 56,
+      "exitCode": 0,
+      "output": "{\"assertions\":50,\"note\":\"Native events, faction manager and response execution mocked; Play verification required.\"}"
+    },
+    {
+      "name": "Test-InvaderCampaign.js",
+      "passed": true,
+      "assertions": 55,
+      "elapsedMs": 137,
+      "exitCode": 0,
+      "output": "{\n  assertions: 55,\n  baselineMeanPercent: 39,\n  escalatedMeanPercent: 62.8,\n  note: 'Funded policy model, not native gameplay or sustained income/performance acceptance.'\n}"
+    },
+    {
+      "name": "Test-RebIntel.js",
+      "passed": true,
+      "assertions": 86,
+      "elapsedMs": 60,
+      "exitCode": 0,
+      "output": "{\n  assertions: 86,\n  note: 'Native rendering, replication/JIP and Enforce compilation still require Workbench.'\n}"
+    },
+    {
+      "name": "Test-MissionLifecycle.js",
+      "passed": true,
+      "assertions": 84,
+      "elapsedMs": 63,
+      "exitCode": 0,
+      "output": "{\"assertions\":84,\"note\":\"Native spawning, seating and replication mocked; Workbench compile and Play required.\"}"
+    },
+    {
+      "name": "Test-CapturePlacement.js",
+      "passed": true,
+      "assertions": 14,
+      "elapsedMs": 53,
+      "exitCode": 0,
+      "output": "{\"assertions\":14,\"note\":\"Native traces, navmesh access, replication and driving still require Workbench verification.\"}"
+    },
+    {
+      "name": "Test-GarrisonsAndSupport.js",
+      "passed": true,
+      "assertions": 198,
+      "elapsedMs": 108,
+      "exitCode": 0,
+      "output": "{\"assertions\":198,\"note\":\"Mocked native services; Workbench compile, crew seating, placement, replication and save/load remain required.\"}"
+    },
+    {
+      "name": "Test-GarrisonCrew.js",
+      "passed": true,
+      "assertions": 37,
+      "elapsedMs": 53,
+      "exitCode": 0,
+      "output": "{\n  assertions: 37,\n  note: 'Native compartments and AI mocked; Workbench compile and sustained mounted-defence acceptance still required.'\n}"
+    },
+    {
+      "name": "Test-OutpostEquipment.js",
+      "passed": true,
+      "assertions": 27,
+      "elapsedMs": 56,
+      "exitCode": 0,
+      "output": "{\n  assertions: 27,\n  note: 'Native inventories mocked. Container contents, access, depletion and save/load require Workbench.'\n}"
+    },
+    {
+      "name": "Test-PostsAndPads.js",
+      "passed": true,
+      "assertions": 29,
+      "elapsedMs": 62,
+      "exitCode": 0,
+      "output": "{\n  assertions: 29,\n  note: 'Native geometry, spawning, teleport and AI behaviour mocked; Workbench Play acceptance required.'\n}"
+    },
+    {
+      "name": "Test-DefenceLayout.js",
+      "passed": true,
+      "assertions": 177,
+      "elapsedMs": 57,
+      "exitCode": 0,
+      "output": "{\n  assertions: 177,\n  note: 'Native terrain/trace services mocked; actual bushes, walls, gun height, navigation and AI need Workbench.'\n}"
+    },
+    {
+      "name": "Test-FortifiedOutpostLayouts.js",
+      "passed": true,
+      "assertions": 1477,
+      "elapsedMs": 334,
+      "exitCode": 0,
+      "output": "{\n  assertions: 1477,\n  note: 'Estimated envelopes only; native bounds, terrain, navigation and loot acceptance required.'\n}"
+    },
+    {
+      "name": "Test-DefenceSiteAudit.js",
+      "passed": true,
+      "assertions": 61,
+      "elapsedMs": 85,
+      "exitCode": 0,
+      "output": "{\n  assertions: 61,\n  note: 'Editor orchestration and geometry services mocked; native compile and dense scan still required.'\n}"
+    },
+    {
+      "name": "Test-DefenceWallGrounding.js",
+      "passed": true,
+      "assertions": 21,
+      "elapsedMs": 57,
+      "exitCode": 0,
+      "output": "{\n  assertions: 21,\n  note: 'Editor invalidation reproduced with mocks; native compile/grounding still required.'\n}"
+    },
+    {
+      "name": "Test-CampaignFlagEditor.js",
+      "passed": true,
+      "assertions": 14,
+      "elapsedMs": 54,
+      "exitCode": 0,
+      "output": "{\"assertions\":14,\"note\":\"Mocked editor API; native plugin compile, terrain collision and actual mesh placement still need Workbench.\"}"
+    },
+    {
+      "name": "Test-HighCommandSimulation.js",
+      "passed": true,
+      "assertions": 16,
+      "elapsedMs": 54,
+      "exitCode": 0,
+      "output": "{\"assertions\":16,\"note\":\"Actual HICOMM methods; native AI budgets, distance simulation and multiplayer remain unverified.\"}"
+    },
+    {
+      "name": "Test-PhoneSession.js",
+      "passed": true,
+      "assertions": 111,
+      "elapsedMs": 109,
+      "exitCode": 0,
+      "output": "{\"assertions\":111,\"note\":\"Actual presentation/lifecycle bodies with native services mocked. Workbench compile, phone input/rendering and real map lifecycle still required.\"}"
+    },
+    {
+      "name": "Test-GarrisonHelicopterProximity.js",
+      "passed": true,
+      "assertions": 29,
+      "elapsedMs": 55,
+      "exitCode": 0,
+      "output": "{\"assertions\":29,\"note\":\"Actual source with native services mocked; Workbench compile and multiplayer flight acceptance still required.\"}"
+    },
+    {
+      "name": "Test-PlayerSquads.js",
+      "passed": true,
+      "assertions": 408,
+      "elapsedMs": 93,
+      "exitCode": 0,
+      "output": "{\"assertions\":408,\"nativeVerified\":false,\"result\":\"Player squad server policy and lifecycle passed\"}"
+    },
+    {
+      "name": "Test-PlayerSquadMutations.js",
+      "passed": true,
+      "assertions": 11,
+      "elapsedMs": 147,
+      "exitCode": 0,
+      "output": "{\"assertions\":11,\"mutantsDetected\":10,\"nativeVerified\":false,\"results\":[{\"name\":\"client-side renaming\",\"detected\":true},{\"name\":\"pending slots ignored\",\"detected\":true},{\"name\":\"leader checks removed\",\"detected\":true},{\"name\":\"cross-squad dismissal\",\"detected\":true},{\"name\":\"foreign AI parent ignored\",\"detected\":true},{\"name\":\"released membership ignored\",\"detected\":true},{\"name\":\"deleted publication unguarded\",\"detected\":true},{\"name\":\"dead or transferred arrival reused\",\"detected\":true},{\"name\":\"name validation bypassed\",\"detected\":true},{\"name\":\"unchanged snapshots republished\",\"detected\":true}]}"
+    },
+    {
+      "name": "Test-TownCorrections.js",
+      "passed": true,
+      "assertions": 12571,
+      "elapsedMs": 79,
+      "exitCode": 0,
+      "output": "{\"assertions\":12571,\"nativeVerified\":false,\"soakCycles\":500,\"admissionTicks\":10000,\"note\":\"Actual current methods with mocked native services; compile, flight and dedicated performance remain Workbench acceptance.\"}"
+    },
+    {
+      "name": "Test-QRFSourceStructure.ps1",
+      "passed": true,
+      "assertions": 0,
+      "elapsedMs": 10546,
+      "exitCode": 0,
+      "output": "Checked balanced delimiters, strings, comments, preprocessor nesting and owned-reference array transfers in 285 addon scripts, including Workbench plugins. Not an Enforce compilation."
+    },
+    {
+      "name": "Test-ExecutorSettings.ps1",
+      "passed": true,
+      "assertions": 0,
+      "elapsedMs": 434,
+      "exitCode": 0,
+      "output": "AROR_Everon_Chicken_Layers: 68 validator terms, 64 layer overrides, 12 vehicle profiles checked against 8 presets\nAROR_Everon_Layers: 68 validator terms, 63 layer overrides, 12 vehicle profiles checked against 8 presets\nWARN AROR_Everon_Chicken_Layers: profile us_airborne always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile us_airborne always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile us_airborne_light always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile us_airborne_light always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile us_light_support always gets UAZ469_PKM.et from USSR_ARMY (one ARMED_CAR)\nWARN AROR_Everon_Chicken_Layers: profile ussr_airborne always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile ussr_airborne always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile ussr_airborne_light always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile ussr_airborne_light always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile ussr_light_support always gets UAZ469_PKM.et from USSR_ARMY (one ARMED_CAR)\nWARN AROR_Everon_Layers: profile us_airborne always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile us_airborne always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile us_airborne_light always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile us_airborne_light always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile us_light_support always gets UAZ469_PKM.et from USSR_ARMY (one ARMED_CAR)\nWARN AROR_Everon_Layers: profile ussr_airborne always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile ussr_airborne always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile ussr_airborne_light always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile ussr_airborne_light always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile ussr_light_support always gets UAZ469_PKM.et from USSR_ARMY (one ARMED_CAR)\nWARN preset RHS_AFRF_MSV_VPKO3_EMR (OpenResistanceRHSCompat) has no vehicles of its own: an army using it spawns no ground or air responses unless another addon overrides it\nWARN preset RHS_USAF_FORECON (OpenResistanceRHSCompat) has no vehicles of its own: an army using it spawns no ground or air responses unless another addon overrides it\nExecutor settings OK"
+    },
+    {
+      "name": "Test-TownSites.ps1",
+      "passed": true,
+      "assertions": 0,
+      "elapsedMs": 585,
+      "exitCode": 0,
+      "output": "AROR_Everon_Chicken: 18 towns/cities, 3 kept outposts, 12 military/resource sites\nWARN  everon_military_outpost_lamentin is 317 m from everon_lamentin_town (under 600 m)\nWARN  everon_military_outpost_hospital is 595 m from everon_tyrone (under 600 m)\nWARN  everon_fortress_vostok is 301 m from everon_saint_pierre (under 600 m)\nWARN  everon_military_outpost_levie is 378 m from everon_levie (under 600 m)\nAll site checks passed."
+    }
+  ],
+  "sourceHashes": {
+    "AROpenResistance/Open Resistance/Scripts/Game/Locations/AROR_SiteLifeComponent.c": "32bab3c33424cedc693fedecd17f5cc093c815835ebf2edd3e4181b37eda6370",
+    "docs/validation/TOWN_CORRECTIONS_2026-11-10.md": "f687f72b31f537be105b73e9e7474709b3a5227a8caa5c2a96e7a42f6b574363",
+    "tools/Test-QRFSourceStructure.ps1": "53443aa558ab676bc80b3a97759499a940b2a2cc7b5710e45e8b0394d735e7d3",
+    "tools/Test-TownCorrections.js": "ad168c737b22f365d40318067be700eae047b3d3ad90ff59414d55b64dc69fa9"
+  },
+  "temporaryArtifacts": "C:\\Users\\jaspe\\AppData\\Local\\Temp\\AROR-town-corrections-E8B02X",
+  "summary": {
+    "checks": 44,
+    "passing": 44,
+    "assertions": 113246,
+    "failing": []
+  },
+  "nativeCompilation": {
+    "status": "USER_CONFIRMED_PASS",
+    "revision": "97babeb6a59aee121d56cd0b0de208737a43e1ec",
+    "confirmedAt": "2026-11-10T09:30:33Z",
+    "evidence": "User confirmed successful Workbench recompilation; gameplay, flight and dedicated-server stress tests remain unverified."
+  }
+}

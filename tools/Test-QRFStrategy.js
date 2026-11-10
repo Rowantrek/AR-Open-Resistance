@@ -21,7 +21,7 @@ function runQRFTests(sources) {
   env.AROR_FactionRoles={GetAIMilitary:out=>out.push(roles.OCCUPIERS,roles.INVADERS)};
   const roles=env.AROR_EFactionRole;
   env.AROR_EResponseType={AIR_GROUND:7};
-  methodNames.push('ResponseLevel','GetCrackdownLevel','GetCrackdown','SetCrackdown_S','RecordCaptureEscalation_S','QRFPoolReadinessLevel','ReportSpawnWait');
+  methodNames.push('ResponseLevel','GetCrackdownLevel','GetCrackdown','SetCrackdown_S','RecordCaptureEscalation_S','QRFPoolReadinessLevel','ReportSpawnWait','GetAvailableProfiles');
   function compile(source,name) {
     let {args,body} = extract(source,name);
     args = args.replace(/\b(?:notnull |const )?(?:[A-Za-z_]\w*)(?:<[^>]+>)?\s+(\w+)/g,'$1');
@@ -153,6 +153,7 @@ function runQRFTests(sources) {
   env.AROR_ResponsePolicy={IsRecipeEligible:compile(sources.AROR_ResponsePolicy,'IsRecipeEligible'),IsProfileUnlocked:compile(sources.AROR_ResponsePolicy,'IsProfileUnlocked')};
   // Execute actual ground selection against bounded authored-recipe mocks.
   const groundCtx={m_Operations:{GetReadinessLevel:()=>5,GetCrackdownLevel:()=>5,GetQRFFinance:()=>({Available:()=>bank.balances[1],Debt:()=>0}),QRFOverhead:t=>50+t*10},m_iMaxGroups:20,m_iMaxMembers:128,m_iMaxVehicles:10,GetReservedGroups:()=>0,GetReservedMembers:()=>0,GetReservedVehicles:()=>0,m_aForceProfiles:[],m_aGroundQRFRecipes:[]};
+  groundCtx.GetAvailableProfiles=compile(sources.AROR_OperationExecutorComponent,'GetAvailableProfiles');
   Profile.prototype.GetVehicleBudget=compile(sources.AROR_ForceProfile,'GetVehicleBudget');
   const motor=new Profile();
   for(let tier=1;tier<=5;tier++)groundCtx.m_aGroundQRFRecipes.push({m_iLevel:tier,AllowsReadinessLevel:()=>true,Resolve:(profiles,role,faction,out)=>{if(role!==1||faction!=='AROR_OCCUPIERS')return false;for(let i=0;i<tier;i++)out.push(motor);return true;}});

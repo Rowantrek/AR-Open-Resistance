@@ -55,7 +55,8 @@ class AROR_QRFCaptureObserver
 				continue;
 			AROR_EFactionRole previous = observed.m_eRole;
 			observed.m_eRole = location.GetControllingRole();
-			if (previous != observed.m_eRole && !AROR_InvaderCampaignComponent.SuppressAICaptureQRF_S(previous, observed.m_eRole))
+			// A town with a wave response answers with its waves, not a capture QRF
+			if (previous != observed.m_eRole && !AROR_InvaderCampaignComponent.SuppressAICaptureQRF_S(previous, observed.m_eRole) && !AROR_TownWavesComponent.ReplacesCaptureQRF(location))
 				m_Operations.ReportLocationCapture_S(previous, location.GetId());
 			return;
 		}

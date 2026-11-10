@@ -95,6 +95,9 @@ const layer=fs.readFileSync(path.join(root,'Worlds/AROR_Everon/AROR_Everon_Chick
 function fields(body){const obj={};for(const m of body.matchAll(/\b(m_\w+)\s+(?:"([^"]*)"|(-?\d+(?:\.\d+)?))/g))obj[m[1]]=m[2]??Number(m[3]);return obj;}
 const profiles=[...layer.matchAll(/^ {4}AROR_ForceProfile \{([\s\S]*?)^ {4}\}/gm)].map(m=>fields(m[1]));
 for(const p of profiles){
+  p.m_iEscortCount??=1;
+  p.m_iMinimumReadinessLevel??=1;
+  p.HasPresetVehicles=()=>true; // Catalogue admission is exercised against installed WCS assets separately.
   for(const name of ['IsValid','HasNativeExecutor','GetGroupBudget','GetVehicleBudget','GetWeight'])p[name]=compile('AROR_ForceProfile',name);
   Object.assign(p,{m_bLightVehicle:!!p.m_bLightVehicle});
 }
@@ -103,6 +106,7 @@ const recipes=[...layer.matchAll(/^ {4}AROR_GroundQRFRecipe \{([\s\S]*?)^ {4}\}/
   for(const name of ['IsValid','AllowsReadinessLevel','Resolve'])r[name]=compile('AROR_GroundQRFRecipe',name);return r;
 });
 const executor={m_aForceProfiles:profiles,m_aGroundQRFRecipes:recipes,m_bAllowAirborneResponses:true,m_bAllowJointResponses:true,m_bQRFTacticalCommander:true,m_bExecuteOperations:true,m_bQRFRequireFriendlyOrigin:true,
+  GetAvailableProfiles:compile('AROR_OperationExecutorComponent','GetAvailableProfiles'),
   BestOrigin:compile('AROR_OperationExecutorComponent','BestOrigin'),IsUsableOrigin:compile('AROR_OperationExecutorComponent','IsUsableOrigin'),
   OriginCost:(a,b)=>env.vector.DistanceXZ(a,b),IsGarrisonDepleted:()=>false,m_mOriginLaunchedAt:{Contains:()=>false},m_aRoadlessOrigins:[],m_fMinOriginDistance:1500,
   GetResponsePreview:compile('AROR_OperationExecutorComponent','GetResponsePreview'),
@@ -121,11 +125,11 @@ for(const role of [1,2])for(let readiness=1;readiness<=5;readiness++)for(const k
   for(let crackdown=1;crackdown<=5;crackdown++){
     const choice=executor.GetResponsePreview(role,kind,readiness,crackdown);
     responseCoverage.push({Role:role===1?'OCCUPIERS':'INVADERS',Family:env.AROR_ResponsePolicy.TypeName(kind),Readiness:readiness,Crackdown:crackdown,Available:choice.IsAvailable(),Recipe:choice.m_sRecipeId||'',Profile:choice.m_sProfileId||'',Packages:choice.m_aElements.length,ReservedGroups:choice.m_iGroups,ReservedPersonnel:choice.m_iPersonnel,ReservedVehicles:choice.m_iVehicles,Reason:choice.m_sReason,NativeExecution:'NOT_RUN'});
-    const minimum=kind===1?3:(kind===7?2:(kind===2?5:1));
+    const minimum=kind===1?3:(kind===2?5:1);
     check(choice.IsAvailable()===(readiness>=minimum),'equipment gate for army/type/Readiness/Crackdown '+[role,kind,readiness,crackdown]);
     if(!choice.IsAvailable())continue;
-    if(kind===3)check(choice.m_aElements.every(p=>p.m_iEscortCount===(readiness<5?0:1)),'Readiness selects light transport-only or heavy escorted air without changing intensity');
-    if(kind===7&&readiness<5)check(choice.m_aElements[0].m_iEscortCount===0&&choice.m_aElements.slice(1).every(p=>p.m_eType!==types.ARMOUR||p.m_bLightVehicle),'early joint responses exclude gunships and heavy armour');
+    if(kind===3)check(choice.m_aElements.every(p=>p.m_iEscortCount===1),'enabled escorted air is available from readiness one without changing requested intensity');
+    if(kind===7&&readiness<5)check(choice.m_aElements.slice(1).every(p=>p.m_eType!==types.ARMOUR||p.m_bLightVehicle),'early joint responses retain the heavy armour equipment gate while allowing gunship support');
     const physicalGroups=choice.m_aElements.reduce((n,p)=>n+(p.m_eType===3?2+p.m_iEscortCount:((p.m_eType===4||(p.m_eType===2&&!p.m_bFillPassengerSeats))?1:2)),0);
     const physicalVehicles=choice.m_aElements.reduce((n,p)=>n+(p.m_eType===3?1+p.m_iEscortCount:(p.m_eType===4?0:1)),0);
     check(choice.m_iGroups===physicalGroups&&choice.m_iVehicles===physicalVehicles&&choice.m_iPersonnel===choice.m_aElements.reduce((n,p)=>n+p.m_iPersonnelBudget,0),'preview reserves actual infantry/pilot/escort groups, vehicles and personnel');
@@ -179,6 +183,9 @@ env.AROR_Operation=class {
 };
 function manager(){return {
   m_bMarsEnabled:true,m_bTerritoryAttacksEnabled:true,m_iClock:1000,m_iMaxAttacks:1,m_iMaxQRFs:1,m_iNextId:0,m_iQRFCooldown:120,m_iAttackInterval:300,
+  HasTownAssault:()=>false,
+  IsTownInGrace:()=>false,
+  AttackOrderTier:()=>3,
   m_bInvaderOperationsEnabled:true,m_aOperations:[],m_mMarsNextRequest:{items:new Map(),Find(id){return this.items.get(id)||0;},Set(id,v){this.items.set(id,v);}},
   IsReady:()=>true,IsEnemyRole:r=>r===1||r===2,HasLocation:id=>!!locations.GetLocationById(id),GetNextRequestTime:()=>9999,
   GetOwner:()=>({FindComponent:()=>executor}),GetOperation(id){return this.m_aOperations.find(x=>x.id===id);},
@@ -190,9 +197,9 @@ let m=manager();const request=compile('AROR_MarsOperationManager','RequestMars_S
  env.AROR_MarsAccess.CanRequest_S=()=>false;
  request.call(denied,7,credential,1,'type:3',5,5);
  request.call(denied,7,credential,1,'type:3',5,5);
- check(!denied.m_aOperations.length&&hints.length===initialHints+1,'unauthorized requests never dispatch and denial replies share the request throttle');
+ check(!denied.m_aOperations.length&&hints.length===initialHints+2&&hints.at(-1)[1].includes('Wait'),'unauthorized requests never dispatch and throttled requests receive an explicit wait reply');
  denied.m_iClock+=5;request.call(denied,7,credential,1,'type:3',5,5);
- check(hints.length===initialHints+2,'denial may be retried at the configured throttle boundary');
+ check(hints.length===initialHints+3,'denial may be retried at the configured throttle boundary');
  env.AROR_MarsAccess.CanRequest_S=()=>true;
 }
 
@@ -236,6 +243,7 @@ check(!!m.RequestOperation_S(2,opTypes.ATTACK,'second-target',60),'terminal atta
 const processOperations=compile('AROR_OperationManagerComponent','ProcessOperations');
 let outcome;
 const completion={m_iClock:10,m_iSpawnTimeout:90,ActiveTimeoutFor:()=>900,HasLocation:()=>true,
+  IsHostileAttackTarget:(op,target)=>target.GetControllingRole()!==op.GetRole(),
   GetOperations:out=>out.push(attackForCompletion),
   ChangeState_S:(op,state,reason)=>outcome={state,reason}};
 let attackForCompletion=new env.AROR_Operation('capture',1,opTypes.ATTACK,'target');
@@ -247,7 +255,7 @@ check(outcome.state===states.SUCCEEDED,'canonical capture resolves an active att
 attackForCompletion.state=states.PLANNED;processOperations.call(completion,opTypes.ATTACK);
 check(outcome.state===states.CANCELLED,'target lost during preparation cancels without false success');
 const idle=compile('AROR_OperationExecutorComponent','FinishGroundQRFIfIdle');
-const idleContext={HasOperatingQRF:()=>false,HasPendingQRF:()=>false,
+const idleContext={HasTownAssault:()=>false,HasOperatingQRF:()=>false,HasPendingQRF:()=>false,
   m_Operations:{ResolveOperation_S:(id,state)=>outcome={state}},FailOperation:()=>outcome={state:states.FAILED}};
 attackForCompletion.state=states.ACTIVE;currentLocations=[site('target',0,100)];idle.call(idleContext,attackForCompletion);
 check(outcome.state===states.FAILED,'withdrawal without capture fails the attack');

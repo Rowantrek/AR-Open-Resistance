@@ -12,6 +12,7 @@ Object.defineProperty(String.prototype,'IsEmpty',{value(){return !this.length},c
 const states={PLANNED:0,SPAWNING:1,ACTIVE:2,SUCCEEDED:3,FAILED:4,CANCELLED:5};
 const sites=Array.from({length:12},()=>({registered:true,role:0,GetControllingRole(){return this.role}}));
 const env={Replication:{IsServer:()=>server},AROR_EFactionRole:{RESISTANCE:0,OCCUPIERS:1,INVADERS:2},
+ AROR_FactionRolesComponent:{GetInstance:()=>({GetFaction:role=>({role,IsFactionEnemy:other=>role!==other.role})})},
  AROR_EOperationType:{ATTACK:0,QRF:1},AROR_EOperationState:states,AROR_QRFSearchPlan:class{},
  AROR_LocationManagerComponent:{GetInstance:()=>({GetLocationById:id=>{const s=sites[Number(id)];return s?.registered?s:null}})},
  Math:{Max:Math.max},Print(){},LogLevel:{NORMAL:0},string:{Empty:'',Format:(s,...a)=>s.replace(/%(\d+)/g,(_,n)=>a[n-1])}};
@@ -25,7 +26,7 @@ function compile(source,name){
  let body=m[2].replace(/array<[^>]+> (\w+) = \{\};/g,'let $1=[];')
  .replace(/foreach \(\w+ (\w+) : ([^)]+)\)/g,'for(const $1 of $2)')
  .replace(/\bAROR_(?!E[A-Z])\w+\s+(\w+);/g,'let $1=null;')
- .replace(/\b(?:bool|int|float|string|AROR_\w+)\s+(\w+)/g,'let $1')
+ .replace(/\b(?:bool|int|float|string|Faction|AROR_\w+)\s+(\w+)/g,'let $1')
  .replace(/let (\w+);/g,'let $1=0;').replace(/(?<![.\w])[ms]_\w+/g,x=>'this.'+x)
  .replace(/(?<![.\w])(\w+)\(/g,(s,n)=>names.has(n)?'this.'+s:s);
  return new Function(...Object.keys(env),'return function('+args+'){'+body+'}')(...Object.values(env));
@@ -41,7 +42,7 @@ const m={m_iClock:0,m_iNextId:0,m_aOperations:[],m_aPendingNotifications:[],m_bN
  m_Commanders:{IsCampaignActive:()=>true},m_QRFFinance:{Activate_S(){},Observe_S(){}}};
 m.s_Instance=m;
 for(const n of ['GetOperation','GetOperations','IsReady','IsEnemyRole','HasLocation','GetNextRequestTime','RequestOperation_S',
- 'ChangeState_S','MarkActive_S','ResolveOperation_S','NotifyChanged','ActiveTimeoutFor','ProcessOperations','Tick'])
+ 'ChangeState_S','MarkActive_S','ResolveOperation_S','NotifyChanged','ActiveTimeoutFor','IsHostileAttackTarget','ProcessOperations','Tick'])
  m[n]=compile(managerSource,n);
 m.m_OnOperationChanged={Invoke(op){
  callbackDepth++;maxDepth=Math.max(maxDepth,callbackDepth);notifications++;

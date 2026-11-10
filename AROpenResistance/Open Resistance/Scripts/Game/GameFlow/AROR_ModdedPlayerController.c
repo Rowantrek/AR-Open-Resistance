@@ -544,12 +544,23 @@ modded class SCR_PlayerController
 	//------------------------------------------------------------------------------------------------
 	// HICOMM: client -> server (validated by AROR_HighCommandComponent)
 	//------------------------------------------------------------------------------------------------
-	void AROR_RequestHiCommRaise(int typeIndex)
+	//! vehicleEntryId: garage entry a mechanized squad brings out (0 otherwise)
+	void AROR_RequestHiCommRaise(int typeIndex, int vehicleEntryId = 0)
 	{
 		if (Replication.IsServer())
-			AROR_RpcAsk_HiCommRaise(typeIndex);
+			AROR_RpcAsk_HiCommRaise(typeIndex, vehicleEntryId);
 		else
-			Rpc(AROR_RpcAsk_HiCommRaise, typeIndex);
+			Rpc(AROR_RpcAsk_HiCommRaise, typeIndex, vehicleEntryId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Embark (entryId: garage vehicle to collect if the squad has none nearby, 0 for any) or dismount
+	void AROR_RequestHiCommVehicle(int squadId, bool embark, int entryId)
+	{
+		if (Replication.IsServer())
+			AROR_RpcAsk_HiCommVehicle(squadId, embark, entryId);
+		else
+			Rpc(AROR_RpcAsk_HiCommVehicle, squadId, embark, entryId);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -572,12 +583,45 @@ modded class SCR_PlayerController
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! HICOMM Garrisons: buy one unit (AROR_EMilitiaKind) for a held town (validated by AROR_TownMilitiaComponent)
+	void AROR_RequestTownGarrison(string townId, int kind)
+	{
+		if (Replication.IsServer())
+			AROR_RpcAsk_TownGarrison(townId, kind);
+		else
+			Rpc(AROR_RpcAsk_TownGarrison, townId, kind);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
-	protected void AROR_RpcAsk_HiCommRaise(int typeIndex)
+	protected void AROR_RpcAsk_TownGarrison(string townId, int kind)
+	{
+		AROR_TownMilitiaComponent militia = AROR_TownMilitiaComponent.GetInstance();
+		if (militia)
+			militia.RequestBuy_S(GetPlayerId(), townId, kind);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void AROR_RpcAsk_HiCommRaise(int typeIndex, int vehicleEntryId)
 	{
 		AROR_HighCommandComponent highCommand = AROR_HighCommandComponent.GetInstance();
 		if (highCommand)
-			highCommand.RequestRaise_S(GetPlayerId(), typeIndex);
+			highCommand.RequestRaise_S(GetPlayerId(), typeIndex, vehicleEntryId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void AROR_RpcAsk_HiCommVehicle(int squadId, bool embark, int entryId)
+	{
+		AROR_HighCommandComponent highCommand = AROR_HighCommandComponent.GetInstance();
+		if (!highCommand)
+			return;
+
+		if (embark)
+			highCommand.RequestEmbark_S(GetPlayerId(), squadId, entryId);
+		else
+			highCommand.RequestDismount_S(GetPlayerId(), squadId);
 	}
 
 	//------------------------------------------------------------------------------------------------

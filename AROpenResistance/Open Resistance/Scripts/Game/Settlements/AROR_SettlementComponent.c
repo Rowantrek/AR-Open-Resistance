@@ -199,12 +199,24 @@ class AROR_SettlementComponent : ScriptComponent
 		{
 			if (GetSupport(role) > MAJORITY && role != m_Location.GetControllingRole())
 			{
+				// A town with a standing garrison post only passes to the Resistance once its flag is taken: support
+				// alone (a repelled response, regional support, missions) must not hand over a town still full of
+				// the army's defenders. Taking the flag breaks the post and adds its swing, flipping it then.
+				if (role == AROR_EFactionRole.RESISTANCE && IsPostStanding())
+					continue;
 				if (m_Location.SetControllingRole_S(role))
 					Print(string.Format("[AROR] '%1' now controlled by %2 (support %3)", m_Location.GetName(), typename.EnumToString(AROR_EFactionRole, role), GetSupport(role)), LogLevel.NORMAL);
 
 				return;
 			}
 		}
+	}
+
+	//! An AI army holds the town and its settlement garrison post has not been taken
+	protected bool IsPostStanding()
+	{
+		AROR_GarrisonComponent post = AROR_CaptureLocationAction.GetSettlementPost(m_Location);
+		return post && !post.IsPostBroken() && AROR_GarrisonPolicy.IsEnemyRole(m_Location.GetControllingRole());
 	}
 
 	//------------------------------------------------------------------------------------------------

@@ -103,11 +103,30 @@ class AROR_FactionPresetsComponent : SCR_BaseGameModeComponent
 			return string.Empty;
 		array<AROR_FactionPresetEntry> entries = {};
 		preset.GetEntries(AROR_EFactionPresetCategory.VEHICLES, type, entries);
-		if (entries.IsEmpty())
+		return PickVehicleEntry(entries, choice);
+	}
+
+	//! Select only among already offered, role-owned entries; a missing preferred mod can fall back within the type.
+	static ResourceName PickVehicleEntry(array<AROR_FactionPresetEntry> entries, int choice = -1)
+	{
+		array<AROR_FactionPresetEntry> preferred = {};
+		int highest = -1;
+		foreach (AROR_FactionPresetEntry entry : entries)
+		{
+			int priority = Math.Max(0, entry.GetSelectionPriority());
+			if (priority > highest)
+			{
+				highest = priority;
+				preferred.Clear();
+			}
+			if (priority == highest)
+				preferred.Insert(entry);
+		}
+		if (preferred.IsEmpty())
 			return string.Empty;
 		if (choice < 0)
-			choice = Math.RandomInt(0, entries.Count());
-		return entries[Math.Mod(choice, entries.Count())].GetPrefab();
+			choice = Math.RandomInt(0, preferred.Count());
+		return preferred[Math.Mod(choice, preferred.Count())].GetPrefab();
 	}
 
 	//! Garrison recipes retain their saved variant ordinals; their old asset paths now only request a type.

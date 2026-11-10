@@ -1,7 +1,7 @@
 // Execute the actual preset/default/loadout selectors against effective addon configs.
 // Native ResourceName normalization, prefab loading and inventory compatibility remain Workbench checks.
 const fs = require('fs'), path = require('path'), assert = require('assert/strict'), crypto = require('crypto');
-const { parseConfig, mergeConfig, field, value, values, objects } = require('./Audit-WCSAssets');
+const { parseConfig, mergeConfig, field, value, values, objects, resourceReferences } = require('./Audit-WCSAssets');
 const root = path.resolve(__dirname, '..'), core = 'AROpenResistance/Open Resistance/';
 const rhs = 'OptionalAddons/OpenResistanceRHSCompat/OpenResistanceRHSCompat/';
 const wcs = 'OptionalAddons/OpenResistanceWCSCompat/';
@@ -31,7 +31,7 @@ const env = {
   AROR_FactionPresetUnit: { Cast: v => v },
   AROR_FactionRoles: { GetAll: a => a.push(...Object.values(roles)) },
   Replication: { IsServer: () => server, BumpMe: () => bumps++ },
-  Math: { Mod: (a, b) => a % b, RandomInt: (a, b) => Math.floor(a + (b - a) * rollFraction) },
+  Math: { Max: Math.max, Mod: (a, b) => a % b, RandomInt: (a, b) => Math.floor(a + (b - a) * rollFraction) },
   int: { MAX: 2147483647 }, string: { Empty: '', Format: (s, ...a) => s.replace(/%(\d+)/g, (_, n) => a[n - 1]) },
   typename: { EnumToString: (e, v) => Object.keys(e).find(k => e[k] === v) }, Print() {}, LogLevel: { WARNING: 1, ERROR: 2 }
 };
@@ -61,7 +61,7 @@ equal(value(fixtureUnits[0], 'm_sPrefab'), '{3333333333333333}Prefabs/B.et', 'qu
 equal(values(field(fixtureUnits[0], 'm_aKit')), ['c'], 'primitive list override replaces its list');
 equal(value(objects(baseFixture, 'm_aUnits')[0], 'm_sPrefab'), '{2222222222222222}Prefabs/A.et', 'merge never mutates base tree');
 
-const report = JSON.parse(read('docs/validation/WCS_ASSET_AUDIT_2026-11-07.json'));
+const report = JSON.parse(read(process.env.AROR_WCS_AUDIT_REPORT || 'docs/validation/WCS_ASSET_AUDIT_2026-11-09.json'));
 for (const [file, hash] of Object.entries(report.sourceHashes)) {
   equal(crypto.createHash('sha256').update(read(file).replace(/\r\n/g, '\n')).digest('hex'), hash, 'resource audit must match current config: ' + file);
 }
@@ -85,6 +85,7 @@ function entry(node, cat) {
   return {
     m_sPrefab: value(node, 'm_sPrefab'), GetCategory: () => cat,
     GetTypeValue: () => (cat === category.VEHICLES ? vehicleTypes : unitTypes)[value(node, 'm_eType', cat === category.VEHICLES ? 'MOTOR_CAR' : 'RIFLEMAN')],
+    GetSelectionPriority: () => Number(value(node, 'm_iSelectionPriority', 0)),
     IsKnownType() { return this.GetTypeValue() !== undefined; },
     GetPrefab: method(entrySource, 'GetPrefab'), GetListedPrefab: method(entrySource, 'GetListedPrefab'),
     HasPrefab() { return !!this.m_sPrefab; }, HasLoadouts: () => objects(node, 'm_aLoadouts').length > 0,
@@ -135,12 +136,14 @@ const component = {
   GetReadiness: () => 1, GetRoleBasePrefab: role => role === roles.CIVILIANS ? '' : 'role-shell-' + role
 };
 env.AROR_FactionPresetsComponent = { GetInstance: () => component };
+component.PickVehicleEntry = method(componentSource, 'PickVehicleEntry');
+env.AROR_FactionPresetsComponent.PickVehicleEntry = component.PickVehicleEntry;
 env.AROR_EVehicleType = vehicleTypes;
 for (const [name, members] of Object.entries({
   FindPreset: [], GetDefaultPresetId: [], ResolvePresetId: ['FindPreset', 'GetDefaultPresetId'],
   SetPresets_S: ['SetRolePreset', 'ResolvePresetId', 'LogPresets'], RestorePresets_S: ['SetPresets_S'],
   IsUsableUnit: ['GetRoleBasePrefab'], FindUnit: ['GetPreset', 'IsUsableUnit', 'FindPreset', 'GetDefaultPresetId', 'LogFallback'],
-  GetUnitLoadout: ['FindUnit', 'GetReadiness'], GetSpawnPrefab: ['GetRoleBasePrefab', 'FindUnit'], PickVehicle: ['GetPreset']
+  GetUnitLoadout: ['FindUnit', 'GetReadiness'], GetSpawnPrefab: ['GetRoleBasePrefab', 'FindUnit'], PickVehicle: ['GetPreset', 'PickVehicleEntry']
 })) component[name] = method(componentSource, name, members);
 component.SetPresets_S([]);
 equal(Object.values(selected), ['FIA', armies[0].GetId(), armies[1].GetId(), 'EVERON_CIV'], 'new campaign gets WCS/RHS enemies and existing Resistance/civilian defaults');
@@ -175,11 +178,26 @@ const usSupply = component.PickVehicle(roles.OCCUPIERS, vehicleTypes.SUPPLY_TRUC
 check(usSupply.startsWith('{ACCF3C5D1629AF7F}'), 'motorized US QRF and supply missions can select the WCS FMTV');
 check(component.PickVehicle(roles.OCCUPIERS, vehicleTypes.STATIC_AA, 0).startsWith('{3DCACB48619AA029}'), 'US static AA uses the offered WCS ZU23 counterpart');
 env.AROR_ContentPacksComponent.IsAvailableAtReadiness = () => true;
+env.AROR_ForceSpawner = {VehiclePrefab:method(read(core + 'Scripts/Game/Common/AROR_ForceSpawner.c'), 'VehiclePrefab')};
 const missionVehicle = method(read(core + 'Scripts/Game/Missions/AROR_MissionBoardComponent.c'), 'GetVehiclePrefab_S');
 equal(missionVehicle(roles.OCCUPIERS, vehicleTypes.SUPPLY_TRUCK), usSupply, 'actual supply/convoy mission selector uses the WCS FMTV');
 env.AROR_ContentPacksComponent.IsAvailableAtReadiness = () => false;
 equal(missionVehicle(roles.OCCUPIERS, vehicleTypes.SUPPLY_TRUCK), usSupply, 'existing mission readiness fallback stays inside the selected army');
 for (const [index, armyReport] of report.presets.entries()) {
+  // Exercise every deterministic ticket and random boundary, rather than just the first configured hull.
+  for (const type of Object.keys(vehicleTypes)) {
+    const enabled = armyReport.vehicles.filter(v => v.offered && v.type === type);
+    const preferred = enabled.filter(v => v.pack === 'WCS');
+    if (!preferred.length) continue;
+    for (const ticket of [-1, ...enabled.map((_, i) => i), enabled.length * 3 + 1]) {
+      for (const fraction of [0, 0.5, 0.999999]) {
+        rollFraction = fraction;
+        const selectedHull = component.PickVehicle(index + 1, vehicleTypes[type], ticket);
+        check(preferred.some(v => v.prefab === selectedHull), 'WCS offered hull takes priority for every roll: ' + armyReport.id + ':' + type);
+        if(index===1&&type==='HELI_ATTACK')check(/\/(Mi24|KA52)\//.test(selectedHull),'Russian gunships prefer the WCS families explicitly named by REAPER');
+      }
+    }
+  }
   for (const type of ['ARMED_CAR', 'APC', 'SUPPLY_TRUCK', 'HELI_TRANSPORT', 'HELI_ATTACK']) {
     const prefab = component.PickVehicle(index + 1, vehicleTypes[type], 0);
     check(prefab && armyReport.vehicles.some(v => v.type === type && v.prefab === prefab && v.offered), 'required force type has an enabled hull: ' + armyReport.id + ':' + type);
@@ -187,6 +205,28 @@ for (const [index, armyReport] of report.presets.entries()) {
   const enabledAircraft = armyReport.vehicles.filter(v => v.offered && v.type === 'HELI_ATTACK');
   check(enabledAircraft.some(v => v.pack === 'WCS'), 'selected army includes enabled WCS gunships');
 }
+rollFraction = 0;
+const russianTruck = component.PickVehicle(roles.INVADERS, vehicleTypes.SUPPLY_TRUCK, 0);
+check(russianTruck.includes('Ural4320_transport_covered.et'), 'Russian motorized assaults use a troop truck, not an Arsenal/logistics body');
+const wcsEquipment = new Set(catalogue.map(n => value(n, 'm_sPrefab')));
+const attackAssets = report.presets.map((armyReport, index) => ({
+  role: index === 0 ? 'OCCUPIERS' : 'INVADERS', preset: armyReport.id,
+  vehicles: [...new Set(armyReport.vehicles.filter(v => v.offered).map(v => v.type))].map(type => {
+    const prefab = component.PickVehicle(index + 1, vehicleTypes[type], 0);
+    return {type, prefab, pack: armyReport.vehicles.find(v => v.prefab === prefab)?.pack};
+  }),
+  specialistEquipment: objects(nodes[index], 'm_aUnits').map(unit => ({
+    type: value(unit, 'm_eType'),
+    wcsItems: [...new Set(resourceReferences(unit).map(r => '{' + r.guid + '}' + r.resource).filter(p => wcsEquipment.has(p)))]
+  })).filter(u => u.wcsItems.length)
+}));
+for (const army of attackAssets) check(army.specialistEquipment.length > 0, 'selected army has actual WCS equipment references, not merely vehicles: ' + army.preset);
+fs.writeFileSync(path.join(root, 'docs/validation/ATTACK_ASSET_MATRIX_2026-11-09.json'), JSON.stringify({
+  nativeVerified: false, audit: process.env.AROR_WCS_AUDIT_REPORT || 'docs/validation/WCS_ASSET_AUDIT_2026-11-09.json',
+  selection: 'Actual preset selector, BASE_GAME/RHS/WCS offered. Highest priority per role and vehicle type; first equal-priority ticket shown.',
+  infantry: 'Combined RHS kits with WCS specialist equipment. REAPER pilots retain dedicated flight equipment.',
+  armies: attackAssets
+}, null, 2) + '\n');
 const managers = parseConfig(read(core + 'Worlds/AROR_Everon/AROR_Everon_Chicken_Layers/Managers.layer'));
 const profiles = [];
 function visit(n) { if (n.head[0] === 'AROR_ForceProfile') profiles.push(n); for (const c of n.children || []) visit(c); }
@@ -194,8 +234,20 @@ managers.forEach(visit);
 check(profiles.length >= 10, 'Chicken force profiles were discovered');
 for (const profile of profiles) for (const key of ['m_eVehicleType', 'm_eEscortVehicleType']) {
   const type = value(profile, key); if (!type) continue;
-  check(component.PickVehicle(Number(value(profile, 'm_eRole')), vehicleTypes[type], 0), 'Chicken force profile can obtain requested army vehicle: ' + value(profile, 'm_sId') + ':' + type);
+  const pickHull = method(read(core + 'Scripts/Game/Operations/AROR_ForceProfile.c'), 'PickPresetVehicle');
+  const nativeProfile = {m_eRole:Number(value(profile, 'm_eRole')),m_eVehicleType:vehicleTypes[value(profile,'m_eVehicleType')],
+    m_eEscortVehicleType:vehicleTypes[value(profile,'m_eEscortVehicleType')],m_sVehicle:value(profile,'m_sVehicle'),m_sEscortVehicle:value(profile,'m_sEscortVehicle')};
+  equal(pickHull.call(nativeProfile,key==='m_eEscortVehicleType',0),component.PickVehicle(nativeProfile.m_eRole,vehicleTypes[type],0),'actual attack profile requests its selected army hull: ' + value(profile,'m_sId') + ':' + type);
 }
+const priorityPick=component.PickVehicleEntry;
+const candidates=[{GetSelectionPriority:()=>0,GetPrefab:()=> 'base'},{GetSelectionPriority:()=>10,GetPrefab:()=> 'wcs'},{GetSelectionPriority:()=>10,GetPrefab:()=> 'wcs2'}];
+equal(priorityPick([],0),'','empty offered list fails closed');
+equal(priorityPick(candidates,0),'wcs','highest offered priority wins');
+equal(priorityPick(candidates,1),'wcs2','stable variant choice stays within preferred entries');
+equal(priorityPick(candidates,2),'wcs','stable variant choices wrap in the preferred pool');
+equal(priorityPick(candidates.slice(0,1),0),'base','removing the preferred mod permits an offered same-type fallback');
+const ignorePriority=method(componentSource.replace('int priority = Math.Max(0, entry.GetSelectionPriority());','int priority = 0;'),'PickVehicleEntry');
+equal(ignorePriority(candidates,0),'base','negative control: ignoring priority returns the base hull and would fail the preferred-hull assertion');
 const replacement = usSupply + '.replacement'; replacements.set(usSupply, replacement); offered.add(replacement);
 equal(component.PickVehicle(roles.OCCUPIERS, vehicleTypes.SUPPLY_TRUCK, 0), replacement, 'actual entry getter carries content replacement through vehicle selection');
 offered.delete(replacement); offered.delete(usSupply);

@@ -11,6 +11,9 @@ class AROR_ResponsePolicy
 	{
 		if (!recipe || readiness < 1 || readiness > 5 || crackdown < 1 || crackdown > 5)
 			return false;
+		// Wave recipes are requested by name for a town garrison's response only
+		if (recipe.m_iAssaultWave > 0)
+			return false;
 		return recipe.m_iLevel <= crackdown && recipe.AllowsReadinessLevel(readiness);
 	}
 

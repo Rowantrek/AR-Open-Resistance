@@ -202,6 +202,14 @@ class AROR_LeaderboardComponent : SCR_BaseGameModeComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! The player credited for a hit, or 0: the shooting player, else the player commanding the AI that hit
+	int ResolveInstigator_S(Instigator instigator)
+	{
+		if (!Replication.IsServer() || !instigator)
+			return 0;
+		bool assist;
+		return ResolveCredit(instigator.GetInstigatorPlayerID(), instigator.GetInstigatorEntity(), assist);
+	}
+
 	protected int ResolveCredit(int playerId, IEntity attacker, out bool assist)
 	{
 		assist = false;

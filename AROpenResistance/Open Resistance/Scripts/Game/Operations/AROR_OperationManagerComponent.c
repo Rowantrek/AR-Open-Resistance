@@ -30,6 +30,14 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("90", desc: "Seconds before unrefreshed last-seen QRF markers expire", params: "15 300 5")]
 	protected int m_iQRFSpotLifetime;
 	protected ref AROR_QRFSpotting m_QRFSpotting = new AROR_QRFSpotting();
+
+	//! Server-side consumers share the confirmed, expiring intel used by Resistance map markers.
+	bool GetSightedPosition_S(IEntity entity, out vector position)
+	{
+		if (!Replication.IsServer() || (!m_bQRFSpotting && !m_bQRFDebugMarkers))
+			return false;
+		return m_QRFSpotting.GetConfirmedPosition_S(entity, m_iClock, m_iQRFSpotLifetime, position);
+	}
 	[Attribute("2", desc: "Initial equipment-pool readiness for each AI role; saved capture progress drives levels 1-5", params: "1 5 1")]
 	protected int m_iStartingReadinessLevel;
 	[Attribute("30", desc: "Target percentage of ordinary dispatched QRFs containing airborne forces, separately per army. Counts standalone air and joint responses; funding and launch safety still apply.", params: "0 100 1")]
@@ -320,7 +328,8 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 		RecordStrategicEvidence(role);
 		foreach (AROR_Operation operation : m_aOperations)
 		{
-			if (!operation.IsTerminal() && operation.GetRole() == role && operation.GetTargetLocationId() == targetId && operation.GetType() == AROR_EOperationType.QRF)
+			// A town's response waves never absorb an ordinary QRF threat at the same target
+			if (!operation.IsTerminal() && !operation.m_bAssaultWave && operation.GetRole() == role && operation.GetTargetLocationId() == targetId && operation.GetType() == AROR_EOperationType.QRF)
 			{
 				if (captured && !operation.m_bCaptureThreatRecorded)
 				{
@@ -471,6 +480,8 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 	protected int m_iQRFCooldown;
 	[Attribute("1", desc: "Maximum outstanding attacks per role, including planned requests; also capped at one attack globally", params: "1 16 1")]
 	protected int m_iMaxAttacks;
+	[Attribute("0", desc: "Allow one outstanding attack per army (the Occupiers and the Invaders can attack at the same time) instead of one globally; two armies never attack the same target at once")]
+	protected bool m_bOneAttackPerArmy;
 	[Attribute("1", desc: "Separate maximum outstanding QRFs per role", params: "1 16 1")]
 	protected int m_iMaxQRFs;
 	[Attribute("30", desc: "Seconds allowed for executor spawn acknowledgement", params: "1 3600 1")]
@@ -776,9 +787,11 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 		bool attackOutstanding;
 		foreach (AROR_Operation operation : m_aOperations)
 		{
-			if (!operation.IsTerminal() && operation.GetType() == AROR_EOperationType.ATTACK)
+			// One attack on the map, or with one per army only this army's own (and never the other army's target)
+			if (!operation.IsTerminal() && operation.GetType() == AROR_EOperationType.ATTACK && (!m_bOneAttackPerArmy || operation.GetRole() == role || operation.GetTargetLocationId() == targetId))
 				attackOutstanding = true;
-			if (operation.IsTerminal() || operation.GetRole() != role)
+			// Assault waves neither take the target nor count toward the role's operation limit
+			if (operation.IsTerminal() || operation.GetRole() != role || operation.m_bAssaultWave)
 				continue;
 			if (operation.GetTargetLocationId() == targetId)
 			{
@@ -891,12 +904,12 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 				AROR_LocationComponent target;
 				if (locations)
 					target = locations.GetLocationById(operation.GetTargetLocationId());
-				if (!target || target.GetControllingRole() != AROR_EFactionRole.RESISTANCE)
+				if (!IsHostileAttackTarget(operation, target))
 				{
 					if (target && target.GetControllingRole() == operation.GetRole() && operation.GetType() == AROR_EOperationType.ATTACK && operation.GetState() == AROR_EOperationState.ACTIVE)
 						ChangeState_S(operation, AROR_EOperationState.SUCCEEDED, "Target captured through canonical territory rules");
 					else
-						ChangeState_S(operation, AROR_EOperationState.CANCELLED, "Target is no longer Rebel-owned territory");
+						ChangeState_S(operation, AROR_EOperationState.CANCELLED, "Target is no longer hostile attack territory");
 					continue;
 				}
 			}
@@ -909,6 +922,21 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 			else if (operation.GetState() == AROR_EOperationState.ACTIVE && m_iClock - operation.GetStateSince() >= ActiveTimeoutFor(operation))
 				ChangeState_S(operation, AROR_EOperationState.FAILED, "Operation timed out");
 		}
+	}
+
+	//! Campaign armies can attack each other; manual/debug dispatch retains its Resistance-target restriction.
+	protected bool IsHostileAttackTarget(AROR_Operation operation, AROR_LocationComponent target)
+	{
+		if (!operation || !target || target.GetControllingRole() == operation.GetRole())
+			return false;
+		if (operation.m_bDebugRequest && target.GetControllingRole() != AROR_EFactionRole.RESISTANCE)
+			return false;
+		AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
+		if (!roles)
+			return false;
+		Faction attacker = roles.GetFaction(operation.GetRole());
+		Faction defender = roles.GetFaction(target.GetControllingRole());
+		return attacker && defender && attacker.IsFactionEnemy(defender);
 	}
 
 	//! Evidence/losses change short-term crackdown; equipment progress never decays here.

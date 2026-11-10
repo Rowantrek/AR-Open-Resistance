@@ -18,10 +18,12 @@ class AROR_ForceSpawner
 	//! An AI group of the role with one member per unit type, each spawned as the role's base character and dressed
 	//! from its preset loadout at the role's current Readiness (through the engine's queue, not all this frame).
 	//! Null if the group prefab, faction or any character cannot be set up.
-	static SCR_AIGroup SpawnGroup(ResourceName groupPrefab, AROR_EFactionRole role, notnull array<AROR_EUnitType> types, vector position)
+	static SCR_AIGroup SpawnGroup(ResourceName groupPrefab, AROR_EFactionRole role, notnull array<AROR_EUnitType> types, vector position, bool trackPopulation = true)
 	{
 		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
 		if (types.IsEmpty() || !presets)
+			return null;
+		if (!Replication.IsServer() || types.Count() > AROR_PopulationBudget.GetAvailable_S())
 			return null;
 
 		string factionKey = FactionKey(role);
@@ -66,6 +68,8 @@ class AROR_ForceSpawner
 			return null;
 		}
 
+		if (trackPopulation)
+			AROR_PopulationBudget.RegisterGroup_S(group, slots);
 		group.RequestSpawn(slots);
 		return group;
 	}
@@ -146,6 +150,114 @@ class AROR_ForceSpawner
 		}
 
 		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A spot on the nearest road to near (within searchRadius), lined up with it. yaw (degrees) runs along the
+	//! road. kerb: parked at the roadside, nose in the direction of traffic for that side (right-hand traffic);
+	//! otherwise on the carriageway. False when no road is that close or the spot is wet or blocked.
+	static bool FindRoadsidePosition(vector near, float searchRadius, bool kerb, out vector position, out float yaw)
+	{
+		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
+			return false;
+		BaseRoad road;
+		float roadDistance;
+		aiWorld.GetRoadNetworkManager().GetClosestRoad(near, road, roadDistance);
+		if (!road || roadDistance > searchRadius)
+			return false;
+		array<vector> points = {};
+		road.GetPoints(points);
+		if (points.Count() < 2)
+			return false;
+
+		// The road segment nearest the point, and the foot of the point on it
+		int best = -1;
+		float bestDistance = float.MAX;
+		vector bestFoot;
+		for (int index = 0; index + 1 < points.Count(); index++)
+		{
+			vector start = points[index];
+			vector segment = points[index + 1] - start;
+			segment[1] = 0;
+			float lengthSq = segment[0] * segment[0] + segment[2] * segment[2];
+			if (lengthSq < 0.25)
+				continue;
+			float along = ((near[0] - start[0]) * segment[0] + (near[2] - start[2]) * segment[2]) / lengthSq;
+			along = Math.Clamp(along, 0, 1);
+			vector foot = start + segment * along;
+			float footDistance = vector.DistanceXZ(foot, near);
+			if (footDistance < bestDistance)
+			{
+				bestDistance = footDistance;
+				best = index;
+				bestFoot = foot;
+			}
+		}
+		if (best < 0)
+			return false;
+
+		vector direction = points[best + 1] - points[best];
+		direction[1] = 0;
+		direction.Normalize();
+		vector right = Vector(direction[2], 0, -direction[0]);
+		float side = 1;
+		if (Math.RandomInt(0, 2) == 0)
+			side = -1;
+		vector heading = direction * side;
+		float offset = 0;
+		if (kerb)
+		{
+			float width = road.GetWidth();
+			if (width <= 0)
+				width = 6;
+			offset = width * 0.5 + 1.2;
+		}
+		vector spot = bestFoot + right * (offset * side);
+		BaseWorld world = GetGame().GetWorld();
+		spot[1] = world.GetSurfaceY(spot[0], spot[2]);
+		if (spot[1] <= world.GetOceanHeight(spot[0], spot[2]) + 0.5)
+			return false;
+		if (!IsSpotClear(spot, 1.3, 2.2))
+			return false;
+		position = spot;
+		yaw = heading.ToYaw();
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True when the nearest road's carriageway comes within clearance of the point (the road's half width is added
+	//! to the distance the road network reports from its centre line). Roads are terrain, so traces never see them.
+	static bool IsNearRoad(vector point, float clearance)
+	{
+		ChimeraAIWorld aiWorld = ChimeraAIWorld.Cast(GetGame().GetAIWorld());
+		if (!aiWorld || !aiWorld.GetRoadNetworkManager())
+			return false;
+		BaseRoad road;
+		float distance;
+		aiWorld.GetRoadNetworkManager().GetClosestRoad(point, road, distance);
+		if (!road)
+			return false;
+		float halfWidth = road.GetWidth() * 0.5;
+		if (halfWidth <= 0)
+			halfWidth = 3;
+		return distance < halfWidth + clearance;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Nothing standing within halfWidth of the point up to height (terrain excluded); exclude: entities to ignore
+	static bool IsSpotClear(vector point, float halfWidth, float height, array<IEntity> exclude = null)
+	{
+		BaseWorld world = GetGame().GetWorld();
+		TraceBox trace = new TraceBox();
+		trace.Start = Vector(point[0], world.GetSurfaceY(point[0], point[2]) + 0.4, point[2]);
+		trace.End = trace.Start + Vector(0, 0.05, 0);
+		trace.Mins = Vector(-halfWidth, 0, -halfWidth);
+		trace.Maxs = Vector(halfWidth, height, halfWidth);
+		trace.Flags = TraceFlags.ENTS;
+		if (exclude)
+			trace.ExcludeArray = exclude;
+		return world.TraceMove(trace, null) >= 1;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -230,6 +342,82 @@ class AROR_ForceSpawner
 		return controller && !controller.IsDead();
 	}
 
+	//! Finite leases for already materialized defenders on an active front; never activate a player character.
+	static void RenewSimulation_S(SCR_AIGroup group)
+	{
+		if (!Replication.IsServer() || !group)
+			return;
+		array<AIAgent> agents = {};
+		group.GetAgents(agents);
+		foreach (AIAgent agent : agents)
+		{
+			if (!agent)
+				continue;
+			IEntity member = agent.GetControlledEntity();
+			if (!IsAlive(member) || GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(member) > 0)
+				continue;
+			agent.PreventMaxLOD(15);
+			agent.ActivateAI(true);
+		}
+	}
+
+	//! Native virtualisation is not a casualty. Does not count queued, never-spawned slots.
+	static int CountStrength(SCR_AIGroup group)
+	{
+		if (!group)
+			return 0;
+		if (group.IsDormant())
+			return group.GetDormantAliveCount();
+		array<IEntity> members = {};
+		return CountLiving(group, members);
+	}
+
+	//! Fleet ownership and player occupancy independently protect a vehicle from cleanup.
+	static bool IsVehicleInUse(IEntity vehicle)
+	{
+		if (!vehicle)
+			return false;
+		if (AROR_ResistanceFleet.IsClaimed(vehicle))
+			return true;
+		array<int> players = {};
+		GetGame().GetPlayerManager().GetPlayers(players);
+		foreach (int playerId : players)
+		{
+			IEntity player = GetGame().GetPlayerManager().GetPlayerControlledEntity(playerId);
+			if (!player)
+				continue;
+			CompartmentAccessComponent access = CompartmentAccessComponent.Cast(player.FindComponent(CompartmentAccessComponent));
+			if (access && access.IsInCompartment() && access.GetCompartment() && access.GetCompartment().GetVehicle() == vehicle)
+				return true;
+		}
+		return false;
+	}
+
+	//! An owned group may retire only after players and protected vehicles have stopped using its members.
+	static bool RemoveGroup_S(SCR_AIGroup group)
+	{
+		if (!Replication.IsServer())
+			return false;
+		if (!group)
+			return true;
+		if (group.GetPlayerCount() > 0)
+			return false;
+		array<IEntity> members = {};
+		CountLiving(group, members);
+		foreach (IEntity member : members)
+		{
+			if (GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(member) > 0)
+				return false;
+			CompartmentAccessComponent access = CompartmentAccessComponent.Cast(member.FindComponent(CompartmentAccessComponent));
+			if (access && access.IsInCompartment() && access.GetCompartment() && IsVehicleInUse(access.GetCompartment().GetVehicle()))
+				return false;
+		}
+		foreach (IEntity soldier : members)
+			SCR_EntityHelper.DeleteEntityAndChildren(soldier);
+		SCR_EntityHelper.DeleteEntityAndChildren(group);
+		return true;
+	}
+
 	//------------------------------------------------------------------------------------------------
 	//! Gone or wrecked
 	static bool IsDestroyed(IEntity entity)
@@ -239,5 +427,157 @@ class AROR_ForceSpawner
 
 		DamageManagerComponent damage = DamageManagerComponent.Cast(entity.FindComponent(DamageManagerComponent));
 		return damage && damage.IsDestroyed();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A random vehicle of the type from the role's faction preset that its readiness allows (any of the type if none
+	//! is allowed yet), or empty if it has none
+	static ResourceName VehiclePrefab(AROR_EFactionRole role, AROR_EVehicleType type)
+	{
+		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
+		if (!presets)
+			return string.Empty;
+
+		AROR_FactionPreset preset = presets.GetPreset(role);
+		if (!preset)
+			return string.Empty;
+
+		array<AROR_FactionPresetEntry> entries = {};
+		preset.GetEntries(AROR_EFactionPresetCategory.VEHICLES, type, entries);
+		if (entries.IsEmpty())
+			return string.Empty;
+
+		array<AROR_FactionPresetEntry> allowed = {};
+		foreach (AROR_FactionPresetEntry candidate : entries)
+		{
+			if (AROR_ContentPacksComponent.IsAvailableAtReadiness(candidate.GetPrefab(), role))
+				allowed.Insert(candidate);
+		}
+
+		if (!allowed.IsEmpty())
+			return AROR_FactionPresetsComponent.PickVehicleEntry(allowed);
+
+		return AROR_FactionPresetsComponent.PickVehicleEntry(entries);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Seats a group's members in a vehicle (driver first, then turrets, then cargo), teleporting them in. Call
+	//! until it returns true: seat requests can be dropped, and members spawn over several frames.
+	static bool SeatGroup(SCR_AIGroup group, IEntity vehicle, int expectedMembers)
+	{
+		if (!group || !vehicle)
+			return false;
+
+		BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(vehicle.FindComponent(BaseCompartmentManagerComponent));
+		SCR_AIVehicleUsageComponent usage = SCR_AIVehicleUsageComponent.Cast(vehicle.FindComponent(SCR_AIVehicleUsageComponent));
+		if (!compartments || !usage || !usage.GetPilotCompartmentSlot())
+			return false;
+
+		array<IEntity> members = {};
+		AROR_ForceSpawner.CountLiving(group, members);
+		if (members.Count() < expectedMembers)
+			return false;
+
+		array<BaseCompartmentSlot> slots = {};
+		compartments.GetCompartments(slots);
+		array<BaseCompartmentSlot> ordered = {usage.GetPilotCompartmentSlot()};
+		foreach (BaseCompartmentSlot slot : slots)
+		{
+			if (slot && TurretCompartmentSlot.Cast(slot) && !ordered.Contains(slot))
+				ordered.Insert(slot);
+		}
+
+		foreach (BaseCompartmentSlot slot : slots)
+		{
+			if (slot && CargoCompartmentSlot.Cast(slot) && !ordered.Contains(slot))
+				ordered.Insert(slot);
+		}
+
+		bool allSeated = true;
+		foreach (IEntity member : members)
+		{
+			CompartmentAccessComponent access = CompartmentAccessComponent.Cast(member.FindComponent(CompartmentAccessComponent));
+			if (!access)
+			{
+				allSeated = false;
+				continue;
+			}
+
+			BaseCompartmentSlot current = access.GetCompartment();
+			if (access.IsInCompartment() && current && current.GetVehicle() == vehicle)
+				continue;
+
+			allSeated = false;
+			if (access.IsGettingIn() || access.IsGettingOut() || access.IsInCompartment())
+				continue;
+
+			foreach (BaseCompartmentSlot seat : ordered)
+			{
+				if (!seat.IsCompartmentAccessible() || seat.IsOccupied() || seat.GetOccupant())
+					continue;
+
+				access.GetInVehicle(vehicle, seat, true, -1, ECloseDoorAfterActions.CLOSE_DOOR, false);
+				break;
+			}
+		}
+
+		if (!allSeated || !usage.GetPilotCompartmentSlot().GetOccupant())
+			return false;
+
+		SCR_AIGroupUtilityComponent utility = group.GetGroupUtilityComponent();
+		if (utility)
+			utility.AddUsableVehicle(usage);
+
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Caps how fast AI drive a vehicle (km/h; 0 or less lifts the cap). Set on the vehicle and on every member's
+	//! car movement, because the engine drives through whichever of them is at the wheel. Re-apply after the
+	//! driver changes.
+	static void SetCruiseSpeed(IEntity vehicle, SCR_AIGroup group, float speedKmH)
+	{
+		if (vehicle)
+			ApplyCruiseSpeed(AICarMovementComponent.Cast(vehicle.FindComponent(AICarMovementComponent)), speedKmH);
+
+		if (!group)
+			return;
+
+		array<AIAgent> agents = {};
+		group.GetAgents(agents);
+		foreach (AIAgent agent : agents)
+		{
+			if (agent)
+				ApplyCruiseSpeed(AICarMovementComponent.Cast(agent.GetMovementComponent()), speedKmH);
+		}
+	}
+
+	protected static void ApplyCruiseSpeed(AICarMovementComponent movement, float speedKmH)
+	{
+		if (!movement)
+			return;
+
+		if (speedKmH > 0)
+			movement.SetCruiseSpeed(speedKmH);
+		else
+			movement.ResetCruiseSpeed();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Makes a group's characters run (true) or move at their own chosen pace again (false), through the group's AI
+	//! settings, as a waypoint's speed setting would
+	static void SetGroupRunning(SCR_AIGroup group, bool run)
+	{
+		if (!group)
+			return;
+
+		SCR_AIGroupSettingsComponent settings = SCR_AIGroupSettingsComponent.Cast(group.FindComponent(SCR_AIGroupSettingsComponent));
+		if (!settings)
+			return;
+
+		if (run)
+			settings.AddSetting(SCR_AIGroupCharactersMovementSpeedSetting.Create(SCR_EAISettingOrigin.SCENARIO, EMovementType.RUN), false, true);
+		else
+			settings.RemoveSettingsOfTypeAndOrigin(SCR_AIGroupCharactersMovementSpeedSettingBase, SCR_EAISettingOrigin.SCENARIO);
 	}
 }

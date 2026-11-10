@@ -5,6 +5,7 @@ function runGarrisonCrewTests(source) {
  const check=(ok,message)=>{assertions++;if(!ok)throw Error(message);};
  const deleted=[];
  const env={Replication:{IsServer:()=>true},Math:{Max:Math.max,Min:Math.min,Mod:(a,b)=>a%b,Clamp:(v,a,b)=>Math.max(a,Math.min(b,v))},
+  AROR_ResistanceFleet:{IsClaimed:()=>false},
   vector:{Zero:[0,0,0],DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])},
   string:{Format:(s,...a)=>s.replace(/%(\d+)/g,(_,n)=>String(a[n-1]))},Print:()=>{},LogLevel:{NORMAL:0},
   GetGame:()=>({GetWorld:()=>({GetWorldTime:()=>clock}),GetPlayerManager:()=>({GetPlayerIdFromControlledEntity:e=>e.player?1:0})}),

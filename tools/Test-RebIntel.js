@@ -23,7 +23,7 @@ function runRebIntelTests(sources) {
     const m=src.match(new RegExp('^\\t[^\\r\\n]*\\b'+name+'\\(([^\\r\\n]*)\\)\\r?\\n\\t\\{([\\s\\S]*?)^\\t\\}', 'm'));
     if(!m)throw Error('Missing method '+name);
     const args=m[1].replace(/\b\w+\s+(\w+)/g,'$1');
-    let body=m[2].replace(/\b(?:bool|int|float|string|Widget|IEntity|Faction|Color|RichTextWidget|ImageWidget|AROR_\w+)\s+(\w+)/g,'let $1')
+    let body=m[2].replace(/\b(?:bool|int|float|string|SCR_PlayerController|Widget|IEntity|Faction|Color|RichTextWidget|ImageWidget|AROR_\w+)\s+(\w+)/g,'let $1')
       .replace(/let (\w+);/g,'let $1=null;').replace(/(?<![.\w])m_\w+/g,x=>'this.'+x);
     for(const n of names)body=body.replace(new RegExp('(?<![.\\w])'+n+'\\(','g'),'this.'+n+'(');
     return new Function(...Object.keys(env),'return function('+args+'){'+body+'}')( ...Object.values(env));

@@ -48,6 +48,7 @@ class AROR_NotificationManagerComponent : SCR_BaseGameModeComponent
 
 	protected static const int HUD_UPDATE_MS = 250;
 	protected ref AROR_RebIntelHud m_RebIntelHud;
+	protected ref AROR_TownContestHud m_TownContestHud;	//!< Town lockdown indicator (Towns)
 
 	//------------------------------------------------------------------------------------------------
 	static AROR_NotificationManagerComponent GetInstance()
@@ -267,15 +268,19 @@ class AROR_NotificationManagerComponent : SCR_BaseGameModeComponent
 	//! Client: the REBINTEL status widget and its level-change alerts, a few times per second
 	protected void UpdateRebIntelHud()
 	{
-		if (!m_RebIntelHud)
+		if (!m_RebIntelHud || !m_TownContestHud)
 		{
 			AROR_NotificationDisplay display = GetDisplay();
 			if (!display || !display.GetRoot())
 				return;
-			m_RebIntelHud = new AROR_RebIntelHud(display.GetRoot());
+			if (!m_RebIntelHud)
+				m_RebIntelHud = new AROR_RebIntelHud(display.GetRoot());
+			if (!m_TownContestHud)
+				m_TownContestHud = new AROR_TownContestHud(display.GetRoot());
 		}
 
 		m_RebIntelHud.Update();
+		m_TownContestHud.Update();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -283,6 +288,7 @@ class AROR_NotificationManagerComponent : SCR_BaseGameModeComponent
 	{
 		GetGame().GetCallqueue().Remove(UpdateRebIntelHud);
 		m_RebIntelHud = null;
+		m_TownContestHud = null;
 		m_Display = null;
 
 		if (s_Instance == this)

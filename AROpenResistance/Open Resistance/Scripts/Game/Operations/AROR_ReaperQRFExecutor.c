@@ -404,12 +404,7 @@ modded class AROR_OperationExecutorComponent
 		}
 		if (operation.m_iResponseMixBucket == 1 && m_bAllowAirborneResponses && ReaperSettingsValid())
 		{
-			bool airspaceFree = true;
-			foreach (AROR_OperationForce existing : m_aForces)
-			{
-				if (AROR_ReaperAirForce.Cast(existing))
-					airspaceFree = false;
-			}
+			bool airspaceFree = !HasReaperAirTraffic();
 			AROR_CommanderManagerComponent commanders = AROR_CommanderManagerComponent.GetInstance();
 			AROR_Commander commander;
 			if (commanders)
@@ -477,13 +472,10 @@ modded class AROR_OperationExecutorComponent
 			FailOperation(operation, "No safe owned military origin remains for airborne dispatch");
 			return;
 		}
-		foreach (AROR_OperationForce existing : m_aForces)
+		if (HasReaperAirTraffic())
 		{
-			if (AROR_ReaperAirForce.Cast(existing))
-			{
-				ReportSpawnWait(operation, "Experimental airspace/LZ reserved by another QRF; one airborne operation at a time");
-				return;
-			}
+			ReportSpawnWait(operation, "Airspace/LZ reserved by active aircraft or an aircraft construction queue");
+			return;
 		}
 		AROR_CommanderManagerComponent commanders = AROR_CommanderManagerComponent.GetInstance();
 		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
@@ -785,7 +777,36 @@ modded class AROR_OperationExecutorComponent
 			Print(string.Format("[AROR JOINT] %1 recipe=%2 airPackages=%5 escorts=%3 groundElements=%4; full force reserved under one tactical command", operation.GetId(), jointRecipe.m_sId, profile.m_iEscortCount, jointElements.Count() - 1, level), LogLevel.NORMAL);
 		}
 		ReleaseForce(reservation);
+		ReleaseReaperLandingPlan(operation.GetId());
 		Print(string.Format("[AROR REAPER] QRF %1 tier=%2 queued airPackages=%3 totalPackages=%4; full force reserved, one construction per executor tick", operation.GetId(), tier, level, totalPackages), LogLevel.NORMAL);
+	}
+
+	//! Delivered infantry and retained wreck records must not reserve the sky after their aircraft have departed.
+	//! Simultaneous physical air traffic is still serialized; actor budgets and pad reservations also remain in force.
+	protected bool HasReaperAirTraffic()
+	{
+		foreach (AROR_OperationForce tracked : m_aForces)
+		{
+			AROR_ReaperAirForce air = AROR_ReaperAirForce.Cast(tracked);
+			if (!air)
+				continue;
+			if (air.m_bConstructionPending && !air.m_bTacticalRetained)
+				return true;
+			if (!air.m_bTransportRetired && !air.m_bTransportLost && AROR_ReaperAirForce.AircraftAlive(air.m_Vehicle))
+				return true;
+			if (!air.m_bEscortLost && air.m_Escort && AROR_ReaperAirForce.AircraftAlive(air.m_Escort.m_Vehicle))
+				return true;
+		}
+		return false;
+	}
+
+	//! Once pad coordinates belong to queued packages, release only this operation's temporary planning workspace.
+	protected void ReleaseReaperLandingPlan(string operationId)
+	{
+		if (m_sReaperPlanningOperation != operationId)
+			return;
+		m_sReaperPlanningOperation = string.Empty;
+		m_ReaperLandingSearch = null;
 	}
 
 	//! Unescorted transports added beside a joint response's airborne pair: m_iJointTransportPercent of its ground
@@ -972,7 +993,9 @@ modded class AROR_OperationExecutorComponent
 			return super.DispatchReadyPackage(ready, operation);
 		if (!DispatchReaperPackage(air))
 			return false;
-		air.m_iSupportEndTime = m_iExecutorClock + m_iReaperSupportSeconds;
+		air.m_bSupportStarted = false;
+		// Bound a failed ingress, but reserve the full support window for arrival near the objective.
+		air.m_iSupportEndTime = air.m_iFlightDeadline + m_iReaperSupportSeconds;
 		air.m_vInvestigation = air.m_vTown;
 		air.m_vGunshipSearch = air.m_vTown;
 		return true;
@@ -1367,7 +1390,10 @@ modded class AROR_OperationExecutorComponent
 		AROR_Operation operation = m_Operations.GetOperation(force.m_sOperationId);
 		if (!operation)
 			return;
-		AROR_CombatContact contact = m_Operations.GetRecentCombatContact(operation.GetRole(), force.m_vTown, m_fReaperSupportRadius, m_iReaperContactAge);
+		int contactAge = m_iReaperContactAge;
+		if (operation.m_TacticalCommander && operation.m_TacticalCommander.m_bTownDoctrine)
+			contactAge = Math.Min(contactAge, operation.m_TacticalCommander.m_iContactMaxAge);
+		AROR_CombatContact contact = m_Operations.GetRecentCombatContact(operation.GetRole(), force.m_vTown, m_fReaperSupportRadius, contactAge);
 		if (!contact)
 		{
 			if (force.m_iGunshipContactSequence > 0)
@@ -1457,6 +1483,19 @@ modded class AROR_OperationExecutorComponent
 		return true;
 	}
 
+	//! Gunship response time starts in the town's support area; a long transport approach cannot spend it all.
+	protected void BeginGunshipSupport(AROR_ReaperAirForce force)
+	{
+		if (force.m_bSupportStarted || !force.m_Escort || !force.m_Escort.m_Vehicle || force.m_iEscortStage == 2 || m_iExecutorClock >= force.m_iSupportEndTime)
+			return;
+		float radius = force.m_fTownRadius + m_fReaperGunshipRunRadius;
+		if (vector.DistanceXZ(force.m_Escort.m_Vehicle.GetOrigin(), force.m_vTown) > radius)
+			return;
+		force.m_bSupportStarted = true;
+		force.m_iSupportEndTime = m_iExecutorClock + m_iReaperSupportSeconds;
+		Print(string.Format("[AROR AIR] %1 gunship response on station for %2s; targets require native perception and friendly clearance", force.m_sOperationId, m_iReaperSupportSeconds), LogLevel.NORMAL);
+	}
+
 	protected void MonitorReaperEscort(AROR_ReaperAirForce force)
 	{
 		if (force.m_bUnescorted || force.m_bEscortLost)
@@ -1469,6 +1508,7 @@ modded class AROR_OperationExecutorComponent
 		}
 		if (escort.m_CrewGroup.GetPlayerCount() > 0)
 			return;
+		BeginGunshipSupport(force);
 		if (force.m_iEscortStage != 2 && m_iExecutorClock < force.m_iSupportEndTime)
 		{
 			if (YieldGunshipTraffic(force))

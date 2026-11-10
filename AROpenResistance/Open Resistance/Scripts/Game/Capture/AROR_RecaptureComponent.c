@@ -18,6 +18,12 @@ class AROR_RecaptureComponent : SCR_BaseGameModeComponent
 	[Attribute("60", desc: "Seconds an attacking AI role must keep the force advantage inside a location before it takes it", params: "0 600 5")]
 	protected int m_iContestSeconds;
 
+	[Attribute("180", desc: "Seconds an AI attack order must keep the force advantage inside a town or city before it occupies it. Towns are only contested while an attack order targets them.", params: "0 1200 5")]
+	protected int m_iTownContestSeconds;
+
+	[Attribute("60", desc: "Support share an AI army gets in a town it occupies, percent (above 50 flips control)", params: "51 100 1")]
+	protected float m_fTownOccupationSupport;
+
 	protected static AROR_RecaptureComponent s_Instance;
 
 	//! Contested locations: ID -> world time (ms) the current attacker's advantage began
@@ -41,15 +47,75 @@ class AROR_RecaptureComponent : SCR_BaseGameModeComponent
 		array<AROR_LocationComponent> locations = {};
 		locationManager.GetLocations(locations);
 
+		array<AROR_Operation> operations = {};
+		AROR_OperationManagerComponent manager = AROR_OperationManagerComponent.GetInstance();
+		if (manager)
+			manager.GetOperations(operations);
+
 		foreach (AROR_LocationComponent location : locations)
 		{
-			if (location && !location.IsControlFixed() && AROR_CaptureLocationAction.IsCapturableLocation(location))
+			if (!location || location.IsControlFixed())
+				continue;
+			if (AROR_CaptureLocationAction.IsCapturableLocation(location))
+			{
 				CheckLocation(location);
+				continue;
+			}
+			// A town or city is only fought for while an AI attack order targets it (never by a passing patrol)
+			AROR_EFactionRole ordered;
+			if (TownAttackRole(location, operations, ordered))
+				CheckLocation(location, true, ordered);
+			else
+			{
+				EndContest(location.GetId());
+				ClearTownContest(location);
+			}
 		}
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void CheckLocation(notnull AROR_LocationComponent location)
+	//! Defenders of a Resistance-held town under an attack order see the contest on the lockdown indicator
+	//! (AROR_TownContestHud through the town's AROR_TownWavesComponent): both counts and the time left
+	protected void MirrorTownContest(notnull AROR_LocationComponent location, int attackers, int defenders, int seconds, int limit, bool losing)
+	{
+		if (location.GetControllingRole() != AROR_EFactionRole.RESISTANCE)
+			return;
+		AROR_TownWavesComponent waves = AROR_TownWavesComponent.Cast(location.GetOwner().FindComponent(AROR_TownWavesComponent));
+		if (waves)
+			waves.ShowAttackContest_S(attackers, defenders, seconds, limit, losing);
+	}
+
+	protected void ClearTownContest(notnull AROR_LocationComponent location)
+	{
+		AROR_ELocationType type = location.GetLocationType();
+		if (type != AROR_ELocationType.TOWN && type != AROR_ELocationType.CITY)
+			return;
+		AROR_TownWavesComponent waves = AROR_TownWavesComponent.Cast(location.GetOwner().FindComponent(AROR_TownWavesComponent));
+		if (waves)
+			waves.ClearAttackContest_S();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True when an outstanding AI attack order targets this town or city; ordered is the attacking role
+	protected static bool TownAttackRole(notnull AROR_LocationComponent location, notnull array<AROR_Operation> operations, out AROR_EFactionRole ordered)
+	{
+		AROR_ELocationType type = location.GetLocationType();
+		if (type != AROR_ELocationType.TOWN && type != AROR_ELocationType.CITY)
+			return false;
+		foreach (AROR_Operation operation : operations)
+		{
+			if (operation && !operation.IsTerminal() && operation.GetType() == AROR_EOperationType.ATTACK && operation.GetTargetLocationId() == location.GetId())
+			{
+				ordered = operation.GetRole();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! town: an attack order's town (only the ordered role may take it, over the town contest time, by occupation)
+	protected void CheckLocation(notnull AROR_LocationComponent location, bool town = false, AROR_EFactionRole ordered = AROR_EFactionRole.INVADERS)
 	{
 		AROR_LocationForces forces = AROR_LocationForces.Count(location);
 		string id = location.GetId();
@@ -75,9 +141,14 @@ class AROR_RecaptureComponent : SCR_BaseGameModeComponent
 			}
 		}
 
-		if (attackerWeight <= defenderWeight || !location.CanBeTakenBy(attacker))
+		int townAttackers;
+		if (town)
+			townAttackers = forces.GetAI(ordered);
+		if (attackerWeight <= defenderWeight || !location.CanBeTakenBy(attacker) || (town && attacker != ordered))
 		{
 			EndContest(id);
+			if (town)
+				MirrorTownContest(location, townAttackers, forces.GetTotal(defender), 0, m_iTownContestSeconds, false);
 			return;
 		}
 
@@ -89,8 +160,27 @@ class AROR_RecaptureComponent : SCR_BaseGameModeComponent
 			m_mContestAttacker.Set(id, attacker);
 			AnnounceContest(location, attacker);
 		}
-		if (now - m_mContestedSince.Get(id) < m_iContestSeconds * 1000)
+		int contestSeconds = m_iContestSeconds;
+		if (town)
+		{
+			contestSeconds = m_iTownContestSeconds;
+			MirrorTownContest(location, townAttackers, forces.GetTotal(defender), (now - m_mContestedSince.Get(id)) / 1000, contestSeconds, true);
+		}
+		if (now - m_mContestedSince.Get(id) < contestSeconds * 1000)
 			return;
+
+		if (town)
+		{
+			AROR_EFactionRole previous = location.GetControllingRole();
+			if (AROR_CaptureLocationAction.OccupyTown_S(location, attacker, m_fTownOccupationSupport))
+			{
+				EndContest(id);
+				ClearTownContest(location);
+				AnnounceOccupation(location, attacker, previous);
+				Print(string.Format("[AROR] '%1' occupied by %2 (attackers %3 vs defenders %4, held %5 s)", location.GetName(), typename.EnumToString(AROR_EFactionRole, attacker), attackerWeight, defenderWeight, contestSeconds), LogLevel.NORMAL);
+			}
+			return;
+		}
 
 		if (AROR_CaptureLocationAction.CaptureLocation_S(location, attacker))
 		{
@@ -117,6 +207,23 @@ class AROR_RecaptureComponent : SCR_BaseGameModeComponent
 
 		AROR_Notification alert = new AROR_Notification(AROR_ENotificationType.HEADLINE, "TERRITORY UNDER ATTACK / " + location.GetName(), string.Empty, AROR_UIColors.Get(AROR_UIColors.DANGER), "HQ");
 		AROR_NotificationManagerComponent.Send_S(alert);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Everyone hears when an army takes a town: a loss for the Resistance, intel when the armies trade towns
+	protected void AnnounceOccupation(AROR_LocationComponent location, AROR_EFactionRole attacker, AROR_EFactionRole previous)
+	{
+		string name = location.GetName();
+		name.ToUpper();
+		string army = AROR_OperationManagerComponent.ThreatArmyName(attacker);
+		int color = AROR_UIColors.WARN;
+		string text = string.Format("%1 OCCUPIED / %2 forces have taken the town", name, army);
+		if (previous == AROR_EFactionRole.RESISTANCE)
+		{
+			color = AROR_UIColors.DANGER;
+			text = string.Format("%1 LOST / %2 forces have occupied the town", name, army);
+		}
+		AROR_NotificationManagerComponent.Send_S(new AROR_Notification(AROR_ENotificationType.HEADLINE, text, location.GetMapIcon(), AROR_UIColors.Get(color), "INTEL"));
 	}
 
 	//------------------------------------------------------------------------------------------------

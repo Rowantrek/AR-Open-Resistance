@@ -82,7 +82,9 @@ class AROR_SquadApp : AROR_PhonePooledApp
 		if (!group || !manager)
 		{
 			m_iGroupId = -1;
-			Text(40, 180, 1500, 120, 28, "Recruit your first rifleman at a Resistance-owned flag to start your squad.", C(AROR_UIColors.TEXT));
+			Text(40, 120, 1500, 40, 28, "Recruit your first rifleman to start your squad.", C(AROR_UIColors.TEXT));
+			if (manager)
+				DrawRecruit(180);
 			DrawInstructions();
 			EndFrame();
 			return;
@@ -113,7 +115,9 @@ class AROR_SquadApp : AROR_PhonePooledApp
 			if (info.m_iGroupId == m_iGroupId)
 				m_aMembers.Insert(info);
 		}
-		Text(40, 246, 1400, 38, 26, string.Format("FLAG RECRUITS  %1 / %2", m_aMembers.Count(), manager.GetLimit()), C(AROR_UIColors.REBEL), true);
+		Text(40, 246, 700, 38, 26, string.Format("RECRUITS  %1 / %2", m_aMembers.Count(), manager.GetLimit()), C(AROR_UIColors.REBEL), true);
+		if (leader && m_aMembers.Count() < manager.GetLimit())
+			DrawRecruit(236, 760);
 		int maxPage = Math.Max(0, Math.Ceil(m_aMembers.Count() / (PAGE_SIZE * 1.0)) - 1);
 		m_iPage = Math.Clamp(m_iPage, 0, maxPage);
 		for (int row = 0; row < PAGE_SIZE; row++)
@@ -135,7 +139,7 @@ class AROR_SquadApp : AROR_PhonePooledApp
 			Button(1260, y + 7, 380, 52, label, action, C(AROR_UIColors.PLATE_STRONG), C(AROR_UIColors.WARN), 22);
 		}
 		if (m_aMembers.IsEmpty())
-			Text(60, 340, 1500, 60, 26, "No riflemen recruited. Walk up to an owned flag and choose Recruit rifleman.", C(AROR_UIColors.TEXT_MUTED));
+			Text(60, 340, 1500, 60, 26, "No riflemen recruited. Press RECRUIT RIFLEMAN at the HQ or any site you hold.", C(AROR_UIColors.TEXT_MUTED));
 		if (maxPage > 0)
 		{
 			Button(40, 700, 180, 48, "PREV", "prev", C(AROR_UIColors.SURFACE_RAISED), C(AROR_UIColors.TEXT), 20);
@@ -144,6 +148,28 @@ class AROR_SquadApp : AROR_PhonePooledApp
 		}
 		DrawInstructions();
 		EndFrame();
+	}
+
+	//! RECRUIT RIFLEMAN, live while the player stands on the HQ or another Resistance-held site; otherwise says where to go
+	protected void DrawRecruit(float y, float x = 40)
+	{
+		string site;
+		IEntity controlled = GetGame().GetPlayerController().GetControlledEntity();
+		if (controlled)
+		{
+			AROR_LocationComponent held = AROR_SquadManagerComponent.FindHeldSiteAt(controlled.GetOrigin());
+			if (held)
+				site = held.GetName();
+		}
+
+		string action;
+		if (!site.IsEmpty())
+			action = "recruit";
+		Button(x, y, 380, 56, "RECRUIT RIFLEMAN", action, C(AROR_UIColors.REBEL_DIM), C(AROR_UIColors.REBEL), 22);
+		string where = "Go to the HQ or any site the Resistance holds to recruit.";
+		if (!site.IsEmpty())
+			where = "At " + site + ". Free; riflemen last for this session.";
+		Text(x + 400, y + 14, 860, 32, 20, where, C(AROR_UIColors.TEXT_MUTED));
 	}
 
 	protected void DrawInstructions()
@@ -159,7 +185,9 @@ class AROR_SquadApp : AROR_PhonePooledApp
 		SCR_PlayerController player = SCR_PlayerController.Cast(GetGame().GetPlayerController());
 		if (!player)
 			return;
-		if (action == "rename")
+		if (action == "recruit")
+			player.AROR_RequestSquadRecruit();
+		else if (action == "rename")
 			player.AROR_RequestSquadRename(m_iGroupId, m_wName.GetText());
 		else if (action == "prev")
 			m_iPage = Math.Max(m_iPage - 1, 0);

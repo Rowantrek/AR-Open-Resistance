@@ -21,7 +21,7 @@ function runInvaderCampaignTests(sources, catalogue) {
     AROR_GameFlowComponent:{GetInstance:()=>({IsPlaythroughReady:()=>campaignReady})},AROR_OperationManagerComponent:{GetInstance:()=>operations},AROR_EconomyComponent:{GetInstance:()=>bank},
     GetGame:()=>({GetWorld:()=>({GetWorldTime:()=>now}),GetPlayerManager:()=>({GetPlayers(){},GetPlayerControlledEntity:()=>null})})};
   const names=['TargetShare','Funding','InvaderAttackChance','BattleChance','Cost','IsAdvanceActive','HasOpeningGrant','IsQuarantined','SuppressAICaptureQRF_S','GetExternalSupportBonus','RemainingDelay','RestoreCampaign_S','Quarantine_S',
-    'OnEvaluation','Advance_S','Counter_S','ShareOverGoal','Survey_S','IsDistant','SelectTarget','Industry','ResolveBattle_S'];
+    'OnEvaluation','Order_S','Advance_S','Counter_S','ShareOverGoal','Survey_S','IsDistant','SelectTarget','Industry','ResolveBattle_S'];
   function compile(src,name){
     const m=src.match(new RegExp('^\\t[^\\r\\n]*\\b'+name+'\\(([^\\r\\n]*)\\)\\s*\\{([^\\r\\n]*)\\}', 'm'))||src.match(new RegExp('^\\t[^\\r\\n]*\\b'+name+'\\(([^\\r\\n]*)\\)\\r?\\n\\t\\{([\\s\\S]*?)^\\t\\}', 'm'));
     if(!m)throw Error('Missing '+name);
@@ -40,6 +40,9 @@ function runInvaderCampaignTests(sources, catalogue) {
     m_sCorridorId:'corridor',m_sForwardBaseId:'base',m_iBaselineShare:40,m_iBattleCost:1000,m_fFrontierReach:3500,m_fPlayerClearance:3000,m_iExternalSupport:1500,m_iFundingPerReadiness:750,m_iFundingPerCrackdown:30,
     m_sAdvanceHold:'',m_aSites:[],m_aPlayers:[],m_aOperations:[],m_Commanders:{IsCampaignActive:()=>true},m_Operations:operations,m_Economy:bank,Cast:x=>x};
   env.AROR_InvaderCampaignComponent=campaign;campaign.s_Instance=campaign;campaign.GetInstance=()=>campaign;
+  operations.IsTownInGrace=()=>false;
+  operations.AttackOrderTier=()=>2;
+  env.AROR_TownWavesComponent={Cast:()=>null,ReplacesCaptureQRF:()=>false};
   const registry={GetLocations:a=>a.Copy(allSites),GetLocationById:id=>allSites.find(s=>s.id===id)};env.AROR_LocationManagerComponent={GetInstance:()=>registry};
   for(const n of names.slice(5))campaign[n]=compile(sources.component,n);
   const makeSite=(id,owner,pos,t=type.OUTPOST)=>({id,owner,pos,t,fixed:false,active:false,started:false,locked:false,
@@ -120,7 +123,8 @@ function runInvaderCampaignTests(sources, catalogue) {
   deserialize(null,campaign,{values:{version:99}});check(campaign.m_bQuarantined&&campaign.GetExternalSupportBonus()===0,'unknown state quarantines grant, funding and simulation');
   campaign.m_bQuarantined=false;campaign.m_bInvaderCampaign=false;evaluate();check(!campaign.IsAdvanceActive()&&campaign.GetExternalSupportBonus()===0&&!campaign.SuppressAICaptureQRF_S(1,2),'shared opt-out leaves existing behaviour intact');
   // Funded offscreen model on actual island sites: isolates front policy from income depletion/player interference.
-  const island=catalogue.filter(r=>policy.Cost(type[r.Type],1000)>0).map(r=>makeSite(r.Id,r.Role==='INVADERS'?2:1,[+r.X,+r.Y,+r.Z],type[r.Type]));
+  // Chicken's revised front includes settlements, which bridge the gaps left by removed military outposts.
+  const island=catalogue.filter(r=>policy.Cost(type[r.Type],1000,true)>0).map(r=>makeSite(r.Id,r.Role==='INVADERS'?2:1,[+r.X,+r.Y,+r.Z],type[r.Type]));
   const foothold=island.find(s=>s.id==='everon_fortress_vostok');
   campaign.m_aSites=island;campaign.m_bInvaderCampaign=true;campaign.m_bQuarantined=false;campaign.m_aPlayers=[];campaign.m_aOperations=[];
   const model=goal=>{for(const s of island)s.owner=s===foothold?2:1;let sum=0,samples=0;
@@ -145,7 +149,7 @@ if(typeof require!=='undefined'&&require.main===module){
   const catalogue=lines.map(l=>Object.fromEntries(split(l).map((x,i)=>[header[i],x])));
   // The legacy CSV omits three ports, the stronghold and some later authored transforms. Use current placed military roots.
   const layer=fs.readFileSync(path.resolve(__dirname,'../AROpenResistance/Open Resistance/Worlds/AROR_Everon/AROR_Everon_Chicken_Layers/MilitaryInstallations.layer'),'utf8');
-  let placed=0;
+  let placed=0;const placedIds=new Set();
   for(const match of layer.matchAll(/^([ \t]*)(?:GenericEntity[ \t]+)?AROR_Location_\w+[^\r\n]*\{\r?\n([\s\S]*?)^\1\}/gm)){
     const body=match[2],id=body.match(/\bm_sId "([^"]+)"/)?.[1],type=body.match(/\bm_eType (\w+)/)?.[1];
     const positionLine=body.split(/\r?\n/).find(line=>line.startsWith(match[1]+' coords '));
@@ -155,8 +159,9 @@ if(typeof require!=='undefined'&&require.main===module){
     if(!id||!type||!position||!role)throw Error('Incomplete placed military location');
     let row=catalogue.find(r=>r.Id===id);
     if(!row){row={Id:id};catalogue.push(row)}
-    Object.assign(row,{Type:type,Role:role,X:position[1],Y:position[2],Z:position[3]});placed++;
+    Object.assign(row,{Type:type,Role:role,X:position[1],Y:position[2],Z:position[3]});placed++;placedIds.add(id);
   }
-  if(placed!==27)throw Error('Expected all 27 actual military locations including seaports and the stronghold');
-  console.log(runInvaderCampaignTests(sources,catalogue));
+  if(placed!==16)throw Error('Expected all 16 current military locations including three seaports and the stronghold');
+  const current=catalogue.filter(row=>!['OUTPOST','MILITARY_BASE','AIRPORT','PORT','FACTORY','RESOURCES'].includes(row.Type)||placedIds.has(row.Id));
+  console.log(runInvaderCampaignTests(sources,current));
 }

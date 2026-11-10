@@ -1,0 +1,1523 @@
+{
+  "generatedAt": "2026-11-10T08:06:38.223Z",
+  "nativeVerified": false,
+  "note": "ID-based text override model and installed resource indexes; no native resource or inventory loading. Catalogue models BASE_GAME + RHS + WCS enabled with their dependency-tree groups. Missing declared dependencies still prevent certification of addon loading.",
+  "sourceHashFormat": "SHA-256 of UTF-8 text with CRLF normalized to LF",
+  "sourceHashes": {
+    "AROpenResistance/Open Resistance/Configs/ContentPacks/BaseGame/AROR_ContentPack_BaseGame.conf": "c487e86fb6be9a347b8c1e76fadbb99767fc4570c2c59b518d248a37123dbddf",
+    "OptionalAddons/OpenResistanceRHSCompat/OpenResistanceRHSCompat/Configs/ContentPacks/AROR_ContentPack_RHS.conf": "5ac19b7043cb6a458b384f9325942e04e274c690f729931fd243193feab0a805",
+    "OptionalAddons/OpenResistanceRHSCompat/OpenResistanceRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf": "c32ddb42147f78daea487a041b47fa0b52e248b70d89c0cbd4bd64d544a0b727",
+    "OptionalAddons/OpenResistanceRHSCompat/OpenResistanceRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_USAF_FORECON.conf": "3b7df40523a9e93c654e3eb20f655bfaa8abd1238727cf8e588cbd9c027ca4b9",
+    "OptionalAddons/OpenResistanceWCSCompat/Configs/ContentPacks/WCS/AROR_ContentPack_WCS.conf": "77bdd5426f9b5ab92bcf863ad1dd9c76f81f3b677f8a8666bdddab76297344fd",
+    "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_AFRF_MSV_VPKO3_EMR.conf": "120d7461012d09cb7ab8c6c99dcf54fbcff8bbe353468d40201c8b3e4133357f",
+    "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Configs/FactionPresets/AROR_Preset_RHS_USAF_FORECON.conf": "df3746ac472591b6d80c9084704a02d4f88e92bbfcf3a14446b55e2ed40d0a3e",
+    "OptionalAddons/OpenResistanceWCSRHSCompat/OpenResistanceWCSRHSCompat/Prefabs/GameModes/AROR_GameMode_Base.et": "885e40c60448b17f81f15dec0c0775b5135e9a47cf6e688c1cd610c3807c6946"
+  },
+  "addonDefaults": {
+    "occupiers": "RHS_USAF_FORECON",
+    "invaders": "RHS_AFRF_MSV_VPKO3_EMR"
+  },
+  "dependencyCount": 51,
+  "databases": 274,
+  "missingDependencies": [],
+  "skippedGroups": [],
+  "missingDependencyParents": {},
+  "catalogue": {
+    "entries": 2838,
+    "replacements": 0,
+    "byPack": {
+      "BASE_GAME": 579,
+      "RHS": 1970,
+      "WCS": 289
+    }
+  },
+  "presets": [
+    {
+      "id": "RHS_USAF_FORECON",
+      "roles": [
+        "OCCUPIERS",
+        "INVADERS"
+      ],
+      "units": [
+        {
+          "type": "RIFLEMAN",
+          "prefab": "{49D0287C513486E3}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_Rifleman3.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 37,
+              "statuses": {
+                "exact": 37
+              }
+            }
+          ]
+        },
+        {
+          "type": "AUTORIFLEMAN",
+          "prefab": "{75B8E80FADCF99F2}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_AR.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 28,
+              "statuses": {
+                "exact": 28
+              }
+            }
+          ]
+        },
+        {
+          "type": "MACHINEGUNNER",
+          "prefab": "{27AF3615C3808D11}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_MG.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 28,
+              "statuses": {
+                "exact": 28
+              }
+            }
+          ]
+        },
+        {
+          "type": "MEDIC",
+          "prefab": "{8A286A16130B1522}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_Medic.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 43,
+              "statuses": {
+                "exact": 43
+              }
+            }
+          ]
+        },
+        {
+          "type": "MARKSMAN",
+          "prefab": "{CCA1FB485A191D56}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_TL_Marksman.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 37,
+              "statuses": {
+                "exact": 37
+              }
+            }
+          ]
+        },
+        {
+          "type": "SNIPER",
+          "prefab": "{1D1C88EC1B58537E}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_Sniper.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 31,
+              "statuses": {
+                "exact": 31
+              }
+            }
+          ]
+        },
+        {
+          "type": "LAT",
+          "prefab": "{8F56A1F94CA55C3A}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_LAT2.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 43,
+              "statuses": {
+                "exact": 43
+              }
+            }
+          ]
+        },
+        {
+          "type": "AT",
+          "prefab": "{8F56A1F94CA55C3A}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_LAT2.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 45,
+              "statuses": {
+                "exact": 45
+              }
+            }
+          ]
+        },
+        {
+          "type": "AA",
+          "prefab": "{8F56A1F94CA55C3A}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_LAT2.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 45,
+              "statuses": {
+                "exact": 45
+              }
+            }
+          ]
+        },
+        {
+          "type": "ENGINEER",
+          "prefab": "{7391108D2C771C94}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_Sapper.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 40,
+              "statuses": {
+                "exact": 40
+              }
+            }
+          ]
+        },
+        {
+          "type": "SQUADLEADER",
+          "prefab": "{96ABFEAD4DB9ADA3}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_SL3.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 47,
+              "statuses": {
+                "exact": 47
+              }
+            }
+          ]
+        },
+        {
+          "type": "TEAMLEADER",
+          "prefab": "{1FF7E341F9CD8122}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_TL.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 37,
+              "statuses": {
+                "exact": 37
+              }
+            }
+          ]
+        },
+        {
+          "type": "CREW",
+          "prefab": "{7402385F6EE584DD}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_USMC_MEF/Character_RHS_USAF_USMC_Crew.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 28,
+              "statuses": {
+                "exact": 28
+              }
+            }
+          ]
+        },
+        {
+          "type": "PILOT",
+          "prefab": "{42A502E3BB727CEC}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_USMC_MEF/Character_RHS_USAF_USMC_HeliPilot.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 18,
+              "statuses": {
+                "exact": 18
+              }
+            }
+          ]
+        },
+        {
+          "type": "GRENADIER",
+          "prefab": "{786D962E5A78F0D8}Prefabs/Characters/Factions/BLUFOR/RHS_USAF/RHS_USAF_FORECON/Character_RHS_USAF_FORECON_GL.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 50,
+              "statuses": {
+                "exact": 50
+              }
+            }
+          ]
+        }
+      ],
+      "vehicles": [
+        {
+          "type": "ARMED_CAR",
+          "prefab": "{0F200E9F3D3AD905}Prefabs/Vehicles/Wheeled/JLTV/OGPK/M2HB/JLTV_OGPK_M2HB_Woodland.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_JLTV",
+          "catalogueType": "ARMED_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "ARMED_CAR",
+          "prefab": "{BAF198F845DF6BBD}Prefabs/Vehicles/Wheeled/JLTV/OGPK/M134/JLTV_OGPK_M134_Woodland.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_JLTV",
+          "catalogueType": "ARMED_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "MOTOR_CAR",
+          "prefab": "{CBC466F92C9E1AE6}Prefabs/Vehicles/Wheeled/JLTV/Unarmed/JLTV_Unarmed_Woodland.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_JLTV",
+          "catalogueType": "MOTOR_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "ARMED_CAR",
+          "prefab": "{2E6481BC1EE9A767}Prefabs/Vehicles/Wheeled/JLTV/CROWS/M2HB/JLTV_CROWS_M2HB_Woodland.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_JLTV",
+          "catalogueType": "ARMED_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "ARMED_CAR",
+          "prefab": "{CFC943343B0D4FBA}Prefabs/Vehicles/Wheeled/JLTV/CROWS/M134/JLTV_CROWS_M134_Woodland.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_JLTV",
+          "catalogueType": "ARMED_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "MOTOR_CAR",
+          "prefab": "{CC55611936C21F25}Prefabs/Vehicles/Wheeled/M998/M1025_USAF.et",
+          "offered": true,
+          "pack": "RHS",
+          "group": "RHS: Status Quo",
+          "catalogueType": "MOTOR_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "ARMED_CAR",
+          "prefab": "{3277F8B1FA06A2BC}Prefabs/Vehicles/Wheeled/M998/M1025_armed_M2HB_USAF.et",
+          "offered": true,
+          "pack": "RHS",
+          "group": "RHS: Status Quo",
+          "catalogueType": "ARMED_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "MOTOR_TRUCK",
+          "prefab": "{04BDACC0BB83284E}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport_covered_MERDC.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "SUPPLY_TRUCK",
+          "readiness": 1
+        },
+        {
+          "type": "IFV",
+          "prefab": "{1B8EB269EECA2DF9}Prefabs/Vehicles/Wheeled/LAV25/LAV25_Base.et",
+          "offered": false
+        },
+        {
+          "type": "APC",
+          "prefab": "{F2307260A1B40F43}Prefabs/Vehicles/Wheeled/Stryker/M1126/Stryker_APC_MERDC.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Stryker",
+          "catalogueType": "APC",
+          "readiness": 1
+        },
+        {
+          "type": "APC",
+          "prefab": "{73C1BB5B830C9F05}Prefabs/Vehicles/Wheeled/Stryker/M1126/CROWS/Stryker_CROWS_MERDC.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Stryker",
+          "catalogueType": "APC",
+          "readiness": 1
+        },
+        {
+          "type": "MOTOR_TRUCK",
+          "prefab": "{ACCF3C5D1629AF7F}Prefabs/Vehicles/Wheeled/M1083/M1083_Transport_Covered_Woodland.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_FMTV",
+          "catalogueType": "SUPPLY_TRUCK",
+          "readiness": 1
+        },
+        {
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{ACCF3C5D1629AF7F}Prefabs/Vehicles/Wheeled/M1083/M1083_Transport_Covered_Woodland.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_FMTV",
+          "catalogueType": "SUPPLY_TRUCK",
+          "readiness": 1
+        },
+        {
+          "type": "ARMED_TRUCK",
+          "prefab": "{A815C3244E04D61A}Prefabs/Vehicles/Wheeled/M1083/Armed/M1083_Transport_Covered_M2HB_Woodland.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_FMTV",
+          "catalogueType": "SUPPLY_TRUCK",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_TRANSPORT",
+          "prefab": "{AF950919C81D91B4}Prefabs/Vehicles/Helicopters/AH6M/MH6M.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_AH-6M",
+          "catalogueType": "HELI_TRANSPORT",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{72C04A6EABC12143}Prefabs/Vehicles/Helicopters/AH6M/AH6M_M134_X2.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_AH-6M",
+          "catalogueType": "HELI_ATTACK",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_TRANSPORT",
+          "prefab": "{D03C0F6044DB5208}Prefabs/Vehicles/Helicopters/UH1H/UH1H_base.et",
+          "offered": false
+        },
+        {
+          "type": "STATIC_MG_LOW",
+          "prefab": "{73530808E4B455BA}Prefabs/Weapons/Tripods/Tripod_M3_M2HB.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "STATIC_MG_LOW",
+          "readiness": 1
+        },
+        {
+          "type": "STATIC_AT",
+          "prefab": "{023236B2A390BA5B}Prefabs/Weapons/Tripods/BGM71_TOW/Tripod_BGM71_TOW.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Armaments",
+          "catalogueType": "STATIC_AT",
+          "readiness": 1
+        },
+        {
+          "type": "STATIC_MORTAR",
+          "prefab": "{8094D99689ABE241}Prefabs/Weapons/Mortars/M252/Mortar_M252.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "STATIC_MORTAR",
+          "readiness": 1
+        },
+        {
+          "type": "STATIC_AA",
+          "prefab": "{3DCACB48619AA029}Prefabs/Weapons/Tripods/ZU23/WeaponTripod_ZU23_US.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_ZU-23-2",
+          "catalogueType": "STATIC_AA",
+          "readiness": 1
+        },
+        {
+          "type": "AA_VEHICLE",
+          "prefab": "{80D859914FD8CA7F}Prefabs/Vehicles/Wheeled/M923A1/M923A1_ZU23_MERDC.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_ZU-23-2",
+          "catalogueType": "ARMED_TRUCK",
+          "readiness": 1
+        },
+        {
+          "type": "AA_VEHICLE",
+          "prefab": "{A7E72E0E66B73009}Prefabs/Vehicles/Wheeled/JLTV/CROWS_II/AIM92/JLTV_CROWS_II_AIM92_Woodland.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_JLTV",
+          "catalogueType": "ARMED_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "TANK",
+          "prefab": "{A76DCC7AD6494682}Prefabs/Vehicles/Wheeled/Stryker/M1128/Stryker_MGS_MERDC.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Stryker",
+          "catalogueType": "APC",
+          "readiness": 1
+        },
+        {
+          "type": "IFV",
+          "prefab": "{D5BECC338A58208D}Prefabs/Vehicles/Wheeled/Stryker/M1296/Stryker_Dragoon_MERDC.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Stryker",
+          "catalogueType": "APC",
+          "readiness": 1
+        }
+      ],
+      "missingCoreTypes": [
+        "RADIO_OPERATOR"
+      ]
+    },
+    {
+      "id": "RHS_AFRF_MSV_VPKO3_EMR",
+      "roles": [
+        "OCCUPIERS",
+        "INVADERS"
+      ],
+      "units": [
+        {
+          "type": "RIFLEMAN",
+          "prefab": "{E569F066E35DA06F}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_Rifleman.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 44,
+              "statuses": {
+                "exact": 44
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 44,
+              "statuses": {
+                "exact": 44
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 44,
+              "statuses": {
+                "exact": 44
+              }
+            },
+            {
+              "tier": 2,
+              "weight": 1,
+              "referenceCount": 48,
+              "statuses": {
+                "exact": 48
+              }
+            }
+          ]
+        },
+        {
+          "type": "AUTORIFLEMAN",
+          "prefab": "{EFFD8A492BB9E881}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_AR.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 40,
+              "statuses": {
+                "exact": 40
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 39,
+              "statuses": {
+                "exact": 39
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 40,
+              "statuses": {
+                "exact": 40
+              }
+            },
+            {
+              "tier": 2,
+              "weight": 1,
+              "referenceCount": 41,
+              "statuses": {
+                "exact": 41
+              }
+            }
+          ]
+        },
+        {
+          "type": "MACHINEGUNNER",
+          "prefab": "{BDEA545345F6FC62}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_MG.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 37,
+              "statuses": {
+                "exact": 37
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 37,
+              "statuses": {
+                "exact": 37
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 39,
+              "statuses": {
+                "exact": 39
+              }
+            },
+            {
+              "tier": 2,
+              "weight": 1,
+              "referenceCount": 39,
+              "statuses": {
+                "exact": 39
+              }
+            }
+          ]
+        },
+        {
+          "type": "GRENADIER",
+          "prefab": "{E228F468DC0E81AB}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_GL.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 45,
+              "statuses": {
+                "exact": 45
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 46,
+              "statuses": {
+                "exact": 46
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 44,
+              "statuses": {
+                "exact": 44
+              }
+            },
+            {
+              "tier": 2,
+              "weight": 1,
+              "referenceCount": 43,
+              "statuses": {
+                "exact": 43
+              }
+            }
+          ]
+        },
+        {
+          "type": "MEDIC",
+          "prefab": "{E365B757340027E4}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_Medic.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 47,
+              "statuses": {
+                "exact": 47
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 50,
+              "statuses": {
+                "exact": 50
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 50,
+              "statuses": {
+                "exact": 50
+              }
+            },
+            {
+              "tier": 2,
+              "weight": 1,
+              "referenceCount": 40,
+              "statuses": {
+                "exact": 40
+              }
+            }
+          ]
+        },
+        {
+          "type": "MARKSMAN",
+          "prefab": "{8E225DCFE40EFA25}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_Sharpshooter.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 40,
+              "statuses": {
+                "exact": 40
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 41,
+              "statuses": {
+                "exact": 41
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 40,
+              "statuses": {
+                "exact": 40
+              }
+            },
+            {
+              "tier": 2,
+              "weight": 1,
+              "referenceCount": 41,
+              "statuses": {
+                "exact": 41
+              }
+            }
+          ]
+        },
+        {
+          "type": "SNIPER",
+          "prefab": "{8E225DCFE40EFA25}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_Sharpshooter.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 40,
+              "statuses": {
+                "exact": 40
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 41,
+              "statuses": {
+                "exact": 41
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 40,
+              "statuses": {
+                "exact": 40
+              }
+            }
+          ]
+        },
+        {
+          "type": "AT",
+          "prefab": "{3755E3885230F6DD}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_AT.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 47,
+              "statuses": {
+                "exact": 47
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 46,
+              "statuses": {
+                "exact": 46
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 47,
+              "statuses": {
+                "exact": 47
+              }
+            },
+            {
+              "tier": 2,
+              "weight": 1,
+              "referenceCount": 44,
+              "statuses": {
+                "exact": 44
+              }
+            }
+          ]
+        },
+        {
+          "type": "LAT",
+          "prefab": "{0C59FC7D5AE9C485}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_AAT3.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 45,
+              "statuses": {
+                "exact": 45
+              }
+            },
+            {
+              "tier": 2,
+              "weight": 1,
+              "referenceCount": 43,
+              "statuses": {
+                "exact": 43
+              }
+            }
+          ]
+        },
+        {
+          "type": "AA",
+          "prefab": "{0C59FC7D5AE9C485}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_AAT3.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 47,
+              "statuses": {
+                "exact": 47
+              }
+            }
+          ]
+        },
+        {
+          "type": "ENGINEER",
+          "prefab": "{F8A58F2159851F48}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_Sapper.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 50,
+              "statuses": {
+                "exact": 50
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 51,
+              "statuses": {
+                "exact": 51
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 52,
+              "statuses": {
+                "exact": 52
+              }
+            },
+            {
+              "tier": 2,
+              "weight": 1,
+              "referenceCount": 41,
+              "statuses": {
+                "exact": 41
+              }
+            }
+          ]
+        },
+        {
+          "type": "RADIO_OPERATOR",
+          "prefab": "{C6B4848E83E251DC}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_RTO.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 44,
+              "statuses": {
+                "exact": 44
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 43,
+              "statuses": {
+                "exact": 43
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 43,
+              "statuses": {
+                "exact": 43
+              }
+            },
+            {
+              "tier": 2,
+              "weight": 1,
+              "referenceCount": 44,
+              "statuses": {
+                "exact": 44
+              }
+            }
+          ]
+        },
+        {
+          "type": "TEAMLEADER",
+          "prefab": "{7BD71EE82DDDB298}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_Sergeant.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 51,
+              "statuses": {
+                "exact": 51
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 51,
+              "statuses": {
+                "exact": 51
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 53,
+              "statuses": {
+                "exact": 53
+              }
+            },
+            {
+              "tier": 2,
+              "weight": 1,
+              "referenceCount": 47,
+              "statuses": {
+                "exact": 47
+              }
+            }
+          ]
+        },
+        {
+          "type": "SQUADLEADER",
+          "prefab": "{82757B56193D4A92}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_SL.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 44,
+              "statuses": {
+                "exact": 44
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 43,
+              "statuses": {
+                "exact": 43
+              }
+            },
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 43,
+              "statuses": {
+                "exact": 43
+              }
+            },
+            {
+              "tier": 2,
+              "weight": 1,
+              "referenceCount": 47,
+              "statuses": {
+                "exact": 47
+              }
+            }
+          ]
+        },
+        {
+          "type": "CREW",
+          "prefab": "{08D5860833E95CA4}Prefabs/Characters/Factions/OPFOR/RHS_AFRF/MSV/VKPO3_EMR/Character_RHS_RF_MSV_VKPO_3.0_Crew.et",
+          "loadouts": [
+            {
+              "tier": 1,
+              "weight": 1,
+              "referenceCount": 25,
+              "statuses": {
+                "exact": 25
+              }
+            }
+          ]
+        }
+      ],
+      "vehicles": [
+        {
+          "type": "MOTOR_CAR",
+          "prefab": "{16A674FE31B0921C}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_uncovered.et",
+          "offered": false
+        },
+        {
+          "type": "MOTOR_CAR",
+          "prefab": "{259EE7B78C51B624}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "MOTOR_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "ARMED_CAR",
+          "prefab": "{0B4DEA8078B78A9B}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_PKM.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "ARMED_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "AMBULANCE",
+          "prefab": "{43C4AF1EEBD001CE}Prefabs/Vehicles/Wheeled/UAZ452/UAZ452_ambulance.et",
+          "offered": false
+        },
+        {
+          "type": "MOTOR_CAR",
+          "prefab": "{1FBB492E86002BF5}Prefabs/Vehicles/Wheeled/UAZ452/UAZ452_transport.et",
+          "offered": false
+        },
+        {
+          "type": "MOTOR_CAR",
+          "prefab": "{01F65EFB8D767A91}Prefabs/Vehicles/Wheeled/UAZ452/UAZ452_cargo.et",
+          "offered": false
+        },
+        {
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et",
+          "offered": false
+        },
+        {
+          "type": "MOTOR_TRUCK",
+          "prefab": "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et",
+          "offered": false
+        },
+        {
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{D9B91FAB817A6033}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport_covered.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "SUPPLY_TRUCK",
+          "readiness": 1
+        },
+        {
+          "type": "MOTOR_TRUCK",
+          "prefab": "{D9B91FAB817A6033}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport_covered.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "SUPPLY_TRUCK",
+          "readiness": 1
+        },
+        {
+          "type": "FUEL_TRUCK",
+          "prefab": "{4C81D7ED8F8C0D87}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_tanker.et",
+          "offered": false
+        },
+        {
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{1BABF6B33DA0AEB6}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_command.et",
+          "offered": false
+        },
+        {
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{32E77EC32ED2B6D1}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_Arsenal.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "SUPPLY_TRUCK",
+          "readiness": 1
+        },
+        {
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{3336BE330C4F355B}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_ammo.et",
+          "offered": false
+        },
+        {
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{A5647958579A4149}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_repair.et",
+          "offered": false
+        },
+        {
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{6E9142CD2471741C}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_engineer.et",
+          "offered": false
+        },
+        {
+          "type": "APC",
+          "prefab": "{C012BB3488BEA0C2}Prefabs/Vehicles/Wheeled/BTR70/BTR70.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "APC",
+          "readiness": 1
+        },
+        {
+          "type": "APC",
+          "prefab": "{BD75A18920BD1278}Prefabs/Vehicles/Wheeled/Conflict_Variants/BTR70_Conflict.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "APC",
+          "readiness": 1
+        },
+        {
+          "type": "APC",
+          "prefab": "{254289B9C09904AB}Prefabs/Vehicles/Wheeled/BRDM2/BRDM2.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "APC",
+          "readiness": 1
+        },
+        {
+          "type": "APC",
+          "prefab": "{F7B9B434FCFF00B3}Prefabs/Vehicles/Wheeled/Conflict_Variants/BRDM2_Conflict.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "APC",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_TRANSPORT",
+          "prefab": "{DF5CCB7C0FF049F4}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_unarmed_transport.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "HELI_TRANSPORT",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{7BD282AF716ED639}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "HELI_ATTACK",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{3C6B3ED0C3AC30D5}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_gunship_HE.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "HELI_ATTACK",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{DBEC63C9DEE4358C}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_armed_gunship_HEDP.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "HELI_ATTACK",
+          "readiness": 1
+        },
+        {
+          "type": "STATIC_MG_LOW",
+          "prefab": "{723870DBB19D30B0}Prefabs/Weapons/Tripods/Tripod_6T5_PKM.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "STATIC_MG_LOW",
+          "readiness": 1
+        },
+        {
+          "type": "STATIC_MG_HIGH",
+          "prefab": "{29F0CC704A582154}Prefabs/Weapons/Tripods/6T7/Tripod_6T7_NSV.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "STATIC_MG_HIGH",
+          "readiness": 1
+        },
+        {
+          "type": "STATIC_MG_HIGH",
+          "prefab": "{3EA26CFD7A202636}Prefabs/Weapons/Tripods/6T7/Tripod_6T7_NSV_SPP.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "STATIC_MG_HIGH",
+          "readiness": 1
+        },
+        {
+          "type": "STATIC_MORTAR",
+          "prefab": "{D1FFE458E8AC4BDB}Prefabs/Weapons/Mortars/2B14/Mortar_2B14.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "STATIC_MORTAR",
+          "readiness": 1
+        },
+        {
+          "type": "APC",
+          "prefab": "{09B071FCB865C208}Prefabs/Vehicles/Wheeled/BTR70/BTR70_KBA105_Green.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_KBA-105",
+          "catalogueType": "APC",
+          "readiness": 1
+        },
+        {
+          "type": "APC",
+          "prefab": "{5F74CD404FA81040}Prefabs/Vehicles/Wheeled/BTR70/BTR70_KBA105_9M113_Green.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_KBA-105",
+          "catalogueType": "APC",
+          "readiness": 1
+        },
+        {
+          "type": "ARMED_CAR",
+          "prefab": "{8C1F2A99E9B1466F}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_NSV.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Vehicles",
+          "catalogueType": "ARMED_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "ARMED_CAR",
+          "prefab": "{D5B7FDEA734BF9B6}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_NSV_SPP.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Vehicles",
+          "catalogueType": "ARMED_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "ARMED_CAR",
+          "prefab": "{E8D254FC24B032C2}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_Kornet.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Armaments",
+          "catalogueType": "ARMED_CAR",
+          "readiness": 1
+        },
+        {
+          "type": "ARMED_TRUCK",
+          "prefab": "{F203E2146C425605}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_ZU23.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_ZU-23-2",
+          "catalogueType": "ARMED_TRUCK",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_TRANSPORT",
+          "prefab": "{F889C67BFCAD2CF7}Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Transport.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Mi-24V",
+          "catalogueType": "HELI_TRANSPORT",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{7FF511EDC4034D9F}Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_UB1657_X4.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Helicopters",
+          "catalogueType": "HELI_ATTACK",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{9AA441DE6DAB6D94}Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_B8V20A_X4.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Helicopters",
+          "catalogueType": "HELI_ATTACK",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{65ED07118C75B32F}Prefabs/Vehicles/Helicopters/Mi24/Mi24V_Armed_UPK23_X2.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Helicopters",
+          "catalogueType": "HELI_ATTACK",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{62A9D6C4ABD7BFC9}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_Armed_B8V20A_X6.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Helicopters",
+          "catalogueType": "HELI_ATTACK",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{55B4044D7422667E}Prefabs/Vehicles/Helicopters/Mi8MT/Mi8MT_Armed_UPK23_X2.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Helicopters",
+          "catalogueType": "HELI_ATTACK",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{CEA6EC9E6C257CB3}Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23_X2.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_KA-52",
+          "catalogueType": "HELI_ATTACK",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{160E855F15AC62EF}Prefabs/Vehicles/Helicopters/KA52/KA52_UPK23_X4.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_KA-52",
+          "catalogueType": "HELI_ATTACK",
+          "readiness": 1
+        },
+        {
+          "type": "HELI_ATTACK",
+          "prefab": "{33085083D07C7B14}Prefabs/Vehicles/Helicopters/KA52/KA52_9M120_X2.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_KA-52",
+          "catalogueType": "HELI_ATTACK",
+          "readiness": 1
+        },
+        {
+          "type": "STATIC_AA",
+          "prefab": "{AF4613B2B820E34D}Prefabs/Weapons/Tripods/ZU23/WeaponTripod_ZU23_USSR.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_ZU-23-2",
+          "catalogueType": "STATIC_AA",
+          "readiness": 1
+        },
+        {
+          "type": "STATIC_AT",
+          "prefab": "{E8F0DA0C05A8FED4}Prefabs/Weapons/Tripods/9M133_Kornet/Tripod_9M133_Kornet.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Armaments",
+          "catalogueType": "STATIC_AT",
+          "readiness": 1
+        }
+      ],
+      "missingCoreTypes": [
+        "PILOT"
+      ]
+    }
+  ],
+  "references": [],
+  "summary": {
+    "references": 2941,
+    "statuses": {
+      "exact": 2941,
+      "same_guid_different_path": 0,
+      "outside_dependency_tree": 0,
+      "unresolved": 0
+    },
+    "unavailablePresetVehicles": [
+      {
+        "preset": "RHS_USAF_FORECON",
+        "type": "IFV",
+        "prefab": "{1B8EB269EECA2DF9}Prefabs/Vehicles/Wheeled/LAV25/LAV25_Base.et",
+        "offered": false
+      },
+      {
+        "preset": "RHS_USAF_FORECON",
+        "type": "HELI_TRANSPORT",
+        "prefab": "{D03C0F6044DB5208}Prefabs/Vehicles/Helicopters/UH1H/UH1H_base.et",
+        "offered": false
+      },
+      {
+        "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+        "type": "MOTOR_CAR",
+        "prefab": "{16A674FE31B0921C}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_uncovered.et",
+        "offered": false
+      },
+      {
+        "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+        "type": "AMBULANCE",
+        "prefab": "{43C4AF1EEBD001CE}Prefabs/Vehicles/Wheeled/UAZ452/UAZ452_ambulance.et",
+        "offered": false
+      },
+      {
+        "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+        "type": "MOTOR_CAR",
+        "prefab": "{1FBB492E86002BF5}Prefabs/Vehicles/Wheeled/UAZ452/UAZ452_transport.et",
+        "offered": false
+      },
+      {
+        "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+        "type": "MOTOR_CAR",
+        "prefab": "{01F65EFB8D767A91}Prefabs/Vehicles/Wheeled/UAZ452/UAZ452_cargo.et",
+        "offered": false
+      },
+      {
+        "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+        "type": "SUPPLY_TRUCK",
+        "prefab": "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et",
+        "offered": false
+      },
+      {
+        "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+        "type": "MOTOR_TRUCK",
+        "prefab": "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et",
+        "offered": false
+      },
+      {
+        "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+        "type": "FUEL_TRUCK",
+        "prefab": "{4C81D7ED8F8C0D87}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_tanker.et",
+        "offered": false
+      },
+      {
+        "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+        "type": "SUPPLY_TRUCK",
+        "prefab": "{1BABF6B33DA0AEB6}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_command.et",
+        "offered": false
+      },
+      {
+        "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+        "type": "SUPPLY_TRUCK",
+        "prefab": "{3336BE330C4F355B}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_ammo.et",
+        "offered": false
+      },
+      {
+        "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+        "type": "SUPPLY_TRUCK",
+        "prefab": "{A5647958579A4149}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_repair.et",
+        "offered": false
+      },
+      {
+        "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+        "type": "SUPPLY_TRUCK",
+        "prefab": "{6E9142CD2471741C}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_engineer.et",
+        "offered": false
+      }
+    ],
+    "mismatchedVehicleTypes": [
+      {
+        "preset": "RHS_USAF_FORECON",
+        "type": "MOTOR_TRUCK",
+        "prefab": "{04BDACC0BB83284E}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport_covered_MERDC.et",
+        "offered": true,
+        "pack": "BASE_GAME",
+        "group": "Base Game",
+        "catalogueType": "SUPPLY_TRUCK",
+        "readiness": 1
+      },
+      {
+        "preset": "RHS_USAF_FORECON",
+        "type": "MOTOR_TRUCK",
+        "prefab": "{ACCF3C5D1629AF7F}Prefabs/Vehicles/Wheeled/M1083/M1083_Transport_Covered_Woodland.et",
+        "offered": true,
+        "pack": "WCS",
+        "group": "WCS_FMTV",
+        "catalogueType": "SUPPLY_TRUCK",
+        "readiness": 1
+      },
+      {
+        "preset": "RHS_USAF_FORECON",
+        "type": "ARMED_TRUCK",
+        "prefab": "{A815C3244E04D61A}Prefabs/Vehicles/Wheeled/M1083/Armed/M1083_Transport_Covered_M2HB_Woodland.et",
+        "offered": true,
+        "pack": "WCS",
+        "group": "WCS_FMTV",
+        "catalogueType": "SUPPLY_TRUCK",
+        "readiness": 1
+      },
+      {
+        "preset": "RHS_USAF_FORECON",
+        "type": "AA_VEHICLE",
+        "prefab": "{80D859914FD8CA7F}Prefabs/Vehicles/Wheeled/M923A1/M923A1_ZU23_MERDC.et",
+        "offered": true,
+        "pack": "WCS",
+        "group": "WCS_ZU-23-2",
+        "catalogueType": "ARMED_TRUCK",
+        "readiness": 1
+      },
+      {
+        "preset": "RHS_USAF_FORECON",
+        "type": "AA_VEHICLE",
+        "prefab": "{A7E72E0E66B73009}Prefabs/Vehicles/Wheeled/JLTV/CROWS_II/AIM92/JLTV_CROWS_II_AIM92_Woodland.et",
+        "offered": true,
+        "pack": "WCS",
+        "group": "WCS_JLTV",
+        "catalogueType": "ARMED_CAR",
+        "readiness": 1
+      },
+      {
+        "preset": "RHS_USAF_FORECON",
+        "type": "TANK",
+        "prefab": "{A76DCC7AD6494682}Prefabs/Vehicles/Wheeled/Stryker/M1128/Stryker_MGS_MERDC.et",
+        "offered": true,
+        "pack": "WCS",
+        "group": "WCS_Stryker",
+        "catalogueType": "APC",
+        "readiness": 1
+      },
+      {
+        "preset": "RHS_USAF_FORECON",
+        "type": "IFV",
+        "prefab": "{D5BECC338A58208D}Prefabs/Vehicles/Wheeled/Stryker/M1296/Stryker_Dragoon_MERDC.et",
+        "offered": true,
+        "pack": "WCS",
+        "group": "WCS_Stryker",
+        "catalogueType": "APC",
+        "readiness": 1
+      },
+      {
+        "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+        "type": "MOTOR_TRUCK",
+        "prefab": "{D9B91FAB817A6033}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport_covered.et",
+        "offered": true,
+        "pack": "BASE_GAME",
+        "group": "Base Game",
+        "catalogueType": "SUPPLY_TRUCK",
+        "readiness": 1
+      }
+    ]
+  },
+  "exactReferencesOmitted": 2941
+}

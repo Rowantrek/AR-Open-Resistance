@@ -15,6 +15,24 @@ class AROR_GarrisonPolicy
 		}
 		return 0;
 	}
+	//! Town and city posts are sized by the holding army's Crackdown level (1-5) when raised: level 1 at first, 2 from
+	//! Crackdown 3, 3 at Crackdown 5. Cities hold one level more.
+	static int SettlementLevel(AROR_ELocationType type, int crackdownLevel)
+	{
+		int level = 1;
+		if (crackdownLevel >= 3)
+			level++;
+		if (crackdownLevel >= 5)
+			level++;
+		if (type == AROR_ELocationType.CITY)
+			level++;
+		return Math.Clamp(level, 1, 4);
+	}
+	//! Town posts have no gun pits at first; one or two guns as the post grows
+	static int SettlementStaticCount(int level)
+	{
+		return Math.Clamp(level - 1, 0, 2);
+	}
 	static int InfantryTeams(int level)
 	{
 		return Math.Clamp(level, 1, 4) * 2;

@@ -10,7 +10,7 @@ Object.defineProperty(String.prototype,'IsEmpty',{value(){return !this.length},c
 const env={Math:{Round:Math.round,Max:Math.max,Min:Math.min},Replication:{IsServer:()=>server},Print(){},LogLevel:{NORMAL:0},
  AROR_EOperationState:{PLANNED:0,SPAWNING:1,ACTIVE:2,SUCCEEDED:3,FAILED:4,CANCELLED:5},AROR_EOperationType:{ATTACK:0,QRF:1},
  AROR_EFactionRole:{RESISTANCE:0,OCCUPIERS:1,INVADERS:2},AROR_EForceType:{AIRBORNE:3},AROR_EResponseType:{AIR_GROUND:7},
- AROR_ReaperAirForce:{Cast:x=>x?.air?x:null},AROR_OperationManagerComponent:{Cast:x=>x},ESerializeResult:{OK:1},VERSION:4,
+ AROR_ReaperAirForce:{Cast:x=>x?.air?x:null,AircraftAlive:x=>!!x&&!x.dead},AROR_OperationManagerComponent:{Cast:x=>x},ESerializeResult:{OK:1},VERSION:4,
  string:{Format:(s,...args)=>s.replace(/%(\d+)/g,(_,i)=>args[i-1])}};
 const names=new Set(Object.values(src).flatMap(s=>[...s.matchAll(/^\t[^\r\n]*?\b(\w+)\([^\r\n]*\)\r?\n\t\{/gm)].map(m=>m[1])));
 function compile(file,name){
@@ -78,7 +78,7 @@ env.AROR_CommanderManagerComponent={GetInstance:()=>({GetCommander:()=>({GetFact
 const route=compile(reaperFile,'StartMixedCampaignQRF'),fallback=compile(reaperFile,'FallbackMixedQRFToGround');
 function router(preferAir){
  const calls=[];const ctx={m_Operations:{PreferAirQRF:()=>preferAir,GetCrackdownLevel:()=>2,GetReadinessLevel:()=>2},m_aForces:[],m_bAllowAirborneResponses:true,
-  m_sReaperPlanningOperation:'',FindForce:()=>null,ReaperSettingsValid:()=>true,HasMarsOrigin_S:()=>true,QRFPoolReadinessLevel:compile(executorFile,'QRFPoolReadinessLevel'),
+  m_sReaperPlanningOperation:'',FindForce:()=>null,ReaperSettingsValid:()=>true,HasReaperAirTraffic:compile(reaperFile,'HasReaperAirTraffic'),HasMarsOrigin_S:()=>true,QRFPoolReadinessLevel:compile(executorFile,'QRFPoolReadinessLevel'),
   m_aForceProfiles:[{m_bEnabled:true,m_eType:3,m_eRole:1,m_sFactionKey:'ARMY',IsValid:()=>true,HasPresetVehicles:()=>true,GetWeight:()=>1}],
   FindStrategicGroundRecipe:()=>({}),AffordableReaperTier:()=>2,FallbackMixedQRFToGround:fallback,ReportSpawnWait(){},
   StartGroundQRFRecipe:o=>calls.push(o.m_iResponseMixBucket===1?'joint':'ground'),StartReaperQRF:()=>calls.push('air'),BaseStartForce:()=>calls.push('ground')};
@@ -87,7 +87,7 @@ function router(preferAir){
 for(const [label,prefer,change,expected]of [
  ['ground share',false,()=>{},'ground'],['joint share',true,()=>{},'joint'],['standalone air',true,c=>c.FindStrategicGroundRecipe=()=>null,'air'],
  ['no funds',true,c=>{c.FindStrategicGroundRecipe=()=>null;c.AffordableReaperTier=()=>0;},'ground'],['adapter disabled',true,c=>c.m_bAllowAirborneResponses=false,'ground'],
- ['airspace occupied',true,c=>c.m_aForces=[{air:true}],'ground'],['no origin',true,c=>c.HasMarsOrigin_S=()=>false,'ground']]){
+ ['airspace occupied',true,c=>c.m_aForces=[{air:true,m_bConstructionPending:true}],'ground'],['no origin',true,c=>c.HasMarsOrigin_S=()=>false,'ground']]){
  const {ctx,calls}=router(prefer),o=operation();change(ctx);route.call(ctx,o);check(calls.join(',')===expected,'route '+label+' through correct backend');
  check(o.m_bResponseMixTracked&&!o.m_bResponseMixCounted,'selection alone cannot increment dispatched history');
 }

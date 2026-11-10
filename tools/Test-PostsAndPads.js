@@ -33,9 +33,9 @@ function runPostsAndPadsTests(source) {
   GetGame:()=>({GetWorld:()=>world}),Print:message=>printed.push(message),LogLevel:{NORMAL:0},
   string:{Format:(s,...a)=>s.replace(/%(\d+)/g,(_,n)=>String(a[n-1]))},Math3D:{AnglesToMatrix:(angles,out)=>{out[0]=angles;}},
   BaseGameEntity:{Cast:x=>x},AROR_LandingPadComponent:{Cast:x=>x},AROR_SentryPostComponent:{Cast:x=>x},AROR_DefencePositionComponent:{Cast:x=>x},
-  SENTRY_VARIANT:1000,ROTOR_CLEARANCE_BOTTOM:2.5,ROTOR_CLEARANCE_TOP:6,PLATFORM_HEADROOM:1.8};
+  AROR_EUnitType:{MARKSMAN:99},SENTRY_VARIANT:1000,ROTOR_CLEARANCE_BOTTOM:2.5,ROTOR_CLEARANCE_TOP:6,PLATFORM_HEADROOM:1.8};
  const methods=['FindPlatform','PadSurface','LandingPadAt','CollectLandingPads','CollectHierarchy','SentryPosts','IsSentry','DefenceMarker','FindDefencePosition',
-  'PositionOrdinal','InfantryPrefab','IsClear','HasPlayerClearance','GetOwner','GetDefenceCenter','GetDefenceHalfExtent','GetDefenceHalfDepth','IsPlayerOrForeignAsset',
+  'PositionOrdinal','InfantryType','IsClear','HasPlayerClearance','GetOwner','GetDefenceCenter','GetDefenceHalfExtent','GetDefenceHalfDepth','IsPlayerOrForeignAsset',
   'MaintainCrewSeats_S','HasMountedDefence','CrewAndOrder'];
  function compile(name){
   const m=source.match(new RegExp('^\\t[^\\r\\n]*\\b'+name+'\\(([^\\r\\n]*)\\)\\r?\\n\\t\\{([\\s\\S]*?)^\\t\\}','m'));
@@ -54,7 +54,7 @@ function runPostsAndPadsTests(source) {
  }
  const tower={name:'tower'},roof={name:'roof'};
  const garrison={};
- for(const n of ['FindPlatform','PadSurface','LandingPadAt','CollectLandingPads','CollectHierarchy','SentryPosts','IsSentry','DefenceMarker','InfantryPrefab','IsClear','GetDefenceHalfDepth','CrewAndOrder'])garrison[n]=compile(n);
+ for(const n of ['FindPlatform','PadSurface','LandingPadAt','CollectLandingPads','CollectHierarchy','SentryPosts','IsSentry','DefenceMarker','InfantryType','IsClear','GetDefenceHalfDepth','CrewAndOrder'])garrison[n]=compile(n);
  let children=[];
  const chain=list=>list.map((c,i)=>Object.assign(c,{GetSibling:()=>list[i+1]||null,GetChildren:()=>null}));
  const owner={GetChildren:()=>chain(children)[0]||null,VectorToLocal:v=>v};
@@ -102,8 +102,8 @@ function runPostsAndPadsTests(source) {
  check(garrison.DefenceMarker(2)===null,'a sentry whose post was removed has no marker');
  check(garrison.DefenceMarker(0).marker==='0:0','team markers are unchanged');
  const faction={m_sMarksman:'sniper',m_sInfantry:'rifle',m_aInfantryVariants:['ar','gl','tl']};
- check(garrison.InfantryPrefab(faction,1000)==='sniper'&&garrison.InfantryPrefab(faction,2)==='gl','sentries use the marksman; fireteam variants are unchanged');
- faction.m_sMarksman='';check(garrison.InfantryPrefab(faction,1001)==='rifle','without a marksman a sentry is a rifleman');
+ check(garrison.InfantryType(1000)===99&&garrison.InfantryType(2)===2,'sentries request the marksman type; saved team unit types are unchanged');
+ check(garrison.InfantryType(1001)===99,'every sentry requests a marksman from its role preset');
  // Room for one man inside a bunker: the bunker walls around him do not block, something on the spot does
  slabs=[{entity:{},x0:-32,x1:-31,z0:13,z1:17,bottom:ground,top:ground+1.5},{entity:{},x0:-29,x1:-28,z0:13,z1:17,bottom:ground,top:ground+1.5}];
  check(garrison.IsClear([-30,ground,15],0,1,50),'a bunker sentry has room between its walls');

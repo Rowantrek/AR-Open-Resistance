@@ -19,6 +19,8 @@ class AROR_GroundQRFRecipe
 	string m_sFactionKey;
 	[Attribute("", desc: "Ordered force-profile IDs. Joint recipes start with one airborne pair, then ground elements. Each entry is deployed once.")]
 	ref array<string> m_aProfileIds;
+	[Attribute("0", desc: "Town garrison response wave this recipe fills (1 = first wave), chosen by the readiness window above. List elements in deployment priority: Crackdown decides how many are sent. 9: the response's helicopter assault (a joint recipe, airborne pair first). 0: an ordinary QRF recipe. Wave recipes are only sent by AROR_TownWavesComponent, never by the campaign selector.", params: "0 9 1")]
+	int m_iAssaultWave;
 
 	//! Script-created fixtures have no resource container to apply Attribute defaults. Resource loading never calls this.
 	static AROR_GroundQRFRecipe CreateForScript()

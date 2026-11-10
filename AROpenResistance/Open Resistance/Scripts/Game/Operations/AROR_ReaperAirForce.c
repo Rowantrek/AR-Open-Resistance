@@ -36,6 +36,7 @@ class AROR_ReaperAirForce : AROR_GroundOperationForce
 	ref AROR_ReaperLandingSearch m_AlternateLandingSearch;
 	int m_iNextFormationUpdate;
 	int m_iSupportEndTime;
+	bool m_bSupportStarted;	//!< Gunship support time begins near the objective, rather than being spent on ingress
 	int m_iDepartureTime;
 	int m_iPatrolStep;
 	int m_iPatrolDeadline;

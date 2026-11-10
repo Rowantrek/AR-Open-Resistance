@@ -1,0 +1,8 @@
+StaticModelEntity : "{CABCA96DA5450B05}Prefabs/Structures/Military/Camps/AirfieldMatting_01/AirfieldMatting_US_01_long.et" {
+ ID "6AC9F0A1B2C3D411"
+ components {
+  MeshObject "{56ACD1C4DC78C87B}" {
+   ClutterOccluder 1
+  }
+ }
+}

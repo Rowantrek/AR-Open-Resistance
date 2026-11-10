@@ -35,6 +35,9 @@ function compile(file,name){
  return new Function(...Object.keys(env),'return function('+args+'){'+body+'}')(...Object.values(env));
 }
 const executor='AROR_OperationExecutorComponent',reaper='AROR_ReaperQRFExecutor',air='AROR_ReaperAirForce';
+env.AROR_EUnitType={CREW:12};
+env.AROR_ResistanceFleet={IsClaimed:()=>false};
+env.AROR_FactionPresetsComponent={GetInstance:()=>({InitializeVehicleFaction_S:entity=>!!entity&&entity.allowFaction!==false})};
 // Initial admission must leave enough time after finite pad search for the same frozen
 // per-package preparation deadline enforced on active reserves.
 {
@@ -95,11 +98,12 @@ const executor='AROR_OperationExecutorComponent',reaper='AROR_ReaperQRFExecutor'
  }}
  visit(addon);check(fixtures.length>1,'shipped executor instances are included, not just class defaults');
  for(const fixture of fixtures){
+  fixture.settings.TacticalSettingInvalid=compile(executor,'TacticalSettingInvalid');
   for(const [name,valid]of Object.entries(methods))check(valid.call(fixture.settings),name+' accepts '+fixture.file);
   settingsEvidence.push({fixture:fixture.file,values:Object.fromEntries(fields.map(n=>[n,fixture.settings[n]]))});
  }
  for(const [field,value]of Object.entries({m_fAttackStagingDistance:199,m_iAttackStagingTimeout:601,m_iOriginLaunchCooldown:3601,m_fMinOriginDistance:3001,m_fOriginWaterPenalty:0.99}))
-  check(!methods.TacticalSettingsValid.call({...defaults,[field]:value}),'invalid tactical bound still rejects '+field);
+  check(!methods.TacticalSettingsValid.call({...defaults,TacticalSettingInvalid:compile(executor,'TacticalSettingInvalid'),[field]:value}),'invalid tactical bound still rejects '+field);
  check(!methods.ReaperSettingsValid.call({...defaults,m_iReaperPreparationTimeout:0}),'air preparation timeout cannot be disabled accidentally');
 }
 // Optional escorts: execute actual construction, with native creation and resource failure injection.
@@ -110,11 +114,11 @@ const executor='AROR_OperationExecutorComponent',reaper='AROR_ReaperQRFExecutor'
  const spawn=compile(reaper,'SpawnReaperPackage');
  for(const escorted of [false,true])for(const failure of ['none','transport','gunship','airspace','clearance','transportPhysics','escortPhysics','transportFaction','escortFaction','crew','infantry','escortCrew','slots','waypoint']){
   missing=failure;spawned=[];groups=[];loaded=[];
-  const profile={m_sVehicle:'transport',m_sEscortVehicle:'gunship',m_sInfantryGroup:'infantry',m_iEscortCount:escorted?1:0,m_iEscortLossValue:2000};
-  const force={ground:true,air:true,m_Profile:profile,m_bUnescorted:!escorted,m_iPackageIndex:0,m_iPackageCount:1,m_iReservedMembers:8,
+  const profile={m_sVehicle:'transport',m_sEscortVehicle:'gunship',m_sInfantryGroup:'infantry',m_iEscortCount:escorted?1:0,m_iEscortLossValue:2000,PickPresetVehicle:escort=>escort?'gunship':'transport',GetInfantryUnits:out=>out.push(0,0,0,0)};
+  const force={ground:true,air:true,m_Profile:profile,m_aInfantryTypes:[],m_bUnescorted:!escorted,m_iPackageIndex:0,m_iPackageCount:1,m_iReservedMembers:8,
    PreparePassengerRoster_S:()=>true,InitializeSpawnFaction_S:entity=>entity?.allowFaction!==false,TrackDamage_S(){},HoldAircraft_S(){this.held=(this.held||0)+1}};
   const ctx={m_iExecutorClock:10,m_iReaperPreparationTimeout:120,m_fReaperInsertionHeight:100,IsLaunchPositionSafe:()=>failure!=='clearance',ReaperGunshipHeight:()=>200,
-   ConfigureForceFunding(f){f.m_bOwnsPackageQuote=true},SpawnWaypoint:()=>failure==='waypoint'?null:{},
+   FillUnits(){},ConfigureForceFunding(f){f.m_bOwnsPackageQuote=true},SpawnWaypoint:()=>failure==='waypoint'?null:{},
    SpawnReaperAircraft(resource){const v={name:resource.name,allowFaction:failure!==(resource.name==='gunship'?'escortFaction':'transportFaction'),GetPhysics:()=>failure!==(resource.name==='gunship'?'escortPhysics':'transportPhysics')};spawned.push(v);return v},
    ReaperGroup(owner,prefab,pilot){
     const kind=owner===force?(pilot?'crew':'infantry'):'escortCrew';
@@ -165,12 +169,13 @@ const executor='AROR_OperationExecutorComponent',reaper='AROR_ReaperQRFExecutor'
  for(const role of [1,2])for(const readiness of [1,2,3,4,5])for(const funds of ['none','light','both'])for(const debug of [false,true]){
   const make=(heavy)=>({m_sId:heavy?'heavy':'light',m_eType:3,m_eRole:role,m_sFactionKey:role===1?'AROR_OCCUPIERS':'AROR_INVADERS',
    m_bEnabled:true,m_iMinimumReadinessLevel:heavy?5:1,m_iEscortCount:heavy?1:0,m_iPersonnelBudget:heavy?20:8,
-   IsValid:()=>true,GetWeight:()=>1,GetGroupBudget:compile('AROR_ForceProfile','GetGroupBudget'),GetVehicleBudget:compile('AROR_ForceProfile','GetVehicleBudget')});
+   IsValid:()=>true,HasPresetVehicles:()=>true,TransportQuote:()=>0,GetWeight:()=>1,GetGroupBudget:compile('AROR_ForceProfile','GetGroupBudget'),GetVehicleBudget:compile('AROR_ForceProfile','GetVehicleBudget')});
   const heavy=make(true),light=make(false);let selected='',quoted=0,failed=0,waiting=0,reason='';
   const op={m_bDebugRequest:debug,m_bUseResponseMetrics:true,m_iPoolReadinessLevel:readiness,m_iRequestedTier:2,m_sRequestedProfileId:'',
    GetId:()=> 'air',GetRole:()=>role,GetType:()=>1,GetTargetLocationId:()=> 'target',
    BindForceProfile_S(id,count){selected=id;check(count===2,'air intensity is frozen independently from equipment readiness');return true}};
   const ctx={m_aForces:[],m_aForceProfiles:[heavy,light],m_iMaxGroups:30,m_iMaxMembers:128,m_iMaxVehicles:10,m_iQRFMaxLiveAircraft:6,
+   HasReaperAirTraffic:()=>false,ReaperLaunchPoint:()=>[0,0,0],ReleaseReaperLandingPlan(){},IsLaunchClear:()=>true,
    QRFPoolReadinessLevel:()=>readiness,FindForce:()=>null,HasMarsOrigin_S:()=>true,ReaperSettingsValid:()=>true,
    AffordableReaperTier:(profile,tier)=>funds==='both'||(funds==='light'&&profile===light)?tier:0,
    GetReservedGroups:()=>0,GetReservedMembers:()=>0,GetReservedVehicles:()=>0,
@@ -197,8 +202,8 @@ const executor='AROR_OperationExecutorComponent',reaper='AROR_ReaperQRFExecutor'
  const canFund=compile(reaper,'CanFundQRFThreat_S');
  for(const mode of ['funded','none','disabled','zeroWeight','foreign']){
   let calls=0;
-  const first={m_eType:3,m_eRole:1,m_sFactionKey:'army',m_bEnabled:true,IsValid:()=>true,GetWeight:()=>1};
-  const light={m_eType:3,m_eRole:1,m_sFactionKey:mode==='foreign'?'other':'army',m_bEnabled:mode!=='disabled',IsValid:()=>true,GetWeight:()=>mode==='zeroWeight'?0:1};
+  const first={m_eType:3,m_eRole:1,m_sFactionKey:'army',m_bEnabled:true,IsValid:()=>true,HasPresetVehicles:()=>true,GetWeight:()=>1};
+  const light={m_eType:3,m_eRole:1,m_sFactionKey:mode==='foreign'?'other':'army',m_bEnabled:mode!=='disabled',IsValid:()=>true,HasPresetVehicles:()=>true,GetWeight:()=>mode==='zeroWeight'?0:1};
   const ctx={m_aForceProfiles:[first,light],m_bReaperQRFTest:true,m_Operations:{},GetGroundQRFRecipeId:()=> '',
    AffordableReaperTier(profile){calls++;return profile===light&&mode!=='none'?1:0}};
   check(canFund.call(ctx,1,1)===(mode==='funded'),'air admission respects all eligible profiles and QRF weights: '+mode);

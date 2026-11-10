@@ -11,9 +11,14 @@ class AROR_ImportPoints
 		if (!locations)
 			return;
 
-		locations.GetLocationsOfType(AROR_ELocationType.PORT, outFacilities);
-		locations.GetLocationsOfType(AROR_ELocationType.HELIPORT, outFacilities);
-		locations.GetLocationsOfType(AROR_ELocationType.AIRPORT, outFacilities);
+		// GetLocationsOfType clears its output, so gather each type separately
+		array<AROR_LocationComponent> ofType = {};
+		locations.GetLocationsOfType(AROR_ELocationType.PORT, ofType);
+		outFacilities.InsertAll(ofType);
+		locations.GetLocationsOfType(AROR_ELocationType.HELIPORT, ofType);
+		outFacilities.InsertAll(ofType);
+		locations.GetLocationsOfType(AROR_ELocationType.AIRPORT, ofType);
+		outFacilities.InsertAll(ofType);
 	}
 
 	//------------------------------------------------------------------------------------------------

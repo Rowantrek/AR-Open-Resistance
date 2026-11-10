@@ -6,7 +6,17 @@ GenericEntity {
    m_fSearchRadius 60
   }
   MeshObject "{6AACA42B022505CD}" {
-   Object "{C41BFB78E6FFFBCB}Assets/Structures/Military/Flags/FlagPole_01/FlagPole_01.xob"
+   Object "{E9A0740046C9DFA1}Assets/Structures/Military/Flags/FlagPole_02/FlagPole_02.xob"
+  }
+  SCR_FlagComponent "{6B0E5A2C41D07F31}" {
+  }
+  SlotManagerComponent "{6B0E5A2C41D07F32}" {
+   Slots {
+    EntitySlotInfo Flag {
+     Offset 0 4.396 -0.0832
+     Prefab "{971F705971EF6F4B}Prefabs/Props/Fabric/Flags/Flag_1_2_US_01.et"
+    }
+   }
   }
   RigidBody "{6AAE5E8D1CEE716E}" {
    ModelGeometry 1

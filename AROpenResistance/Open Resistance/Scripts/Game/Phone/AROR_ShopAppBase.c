@@ -215,7 +215,7 @@ class AROR_ShopAppBase : AROR_PhonePooledApp
 
 		string hint = "Hold more seaports, heliports and airports to unlock heavier imports.";
 		if (m_iFacilities < 1)
-			hint = "Hold at least one seaport, heliport or airport to import.";
+			hint = "Starter gear needs no facility. Hold a seaport, heliport or airport for more.";
 		Text(MARGIN + width - 24 - 330, STRIP_TOP + 16, 330, 44, 15, hint, C(AROR_UIColors.TEXT_MUTED));
 	}
 
@@ -227,47 +227,6 @@ class AROR_ShopAppBase : AROR_PhonePooledApp
 			color = AROR_UIColors.TEXT;
 
 		Text(x, STRIP_TOP + 26, 170, 24, 17, string.Format("%1  %2", label, count), C(color), count > 0);
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Zero facilities held: the shop is closed and the facilities to take are listed
-	protected void DrawNoAccess(string verb)
-	{
-		float top = STRIP_TOP;
-		float height = 846 - STRIP_TOP;
-		Panel(MARGIN, top, WIDTH - MARGIN * 2, height, C(AROR_UIColors.LINE));
-		Panel(MARGIN + 1, top + 1, WIDTH - MARGIN * 2 - 2, height - 2, C(AROR_UIColors.SURFACE_RAISED));
-		Panel(WIDTH * 0.5, top + 1, 1, height - 2, C(AROR_UIColors.LINE));
-
-		Text(MARGIN + 48, top + 150, 700, 28, 20, "NO ACCESS", C(AROR_UIColors.DANGER), true);
-		Text(MARGIN + 48, top + 190, 700, 110, 44, "NO IMPORT FACILITIES HELD", C(AROR_UIColors.TEXT), true);
-		Text(MARGIN + 48, top + 320, 700, 120, 21, "Nothing can be " + verb + " until the Resistance holds a seaport, heliport or airport. Capture one at its flag, then come back.", C(AROR_UIColors.TEXT_MUTED));
-
-		Text(WIDTH * 0.5 + 40, top + 36, 700, 24, 16, "IMPORT FACILITIES ON THIS MAP", C(AROR_UIColors.TEXT_MUTED), true);
-		array<AROR_LocationComponent> facilities = {};
-		AROR_ImportPoints.GetFacilities(facilities);
-		float y = top + 80;
-		foreach (AROR_LocationComponent facility : facilities)
-		{
-			if (!facility || y > 820)
-				continue;
-
-			Panel(WIDTH * 0.5 + 40, y - 8, WIDTH * 0.5 - MARGIN - 80, 1, C(AROR_UIColors.LINE));
-			Text(WIDTH * 0.5 + 40, y, 480, 28, 22, facility.GetName(), C(AROR_UIColors.TEXT), true);
-			TextRight(WIDTH - MARGIN - 40, y + 4, 15, "HELD BY " + AROR_RebIntelHud.ArmyName(facility.GetControllingRole()), C(AROR_UIColors.TEXT_MUTED), true);
-			Text(WIDTH * 0.5 + 40, y + 28, 480, 22, 16, FacilityKind(facility.GetLocationType()), C(AROR_UIColors.TEXT_FAINT));
-			y += 70;
-		}
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected static string FacilityKind(AROR_ELocationType type)
-	{
-		if (type == AROR_ELocationType.PORT)
-			return "Seaport";
-		if (type == AROR_ELocationType.HELIPORT)
-			return "Heliport";
-		return "Airport";
 	}
 
 	//------------------------------------------------------------------------------------------------

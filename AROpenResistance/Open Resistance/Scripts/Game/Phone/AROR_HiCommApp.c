@@ -4,7 +4,8 @@ enum AROR_EHiCommScreen
 	LOGIN,		//!< Clearance check: only Resistance Leaders get past it
 	COMMAND,	//!< Resistance name and leaders (the host delegates here)
 	STRATEGIC,	//!< Strategic Command: map and orders only
-	UNITS		//!< Unit Management: raise squads, review the order of battle
+	UNITS,		//!< Unit Management: raise squads, review the order of battle
+	GARRISONS	//!< Town garrisons: buy infantry, APCs and armour that stay in held towns
 }
 
 //! Passes HICOMM clicks, with their screen position, to the app
@@ -114,7 +115,7 @@ class AROR_HiCommApp
 	protected static const float PANEL_MARGIN = 10;
 	protected static const float OOB_WIDTH = 260;
 	protected static const float SELECTION_WIDTH = 300;
-	protected static const float SELECTION_HEIGHT = 432;
+	protected static const float SELECTION_HEIGHT = 562;
 	protected static const float HELP_WIDTH = 270;
 	protected static const float SLIDER_HEIGHT = 240;
 
@@ -231,9 +232,10 @@ class AROR_HiCommApp
 	// Presentation state is restored by the phone for this client session.
 	protected AROR_EHiCommScreen m_eScreen = AROR_EHiCommScreen.LOGIN;
 	protected AROR_EHiCommScreen m_eLastScreen = -1;
-	protected int m_iLoginStart;
+	protected int m_iLoginStart = -1;
 	protected ref AROR_HiCommGlobe m_Globe = new AROR_HiCommGlobe();
 	protected ref array<int> m_aSelected = {};	//!< Selected squad IDs
+	protected int m_iVehicleChoice;	//!< Garage vehicle picked with the < > selector (mechanized raise and Embark)
 	protected AROR_EHighCommandOrder m_eSelectedOrder = AROR_EHighCommandOrder.MOVE;
 	protected string m_sSelectedTarget;
 
@@ -399,8 +401,8 @@ class AROR_HiCommApp
 
 		bool showMap = m_eScreen == AROR_EHiCommScreen.STRATEGIC;
 
-		// The login sequence replays each time the login screen is shown
-		if (m_eScreen == AROR_EHiCommScreen.LOGIN && m_eLastScreen != AROR_EHiCommScreen.LOGIN)
+		// Start once per world session; closing the phone or logging out keeps boot progress.
+		if (m_eScreen == AROR_EHiCommScreen.LOGIN && m_iLoginStart < 0)
 			m_iLoginStart = System.GetTickCount();
 
 		m_eLastScreen = m_eScreen;
@@ -416,6 +418,8 @@ class AROR_HiCommApp
 				DrawCommand(highCommand);
 			else if (m_eScreen == AROR_EHiCommScreen.STRATEGIC)
 				DrawStrategic(highCommand);
+			else if (m_eScreen == AROR_EHiCommScreen.GARRISONS)
+				DrawGarrisons();
 			else
 				DrawUnits(highCommand);
 		}
@@ -570,6 +574,7 @@ class AROR_HiCommApp
 		TabButton(240, "COMMAND", AROR_EHiCommScreen.COMMAND, 190);
 		TabButton(440, "STRATEGIC COMMAND", AROR_EHiCommScreen.STRATEGIC, 320);
 		TabButton(770, "UNIT MANAGEMENT", AROR_EHiCommScreen.UNITS, 290);
+		TabButton(1070, "GARRISONS", AROR_EHiCommScreen.GARRISONS, 200);
 
 		AROR_EconomyComponent economy = AROR_EconomyComponent.GetInstance();
 		string funds = "$ -";
@@ -697,7 +702,7 @@ class AROR_HiCommApp
 		// Left: catalogue
 		Box(30, 110, 790, 770);
 		Header(55, 125, "// RAISE SQUADS");
-		Text(55, 165, 740, 34, 20, "Squads form up at the HQ. Cost: Resistance funds AND manpower.", m_GreenDim);
+		Text(55, 165, 740, 34, 20, "Squads form up at the HQ. Costs funds and manpower.", m_GreenDim);
 
 		array<AROR_HighCommandSquadType> types = {};
 		highCommand.GetSquadTypes(types);
@@ -707,8 +712,13 @@ class AROR_HiCommApp
 			if (y > 700)
 				break;
 
-			Panel(55, y, 740, 110, m_Border);
-			Panel(57, y + 2, 736, 106, m_PanelFill);
+			// Mechanized cards are taller: a row to pick the garage vehicle the squad brings out
+			float cardHeight = 110;
+			if (type.m_bMechanized)
+				cardHeight = 156;
+
+			Panel(55, y, 740, cardHeight, m_Border);
+			Panel(57, y + 2, 736, cardHeight - 4, m_PanelFill);
 			Text(80, y + 14, 420, 44, 32, Upper(type.m_sName), m_Green, true);
 			Text(80, y + 62, 420, 30, 20, string.Format("%1 MEN  //  CALLSIGN %2", type.GetSize(), type.m_sCallsign), m_GreenDim);
 
@@ -720,12 +730,24 @@ class AROR_HiCommApp
 			Text(470, y + 20, 160, 30, 22, AROR_EconomyComponent.FormatMoney(type.m_iFundsCost), costColor);
 			Text(470, y + 56, 160, 30, 22, type.m_iManpowerCost.ToString() + " MP", costColor);
 
-			if (affordable && ownedCount < maximum)
-				Button(620, y + 25, 155, 60, "RAISE", "raise:" + index, STYLE_PRIMARY, 24);
+			string action = "raise:" + index;
+			bool ready = affordable && ownedCount < maximum;
+			if (type.m_bMechanized)
+			{
+				int entryId;
+				string vehicleName;
+				int vehicleCount;
+				ready = ready && GetVehicleChoice(entryId, vehicleName, vehicleCount);
+				action += ":" + entryId;
+				DrawVehicleSelector(80, y + 104, 695, 38);
+			}
+
+			if (ready)
+				Button(620, y + 25, 155, 60, "RAISE", action, STYLE_PRIMARY, 24);
 			else
 				Button(620, y + 25, 155, 60, "RAISE", string.Empty, STYLE_DISABLED, 24);
 
-			y += 125;
+			y += cardHeight + 15;
 		}
 
 		if (types.IsEmpty())
@@ -769,6 +791,195 @@ class AROR_HiCommApp
 
 		if (squads.IsEmpty())
 			Text(875, 210, 780, 40, 22, "No squads in the field.", m_GreenDim);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The garage vehicle picked with the < > selector (shared by Unit Management and the orders panel).
+	//! False when the garage is empty.
+	protected bool GetVehicleChoice(out int entryId, out string name, out int count)
+	{
+		entryId = 0;
+		name = string.Empty;
+		count = 0;
+		AROR_ResistanceGarageComponent garage = AROR_ResistanceGarageComponent.GetInstance();
+		if (!garage)
+			return false;
+
+		array<int> ids = {};
+		array<ResourceName> prefabs = {};
+		array<float> healths = {};
+		array<float> fuels = {};
+		garage.GetEntries(ids, prefabs, healths, fuels);
+		// Land vehicles only: squads cannot fly or sail
+		for (int i = ids.Count() - 1; i >= 0; i--)
+		{
+			if (!AROR_HighCommandComponent.IsSquadVehicle(prefabs[i]))
+			{
+				ids.RemoveOrdered(i);
+				prefabs.RemoveOrdered(i);
+			}
+		}
+
+		count = ids.Count();
+		if (count == 0)
+			return false;
+
+		m_iVehicleChoice = ((m_iVehicleChoice % count) + count) % count;
+		entryId = ids[m_iVehicleChoice];
+		name = Upper(AROR_PrefabInfo.GetName(prefabs[m_iVehicleChoice], true));
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! "<  UAZ-469  (1/3)  >": cycles through the garage's vehicles
+	protected void DrawVehicleSelector(float x, float y, float width, float height)
+	{
+		int entryId;
+		string name;
+		int count;
+		if (!GetVehicleChoice(entryId, name, count))
+		{
+			string empty = "GARAGE EMPTY  //  BUY A VEHICLE IN IMPORTS";
+			if (width < 400)
+				empty = "GARAGE EMPTY";
+
+			Text(x, y + 6, width, height, 18, empty, m_Red);
+			return;
+		}
+
+		Button(x, y, 40, height, "<", "vehicle:-1", STYLE_NORMAL, 18);
+		Button(x + width - 40, y, 40, height, ">", "vehicle:1", STYLE_NORMAL, 18);
+		string label = name;
+		if (count > 1)
+			label = string.Format("%1  (%2/%3)", name, m_iVehicleChoice + 1, count);
+
+		Text(x + 50, y + (height - 26) * 0.5, width - 100, height, 18, label, m_Amber, true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Embark or dismount every selected squad under our command
+	protected void SendVehicleOrder(bool embark)
+	{
+		AROR_HighCommandComponent highCommand = AROR_HighCommandComponent.GetInstance();
+		SCR_PlayerController controller = SCR_PlayerController.Cast(GetGame().GetPlayerController());
+		if (!highCommand || !controller)
+			return;
+
+		int entryId;
+		string name;
+		int count;
+		GetVehicleChoice(entryId, name, count);
+		int localId = GetLocalPlayerId();
+		foreach (int squadId : m_aSelected)
+		{
+			AROR_HighCommandSquadInfo squad = highCommand.GetSquadInfo(squadId);
+			if (squad && highCommand.CanCommand(localId, squad.m_iOwnerId))
+				controller.AROR_RequestHiCommVehicle(squadId, embark, entryId);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Town garrisons: every held town and city with what it holds and what can be bought for it
+	protected void DrawGarrisons()
+	{
+		AROR_TownMilitiaComponent militia = AROR_TownMilitiaComponent.GetInstance();
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
+		AROR_EconomyComponent economy = AROR_EconomyComponent.GetInstance();
+		Box(30, 110, 1645, 770);
+		Header(55, 125, "// GARRISONS");
+		if (!militia || !locations)
+		{
+			Text(55, 175, 1580, 34, 22, "Garrisons are not enabled in this scenario.", m_GreenDim);
+			return;
+		}
+		int funds, manpower;
+		if (economy)
+		{
+			funds = economy.GetFactionFunds(AROR_EFactionRole.RESISTANCE);
+			manpower = economy.GetManpower();
+		}
+		int ports = AROR_ImportPoints.CountPorts(AROR_EFactionRole.RESISTANCE);
+		Text(55, 160, 1580, 26, 18, "Towns, outposts and every site you hold. Paid once; units stay until killed or the site is lost, and turn out when players or the enemy come near.", m_GreenDim);
+		Text(55, 186, 1580, 26, 18, string.Format("Seaports held: %1  //  APCs need %2, armour %3", ports, militia.GetPortsNeeded(AROR_EMilitiaKind.APC), militia.GetPortsNeeded(AROR_EMilitiaKind.ARMOUR)), m_GreenDim);
+
+		Text(55, 215, 330, 30, 18, "SITE", m_GreenFaint);
+		Text(390, 215, 180, 30, 18, "INFANTRY", m_GreenFaint);
+		Text(570, 215, 200, 30, 18, "VEHICLES", m_GreenFaint);
+
+		// Military sites first (outposts, bases, airfields...), then cities and towns
+		array<AROR_LocationComponent> all = {};
+		locations.GetLocations(all);
+		array<AROR_LocationComponent> towns = {};
+		array<AROR_LocationComponent> settlements = {};
+		foreach (AROR_LocationComponent site : all)
+		{
+			if (!site || site.GetControllingRole() != AROR_EFactionRole.RESISTANCE || !AROR_TownMilitiaComponent.CanGarrison(site))
+				continue;
+			AROR_ELocationType siteType = site.GetLocationType();
+			if (siteType == AROR_ELocationType.TOWN || siteType == AROR_ELocationType.CITY)
+				settlements.Insert(site);
+			else
+				towns.Insert(site);
+		}
+		towns.InsertAll(settlements);
+
+		float y = 250;
+		int shown;
+		foreach (AROR_LocationComponent town : towns)
+		{
+			if (y > 820)
+				break;
+			shown++;
+			int infantry, apcs, armour;
+			militia.GetGarrison(town.GetId(), infantry, apcs, armour);
+			string name = Upper(town.GetName());
+			if (town.GetLocationType() != AROR_ELocationType.TOWN)
+				name += " (" + SiteKind(town.GetLocationType()) + ")";
+			Text(55, y + 10, 330, 36, 22, name, m_Green, true);
+			Text(390, y + 10, 180, 36, 22, string.Format("%1 / %2", infantry, militia.GetMaxInfantry(town)), m_Green);
+			Text(570, y + 10, 200, 36, 22, string.Format("%1 APC  %2 ARM  / %3", apcs, armour, militia.GetMaxVehicles(town)), m_Green);
+
+			int soldiers = militia.InfantryToBuy(town);
+			GarrisonButton(780, y, 290, town, AROR_EMilitiaKind.INFANTRY, string.Format("+%1 INF", soldiers), soldiers * militia.GetSoldierCost(), soldiers * militia.GetSoldierManpower(), funds, manpower, militia);
+			GarrisonButton(1080, y, 290, town, AROR_EMilitiaKind.APC, "+APC", militia.GetVehicleCost(AROR_EMilitiaKind.APC), militia.GetVehicleManpower(), funds, manpower, militia);
+			GarrisonButton(1380, y, 270, town, AROR_EMilitiaKind.ARMOUR, "+ARMOUR", militia.GetVehicleCost(AROR_EMilitiaKind.ARMOUR), militia.GetVehicleManpower(), funds, manpower, militia);
+			Panel(55, y + 54, 1595, 1, m_GreenFaint);
+			y += 60;
+		}
+		if (shown == 0)
+			Text(55, 260, 1580, 40, 22, "The Resistance holds no sites yet. Take an outpost's or a town's flag to hold it.", m_GreenDim);
+	}
+
+	//! Short site kind after a garrison's name: "OUTPOST", "BASE", "CITY"...
+	protected static string SiteKind(AROR_ELocationType type)
+	{
+		switch (type)
+		{
+			case AROR_ELocationType.CITY: return "CITY";
+			case AROR_ELocationType.OUTPOST: return "OUTPOST";
+			case AROR_ELocationType.MILITARY_BASE: return "BASE";
+			case AROR_ELocationType.AIRPORT: return "AIRFIELD";
+			case AROR_ELocationType.HELIPORT: return "HELIPORT";
+			case AROR_ELocationType.PORT: return "PORT";
+			case AROR_ELocationType.FACTORY: return "FACTORY";
+			case AROR_ELocationType.RESOURCES: return "RESOURCES";
+		}
+		return "SITE";
+	}
+
+	//! One buy button: label and price, or why it cannot be bought
+	protected void GarrisonButton(float x, float y, float width, AROR_LocationComponent town, AROR_EMilitiaKind kind, string label, int cost, int manpowerCost, int funds, int manpower, AROR_TownMilitiaComponent militia)
+	{
+		string reason = militia.WhyNot(town, kind);
+		if (reason.IsEmpty() && (funds < cost || manpower < manpowerCost))
+			reason = "Can't afford";
+		string text = string.Format("%1  %2 / %3 MP", label, AROR_EconomyComponent.FormatMoney(cost), manpowerCost);
+		if (!reason.IsEmpty())
+		{
+			Button(x, y, width, 48, Upper(reason), string.Empty, STYLE_DISABLED, 18);
+			return;
+		}
+		Button(x, y, width, 48, text, string.Format("garrison:%1:%2", town.GetId(), kind), STYLE_PRIMARY, 18);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1072,6 +1283,14 @@ class AROR_HiCommApp
 			Button(x + 102, top + 366, width - 102, 52, "EXECUTE", "execute", STYLE_PRIMARY, 24);
 		else
 			Button(x + 102, top + 366, width - 102, 52, "EXECUTE", string.Empty, STYLE_DISABLED, 24);
+
+		// Vehicles, at once: Embark boards the squad's own vehicle, or collects the picked garage vehicle at the
+		// nearest Resistance site when it has none nearby; Dismount gets everyone out
+		Panel(x, top + 432, width, 1, m_Border);
+		Text(x, top + 440, width, 22, 14, "GARAGE VEHICLE IF NONE NEARBY", m_GreenDim);
+		DrawVehicleSelector(x, top + 462, width, 34);
+		Button(x, top + 506, half, 42, "EMBARK", "embark", STYLE_NORMAL, 18);
+		Button(x + half + 10, top + 506, half, 42, "DISMOUNT", "dismount", STYLE_NORMAL, 18);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1181,6 +1400,7 @@ class AROR_HiCommApp
 	void SaveState(notnull AROR_PhoneSessionState state)
 	{
 		state.m_eHiCommScreen = m_eScreen;
+		state.m_iHiCommLoginStart = m_iLoginStart;
 		state.m_aHiCommSelected.Copy(m_aSelected);
 		state.m_eHiCommOrder = m_eSelectedOrder;
 		state.m_sHiCommTarget = m_sSelectedTarget;
@@ -1196,6 +1416,7 @@ class AROR_HiCommApp
 	{
 		// Layout still rechecks live leadership before drawing any command screen.
 		m_eScreen = state.m_eHiCommScreen;
+		m_iLoginStart = state.m_iHiCommLoginStart;
 		m_aSelected.Copy(state.m_aHiCommSelected);
 		m_eSelectedOrder = state.m_eHiCommOrder;
 		m_sSelectedTarget = state.m_sHiCommTarget;
@@ -1925,8 +2146,6 @@ class AROR_HiCommApp
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! A location's military-frame symbol centred on its map point: frame by owner, pale fill, glyph by type.
-	//! Line widths scale with the symbol, matching the 40-pixel location map icon.
 	//! The national flag of the army holding a stronghold, 3:2 and centred on the point
 	protected void DrawStrongholdFlag(vector point, float size, AROR_EFactionRole owner, Color color)
 	{
@@ -1937,6 +2156,22 @@ class AROR_HiCommApp
 		float height = size * 2 / 3;
 		array<ref CanvasWidgetCommand> commands = {};
 		AROR_ArmyFlag.Build(commands, point[0] - size * 0.5, point[1] - height * 0.5, size, height, presetId, color, AROR_MapFrameIcon.KEYLINE_WIDTH * size / 40);
+		ReplayCommands(commands);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The location map's type silhouette (AROR_MapSiteSymbol), centred on the point
+	protected void DrawFrameSymbol(vector point, float size, AROR_ELocationType type, AROR_EFactionRole owner, Color color)
+	{
+		array<ref CanvasWidgetCommand> commands = {};
+		AROR_MapSiteSymbol.Build(commands, point[0] - size * 0.5, point[1] - size * 0.5, size, type, color);
+		ReplayCommands(commands);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Canvas commands built for the location map, drawn on HICOMM's map
+	protected void ReplayCommands(notnull array<ref CanvasWidgetCommand> commands)
+	{
 		foreach (CanvasWidgetCommand command : commands)
 		{
 			PolygonDrawCommand polygon = PolygonDrawCommand.Cast(command);
@@ -1945,28 +2180,6 @@ class AROR_HiCommApp
 			LineDrawCommand line = LineDrawCommand.Cast(command);
 			if (line)
 				m_Map.DrawPolyline(line.m_Vertices, Color.FromInt(line.m_iColor), line.m_fWidth, line.m_bShouldEnclose);
-		}
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected void DrawFrameSymbol(vector point, float size, AROR_ELocationType type, AROR_EFactionRole owner, Color color)
-	{
-		float left = point[0] - size * 0.5;
-		float top = point[1] - size * 0.5;
-		float lineScale = size / 40;
-		Color stroke = AROR_MapFrameIcon.StrokeColor(color);
-
-		array<float> frame = {};
-		AROR_MapFrameIcon.FrameOutline(owner, left, top, size, frame);
-		m_Map.DrawPolygon(frame, AROR_MapFrameIcon.FillColor(stroke));
-		m_Map.DrawPolyline(frame, AROR_MapFrameIcon.KeylineColor(), AROR_MapFrameIcon.KEYLINE_WIDTH * lineScale, true);
-		m_Map.DrawPolyline(frame, stroke, AROR_MapFrameIcon.BORDER_WIDTH * lineScale, true);
-
-		array<ref array<float>> strokes = {};
-		AROR_MapFrameIcon.GlyphStrokes(type, owner, left, top, size, strokes);
-		foreach (array<float> strokeLine : strokes)
-		{
-			m_Map.DrawPolyline(strokeLine, stroke, AROR_MapFrameIcon.GLYPH_WIDTH * lineScale, false);
 		}
 	}
 
@@ -2539,7 +2752,24 @@ class AROR_HiCommApp
 		}
 		else if (verb == "raise" && parts.Count() > 1)
 		{
-			controller.AROR_RequestHiCommRaise(parts[1].ToInt());
+			int vehicleEntryId;
+			if (parts.Count() > 2)
+				vehicleEntryId = parts[2].ToInt();
+
+			controller.AROR_RequestHiCommRaise(parts[1].ToInt(), vehicleEntryId);
+		}
+		else if (verb == "vehicle" && parts.Count() > 1)
+		{
+			m_iVehicleChoice += parts[1].ToInt();
+		}
+		else if (verb == "embark" || verb == "dismount")
+		{
+			if (!m_aSelected.IsEmpty())
+				SendVehicleOrder(verb == "embark");
+		}
+		else if (verb == "garrison" && parts.Count() > 2)
+		{
+			controller.AROR_RequestTownGarrison(parts[1], parts[2].ToInt());
 		}
 		else if (verb == "leader" && parts.Count() > 2)
 		{
@@ -3037,6 +3267,9 @@ class AROR_HiCommApp
 		if (order == AROR_EHighCommandOrder.MOVE)
 			return "MOVE";
 
+		if (order == AROR_EHighCommandOrder.EMBARK)
+			return "EMBARK";
+
 		return "HOLD";
 	}
 
@@ -3059,10 +3292,17 @@ class AROR_HiCommApp
 		if (squad.m_eOrder == AROR_EHighCommandOrder.NONE)
 			return "AT HQ";
 
-		if (squad.m_eOrder == AROR_EHighCommandOrder.MOVE || squad.m_eOrder == AROR_EHighCommandOrder.HOLD)
-			return ShortVerb(squad.m_eOrder) + " " + AROR_HighCommandComponent.GridReference(squad.m_vTarget);
+		if (squad.m_eOrder == AROR_EHighCommandOrder.EMBARK)
+			return "EMBARK " + TargetName(squad);
 
-		return ShortVerb(squad.m_eOrder) + " " + TargetName(squad);
+		string mounted;
+		if (squad.m_bMounted)
+			mounted = " [M]";
+
+		if (squad.m_eOrder == AROR_EHighCommandOrder.MOVE || squad.m_eOrder == AROR_EHighCommandOrder.HOLD)
+			return ShortVerb(squad.m_eOrder) + " " + AROR_HighCommandComponent.GridReference(squad.m_vTarget) + mounted;
+
+		return ShortVerb(squad.m_eOrder) + " " + TargetName(squad) + mounted;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -3077,13 +3317,26 @@ class AROR_HiCommApp
 		if (squad.m_eOrder == AROR_EHighCommandOrder.DEFEND)
 			return "DEFENDING " + TargetName(squad);
 
+		if (squad.m_eOrder == AROR_EHighCommandOrder.EMBARK)
+		{
+			string site = TargetName(squad);
+			if (!site.IsEmpty())
+				return "COLLECTING VEHICLE AT " + site;
+
+			return "EMBARKING";
+		}
+
+		string mode;
+		if (squad.m_bMounted)
+			mode = "MOUNTED, ";
+
 		if (squad.m_eOrder == AROR_EHighCommandOrder.MOVE)
-			return "MOVING TO GRID " + AROR_HighCommandComponent.GridReference(squad.m_vTarget);
+			return mode + "MOVING TO GRID " + AROR_HighCommandComponent.GridReference(squad.m_vTarget);
 
 		if (squad.m_eOrder == AROR_EHighCommandOrder.HOLD)
-			return "STANDING BY AT GRID " + AROR_HighCommandComponent.GridReference(squad.m_vTarget);
+			return mode + "STANDING BY AT GRID " + AROR_HighCommandComponent.GridReference(squad.m_vTarget);
 
-		return "HOLDING AT HQ";
+		return mode + "HOLDING AT HQ";
 	}
 
 	//------------------------------------------------------------------------------------------------

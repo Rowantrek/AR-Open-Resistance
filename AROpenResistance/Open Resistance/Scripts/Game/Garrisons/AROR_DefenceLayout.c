@@ -30,6 +30,9 @@ class AROR_DefenceLayout
 			case AROR_ELocationType.MILITARY_BASE: return 32;
 			case AROR_ELocationType.AIRPORT: return 44;
 			case AROR_ELocationType.RESOURCES: return 26;
+			// Settlement garrison posts sit among buildings: a tight ring around the flag
+			case AROR_ELocationType.TOWN:
+			case AROR_ELocationType.CITY: return 20;
 		}
 		return 28;
 	}

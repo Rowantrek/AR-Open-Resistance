@@ -335,31 +335,92 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			return;
 		foreach (AROR_OperationForce force : m_aForces)
 		{
-			AROR_GroundOperationForce ground = AROR_GroundOperationForce.Cast(force);
+			if (!force || force.m_bReservation)
+				continue;
 			AROR_Operation operation = m_Operations.GetOperation(force.m_sOperationId);
-			if (!ground || !ground.m_Profile || force.m_bReservation || !operation || !operation.UsesTacticalResponse())
+			if (!operation || !operation.UsesTacticalResponse())
 				continue;
 			Faction campaignFaction = roles.GetFaction(operation.GetRole());
 			if (!campaignFaction || !resistance.IsFactionEnemy(campaignFaction))
 				continue;
 			// A vehicle the Resistance has taken is theirs now, not an enemy asset
-			if (ground.m_Vehicle && !AROR_ResistanceFleet.IsClaimed(ground.m_Vehicle))
-			{
-				vehicles.Insert(ground.m_Vehicle);
-				kinds.Insert(ground.m_Profile.GetSpottingKind());
-				sides.Insert(operation.GetRole());
-			}
+			AROR_GroundOperationForce ground = AROR_GroundOperationForce.Cast(force);
+			if (ground && ground.m_Profile)
+				AddSpottingAsset(ground.m_Vehicle, ground.m_Profile.GetSpottingKind(), operation.GetRole(), vehicles, kinds, sides);
 			AROR_ReaperAirForce air = AROR_ReaperAirForce.Cast(force);
-			if (air && air.m_Escort && air.m_Escort.m_Vehicle && !AROR_ResistanceFleet.IsClaimed(air.m_Escort.m_Vehicle))
+			if (air && air.m_Escort)
+				AddSpottingAsset(air.m_Escort.m_Vehicle, 4, operation.GetRole(), vehicles, kinds, sides);
+			// One last-seen marker per deployed dismounted group, not one per soldier or seated passenger.
+			if (force.m_bOrdersIssued && force.m_Group)
 			{
-				vehicles.Insert(air.m_Escort.m_Vehicle);
-				kinds.Insert(4);
-				sides.Insert(operation.GetRole());
+				IEntity leader = force.m_Group.GetLeaderEntity();
+				if (!leader)
+					continue;
+				CompartmentAccessComponent access = CompartmentAccessComponent.Cast(leader.FindComponent(CompartmentAccessComponent));
+				if (!access || !access.IsInCompartment())
+					AddSpottingAsset(leader, 6, operation.GetRole(), vehicles, kinds, sides);
 			}
 		}
 	}
+
+	//! Keep the three candidate arrays aligned; destroyed, claimed and duplicate assets never become sightings.
+	protected void AddSpottingAsset(IEntity entity, int kind, AROR_EFactionRole role, array<IEntity> entities, array<int> kinds, array<int> sides)
+	{
+		if (!entity || entities.Contains(entity) || AROR_ResistanceFleet.IsClaimed(entity))
+			return;
+		DamageManagerComponent damage = DamageManagerComponent.Cast(entity.FindComponent(DamageManagerComponent));
+		if (damage && damage.IsDestroyed())
+			return;
+		entities.Insert(entity);
+		kinds.Insert(kind);
+		sides.Insert(role);
+	}
 	protected ref array<ref AROR_OperationForce> m_aForces = {};
 	protected ref map<string, string> m_mWaitReasons = new map<string, string>();
+
+	//------------------------------------------------------------------------------------------------
+	//! Server: nearest confirmed last-seen element and its own type. Planned landing zones remain private;
+	//! individual aircraft and ground contacts continue to use the spotting markers.
+	bool GetOperationTrack_S(string operationId, vector target, out vector lead, out bool air, out vector landing)
+	{
+		air = false;
+		landing = vector.Zero;
+		if (!Replication.IsServer() || !m_Operations)
+			return false;
+		float best = -1;
+		foreach (AROR_OperationForce force : m_aForces)
+		{
+			if (!force || force.m_bReservation || force.m_sOperationId != operationId)
+				continue;
+
+			IEntity candidate;
+			bool candidateAir;
+			vector position;
+			AROR_GroundOperationForce ground = AROR_GroundOperationForce.Cast(force);
+			if (ground && ground.m_Vehicle && !AROR_ForceSpawner.IsDestroyed(ground.m_Vehicle))
+			{
+				candidate = ground.m_Vehicle;
+				candidateAir = AROR_ReaperAirForce.Cast(force) != null;
+			}
+			else if (force.m_Group)
+			{
+				candidate = force.m_Group.GetLeaderEntity();
+			}
+
+			if (!candidate || !m_Operations.GetSightedPosition_S(candidate, position))
+				continue;
+
+			float distance = vector.DistanceXZ(position, target);
+			if (best < 0 || distance < best)
+			{
+				best = distance;
+				lead = position;
+				air = candidateAir;
+			}
+		}
+
+		return best >= 0;
+	}
 
 	//! Log changed blockers only; requests are retried each second without flooding the console.
 	protected void ReportSpawnWait(AROR_Operation operation, string reason)
@@ -692,12 +753,33 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		return count;
 	}
 
-	protected int GetReservedMembers()
+	[Attribute("320", desc: "Shared reserved AI personnel limit across operations, military garrisons, militia, HICOMM, recruits, missions and ambient groups", params: "96 768 1", category: "Population")]
+	protected int m_iPopulationLimit;
+	[Attribute("72", desc: "Shared personnel slots ambient site activity leaves free for combat forces", params: "0 220 1", category: "Population")]
+	protected int m_iCombatPersonnelReserve;
+
+	int GetPopulationLimit(bool ambient)
+	{
+		int limit = Math.Clamp(m_iPopulationLimit, 96, 768);
+		if (ambient)
+			return limit - Math.Clamp(m_iCombatPersonnelReserve, 0, limit);
+		return limit;
+	}
+
+	int GetCommittedPersonnel_S()
 	{
 		int count;
 		foreach (AROR_OperationForce force : m_aForces)
 			count += force.m_iReservedMembers;
 		return count;
+	}
+
+	protected int GetReservedMembers()
+	{
+		int own = GetCommittedPersonnel_S();
+		// Retain the existing operation limit while also respecting shared free capacity. GetAvailable uses the
+		// raw commitment above, never this effective value, so accounting cannot recurse or double-count.
+		return own + Math.Max(0, m_iMaxMembers - own - AROR_PopulationBudget.GetAvailable_S());
 	}
 
 	protected int GetReservedVehicles()
@@ -900,6 +982,20 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			FailOperation(operation, "Ground QRF recipe missing, disabled, unsupported or faction-incompatible");
 			return;
 		}
+		// Recipes list elements in priority order, so a limit keeps the most important ones. An offset (a split
+		// column) starts further down the list; joint recipes keep their airborne pair first, so never offset them.
+		if (operation.m_iElementOffset > 0 && recipe.m_eResponseType != AROR_EResponseType.AIR_GROUND)
+		{
+			if (operation.m_iElementOffset >= elements.Count())
+			{
+				FailOperation(operation, "Element offset leaves no elements in the recipe");
+				return;
+			}
+			for (int skipped = 0; skipped < operation.m_iElementOffset; skipped++)
+				elements.RemoveOrdered(0);
+		}
+		if (operation.m_iElementLimit > 0 && elements.Count() > operation.m_iElementLimit)
+			elements.Resize(operation.m_iElementLimit);
 		if (recipe.m_eResponseType == AROR_EResponseType.AIR_GROUND)
 		{
 			StartJointResponse(operation, recipe, elements);
@@ -1870,8 +1966,9 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 	//! Every rejection names its reason: one failure disables all QRFs, so the log must say which
 	protected bool ValidatePool()
 	{
-		if (m_aGroundQRFRecipes.Count() > 64)
-			return PoolError(string.Format("%1 ground recipes; the limit is 64", m_aGroundQRFRecipes.Count()));
+		// A sanity bound only (town wave and assault recipes per army and Readiness band add up quickly)
+		if (m_aGroundQRFRecipes.Count() > 128)
+			return PoolError(string.Format("%1 ground recipes; the limit is 128", m_aGroundQRFRecipes.Count()));
 		array<string> recipeKeys = {};
 		foreach (AROR_GroundQRFRecipe recipe : m_aGroundQRFRecipes)
 		{
@@ -2252,69 +2349,77 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		force.m_iVehicleLossValue = profile.VehicleLossValue();
 	}
 
+	//! Logs the first tactical setting outside its allowed range, so the disabled executor names its cause
+	protected bool TacticalSettingInvalid(string check)
+	{
+		Print("[AROR] Tactical commander setting out of range: " + check, LogLevel.ERROR);
+		return false;
+	}
 	protected bool TacticalSettingsValid()
 	{
 		if (m_fAttackStagingDistance < 200 || m_fAttackStagingDistance > 1500 || m_iAttackStagingTimeout < 30 || m_iAttackStagingTimeout > 600)
-			return false;
+			return TacticalSettingInvalid("m_fAttackStagingDistance < 200 || m_fAttackStagingDistance > 1500 || m_iAttackStagingTimeout < 30 || m_iAttackStagingTimeout > 600");
 		if (m_fQRFTownSupportPerMinute < 0 || m_fQRFTownSupportPerMinute > 30)
-			return false;
+			return TacticalSettingInvalid("m_fQRFTownSupportPerMinute < 0 || m_fQRFTownSupportPerMinute > 30");
 		if (m_iOriginLaunchCooldown < 0 || m_iOriginLaunchCooldown > 3600 || m_fOriginMaxGarrisonLoss < 0 || m_fOriginMaxGarrisonLoss > 1)
-			return false;
+			return TacticalSettingInvalid("m_iOriginLaunchCooldown < 0 || m_iOriginLaunchCooldown > 3600 || m_fOriginMaxGarrisonLoss < 0 || m_fOriginMaxGarrisonLoss > 1");
 		if (m_fMinOriginDistance < 0 || m_fMinOriginDistance > 3000 || m_fOriginWaterPenalty < 1 || m_fOriginWaterPenalty > 10)
-			return false;
+			return TacticalSettingInvalid("m_fMinOriginDistance < 0 || m_fMinOriginDistance > 3000 || m_fOriginWaterPenalty < 1 || m_fOriginWaterPenalty > 10");
 		if (m_iQRFSplitTier < 1 || m_iQRFSplitTier > 5)
-			return false;
+			return TacticalSettingInvalid("m_iQRFSplitTier < 1 || m_iQRFSplitTier > 5");
 		if (m_iQRFReinforcementDelay < 15 || m_iQRFReinforcementDelay > 180)
-			return false;
+			return TacticalSettingInvalid("m_iQRFReinforcementDelay < 15 || m_iQRFReinforcementDelay > 180");
 		if (m_iQRFReserveWait < 60 || m_iQRFReserveWait > 480)
-			return false;
+			return TacticalSettingInvalid("m_iQRFReserveWait < 60 || m_iQRFReserveWait > 480");
 		if (m_iQRFReserveWait <= m_iQRFReinforcementDelay)
-			return false;
+			return TacticalSettingInvalid("m_iQRFReserveWait <= m_iQRFReinforcementDelay");
 		if (m_iQRFMaxLiveGround < 4 || m_iQRFMaxLiveGround > 8)
-			return false;
+			return TacticalSettingInvalid("m_iQRFMaxLiveGround < 4 || m_iQRFMaxLiveGround > 8");
 		if (m_iQRFMaxLiveAircraft < 6 || m_iQRFMaxLiveAircraft > 10)
-			return false;
+			return TacticalSettingInvalid("m_iQRFMaxLiveAircraft < 6 || m_iQRFMaxLiveAircraft > 10");
 		if (m_iQRFTacticalDuration < 180 || m_iQRFTacticalDuration > 720)
-			return false;
+			return TacticalSettingInvalid("m_iQRFTacticalDuration < 180 || m_iQRFTacticalDuration > 720");
 		if (m_iQRFTownHoldDuration < 0 || m_iQRFTownHoldDuration > 1800)
-			return false;
+			return TacticalSettingInvalid("m_iQRFTownHoldDuration < 0 || m_iQRFTownHoldDuration > 1800");
 		if (m_iQRFOrderInterval < 10 || m_iQRFOrderInterval > 60)
-			return false;
+			return TacticalSettingInvalid("m_iQRFOrderInterval < 10 || m_iQRFOrderInterval > 60");
 		if (m_iQRFApproachAttempts < 4 || m_iQRFApproachAttempts > 16)
-			return false;
+			return TacticalSettingInvalid("m_iQRFApproachAttempts < 4 || m_iQRFApproachAttempts > 16");
 		if (m_fQRFRoadLaunchRadius < 75 || m_fQRFRoadLaunchRadius > 300)
-			return false;
+			return TacticalSettingInvalid("m_fQRFRoadLaunchRadius < 75 || m_fQRFRoadLaunchRadius > 300");
 		if (m_fQRFVehicleArrivalTolerance < 10 || m_fQRFVehicleArrivalTolerance > 40)
-			return false;
+			return TacticalSettingInvalid("m_fQRFVehicleArrivalTolerance < 10 || m_fQRFVehicleArrivalTolerance > 40");
 		if (m_fQRFObjectiveDeliveryRadius < 50 || m_fQRFObjectiveDeliveryRadius > 150)
-			return false;
+			return TacticalSettingInvalid("m_fQRFObjectiveDeliveryRadius < 50 || m_fQRFObjectiveDeliveryRadius > 150");
 		if (m_fQRFMaximumRoadDismount < 0 || m_fQRFMaximumRoadDismount > 350)
-			return false;
+			return TacticalSettingInvalid("m_fQRFMaximumRoadDismount < 0 || m_fQRFMaximumRoadDismount > 350");
 		if (m_iQRFIngressTimeout < 120 || m_iQRFIngressTimeout > 600)
-			return false;
+			return TacticalSettingInvalid("m_iQRFIngressTimeout < 120 || m_iQRFIngressTimeout > 600");
 		if (m_iQRFDetourTimeout < 60 || m_iQRFDetourTimeout > 300)
-			return false;
+			return TacticalSettingInvalid("m_iQRFDetourTimeout < 60 || m_iQRFDetourTimeout > 300");
 		if (m_iQRFExitTimeout < 15 || m_iQRFExitTimeout > 90)
-			return false;
+			return TacticalSettingInvalid("m_iQRFExitTimeout < 15 || m_iQRFExitTimeout > 90");
 		if (m_iQRFExitRetryLimit < 0 || m_iQRFExitRetryLimit > 5)
-			return false;
+			return TacticalSettingInvalid("m_iQRFExitRetryLimit < 0 || m_iQRFExitRetryLimit > 5");
 		if (m_iQRFExitRecoveryDelay < 0 || m_iQRFExitRecoveryDelay > 20 || m_iQRFExitRecoveryDelay >= m_iQRFExitTimeout)
-			return false;
+			return TacticalSettingInvalid("m_iQRFExitRecoveryDelay < 0 || m_iQRFExitRecoveryDelay > 20 || m_iQRFExitRecoveryDelay >= m_iQRFExitTimeout");
 		if (m_iQRFInfantryLegTimeout < 60 || m_iQRFInfantryLegTimeout > 300)
-			return false;
+			return TacticalSettingInvalid("m_iQRFInfantryLegTimeout < 60 || m_iQRFInfantryLegTimeout > 300");
 		if (m_fQRFInfantryPlanningSpeed < 0.5 || m_fQRFInfantryPlanningSpeed > 3)
-			return false;
+			return TacticalSettingInvalid("m_fQRFInfantryPlanningSpeed < 0.5 || m_fQRFInfantryPlanningSpeed > 3");
 		if (m_fQRFRecoveryRadius < 20 || m_fQRFRecoveryRadius > 200 || m_fQRFVehicleRecoveryRadius < 20 || m_fQRFVehicleRecoveryRadius > 250)
-			return false;
+			return TacticalSettingInvalid("m_fQRFRecoveryRadius < 20 || m_fQRFRecoveryRadius > 200 || m_fQRFVehicleRecoveryRadius < 20 || m_fQRFVehicleRecoveryRadius > 250");
 		if (m_fQRFThreatDismount < 100 || m_fQRFThreatDismount > 350)
-			return false;
+			return TacticalSettingInvalid("m_fQRFThreatDismount < 100 || m_fQRFThreatDismount > 350");
 		if (m_fQRFWithdrawFraction < 0.1 || m_fQRFWithdrawFraction > 0.7)
-			return false;
+			return TacticalSettingInvalid("m_fQRFWithdrawFraction < 0.1 || m_fQRFWithdrawFraction > 0.7");
 		if (m_fQRFLocalWithdrawFraction < 0.1 || m_fQRFLocalWithdrawFraction > 0.8)
-			return false;
+			return TacticalSettingInvalid("m_fQRFLocalWithdrawFraction < 0.1 || m_fQRFLocalWithdrawFraction > 0.8");
 		if (m_iQRFGroundRetention < 30 || m_iQRFGroundRetention > 600)
-			return false;
-		return m_fQRFGroundCleanupDistance >= 500 && m_fQRFGroundCleanupDistance <= 2500;
+			return TacticalSettingInvalid("m_iQRFGroundRetention < 30 || m_iQRFGroundRetention > 600");
+		if (m_fQRFGroundCleanupDistance < 500 || m_fQRFGroundCleanupDistance > 2500)
+			return TacticalSettingInvalid("m_fQRFGroundCleanupDistance < 500 || m_fQRFGroundCleanupDistance > 2500");
+		return true;
 	}
 
 	protected void CreateQRFTacticalCommander(AROR_Operation operation, int packages, vector origin)
@@ -2338,6 +2443,12 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		commander.m_vOrigin = origin;
 		commander.m_eRole = operation.GetRole();
 		commander.m_bAssault = operation.GetType() == AROR_EOperationType.ATTACK;
+		if (operation.m_bAssaultWave || commander.m_bAssault)
+		{
+			AROR_TownWavesComponent town = AROR_TownWavesComponent.Cast(target.GetOwner().FindComponent(AROR_TownWavesComponent));
+			if (town)
+				town.ConfigureCommander_S(commander);
+		}
 		array<AROR_LocationComponent> outposts = {};
 		locations.GetLocations(outposts);
 		foreach (AROR_LocationComponent outpost : outposts)
@@ -2574,7 +2685,10 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 					RetargetWithdrawalOrigin(operation, commander, locations);
 				}
 			}
-			AROR_CombatContact report = m_Operations.GetRecentCombatContact(operation.GetRole(), commander.m_vTown, commander.m_fTownRadius + commander.m_fMargin, m_iQRFContactMaxAge);
+			int contactAge = m_iQRFContactMaxAge;
+			if (commander.m_bTownDoctrine)
+				contactAge = commander.m_iContactMaxAge;
+			AROR_CombatContact report = m_Operations.GetRecentCombatContact(operation.GetRole(), commander.m_vTown, commander.m_fTownRadius + commander.m_fMargin, contactAge);
 			commander.UpdateContact_S(report, m_iExecutorClock);
 			commander.RefreshRoster(m_iExecutorClock);
 			if (commander.ShouldWithdraw(m_iExecutorClock, HasPendingQRF(operation.GetId())) && !wasWithdrawing)
@@ -3296,7 +3410,10 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 	protected bool ReportDefenders(AROR_Operation operation, AROR_LocationComponent target)
 	{
 		// An assault does not reveal hidden defenders. Reuse only attributed, fresh reports.
-		AROR_CombatContact contact = m_Operations.GetRecentCombatContact(operation.GetRole(), target.GetCenter(), target.GetRadius() + m_fQRFSearchMargin, m_iQRFContactMaxAge);
+		int contactAge = m_iQRFContactMaxAge;
+		if (operation.m_TacticalCommander && operation.m_TacticalCommander.m_bTownDoctrine)
+			contactAge = operation.m_TacticalCommander.m_iContactMaxAge;
+		AROR_CombatContact contact = m_Operations.GetRecentCombatContact(operation.GetRole(), target.GetCenter(), target.GetRadius() + m_fQRFSearchMargin, contactAge);
 		if (!contact || !operation.m_TacticalCommander)
 			return false;
 		operation.m_TacticalCommander.UpdateContact_S(contact, m_iExecutorClock);
@@ -3308,6 +3425,12 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 	//! back to its army, and the town flips back through the normal support rules
 	protected void PacifyTown(AROR_Operation operation, AROR_LocationComponent target)
 	{
+		// Waves use lockdown; attack orders use the occupation contest. Neither also pacifies via QRF ticks.
+		if (operation.m_bAssaultWave || operation.GetType() == AROR_EOperationType.ATTACK)
+			return;
+		AROR_TownWavesComponent town = AROR_TownWavesComponent.Cast(target.GetOwner().FindComponent(AROR_TownWavesComponent));
+		if (town && town.IsResponding())
+			return;
 		if (m_fQRFTownSupportPerMinute <= 0 || target.GetControllingRole() == operation.GetRole())
 			return;
 		AROR_SettlementComponent settlement = AROR_SettlementComponent.Cast(target.GetOwner().FindComponent(AROR_SettlementComponent));
@@ -3346,6 +3469,9 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		{
 			force.m_iTacticalContactVersion = commander.m_iContactVersion;
 			force.m_iTacticalSearchStep = 0;
+			// A fresh shared report must not wait behind the previous security task's 60-second dwell.
+			if (commander.m_bTownDoctrine)
+				force.m_iTacticalNextOrder = Math.Min(force.m_iTacticalNextOrder, m_iExecutorClock);
 		}
 		if (m_iExecutorClock < force.m_iTacticalNextOrder)
 			return;
@@ -3378,9 +3504,11 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		ResourceName prefab = m_sMoveWaypointPrefab;
 		if (step >= 5)
 			prefab = m_sQRFWaypointPrefab;
+		if (commander.IsTownCoverElement(force.m_iPackageIndex))
+			prefab = m_sQRFWaypointPrefab;
 		// Every delivered fireteam investigates contact/town first, then fans out into sectors.
 		vector point = commander.InfantryPoint(force.m_iPackageIndex, step);
-		force.m_iTacticalNextOrder = m_iExecutorClock + m_iQRFOrderInterval;
+		force.m_iTacticalNextOrder = m_iExecutorClock + commander.m_iRetaskSeconds;
 		if (!ReplaceTacticalWaypoint(force, false, prefab, point))
 			return;
 		float walkingDistance = 0;

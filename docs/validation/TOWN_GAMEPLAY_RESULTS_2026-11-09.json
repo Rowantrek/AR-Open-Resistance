@@ -1,0 +1,241 @@
+{
+  "generatedAt": "2026-11-09T10:27:15.886Z",
+  "nativeVerified": false,
+  "releaseApproved": false,
+  "scope": "Actual-source methods with mocked engine services, configuration overlays, installed dependency/resource indexes and lexical/UI binding checks. No Enforce compilation, flight, inventory loading or dedicated-server Play.",
+  "passed": false,
+  "results": [
+    {
+      "name": "Audit-WCSAssets.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\n  \"references\": 2941,\n  \"statuses\": {\n    \"exact\": 2941,\n    \"same_guid_different_path\": 0,\n    \"outside_dependency_tree\": 0,\n    \"unresolved\": 0\n  },\n  \"unavailablePresetVehicles\": [\n    {\n      \"preset\": \"RHS_USAF_FORECON\",\n      \"type\": \"IFV\",\n      \"prefab\": \"{1B8EB269EECA2DF9}Prefabs/Vehicles/Wheeled/LAV25/LAV25_Base.et\",\n      \"offered\": false\n    },\n    {\n      \"preset\": \"RHS_USAF_FORECON\",\n      \"type\": \"HELI_TRANSPORT\",\n      \"prefab\": \"{D03C0F6044DB5208}Prefabs/Vehicles/Helicopters/UH1H/UH1H_base.et\",\n      \"offered\": false\n    },\n    {\n      \"preset\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"type\": \"MOTOR_CAR\",\n      \"prefab\": \"{16A674FE31B0921C}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_uncovered.et\",\n      \"offered\": false\n    },\n    {\n      \"preset\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"type\": \"AMBULANCE\",\n      \"prefab\": \"{43C4AF1EEBD001CE}Prefabs/Vehicles/Wheeled/UAZ452/UAZ452_ambulance.et\",\n      \"offered\": false\n    },\n    {\n      \"preset\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"type\": \"MOTOR_CAR\",\n      \"prefab\": \"{1FBB492E86002BF5}Prefabs/Vehicles/Wheeled/UAZ452/UAZ452_transport.et\",\n      \"offered\": false\n    },\n    {\n      \"preset\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"type\": \"MOTOR_CAR\",\n      \"prefab\": \"{01F65EFB8D767A91}Prefabs/Vehicles/Wheeled/UAZ452/UAZ452_cargo.et\",\n      \"offered\": false\n    },\n    {\n      \"preset\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"type\": \"SUPPLY_TRUCK\",\n      \"prefab\": \"{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et\",\n      \"offered\": false\n    },\n    {\n      \"preset\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"type\": \"MOTOR_TRUCK\",\n      \"prefab\": \"{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et\",\n      \"offered\": false\n    },\n    {\n      \"preset\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"type\": \"FUEL_TRUCK\",\n      \"prefab\": \"{4C81D7ED8F8C0D87}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_tanker.et\",\n      \"offered\": false\n    },\n    {\n      \"preset\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"type\": \"SUPPLY_TRUCK\",\n      \"prefab\": \"{1BABF6B33DA0AEB6}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_command.et\",\n      \"offered\": false\n    },\n    {\n      \"preset\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"type\": \"SUPPLY_TRUCK\",\n      \"prefab\": \"{3336BE330C4F355B}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_ammo.et\",\n      \"offered\": false\n    },\n    {\n      \"preset\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"type\": \"SUPPLY_TRUCK\",\n      \"prefab\": \"{A5647958579A4149}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_repair.et\",\n      \"offered\": false\n    },\n    {\n      \"preset\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"type\": \"SUPPLY_TRUCK\",\n      \"prefab\": \"{6E9142CD2471741C}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_engineer.et\",\n      \"offered\": false\n    }\n  ],\n  \"mismatchedVehicleTypes\": [\n    {\n      \"preset\": \"RHS_USAF_FORECON\",\n      \"type\": \"MOTOR_TRUCK\",\n      \"prefab\": \"{04BDACC0BB83284E}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport_covered_MERDC.et\",\n      \"offered\": true,\n      \"pack\": \"BASE_GAME\",\n      \"group\": \"Base Game\",\n      \"catalogueType\": \"SUPPLY_TRUCK\",\n      \"readiness\": 1\n    },\n    {\n      \"preset\": \"RHS_USAF_FORECON\",\n      \"type\": \"MOTOR_TRUCK\",\n      \"prefab\": \"{ACCF3C5D1629AF7F}Prefabs/Vehicles/Wheeled/M1083/M1083_Transport_Covered_Woodland.et\",\n      \"offered\": true,\n      \"pack\": \"WCS\",\n      \"group\": \"WCS_FMTV\",\n      \"catalogueType\": \"SUPPLY_TRUCK\",\n      \"readiness\": 1\n    },\n    {\n      \"preset\": \"RHS_USAF_FORECON\",\n      \"type\": \"ARMED_TRUCK\",\n      \"prefab\": \"{A815C3244E04D61A}Prefabs/Vehicles/Wheeled/M1083/Armed/M1083_Transport_Covered_M2HB_Woodland.et\",\n      \"offered\": true,\n      \"pack\": \"WCS\",\n      \"group\": \"WCS_FMTV\",\n      \"catalogueType\": \"SUPPLY_TRUCK\",\n      \"readiness\": 1\n    },\n    {\n      \"preset\": \"RHS_USAF_FORECON\",\n      \"type\": \"AA_VEHICLE\",\n      \"prefab\": \"{80D859914FD8CA7F}Prefabs/Vehicles/Wheeled/M923A1/M923A1_ZU23_MERDC.et\",\n      \"offered\": true,\n      \"pack\": \"WCS\",\n      \"group\": \"WCS_ZU-23-2\",\n      \"catalogueType\": \"ARMED_TRUCK\",\n      \"readiness\": 1\n    },\n    {\n      \"preset\": \"RHS_USAF_FORECON\",\n      \"type\": \"AA_VEHICLE\",\n      \"prefab\": \"{A7E72E0E66B73009}Prefabs/Vehicles/Wheeled/JLTV/CROWS_II/AIM92/JLTV_CROWS_II_AIM92_Woodland.et\",\n      \"offered\": true,\n      \"pack\": \"WCS\",\n      \"group\": \"WCS_JLTV\",\n      \"catalogueType\": \"ARMED_CAR\",\n      \"readiness\": 1\n    },\n    {\n      \"preset\": \"RHS_USAF_FORECON\",\n      \"type\": \"TANK\",\n      \"prefab\": \"{A76DCC7AD6494682}Prefabs/Vehicles/Wheeled/Stryker/M1128/Stryker_MGS_MERDC.et\",\n      \"offered\": true,\n      \"pack\": \"WCS\",\n      \"group\": \"WCS_Stryker\",\n      \"catalogueType\": \"APC\",\n      \"readiness\": 1\n    },\n    {\n      \"preset\": \"RHS_USAF_FORECON\",\n      \"type\": \"IFV\",\n      \"prefab\": \"{D5BECC338A58208D}Prefabs/Vehicles/Wheeled/Stryker/M1296/Stryker_Dragoon_MERDC.et\",\n      \"offered\": true,\n      \"pack\": \"WCS\",\n      \"group\": \"WCS_Stryker\",\n      \"catalogueType\": \"APC\",\n      \"readiness\": 1\n    },\n    {\n      \"preset\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"type\": \"MOTOR_TRUCK\",\n      \"prefab\": \"{D9B91FAB817A6033}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport_covered.et\",\n      \"offered\": true,\n      \"pack\": \"BASE_GAME\",\n      \"group\": \"Base Game\",\n      \"catalogueType\": \"SUPPLY_TRUCK\",\n      \"readiness\": 1\n    }\n  ],\n  \"missingDependencies\": [],\n  \"skippedGroups\": [],\n  \"catalogue\": {\n    \"entries\": 2838,\n    \"replacements\": 0,\n    \"byPack\": {\n      \"BASE_GAME\": 579,\n      \"RHS\": 1970,\n      \"WCS\": 289\n    }\n  },\n  \"presets\": [\n    {\n      \"id\": \"RHS_USAF_FORECON\",\n      \"units\": 15,\n      \"vehicles\": 25,\n      \"missingCoreTypes\": [\n        \"RADIO_OPERATOR\"\n      ]\n    },\n    {\n      \"id\": \"RHS_AFRF_MSV_VPKO3_EMR\",\n      \"units\": 15,\n      \"vehicles\": 45,\n      \"missingCoreTypes\": [\n        \"PILOT\"\n      ]\n    }\n  ],\n  \"unresolved\": []\n}"
+    },
+    {
+      "name": "Test-WCSIntegration.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "{\"assertions\":1083,\"effectivePresets\":[\"RHS_USAF_FORECON\",\"RHS_AFRF_MSV_VPKO3_EMR\"],\"forceProfiles\":12,\"note\":\"Actual Enforce selector bodies with native services mocked; ID-based config override model and installed resource indexes. Workbench compile/loading/gameplay still required.\"}"
+    },
+    {
+      "name": "Test-PresetVehicles.js",
+      "passed": true,
+      "exitCode": 0,
+      "output": "Preset vehicle selection, content filtering, role assignment, saved variants and runtime availability checks passed. Workbench validation required."
+    },
+    {
+      "name": "Validate-QRFRelease.js",
+      "passed": false,
+      "exitCode": 1,
+      "output": "PASS Test-MarsAndAttacks.js (1744 assertions)\nPASS Test-OperationAlerts.js (33 assertions)\nPASS Test-QRFReleaseLifecycle.js (20588 assertions)\nPASS Test-QRFInterruptions.js (958 assertions)\nPASS Test-StrongholdIntegration.js (95 assertions)\nPASS Test-QRFManagerSoak.js (60024 assertions)\nPASS Test-QRFMutations.js (60 assertions)\nPASS Test-QRFRouteAudit.js (147 assertions)\nPASS Test-QRFStrategy.js (7254 assertions)\nPASS Test-QRFProgression.js (3949 assertions)\nPASS Test-QRFResponseMix.js (1842 assertions)\nPASS Test-ReaperLandingSearch.js (159 assertions)\nPASS Test-QRFBoarding.js (97 assertions)\nPASS Test-QRFIngress.js (53 assertions)\nPASS Test-QRFUnloading.js (42 assertions)\nPASS Test-QRFRetention.js (10 assertions)\nPASS Test-QRFSupportAndHeadlines.js (94 assertions)\nPASS Test-QRFVehicleFaction.js (14 assertions)\nPASS Test-QRFTownHold.js (22 assertions)\nPASS Test-TownDoctrine.js (496 assertions)\nPASS Test-SpottingAndAirResponse.js (89 assertions)\nPASS Test-EveronQRFIntegration.js (50 assertions)\nPASS Test-InvaderCampaign.js (55 assertions)\nPASS Test-RebIntel.js (86 assertions)\nPASS Test-MissionLifecycle.js (84 assertions)\nPASS Test-CapturePlacement.js (14 assertions)\nFAIL Test-GarrisonsAndSupport.js (0 assertions)\nPASS Test-GarrisonCrew.js (37 assertions)\nPASS Test-OutpostEquipment.js (27 assertions)\nFAIL Test-PostsAndPads.js (0 assertions)\nPASS Test-DefenceLayout.js (177 assertions)\nPASS Test-FortifiedOutpostLayouts.js (1477 assertions)\nPASS Test-DefenceSiteAudit.js (61 assertions)\nPASS Test-DefenceWallGrounding.js (21 assertions)\nPASS Test-CampaignFlagEditor.js (14 assertions)\n33/35 suites passed. Native Workbench/dedicated-server acceptance remains required."
+    },
+    {
+      "name": "Test-QRFSourceStructure.ps1",
+      "passed": true,
+      "exitCode": 0,
+      "output": "Checked balanced delimiters, strings, comments and preprocessor nesting in 277 addon scripts, including Workbench plugins. Not an Enforce compilation."
+    },
+    {
+      "name": "Test-ExecutorSettings.ps1",
+      "passed": true,
+      "exitCode": 0,
+      "output": "AROR_Everon_Chicken_Layers: 68 validator terms, 63 layer overrides, 12 vehicle profiles checked against 8 presets\nAROR_Everon_Layers: 68 validator terms, 63 layer overrides, 12 vehicle profiles checked against 8 presets\nWARN AROR_Everon_Chicken_Layers: profile us_airborne always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile us_airborne always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile us_airborne_light always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile us_airborne_light always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile us_light_support always gets UAZ469_PKM.et from USSR_ARMY (one ARMED_CAR)\nWARN AROR_Everon_Chicken_Layers: profile ussr_airborne always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile ussr_airborne always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile ussr_airborne_light always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile ussr_airborne_light always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile ussr_light_support always gets UAZ469_PKM.et from USSR_ARMY (one ARMED_CAR)\nWARN AROR_Everon_Layers: profile us_airborne always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile us_airborne always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile us_airborne_light always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile us_airborne_light always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile us_light_support always gets UAZ469_PKM.et from USSR_ARMY (one ARMED_CAR)\nWARN AROR_Everon_Layers: profile ussr_airborne always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile ussr_airborne always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile ussr_airborne_light always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile ussr_airborne_light always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile ussr_light_support always gets UAZ469_PKM.et from USSR_ARMY (one ARMED_CAR)\nWARN preset RHS_AFRF_MSV_VPKO3_EMR (OpenResistanceRHSCompat) has no vehicles of its own: an army using it spawns no ground or air responses unless another addon overrides it\nWARN preset RHS_USAF_FORECON (OpenResistanceRHSCompat) has no vehicles of its own: an army using it spawns no ground or air responses unless another addon overrides it\nExecutor settings OK"
+    },
+    {
+      "name": "Test-OperationUIResources.ps1",
+      "passed": true,
+      "exitCode": 0,
+      "output": "Verified metadata, script/config bindings and local Workbench registration for MARS, Black Market and setup layouts. Native widget loading/rendering remain unverified."
+    },
+    {
+      "name": "Test-ReaperAssets.ps1",
+      "passed": true,
+      "exitCode": 0,
+      "output": "Verified all five installed REAPER pilot/flight-waypoint references. This does not verify native flight or script compilation."
+    }
+  ],
+  "qrf": {
+    "passedSuites": 33,
+    "totalSuites": 35,
+    "assertions": 99873,
+    "failures": [
+      "Test-GarrisonsAndSupport.js",
+      "Test-PostsAndPads.js"
+    ]
+  },
+  "assets": {
+    "summary": {
+      "references": 2941,
+      "statuses": {
+        "exact": 2941,
+        "same_guid_different_path": 0,
+        "outside_dependency_tree": 0,
+        "unresolved": 0
+      },
+      "unavailablePresetVehicles": [
+        {
+          "preset": "RHS_USAF_FORECON",
+          "type": "IFV",
+          "prefab": "{1B8EB269EECA2DF9}Prefabs/Vehicles/Wheeled/LAV25/LAV25_Base.et",
+          "offered": false
+        },
+        {
+          "preset": "RHS_USAF_FORECON",
+          "type": "HELI_TRANSPORT",
+          "prefab": "{D03C0F6044DB5208}Prefabs/Vehicles/Helicopters/UH1H/UH1H_base.et",
+          "offered": false
+        },
+        {
+          "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+          "type": "MOTOR_CAR",
+          "prefab": "{16A674FE31B0921C}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469_uncovered.et",
+          "offered": false
+        },
+        {
+          "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+          "type": "AMBULANCE",
+          "prefab": "{43C4AF1EEBD001CE}Prefabs/Vehicles/Wheeled/UAZ452/UAZ452_ambulance.et",
+          "offered": false
+        },
+        {
+          "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+          "type": "MOTOR_CAR",
+          "prefab": "{1FBB492E86002BF5}Prefabs/Vehicles/Wheeled/UAZ452/UAZ452_transport.et",
+          "offered": false
+        },
+        {
+          "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+          "type": "MOTOR_CAR",
+          "prefab": "{01F65EFB8D767A91}Prefabs/Vehicles/Wheeled/UAZ452/UAZ452_cargo.et",
+          "offered": false
+        },
+        {
+          "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et",
+          "offered": false
+        },
+        {
+          "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+          "type": "MOTOR_TRUCK",
+          "prefab": "{16C1F16C9B053801}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport.et",
+          "offered": false
+        },
+        {
+          "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+          "type": "FUEL_TRUCK",
+          "prefab": "{4C81D7ED8F8C0D87}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_tanker.et",
+          "offered": false
+        },
+        {
+          "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{1BABF6B33DA0AEB6}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_command.et",
+          "offered": false
+        },
+        {
+          "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{3336BE330C4F355B}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_ammo.et",
+          "offered": false
+        },
+        {
+          "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{A5647958579A4149}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_repair.et",
+          "offered": false
+        },
+        {
+          "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+          "type": "SUPPLY_TRUCK",
+          "prefab": "{6E9142CD2471741C}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_engineer.et",
+          "offered": false
+        }
+      ],
+      "mismatchedVehicleTypes": [
+        {
+          "preset": "RHS_USAF_FORECON",
+          "type": "MOTOR_TRUCK",
+          "prefab": "{04BDACC0BB83284E}Prefabs/Vehicles/Wheeled/M923A1/M923A1_transport_covered_MERDC.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "SUPPLY_TRUCK",
+          "readiness": 1
+        },
+        {
+          "preset": "RHS_USAF_FORECON",
+          "type": "MOTOR_TRUCK",
+          "prefab": "{ACCF3C5D1629AF7F}Prefabs/Vehicles/Wheeled/M1083/M1083_Transport_Covered_Woodland.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_FMTV",
+          "catalogueType": "SUPPLY_TRUCK",
+          "readiness": 1
+        },
+        {
+          "preset": "RHS_USAF_FORECON",
+          "type": "ARMED_TRUCK",
+          "prefab": "{A815C3244E04D61A}Prefabs/Vehicles/Wheeled/M1083/Armed/M1083_Transport_Covered_M2HB_Woodland.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_FMTV",
+          "catalogueType": "SUPPLY_TRUCK",
+          "readiness": 1
+        },
+        {
+          "preset": "RHS_USAF_FORECON",
+          "type": "AA_VEHICLE",
+          "prefab": "{80D859914FD8CA7F}Prefabs/Vehicles/Wheeled/M923A1/M923A1_ZU23_MERDC.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_ZU-23-2",
+          "catalogueType": "ARMED_TRUCK",
+          "readiness": 1
+        },
+        {
+          "preset": "RHS_USAF_FORECON",
+          "type": "AA_VEHICLE",
+          "prefab": "{A7E72E0E66B73009}Prefabs/Vehicles/Wheeled/JLTV/CROWS_II/AIM92/JLTV_CROWS_II_AIM92_Woodland.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_JLTV",
+          "catalogueType": "ARMED_CAR",
+          "readiness": 1
+        },
+        {
+          "preset": "RHS_USAF_FORECON",
+          "type": "TANK",
+          "prefab": "{A76DCC7AD6494682}Prefabs/Vehicles/Wheeled/Stryker/M1128/Stryker_MGS_MERDC.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Stryker",
+          "catalogueType": "APC",
+          "readiness": 1
+        },
+        {
+          "preset": "RHS_USAF_FORECON",
+          "type": "IFV",
+          "prefab": "{D5BECC338A58208D}Prefabs/Vehicles/Wheeled/Stryker/M1296/Stryker_Dragoon_MERDC.et",
+          "offered": true,
+          "pack": "WCS",
+          "group": "WCS_Stryker",
+          "catalogueType": "APC",
+          "readiness": 1
+        },
+        {
+          "preset": "RHS_AFRF_MSV_VPKO3_EMR",
+          "type": "MOTOR_TRUCK",
+          "prefab": "{D9B91FAB817A6033}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_transport_covered.et",
+          "offered": true,
+          "pack": "BASE_GAME",
+          "group": "Base Game",
+          "catalogueType": "SUPPLY_TRUCK",
+          "readiness": 1
+        }
+      ]
+    },
+    "missingDependencies": []
+  },
+  "workbench": "Compile Game scripts, then Play AROR_Everon_Chicken with combined WCS/RHS compatibility and REAPER; repeat on a dedicated server with two clients and a late joiner."
+}

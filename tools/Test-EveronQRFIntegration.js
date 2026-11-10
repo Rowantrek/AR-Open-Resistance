@@ -89,7 +89,7 @@ function runEveronQRFIntegrationTests(sources) {
   site.m_eType=types.HQ;check(!actions.IsCapturableLocation(site),'HQ cannot opt into settlement flag capture');
   env.Replication.IsServer=()=>false;site.m_eType=types.OUTPOST;
   check(!captureFlag.call(actions,site,0)&&controlCalls===2,'client cannot capture through helper');
-  check(sources.capture.includes('if (!IsCapturableLocation(location) || location.IsControlFixed())'),'action visibility uses the military-only gate');
+  check(sources.capture.includes('if (!IsActionLocation(location) || location.IsControlFixed())')&&sources.capture.includes('return IsCapturableLocation(location) || GetSettlementPost(location) != null;'),'action visibility permits settlement posts while retaining the fixed-control gate');
   return {assertions,note:'Native events, faction manager and response execution mocked; Play verification required.'};
 }
 if(typeof require==='function'&&typeof module!=='undefined'&&require.main===module){

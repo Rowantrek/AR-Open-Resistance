@@ -119,6 +119,20 @@ class ORRadio_NowPlayingCard : Managed
 	}
 
 	//------------------------------------------------------------------------------------------------
+	bool IsShowing()
+	{
+		return m_bShowing;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Fills in the title of the card already up, without restarting its timer
+	void SetTitle(string title)
+	{
+		if (m_wTitle)
+			m_wTitle.SetText(title);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected void Update()
 	{
 		float elapsed = System.GetTickCount() - m_iStartMs;

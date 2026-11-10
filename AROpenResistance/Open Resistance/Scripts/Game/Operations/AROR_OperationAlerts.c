@@ -6,6 +6,12 @@ class AROR_OperationThreatInfo
 	string m_sTargetId;
 	AROR_EOperationState m_eState;
 	int m_iEtaSeconds = -1;	//!< Seconds left when the board was received; -1 before dispatch
+	bool m_bTownResponse;	//!< A town garrison's reinforcement wave (Towns), shown as a contact response, not a QRF
+	bool m_bAir;			//!< A helicopter insertion
+	bool m_bHasLead;		//!< m_vLead is known (something of it stands in the world)
+	vector m_vLead;			//!< Its head: the vehicle or leader nearest the target (x, z; refreshed every few seconds)
+	bool m_bHasLanding;
+	vector m_vLanding;		//!< Helicopter landing zone (x, z)
 }
 
 //! Player-facing operation alerts: a headline with an arrival estimate when a QRF or attack is dispatched, and a
@@ -14,6 +20,8 @@ class AROR_OperationThreatInfo
 modded class AROR_OperationManagerComponent
 {
 	protected static const int THREAT_BOARD_RESYNC = 15;	//!< Seconds between republishing countdowns that drift
+	protected static const int THREAT_TRACK_RESYNC = 4;	//!< Seconds between republishing where moving forces are
+	protected int m_iThreatTrackResync;
 	protected static const string THREAT_ROW = ";";
 	protected static const string THREAT_FIELD = "|";
 
@@ -53,7 +61,9 @@ modded class AROR_OperationManagerComponent
 		super.NotifyChanged(operation);
 		if (!Replication.IsServer() || !operation || !operation.UsesTacticalResponse())
 			return;
-		if (operation.GetState() == AROR_EOperationState.ACTIVE)
+		// A town garrison's waves report through the town (contact report, then the response); "QRF" stays for
+		// outposts, bases and the other campaign responses
+		if (operation.GetState() == AROR_EOperationState.ACTIVE && !operation.m_bAssaultWave)
 			AnnounceDispatch_S(operation);
 		PublishThreatBoard_S(true);
 	}
@@ -115,26 +125,58 @@ modded class AROR_OperationManagerComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Row per outstanding QRF/attack: type|role|target|state|eta. force: publish now; otherwise only when the
-	//! set of operations changed, or every resync interval so late joiners' countdowns stay close.
+	//! Row per outstanding QRF/attack: type|role|target|state|town|eta|air|leadX|leadZ|landingX|landingZ (town: 1 for
+	//! a town garrison's wave; lead/landing -1 -1 when unknown). force: publish now; otherwise when the set of
+	//! operations changed, every few seconds while forces are moving, or every resync interval so late joiners'
+	//! countdowns stay close.
 	protected void PublishThreatBoard_S(bool force)
 	{
+		AROR_OperationExecutorComponent executor = AROR_OperationExecutorComponent.Cast(GetOwner().FindComponent(AROR_OperationExecutorComponent));
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
 		string board;
 		string structure;
+		bool moving;
+		m_iThreatTrackResync--;
 		foreach (AROR_Operation operation : m_aOperations)
 		{
 			if (operation.IsTerminal() || !operation.UsesTacticalResponse())
 				continue;
-			string row = string.Format("%1|%2|%3|%4", operation.GetType(), operation.GetRole(), operation.GetTargetLocationId(), operation.GetState());
+			int town = 0;
+			if (operation.m_bAssaultWave)
+				town = 1;
+			string row = string.Format("%1|%2|%3|%4|%5", operation.GetType(), operation.GetRole(), operation.GetTargetLocationId(), operation.GetState(), town);
 			structure += row + THREAT_ROW;
-			board += string.Format("%1|%2", row, operation.GetEtaRemaining(m_iClock)) + THREAT_ROW;
+
+			vector target;
+			AROR_LocationComponent targetLocation;
+			if (locations)
+				targetLocation = locations.GetLocationById(operation.GetTargetLocationId());
+			if (targetLocation)
+				target = targetLocation.GetCenter();
+			vector lead;
+			vector landing;
+			bool air;
+			bool hasLead;
+			if (executor && targetLocation)
+				hasLead = executor.GetOperationTrack_S(operation.GetId(), target, lead, air, landing);
+			if (hasLead)
+				moving = true;
+			int airFlag = 0;
+			if (air)
+				airFlag = 1;
+			string track = string.Format("%1|%2|%3", airFlag, TrackCoordinate(hasLead, lead[0]), TrackCoordinate(hasLead, lead[2]));
+			bool hasLanding = landing != vector.Zero;
+			track += string.Format("|%1|%2", TrackCoordinate(hasLanding, landing[0]), TrackCoordinate(hasLanding, landing[2]));
+			board += string.Format("%1|%2|%3", row, operation.GetEtaRemaining(m_iClock), track) + THREAT_ROW;
 		}
-		if (!force && structure == m_sThreatBoardStructure && m_iThreatBoardResync > 0)
+		bool trackDue = moving && m_iThreatTrackResync <= 0;
+		if (!force && structure == m_sThreatBoardStructure && m_iThreatBoardResync > 0 && !trackDue)
 			return;
 		if (!force && structure.IsEmpty() && m_sThreatBoardStructure.IsEmpty())
 			return;
 		m_sThreatBoardStructure = structure;
 		m_iThreatBoardResync = THREAT_BOARD_RESYNC;
+		m_iThreatTrackResync = THREAT_TRACK_RESYNC;
 		if (board == m_sThreatBoard)
 			return;
 		m_sThreatBoard = board;
@@ -153,15 +195,40 @@ modded class AROR_OperationManagerComponent
 		{
 			array<string> fields = {};
 			row.Split(THREAT_FIELD, fields, false);
-			if (fields.Count() != 5)
+			if (fields.Count() < 6)
 				continue;
 			AROR_OperationThreatInfo info = new AROR_OperationThreatInfo();
 			info.m_eType = fields[0].ToInt();
 			info.m_eRole = fields[1].ToInt();
 			info.m_sTargetId = fields[2];
 			info.m_eState = fields[3].ToInt();
-			info.m_iEtaSeconds = fields[4].ToInt();
+			info.m_bTownResponse = fields[4].ToInt() == 1;
+			info.m_iEtaSeconds = fields[5].ToInt();
+			if (fields.Count() >= 11)
+			{
+				info.m_bAir = fields[6].ToInt() == 1;
+				int leadX = fields[7].ToInt();
+				int leadZ = fields[8].ToInt();
+				info.m_bHasLead = leadX >= 0 && leadZ >= 0;
+				info.m_vLead = Vector(leadX, 0, leadZ);
+				int landingX = fields[9].ToInt();
+				int landingZ = fields[10].ToInt();
+				info.m_bHasLanding = landingX >= 0 && landingZ >= 0;
+				info.m_vLanding = Vector(landingX, 0, landingZ);
+			}
 			m_aThreatInfos.Insert(info);
 		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Whole metres for the board, -1 when unknown (world coordinates are never negative on the maps used)
+	protected static int TrackCoordinate(bool known, float value)
+	{
+		if (!known)
+			return -1;
+		int metres = Math.Round(value);
+		if (metres < 0)
+			metres = 0;
+		return metres;
 	}
 }
