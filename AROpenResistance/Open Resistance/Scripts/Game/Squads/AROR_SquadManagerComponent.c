@@ -21,6 +21,7 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("{000CD338713F2B5A}Prefabs/AI/Groups/Group_Base.et", UIWidgets.ResourceNamePicker, desc: "Temporary single-rifleman spawn group", params: "et")]
 	protected ResourceName m_sRecruitGroup;
 
+	protected static const float HELD_SITE_MIN_RADIUS = 60;	//!< Phone recruiting works this close to a held site's centre even if its radius is smaller
 	protected static AROR_SquadManagerComponent s_Instance;
 	protected ref array<ref AROR_SquadRecruit> m_aRecruits = {};
 	protected int m_iNextId = 1;
@@ -191,18 +192,106 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 			Hint(playerId, reason);
 			return;
 		}
+		AROR_LocationComponent location = GetFlagLocation(flag);
+		string siteName;
+		if (location)
+			siteName = location.GetName();
+		SpawnRecruit_S(playerId, flag.GetOrigin(), siteName);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every machine: the Resistance-held site (the HQ, a town, an outpost...) whose ground a position is on, or null
+	static AROR_LocationComponent FindHeldSiteAt(vector position)
+	{
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
+		if (!locations)
+			return null;
+
+		array<AROR_LocationComponent> all = {};
+		locations.GetLocations(all);
+		AROR_LocationComponent best;
+		float bestDistance;
+		foreach (AROR_LocationComponent location : all)
+		{
+			if (!location || location.GetControllingRole() != AROR_EFactionRole.RESISTANCE)
+				continue;
+
+			float distance = vector.DistanceXZ(position, location.GetCenter());
+			if (distance > Math.Max(location.GetRadius(), HELD_SITE_MIN_RADIUS))
+				continue;
+
+			if (!best || distance < bestDistance)
+			{
+				best = location;
+				bestDistance = distance;
+			}
+		}
+
+		return best;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server: recruit from the phone while standing on any Resistance-held site, the HQ included, so a squad never
+	//! depends on finding a flag. The rifleman turns up beside the player.
+	void RecruitHere_S(int playerId)
+	{
+		if (!Replication.IsServer())
+			return;
+
+		IEntity player;
+		if (!IsReadyPlayer(playerId, player))
+		{
+			Hint(playerId, "Recruitment requires a living Resistance player in a running campaign");
+			return;
+		}
+
+		AROR_LocationComponent site = FindHeldSiteAt(player.GetOrigin());
+		if (!site)
+		{
+			Hint(playerId, "Recruit at the HQ or any site the Resistance holds");
+			return;
+		}
+
+		SCR_GroupsManagerComponent groups = SCR_GroupsManagerComponent.GetInstance();
+		if (!groups || !SCR_CommandingManagerComponent.GetInstance())
+		{
+			Hint(playerId, "Native squad commanding is unavailable in this scenario");
+			return;
+		}
+
+		SCR_AIGroup current = groups.GetPlayerGroup(playerId);
+		if (current && !current.IsPlayerLeader(playerId))
+		{
+			Hint(playerId, "Only your squad leader can recruit riflemen");
+			return;
+		}
+
+		if (CountMembers(current) >= GetLimit())
+		{
+			Hint(playerId, "Your squad is full");
+			return;
+		}
+
+		SpawnRecruit_S(playerId, player.GetOrigin(), site.GetName());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void SpawnRecruit_S(int playerId, vector near, string siteName)
+	{
 		SCR_AIGroup group = EnsureSquad_S(playerId);
 		if (!group || !group.IsPlayerLeader(playerId) || !group.GetSlave())
 		{
 			Hint(playerId, "Could not prepare your native squad command group");
 			return;
 		}
+
 		vector position;
-		if (!AROR_ForceSpawner.FindClearPosition(flag.GetOrigin(), m_fSpawnRadius, 1, position))
+		if (!AROR_ForceSpawner.FindClearPosition(near, m_fSpawnRadius, 1, position))
 		{
-			Hint(playerId, "No clear ground beside this flag; try again");
+			Hint(playerId, "No clear ground nearby; try again");
 			return;
 		}
+
 		array<AROR_EUnitType> types = {AROR_EUnitType.RIFLEMAN};
 		SCR_AIGroup spawned = AROR_ForceSpawner.SpawnGroup(m_sRecruitGroup, AROR_EFactionRole.RESISTANCE, types, position);
 		if (!spawned)
@@ -210,6 +299,7 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 			Hint(playerId, "Rifleman could not be spawned from the Resistance preset");
 			return;
 		}
+
 		AROR_SquadRecruit recruit = new AROR_SquadRecruit();
 		recruit.m_iId = m_iNextId++;
 		recruit.m_Master = group;
@@ -218,6 +308,7 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 		m_aRecruits.Insert(recruit);
 		Publish_S();
 		Hint(playerId, "Rifleman arriving. Use the native squad command wheel to give orders");
+		Print(string.Format("[AROR SQUAD] player %1 recruited a rifleman at %2", playerId, siteName), LogLevel.NORMAL);
 	}
 
 	void Rename_S(int playerId, int groupId, string name)

@@ -17,6 +17,23 @@ modded class SCR_PlayerController
 			manager.Rename_S(GetPlayerId(), groupId, name);
 	}
 
+	//! Recruit a rifleman from the phone while standing on a Resistance-held site
+	void AROR_RequestSquadRecruit()
+	{
+		if (Replication.IsServer())
+			AROR_RpcAsk_SquadRecruit();
+		else
+			Rpc(AROR_RpcAsk_SquadRecruit);
+	}
+
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void AROR_RpcAsk_SquadRecruit()
+	{
+		AROR_SquadManagerComponent manager = AROR_SquadManagerComponent.GetInstance();
+		if (manager)
+			manager.RecruitHere_S(GetPlayerId());
+	}
+
 	void AROR_RequestSquadDismiss(int groupId, int recruitId)
 	{
 		if (Replication.IsServer())
