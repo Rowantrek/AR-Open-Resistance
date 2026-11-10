@@ -23,11 +23,14 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	[Attribute("0.58", desc: "Towns, as a share of the key-site size (the map already prints their names)", params: "0.3 1 0.05", category: "Marker tiers")]
 	protected float m_fTownScale;
 
-	[Attribute("1", desc: "Print key sites' names in bold on a plate beside their marker", category: "Marker tiers")]
+	[Attribute("1", desc: "Print every site's name in bold on a plate beside its marker, edged in the holder's colour", category: "Marker tiers")]
 	protected bool m_bKeySiteNames;
 
 	[Attribute("15", desc: "Key-site name size in reference pixels", params: "10 28 1", category: "Marker tiers")]
 	protected int m_iNameFontSize;
+
+	[Attribute("13", desc: "Name size of towns, cities, factories and resource sites in reference pixels", params: "8 28 1", category: "Marker tiers")]
+	protected int m_iMinorNameFontSize;
 
 	[Attribute("1", desc: "Mark each town's garrison post with a flag in the holding faction's colour (outline once taken)", category: "Marker tiers")]
 	protected bool m_bPostMarkers;
@@ -35,7 +38,7 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	[Attribute("22", desc: "Garrison post flag size in reference pixels", params: "8 48 1", category: "Marker tiers")]
 	protected float m_fPostMarkerSize;
 
-	[Attribute("1", desc: "Draw locations as military-frame symbols (rectangle ours, diamond enemy) instead of the icon textures")]
+	[Attribute("1", desc: "Draw locations as type silhouettes in the holder's colour (AROR_MapSiteSymbol) instead of the icon textures")]
 	protected bool m_bFrameIcons;
 
 	[Attribute("{EC2170E3AEEDEC1E}UI/Layouts/Map/AROR_MapInfoPopup.layout", UIWidgets.ResourceNamePicker, desc: "Layout of the info popup shown when an icon is clicked (see AROR_LocationInfoPopup for the widget names)", params: "layout", category: "Info popup")]
@@ -304,7 +307,7 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 			ownLabel.SetVisible(false);
 		ApplyControlColor(image, location);
 
-		if (m_bKeySiteNames && IsKeySite(location))
+		if (m_bKeySiteNames)
 			CreateNamePlate(index, location);
 		if (m_bPostMarkers && AROR_CaptureLocationAction.GetSettlementPost(location))
 			m_aPostWidgets[index] = CreateBareWidget(true);
@@ -368,16 +371,19 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 		return root;
 	}
 
-	//! The key site's name in bold capitals on a dark plate to the right of its marker. The plate is its own widget
-	//! below the text (a layout's canvas draws over its label).
+	//! The site's name in bold capitals on a dark plate to the right of its marker, smaller below the key sites. The
+	//! plate is its own widget below the text (a layout's canvas draws over its label).
 	protected void CreateNamePlate(int index, notnull AROR_LocationComponent location)
 	{
 		string text = location.GetName();
 		text.ToUpper();
 		if (text.IsEmpty())
 			return;
-		float height = m_iNameFontSize + 9;
-		float width = AROR_MapLabelPlate.Width(text, m_iNameFontSize);
+		int fontSize = m_iMinorNameFontSize;
+		if (IsKeySite(location))
+			fontSize = m_iNameFontSize;
+		float height = fontSize + 9;
+		float width = AROR_MapLabelPlate.Width(text, fontSize);
 
 		Widget plate = CreateBareWidget(true);
 		Widget caption = CreateBareWidget(false);
@@ -390,11 +396,11 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 		RichTextWidget label = RichTextWidget.Cast(caption.FindAnyWidget(LABEL_WIDGET_NAME));
 		if (label)
 		{
-			label.SetExactFontSize(m_iNameFontSize);
+			label.SetExactFontSize(fontSize);
 			label.SetBold(true);
 			label.SetColor(Color.FromRGBA(238, 242, 238, 255));
 			label.SetText(text);
-			FrameSlot.SetPos(label, AROR_MapLabelPlate.TextInset(), m_iNameFontSize * 0.2);
+			FrameSlot.SetPos(label, AROR_MapLabelPlate.TextInset(), fontSize * 0.2);
 			FrameSlot.SetSize(label, width, height);
 		}
 		m_aNamePlates[index] = plate;
@@ -475,12 +481,11 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 		float screenFlagX = workspace.DPIUnscale(flagX);
 		float screenFlagY = workspace.DPIUnscale(flagY);
 		float apart = Math.Sqrt((screenFlagX - iconX) * (screenFlagX - iconX) + (screenFlagY - iconY) * (screenFlagY - iconY));
-		// Always shown: on the flag once zoomed in enough to tell it apart, otherwise against the town marker's
-		// top-right so it never hides under it
+		// Zoomed out the town marker says enough; a flag beside every house is clutter
 		if (apart <= size * 0.5 + m_fPostMarkerSize * 0.5)
 		{
-			screenFlagX = iconX + size * 0.4;
-			screenFlagY = iconY - size * 0.1;
+			widget.SetVisible(false);
+			return;
 		}
 		widget.SetVisible(true);
 		widget.SetZOrder(3);
@@ -563,18 +568,13 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Tint the icon with the controlling role's faction colour (icons must be white to show the tint)
+	//! The marker in the controlling role's faction colour: the type's silhouette (AROR_MapSiteSymbol) or, for a
+	//! stronghold, its army's flag. Falls back to the tinted texture icon when symbols are off.
 	protected void ApplyControlColor(notnull ImageWidget image, notnull AROR_LocationComponent location)
 	{
-		AROR_FactionRolesComponent roles = AROR_FactionRolesComponent.GetInstance();
-		if (!roles)
-			return;
+		Color color = FactionColor(location);
+		image.SetColor(color);
 
-		Faction faction = roles.GetFaction(location.GetControllingRole());
-		if (faction)
-			image.SetColor(faction.GetFactionColor());
-
-		// Military-frame style: the frame canvas replaces the texture icon (see AROR_MapFrameIcon)
 		Widget root = image.GetParent();
 		CanvasWidget frame;
 		if (root)
@@ -588,39 +588,26 @@ class AROR_LocationMapIconsComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
-		Color color;
-		if (faction)
-			color = faction.GetFactionColor();
-		WorkspaceWidget workspace = GetGame().GetWorkspace();
 		array<ref CanvasWidgetCommand> commands = m_mFrameCommands.Get(frame);
 		if (!commands)
 		{
 			commands = new array<ref CanvasWidgetCommand>();
 			m_mFrameCommands.Set(frame, commands);
 		}
-		ResourceName iconSet;
-		string iconName;
-		bool stronghold = location.GetOwner().FindComponent(AROR_StrongholdComponent) != null;
-		bool baseIcon = !stronghold && AROR_MapFrameIcon.IconFor(location.GetLocationType(), iconSet, iconName);
-		if (stronghold)
-			DrawStrongholdFlag(frame, commands, location, color);
-		else
-			AROR_MapFrameIcon.Draw(frame, commands, workspace.DPIScale(IconSize(location)), workspace.DPIScale(1), location.GetLocationType(), location.GetControllingRole(), color, !baseIcon);
 
-		// Only once the frame has drawn: if drawing fails, the texture icon stays visible
-		if (!baseIcon)
+		if (location.GetOwner().FindComponent(AROR_StrongholdComponent))
 		{
-			image.SetVisible(false);
-			return;
+			DrawStrongholdFlag(frame, commands, location, color);
 		}
-		// The base game's own map icon for the type, tinted for contrast and drawn over the badge
-		image.LoadImageFromSet(0, iconSet, iconName);
-		image.SetColor(AROR_MapFrameIcon.GlyphColor(AROR_MapFrameIcon.StrokeColor(color)));
-		float inset = IconSize(location) * AROR_MapFrameIcon.ICON_INSET;
-		FrameSlot.SetOffsets(image, inset, inset, inset, inset);
-		frame.SetZOrder(1);
-		image.SetZOrder(2);
-		image.SetVisible(true);
+		else
+		{
+			float size = GetGame().GetWorkspace().DPIScale(IconSize(location));
+			AROR_MapSiteSymbol.Build(commands, 0, 0, size, location.GetLocationType(), color);
+			frame.SetDrawCommands(commands);
+		}
+
+		// Only once the symbol has drawn: if drawing fails, the texture icon stays visible
+		image.SetVisible(false);
 	}
 
 	//------------------------------------------------------------------------------------------------

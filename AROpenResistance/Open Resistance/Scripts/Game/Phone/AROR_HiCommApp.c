@@ -2009,8 +2009,6 @@ class AROR_HiCommApp
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! A location's military-frame symbol centred on its map point: frame by owner, pale fill, glyph by type.
-	//! Line widths scale with the symbol, matching the 40-pixel location map icon.
 	//! The national flag of the army holding a stronghold, 3:2 and centred on the point
 	protected void DrawStrongholdFlag(vector point, float size, AROR_EFactionRole owner, Color color)
 	{
@@ -2021,6 +2019,22 @@ class AROR_HiCommApp
 		float height = size * 2 / 3;
 		array<ref CanvasWidgetCommand> commands = {};
 		AROR_ArmyFlag.Build(commands, point[0] - size * 0.5, point[1] - height * 0.5, size, height, presetId, color, AROR_MapFrameIcon.KEYLINE_WIDTH * size / 40);
+		ReplayCommands(commands);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The location map's type silhouette (AROR_MapSiteSymbol), centred on the point
+	protected void DrawFrameSymbol(vector point, float size, AROR_ELocationType type, AROR_EFactionRole owner, Color color)
+	{
+		array<ref CanvasWidgetCommand> commands = {};
+		AROR_MapSiteSymbol.Build(commands, point[0] - size * 0.5, point[1] - size * 0.5, size, type, color);
+		ReplayCommands(commands);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Canvas commands built for the location map, drawn on HICOMM's map
+	protected void ReplayCommands(notnull array<ref CanvasWidgetCommand> commands)
+	{
 		foreach (CanvasWidgetCommand command : commands)
 		{
 			PolygonDrawCommand polygon = PolygonDrawCommand.Cast(command);
@@ -2029,28 +2043,6 @@ class AROR_HiCommApp
 			LineDrawCommand line = LineDrawCommand.Cast(command);
 			if (line)
 				m_Map.DrawPolyline(line.m_Vertices, Color.FromInt(line.m_iColor), line.m_fWidth, line.m_bShouldEnclose);
-		}
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected void DrawFrameSymbol(vector point, float size, AROR_ELocationType type, AROR_EFactionRole owner, Color color)
-	{
-		float left = point[0] - size * 0.5;
-		float top = point[1] - size * 0.5;
-		float lineScale = size / 40;
-		Color stroke = AROR_MapFrameIcon.StrokeColor(color);
-
-		array<float> frame = {};
-		AROR_MapFrameIcon.FrameOutline(owner, left, top, size, frame);
-		m_Map.DrawPolyline(frame, AROR_MapFrameIcon.KeylineColor(), AROR_MapFrameIcon.KEYLINE_WIDTH * lineScale, true);
-		m_Map.DrawPolygon(frame, AROR_MapFrameIcon.FillColor(stroke));
-
-		Color glyph = AROR_MapFrameIcon.GlyphColor(stroke);
-		array<ref array<float>> strokes = {};
-		AROR_MapFrameIcon.GlyphStrokes(type, owner, left, top, size, strokes);
-		foreach (array<float> strokeLine : strokes)
-		{
-			m_Map.DrawPolyline(strokeLine, glyph, AROR_MapFrameIcon.GLYPH_WIDTH * lineScale, false);
 		}
 	}
 
