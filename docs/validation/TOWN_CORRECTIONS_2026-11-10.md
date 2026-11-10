@@ -1,6 +1,6 @@
 # Town warfare corrections — 10 November 2026
 
-Implemented against the reviewed local `chicken-dev` snapshot `b7648ab`. The earlier review and its JSON are historical evidence for that snapshot; the results below describe the corrected working tree. Native compilation and gameplay acceptance remain outstanding.
+Implemented against the reviewed local `chicken-dev` snapshot `b7648ab`. The earlier review and its JSON are historical evidence for that snapshot; the results below describe the corrections. The user confirmed successful Workbench compilation of `97babeb` on 10 November 2026. Native gameplay acceptance remains outstanding.
 
 ## Changes
 
@@ -67,7 +67,7 @@ WCS vehicle priorities and RHS infantry loadouts are retained. Resource resoluti
 
 Start a fresh world/server session after compiling; hot-reloading an already populated old world cannot reconstruct all new reservation ownership.
 
-1. Compile in Workbench Script Editor, then Play the Chicken scenario in World Editor with the intended addon stack.
+1. Workbench compilation of `97babeb` is user-confirmed passing. Next, Play the Chicken scenario in World Editor with the intended addon stack.
 2. On a dedicated server, test two players with a shared recruit squad, then separate squads and two HICOMM leaders. Send gangs beyond human simulation range to attack and defend towns. Confirm defenders remain present, fight, and do not trigger an automatic human-only retake.
 3. Repeat site capture/recapture, militia purchase/stand-down, destroyed-hull crew survival, claimed vehicle departure, and save/restart. Check both body and waypoint counts return to baseline after retirement.
 4. Force delayed materialization/native dormancy and shared-budget saturation. Confirm stock is retained, queues stay finite, and late callbacks do not create duplicate units. Test a fresh world transition to clear the session ledger.
@@ -83,4 +83,4 @@ The user's 20:19:36 Workbench log for `4034ff4` reports five Open Resistance dia
 
 The follow-up replaces both bulk transfers with per-element insertion, retaining ownership before the original collections are cleared. Startup delay now uses a typed hash variable and a signed-modulo helper with no inline bit mask. Regression checks cover signed integer boundaries and reject `InsertAll` calls supplied with locally declared owned-reference arrays. The source guard tests its own rejection/acceptance against invalid bulk, valid weak-array, and valid per-element examples.
 
-The same failed log contains base-game diagnostics. They may be cascading; a new Workbench compile is required to distinguish them from independent addon/tool issues. The corrected source has not been natively recompiled by this agent, and a successful current compile is not claimed.
+The same failed log contains base-game diagnostics. The user subsequently confirmed that recompilation of `97babeb` succeeds, resolving the reported compile failure. This is user-provided native compile evidence; the flight, multiplayer gameplay and dedicated-server performance checks above remain outstanding.

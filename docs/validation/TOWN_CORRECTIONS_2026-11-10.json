@@ -359,7 +359,7 @@
   ],
   "sourceHashes": {
     "AROpenResistance/Open Resistance/Scripts/Game/Locations/AROR_SiteLifeComponent.c": "32bab3c33424cedc693fedecd17f5cc093c815835ebf2edd3e4181b37eda6370",
-    "docs/validation/TOWN_CORRECTIONS_2026-11-10.md": "0acbfbe725a7da9e9dba2702c7b9ecc17cd21990b429d3301d25a0e5684b1af3",
+    "docs/validation/TOWN_CORRECTIONS_2026-11-10.md": "f687f72b31f537be105b73e9e7474709b3a5227a8caa5c2a96e7a42f6b574363",
     "tools/Test-QRFSourceStructure.ps1": "53443aa558ab676bc80b3a97759499a940b2a2cc7b5710e45e8b0394d735e7d3",
     "tools/Test-TownCorrections.js": "ad168c737b22f365d40318067be700eae047b3d3ad90ff59414d55b64dc69fa9"
   },
@@ -369,5 +369,11 @@
     "passing": 44,
     "assertions": 113246,
     "failing": []
+  },
+  "nativeCompilation": {
+    "status": "USER_CONFIRMED_PASS",
+    "revision": "97babeb6a59aee121d56cd0b0de208737a43e1ec",
+    "confirmedAt": "2026-11-10T09:30:33Z",
+    "evidence": "User confirmed successful Workbench recompilation; gameplay, flight and dedicated-server stress tests remain unverified."
   }
 }
