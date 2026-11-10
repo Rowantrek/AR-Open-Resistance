@@ -115,7 +115,7 @@ class AROR_HiCommApp
 	protected static const float PANEL_MARGIN = 10;
 	protected static const float OOB_WIDTH = 260;
 	protected static const float SELECTION_WIDTH = 300;
-	protected static const float SELECTION_HEIGHT = 432;
+	protected static const float SELECTION_HEIGHT = 562;
 	protected static const float HELP_WIDTH = 270;
 	protected static const float SLIDER_HEIGHT = 240;
 
@@ -235,6 +235,7 @@ class AROR_HiCommApp
 	protected int m_iLoginStart = -1;
 	protected ref AROR_HiCommGlobe m_Globe = new AROR_HiCommGlobe();
 	protected ref array<int> m_aSelected = {};	//!< Selected squad IDs
+	protected int m_iVehicleChoice;	//!< Garage vehicle picked with the < > selector (mechanized raise and Embark)
 	protected AROR_EHighCommandOrder m_eSelectedOrder = AROR_EHighCommandOrder.MOVE;
 	protected string m_sSelectedTarget;
 
@@ -711,8 +712,13 @@ class AROR_HiCommApp
 			if (y > 700)
 				break;
 
-			Panel(55, y, 740, 110, m_Border);
-			Panel(57, y + 2, 736, 106, m_PanelFill);
+			// Mechanized cards are taller: a row to pick the garage vehicle the squad brings out
+			float cardHeight = 110;
+			if (type.m_bMechanized)
+				cardHeight = 156;
+
+			Panel(55, y, 740, cardHeight, m_Border);
+			Panel(57, y + 2, 736, cardHeight - 4, m_PanelFill);
 			Text(80, y + 14, 420, 44, 32, Upper(type.m_sName), m_Green, true);
 			Text(80, y + 62, 420, 30, 20, string.Format("%1 MEN  //  CALLSIGN %2", type.GetSize(), type.m_sCallsign), m_GreenDim);
 
@@ -724,12 +730,24 @@ class AROR_HiCommApp
 			Text(470, y + 20, 160, 30, 22, AROR_EconomyComponent.FormatMoney(type.m_iFundsCost), costColor);
 			Text(470, y + 56, 160, 30, 22, type.m_iManpowerCost.ToString() + " MP", costColor);
 
-			if (affordable && ownedCount < maximum)
-				Button(620, y + 25, 155, 60, "RAISE", "raise:" + index, STYLE_PRIMARY, 24);
+			string action = "raise:" + index;
+			bool ready = affordable && ownedCount < maximum;
+			if (type.m_bMechanized)
+			{
+				int entryId;
+				string vehicleName;
+				int vehicleCount;
+				ready = ready && GetVehicleChoice(entryId, vehicleName, vehicleCount);
+				action += ":" + entryId;
+				DrawVehicleSelector(80, y + 104, 695, 38);
+			}
+
+			if (ready)
+				Button(620, y + 25, 155, 60, "RAISE", action, STYLE_PRIMARY, 24);
 			else
 				Button(620, y + 25, 155, 60, "RAISE", string.Empty, STYLE_DISABLED, 24);
 
-			y += 125;
+			y += cardHeight + 15;
 		}
 
 		if (types.IsEmpty())
@@ -773,6 +791,81 @@ class AROR_HiCommApp
 
 		if (squads.IsEmpty())
 			Text(875, 210, 780, 40, 22, "No squads in the field.", m_GreenDim);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The garage vehicle picked with the < > selector (shared by Unit Management and the orders panel).
+	//! False when the garage is empty.
+	protected bool GetVehicleChoice(out int entryId, out string name, out int count)
+	{
+		entryId = 0;
+		name = string.Empty;
+		count = 0;
+		AROR_ResistanceGarageComponent garage = AROR_ResistanceGarageComponent.GetInstance();
+		if (!garage)
+			return false;
+
+		array<int> ids = {};
+		array<ResourceName> prefabs = {};
+		array<float> healths = {};
+		array<float> fuels = {};
+		garage.GetEntries(ids, prefabs, healths, fuels);
+		count = ids.Count();
+		if (count == 0)
+			return false;
+
+		m_iVehicleChoice = ((m_iVehicleChoice % count) + count) % count;
+		entryId = ids[m_iVehicleChoice];
+		name = Upper(AROR_PrefabInfo.GetName(prefabs[m_iVehicleChoice], true));
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! "<  UAZ-469  (1/3)  >": cycles through the garage's vehicles
+	protected void DrawVehicleSelector(float x, float y, float width, float height)
+	{
+		int entryId;
+		string name;
+		int count;
+		if (!GetVehicleChoice(entryId, name, count))
+		{
+			string empty = "GARAGE EMPTY  //  BUY A VEHICLE IN IMPORTS";
+			if (width < 400)
+				empty = "GARAGE EMPTY";
+
+			Text(x, y + 6, width, height, 18, empty, m_Red);
+			return;
+		}
+
+		Button(x, y, 40, height, "<", "vehicle:-1", STYLE_NORMAL, 18);
+		Button(x + width - 40, y, 40, height, ">", "vehicle:1", STYLE_NORMAL, 18);
+		string label = name;
+		if (count > 1)
+			label = string.Format("%1  (%2/%3)", name, m_iVehicleChoice + 1, count);
+
+		Text(x + 50, y + (height - 26) * 0.5, width - 100, height, 18, label, m_Amber, true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Embark or dismount every selected squad under our command
+	protected void SendVehicleOrder(bool embark)
+	{
+		AROR_HighCommandComponent highCommand = AROR_HighCommandComponent.GetInstance();
+		SCR_PlayerController controller = SCR_PlayerController.Cast(GetGame().GetPlayerController());
+		if (!highCommand || !controller)
+			return;
+
+		int entryId;
+		string name;
+		int count;
+		GetVehicleChoice(entryId, name, count);
+		int localId = GetLocalPlayerId();
+		foreach (int squadId : m_aSelected)
+		{
+			AROR_HighCommandSquadInfo squad = highCommand.GetSquadInfo(squadId);
+			if (squad && highCommand.CanCommand(localId, squad.m_iOwnerId))
+				controller.AROR_RequestHiCommVehicle(squadId, embark, entryId);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1154,6 +1247,14 @@ class AROR_HiCommApp
 			Button(x + 102, top + 366, width - 102, 52, "EXECUTE", "execute", STYLE_PRIMARY, 24);
 		else
 			Button(x + 102, top + 366, width - 102, 52, "EXECUTE", string.Empty, STYLE_DISABLED, 24);
+
+		// Vehicles, at once: Embark boards the squad's own vehicle, or collects the picked garage vehicle at the
+		// nearest Resistance site when it has none nearby; Dismount gets everyone out
+		Panel(x, top + 432, width, 1, m_Border);
+		Text(x, top + 440, width, 22, 14, "GARAGE VEHICLE IF NONE NEARBY", m_GreenDim);
+		DrawVehicleSelector(x, top + 462, width, 34);
+		Button(x, top + 506, half, 42, "EMBARK", "embark", STYLE_NORMAL, 18);
+		Button(x + half + 10, top + 506, half, 42, "DISMOUNT", "dismount", STYLE_NORMAL, 18);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -2615,7 +2716,20 @@ class AROR_HiCommApp
 		}
 		else if (verb == "raise" && parts.Count() > 1)
 		{
-			controller.AROR_RequestHiCommRaise(parts[1].ToInt());
+			int vehicleEntryId;
+			if (parts.Count() > 2)
+				vehicleEntryId = parts[2].ToInt();
+
+			controller.AROR_RequestHiCommRaise(parts[1].ToInt(), vehicleEntryId);
+		}
+		else if (verb == "vehicle" && parts.Count() > 1)
+		{
+			m_iVehicleChoice += parts[1].ToInt();
+		}
+		else if (verb == "embark" || verb == "dismount")
+		{
+			if (!m_aSelected.IsEmpty())
+				SendVehicleOrder(verb == "embark");
 		}
 		else if (verb == "garrison" && parts.Count() > 2)
 		{
@@ -3117,6 +3231,9 @@ class AROR_HiCommApp
 		if (order == AROR_EHighCommandOrder.MOVE)
 			return "MOVE";
 
+		if (order == AROR_EHighCommandOrder.EMBARK)
+			return "EMBARK";
+
 		return "HOLD";
 	}
 
@@ -3139,10 +3256,17 @@ class AROR_HiCommApp
 		if (squad.m_eOrder == AROR_EHighCommandOrder.NONE)
 			return "AT HQ";
 
-		if (squad.m_eOrder == AROR_EHighCommandOrder.MOVE || squad.m_eOrder == AROR_EHighCommandOrder.HOLD)
-			return ShortVerb(squad.m_eOrder) + " " + AROR_HighCommandComponent.GridReference(squad.m_vTarget);
+		if (squad.m_eOrder == AROR_EHighCommandOrder.EMBARK)
+			return "EMBARK " + TargetName(squad);
 
-		return ShortVerb(squad.m_eOrder) + " " + TargetName(squad);
+		string mounted;
+		if (squad.m_bMounted)
+			mounted = " [M]";
+
+		if (squad.m_eOrder == AROR_EHighCommandOrder.MOVE || squad.m_eOrder == AROR_EHighCommandOrder.HOLD)
+			return ShortVerb(squad.m_eOrder) + " " + AROR_HighCommandComponent.GridReference(squad.m_vTarget) + mounted;
+
+		return ShortVerb(squad.m_eOrder) + " " + TargetName(squad) + mounted;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -3157,13 +3281,26 @@ class AROR_HiCommApp
 		if (squad.m_eOrder == AROR_EHighCommandOrder.DEFEND)
 			return "DEFENDING " + TargetName(squad);
 
+		if (squad.m_eOrder == AROR_EHighCommandOrder.EMBARK)
+		{
+			string site = TargetName(squad);
+			if (!site.IsEmpty())
+				return "COLLECTING VEHICLE AT " + site;
+
+			return "EMBARKING";
+		}
+
+		string mode;
+		if (squad.m_bMounted)
+			mode = "MOUNTED, ";
+
 		if (squad.m_eOrder == AROR_EHighCommandOrder.MOVE)
-			return "MOVING TO GRID " + AROR_HighCommandComponent.GridReference(squad.m_vTarget);
+			return mode + "MOVING TO GRID " + AROR_HighCommandComponent.GridReference(squad.m_vTarget);
 
 		if (squad.m_eOrder == AROR_EHighCommandOrder.HOLD)
-			return "STANDING BY AT GRID " + AROR_HighCommandComponent.GridReference(squad.m_vTarget);
+			return mode + "STANDING BY AT GRID " + AROR_HighCommandComponent.GridReference(squad.m_vTarget);
 
-		return "HOLDING AT HQ";
+		return mode + "HOLDING AT HQ";
 	}
 
 	//------------------------------------------------------------------------------------------------

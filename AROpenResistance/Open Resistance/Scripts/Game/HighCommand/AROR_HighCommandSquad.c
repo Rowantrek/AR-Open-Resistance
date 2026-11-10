@@ -5,7 +5,16 @@ enum AROR_EHighCommandOrder
 	ATTACK,	//!< Attack an enemy-held location
 	DEFEND,	//!< Defend a Resistance-held location
 	MOVE,	//!< Move to a map position, then stand by there (becomes HOLD on arrival)
-	HOLD	//!< Stand by at a position, defending it
+	HOLD,	//!< Stand by at a position, defending it
+	EMBARK	//!< Board the squad's vehicle, or collect one from the garage at the nearest Resistance site first
+}
+
+//! Embark progress of a squad (AROR_HighCommandSquad.m_eEmbarkPhase)
+enum AROR_EHighCommandEmbarkPhase
+{
+	NONE,
+	TO_SITE,	//!< Walking to a Resistance site to collect a garage vehicle there
+	TO_VEHICLE	//!< Walking to the vehicle and boarding it
 }
 
 //! Server: one raised squad. Session-only (never saved); its cost is refunded when the campaign ends.
@@ -32,6 +41,13 @@ class AROR_HighCommandSquad
 	int m_iAlive;
 	vector m_vPosition;
 	ref array<IEntity> m_aAffiliated = {};	//!< Members already given the Resistance faction
+
+	// Vehicle (mechanized squads, Embark / Dismount)
+	IEntity m_Vehicle;		//!< The squad's vehicle, kept after dismounting so Embark returns to it
+	bool m_bMounted;		//!< Any member is seated in m_Vehicle
+	AROR_EHighCommandEmbarkPhase m_eEmbarkPhase;
+	int m_iEmbarkEntryId;	//!< Garage entry to collect at the site (TO_SITE)
+	int m_iEmbarkStarted;	//!< World time (ms) boarding began at the vehicle; 0 while still walking to it
 }
 
 //! Client: a squad as read from the replicated HICOMM snapshot
@@ -48,4 +64,6 @@ class AROR_HighCommandSquadInfo
 	bool m_bFormed;
 	vector m_vPosition;
 	vector m_vTarget;
+	bool m_bMounted;	//!< Riding in its vehicle
+	bool m_bHasVehicle;	//!< Has a vehicle in the world (mounted or parked)
 }

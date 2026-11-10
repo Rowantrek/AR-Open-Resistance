@@ -119,6 +119,21 @@ SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" 
      m_iFundsCost 1200
      m_iManpowerCost 4
     }
+    AROR_HighCommandSquadType {
+     m_sCallsign "MEC"
+     m_sName "Mechanized Squad"
+     m_aUnits {
+      SQUADLEADER
+      RIFLEMAN
+      AUTORIFLEMAN
+      LAT
+      RIFLEMAN
+      RIFLEMAN
+     }
+     m_iFundsCost 2000
+     m_iManpowerCost 6
+     m_bMechanized 1
+    }
    }
   }
   AROR_MissionBoardComponent "{6AC0A0F1A5000001}" {

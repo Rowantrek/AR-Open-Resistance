@@ -9,6 +9,10 @@ class AROR_HighCommandComponentClass : SCR_BaseGameModeComponentClass
 //! Clients: read a compact replicated snapshot (leaders, name, squad summaries) to draw HICOMM.
 //! Leaders: the host (listen server/Workbench player; admins on a dedicated server) is always a leader and can
 //! delegate other players. Each leader commands only their own squads; everyone sees every squad.
+//! Vehicles: a mechanized squad type is raised with a garage vehicle (brought out at the HQ, claimed for the
+//! Resistance fleet so it is saved) and boards it. Any squad can be told to Embark (its own vehicle if near, else it
+//! walks to the nearest Resistance site and collects a garage vehicle there) or Dismount; a mounted squad drives on
+//! Move orders and gets out to assault on Attack orders.
 //! Only the resistance name is saved (AROR_HighCommandComponentSerializer): squads are session-only and the Economy
 //! serializer saves funds/manpower as if every living squad had been refunded, so a loaded campaign never loses their cost.
 class AROR_HighCommandComponent : SCR_BaseGameModeComponent
@@ -48,6 +52,18 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 
 	[Attribute("2", desc: "Seconds between squad status updates (alive count, position)", params: "1 10 1")]
 	protected int m_iUpdateInterval;
+
+	[Attribute("40", desc: "A squad sent to embark collects its garage vehicle once this close (m) to the Resistance site", params: "10 200 1", category: "Vehicles")]
+	protected float m_fEmbarkSiteRadius;
+
+	[Attribute("25", desc: "Members board once the squad leader is this close (m) to the vehicle", params: "5 100 1", category: "Vehicles")]
+	protected float m_fBoardRadius;
+
+	[Attribute("60", desc: "Seconds of boarding before the squad reports in with whoever is seated", params: "10 600 1", category: "Vehicles")]
+	protected int m_iBoardTimeout;
+
+	[Attribute("800", desc: "Embark walks back to the squad's own vehicle when it is within this distance (m); farther, a garage vehicle is collected instead", params: "50 5000 10", category: "Vehicles")]
+	protected float m_fOwnVehicleRange;
 
 	[Attribute("0 0 0", UIWidgets.Coords, desc: "South-west corner of the area HICOMM's map shows", category: "Map")]
 	protected vector m_vMapMin;
@@ -265,7 +281,8 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 	//------------------------------------------------------------------------------------------------
 	// Server: requests (arrive through SCR_PlayerController RPCs)
 	//------------------------------------------------------------------------------------------------
-	void RequestRaise_S(int playerId, int typeIndex)
+	//! vehicleEntryId: the garage vehicle a mechanized squad brings out (any garage vehicle when it is gone)
+	void RequestRaise_S(int playerId, int typeIndex, int vehicleEntryId = 0)
 	{
 		if (!Replication.IsServer())
 			return;
@@ -297,6 +314,16 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
+		if (type.m_bMechanized)
+		{
+			vehicleEntryId = PickGarageEntry_S(vehicleEntryId);
+			if (vehicleEntryId <= 0)
+			{
+				Reply(playerId, type.m_sName + " needs a vehicle in the garage: buy one in Imports");
+				return;
+			}
+		}
+
 		AROR_EconomyComponent economy = AROR_EconomyComponent.GetInstance();
 		if (!economy)
 			return;
@@ -316,11 +343,29 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
-		SCR_AIGroup group = CreateGroup_S(hq.GetCenter(), type);
+		// A mechanized squad forms up beside its vehicle, brought out of the garage at the HQ
+		IEntity vehicle;
+		vector formUp = hq.GetCenter();
+		if (type.m_bMechanized)
+		{
+			vehicle = PlaceGarageVehicle_S(playerId, vehicleEntryId, hq.GetCenter());
+			if (!vehicle)
+			{
+				economy.AddFactionFunds_S(AROR_EFactionRole.RESISTANCE, type.m_iFundsCost);
+				economy.AddManpower_S(type.m_iManpowerCost);
+				Reply(playerId, "The vehicle could not be brought out at the HQ (no clear space); nothing was spent");
+				return;
+			}
+
+			formUp = vehicle.GetOrigin();
+		}
+
+		SCR_AIGroup group = CreateGroup_S(formUp, type);
 		if (!group)
 		{
 			economy.AddFactionFunds_S(AROR_EFactionRole.RESISTANCE, type.m_iFundsCost);
 			economy.AddManpower_S(type.m_iManpowerCost);
+			ReturnToGarage_S(vehicle);
 			Reply(playerId, "The squad could not be raised (group setup failed)");
 			return;
 		}
@@ -336,11 +381,473 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 		squad.m_iRaisedAt = GetGame().GetWorld().GetWorldTime();
 		squad.m_Group = group;
 		squad.m_vPosition = group.GetOrigin();
+		if (vehicle)
+		{
+			// Boards as soon as the members have spawned beside it (see UpdateEmbark_S)
+			squad.m_Vehicle = vehicle;
+			squad.m_eOrder = AROR_EHighCommandOrder.EMBARK;
+			squad.m_eEmbarkPhase = AROR_EHighCommandEmbarkPhase.TO_VEHICLE;
+			squad.m_vTarget = vehicle.GetOrigin();
+		}
+
 		m_aSquads.Insert(squad);
 
-		Print(string.Format("[AROR HICOMM] Player %1 raised %2 (%3 men) at the HQ", playerId, squad.m_sCallsign, squad.m_iSize), LogLevel.NORMAL);
-		Reply(playerId, squad.m_sCallsign + " is forming up at the HQ");
+		string vehicleName;
+		if (vehicle)
+			vehicleName = " with a " + VehicleName(vehicle);
+
+		Print(string.Format("[AROR HICOMM] Player %1 raised %2 (%3 men%4) at the HQ", playerId, squad.m_sCallsign, squad.m_iSize, vehicleName), LogLevel.NORMAL);
+		Reply(playerId, squad.m_sCallsign + " is forming up at the HQ" + vehicleName);
 		PublishSnapshot_S();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	// Server: vehicles (mechanized squads, Embark / Dismount)
+	//------------------------------------------------------------------------------------------------
+	//! Embark: board the squad's own vehicle if it is near enough, otherwise walk to the nearest Resistance site
+	//! (the HQ or a held site with a flag) and collect a garage vehicle there (entryId, or any when it is gone)
+	void RequestEmbark_S(int playerId, int squadId, int entryId)
+	{
+		if (!Replication.IsServer())
+			return;
+
+		RefreshLeaders_S();
+		AROR_HighCommandSquad squad = FindCommandableSquad_S(playerId, squadId);
+		if (!squad)
+			return;
+
+		if (squad.m_bMounted)
+		{
+			Reply(playerId, squad.m_sCallsign + " is already mounted");
+			return;
+		}
+
+		if (squad.m_Vehicle && !AROR_ForceSpawner.IsDestroyed(squad.m_Vehicle) && vector.DistanceXZ(squad.m_vPosition, squad.m_Vehicle.GetOrigin()) <= m_fOwnVehicleRange)
+		{
+			StartBoarding_S(squad);
+			Reply(playerId, squad.m_sCallsign + ": embarking on their " + VehicleName(squad.m_Vehicle));
+		}
+		else
+		{
+			int entry = PickGarageEntry_S(entryId);
+			if (entry <= 0)
+			{
+				Reply(playerId, "No vehicle in the garage for " + squad.m_sCallsign + ": buy one in Imports");
+				return;
+			}
+
+			AROR_LocationComponent site = FindEmbarkSite_S(squad.m_vPosition);
+			if (!site)
+			{
+				Reply(playerId, "No Resistance site to collect a vehicle from");
+				return;
+			}
+
+			ClearWaypoint_S(squad);
+			if (!IssueWaypoint_S(squad, m_sMoveWaypointPrefab, site.GetCenter(), m_fEmbarkSiteRadius * 0.5))
+			{
+				Reply(playerId, "Order failed: the move waypoint prefab is not set or invalid");
+				return;
+			}
+
+			squad.m_iEmbarkEntryId = entry;
+			squad.m_eEmbarkPhase = AROR_EHighCommandEmbarkPhase.TO_SITE;
+			squad.m_vTarget = site.GetCenter();
+			squad.m_sTargetId = site.GetId();
+			Reply(playerId, squad.m_sCallsign + ": moving to " + site.GetName() + " to collect a vehicle");
+		}
+
+		squad.m_eOrder = AROR_EHighCommandOrder.EMBARK;
+		if (squad.m_iOwnerId == 0)
+			squad.m_iOwnerId = playerId;
+
+		PublishSnapshot_S();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Dismount: everyone gets out and the squad stands by where it is; the vehicle stays with the squad for Embark
+	void RequestDismount_S(int playerId, int squadId)
+	{
+		if (!Replication.IsServer())
+			return;
+
+		RefreshLeaders_S();
+		AROR_HighCommandSquad squad = FindCommandableSquad_S(playerId, squadId);
+		if (!squad)
+			return;
+
+		bool embarking = squad.m_eOrder == AROR_EHighCommandOrder.EMBARK;
+		if (!squad.m_bMounted && !embarking)
+		{
+			Reply(playerId, squad.m_sCallsign + " is not in a vehicle");
+			return;
+		}
+
+		DismountMembers_S(squad);
+		squad.m_eEmbarkPhase = AROR_EHighCommandEmbarkPhase.NONE;
+		squad.m_iEmbarkStarted = 0;
+		squad.m_bMounted = false;
+		IssueWaypoint_S(squad, m_sDefendWaypointPrefab, squad.m_vPosition, m_fHoldRadius);
+		squad.m_eOrder = AROR_EHighCommandOrder.HOLD;
+		squad.m_vTarget = squad.m_vPosition;
+		squad.m_sTargetId = string.Empty;
+		if (squad.m_iOwnerId == 0)
+			squad.m_iOwnerId = playerId;
+
+		Reply(playerId, squad.m_sCallsign + ": dismounting, standing by at grid " + GridReference(squad.m_vPosition));
+		PublishSnapshot_S();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected AROR_HighCommandSquad FindCommandableSquad_S(int playerId, int squadId)
+	{
+		AROR_HighCommandSquad squad = FindServerSquad(squadId);
+		if (!squad)
+		{
+			Reply(playerId, "That squad no longer exists");
+			return null;
+		}
+
+		if (!CanCommand(playerId, squad.m_iOwnerId))
+		{
+			Reply(playerId, squad.m_sCallsign + " is not under your command");
+			return null;
+		}
+
+		return squad;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The requested garage entry while it is still there, else the first garage vehicle; 0 when the garage is empty
+	protected int PickGarageEntry_S(int requested)
+	{
+		AROR_ResistanceGarageComponent garage = AROR_ResistanceGarageComponent.GetInstance();
+		if (!garage)
+			return 0;
+
+		if (requested > 0 && garage.GetEntry_S(requested))
+			return requested;
+
+		array<int> ids = {};
+		array<ResourceName> prefabs = {};
+		array<float> healths = {};
+		array<float> fuels = {};
+		garage.GetEntries(ids, prefabs, healths, fuels);
+		if (ids.IsEmpty())
+			return 0;
+
+		return ids[0];
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Brings a garage vehicle out near the centre (roadside if there is a road, else any clear spot) and claims it
+	//! for the Resistance fleet, so it is saved like a vehicle a player drove. Null when there is no room.
+	protected IEntity PlaceGarageVehicle_S(int playerId, int entryId, vector centre)
+	{
+		AROR_ResistanceGarageComponent garage = AROR_ResistanceGarageComponent.GetInstance();
+		if (!garage || entryId <= 0)
+			return null;
+
+		for (int attempt = 0; attempt < 6; attempt++)
+		{
+			vector position;
+			float yaw = Math.RandomFloat(0, 360);
+			bool found = AROR_ForceSpawner.FindRoadsidePosition(centre, 90, true, position, yaw);
+			if (!found)
+				found = AROR_ForceSpawner.FindClearPosition(centre, 60, 4, position);
+
+			if (!found)
+				continue;
+
+			IEntity vehicle = garage.RetrieveVehicle_S(playerId, entryId, position, yaw, position, 1);
+			if (!vehicle)
+				continue;
+
+			if (garage.GetFleet())
+				garage.GetFleet().Claim_S(vehicle);
+
+			return vehicle;
+		}
+
+		return null;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A vehicle that was brought out for nothing goes back into the garage
+	protected void ReturnToGarage_S(IEntity vehicle)
+	{
+		AROR_ResistanceGarageComponent garage = AROR_ResistanceGarageComponent.GetInstance();
+		if (vehicle && garage)
+			garage.StoreVehicle_S(vehicle);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The nearest Resistance site a vehicle can be collected at: the HQ or a held site with a capture flag
+	protected AROR_LocationComponent FindEmbarkSite_S(vector position)
+	{
+		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
+		if (!locations)
+			return null;
+
+		array<AROR_LocationComponent> all = {};
+		locations.GetLocations(all);
+		AROR_LocationComponent nearest;
+		float nearestDistance = float.MAX;
+		foreach (AROR_LocationComponent location : all)
+		{
+			if (!location || location.GetControllingRole() != AROR_EFactionRole.RESISTANCE)
+				continue;
+
+			AROR_ELocationType type = location.GetLocationType();
+			if (type != AROR_ELocationType.HQ && !AROR_CaptureLocationAction.IsCapturableType(type))
+				continue;
+
+			float distance = vector.DistanceXZ(position, location.GetCenter());
+			if (distance < nearestDistance)
+			{
+				nearestDistance = distance;
+				nearest = location;
+			}
+		}
+
+		return nearest;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void StartBoarding_S(AROR_HighCommandSquad squad)
+	{
+		squad.m_eEmbarkPhase = AROR_EHighCommandEmbarkPhase.TO_VEHICLE;
+		squad.m_iEmbarkStarted = 0;
+		squad.m_vTarget = squad.m_Vehicle.GetOrigin();
+		squad.m_sTargetId = string.Empty;
+		IssueWaypoint_S(squad, m_sMoveWaypointPrefab, squad.m_vTarget, m_fBoardRadius * 0.5);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Periodic, while the order is Embark: collect the garage vehicle at the site, then board once beside it
+	protected void UpdateEmbark_S(AROR_HighCommandSquad squad, int now)
+	{
+		if (squad.m_eEmbarkPhase == AROR_EHighCommandEmbarkPhase.TO_SITE)
+		{
+			if (vector.DistanceXZ(squad.m_vPosition, squad.m_vTarget) > m_fEmbarkSiteRadius)
+				return;
+
+			IEntity collected = PlaceGarageVehicle_S(squad.m_iOwnerId, PickGarageEntry_S(squad.m_iEmbarkEntryId), squad.m_vTarget);
+			if (!collected)
+			{
+				FinishEmbark_S(squad, squad.m_sCallsign + " could not collect a vehicle (the garage is empty or there is no room)", false);
+				return;
+			}
+
+			squad.m_Vehicle = collected;
+			squad.m_iEmbarkEntryId = 0;
+			StartBoarding_S(squad);
+			return;
+		}
+
+		if (!squad.m_Vehicle || AROR_ForceSpawner.IsDestroyed(squad.m_Vehicle))
+		{
+			FinishEmbark_S(squad, squad.m_sCallsign + "'s vehicle has been lost", false);
+			return;
+		}
+
+		if (!squad.m_bFormed)
+			return;
+
+		// Still walking to it
+		if (squad.m_iEmbarkStarted == 0)
+		{
+			if (vector.DistanceXZ(squad.m_vPosition, squad.m_Vehicle.GetOrigin()) > m_fBoardRadius)
+				return;
+
+			// The group's own vehicle from now on, so its AI does not climb straight back out
+			squad.m_iEmbarkStarted = now;
+			SetUsableVehicle(squad.m_Group, squad.m_Vehicle, true);
+		}
+
+		bool seated = SeatSquad_S(squad);
+		bool timedOut = now - squad.m_iEmbarkStarted > m_iBoardTimeout * 1000;
+		if (!seated && !timedOut)
+			return;
+
+		squad.m_bMounted = CountMounted_S(squad) > 0;
+		if (!squad.m_bMounted)
+		{
+			FinishEmbark_S(squad, squad.m_sCallsign + " could not board the " + VehicleName(squad.m_Vehicle), false);
+			return;
+		}
+
+		string message = squad.m_sCallsign + " mounted up in the " + VehicleName(squad.m_Vehicle);
+		if (CountMounted_S(squad) < squad.m_iAlive)
+			message += " (not enough seats: some stay on foot)";
+
+		FinishEmbark_S(squad, message, true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Embark is over: the squad stands by where it is, mounted or not
+	protected void FinishEmbark_S(AROR_HighCommandSquad squad, string message, bool mounted)
+	{
+		squad.m_eEmbarkPhase = AROR_EHighCommandEmbarkPhase.NONE;
+		squad.m_iEmbarkStarted = 0;
+		squad.m_iEmbarkEntryId = 0;
+		ClearWaypoint_S(squad);
+		if (mounted)
+			SetUsableVehicle(squad.m_Group, squad.m_Vehicle, true);
+		else
+			IssueWaypoint_S(squad, m_sDefendWaypointPrefab, squad.m_vPosition, m_fHoldRadius);
+
+		squad.m_eOrder = AROR_EHighCommandOrder.HOLD;
+		squad.m_vTarget = squad.m_vPosition;
+		squad.m_sTargetId = string.Empty;
+		if (squad.m_iOwnerId > 0)
+			Reply(squad.m_iOwnerId, message);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Puts the squad's members in its vehicle: driver first, then turrets, then cargo. True once every living member
+	//! is seated or no free seat is left (the rest stay on foot); call again until then, seat requests can be dropped.
+	protected bool SeatSquad_S(AROR_HighCommandSquad squad)
+	{
+		IEntity vehicle = squad.m_Vehicle;
+		BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(vehicle.FindComponent(BaseCompartmentManagerComponent));
+		if (!compartments)
+			return true;
+
+		array<BaseCompartmentSlot> slots = {};
+		compartments.GetCompartments(slots);
+		array<BaseCompartmentSlot> ordered = {};
+		SCR_AIVehicleUsageComponent usage = SCR_AIVehicleUsageComponent.Cast(vehicle.FindComponent(SCR_AIVehicleUsageComponent));
+		if (usage && usage.GetPilotCompartmentSlot())
+			ordered.Insert(usage.GetPilotCompartmentSlot());
+
+		foreach (BaseCompartmentSlot pilot : slots)
+		{
+			if (pilot && PilotCompartmentSlot.Cast(pilot) && !ordered.Contains(pilot))
+				ordered.Insert(pilot);
+		}
+
+		foreach (BaseCompartmentSlot turret : slots)
+		{
+			if (turret && TurretCompartmentSlot.Cast(turret) && !ordered.Contains(turret))
+				ordered.Insert(turret);
+		}
+
+		foreach (BaseCompartmentSlot cargo : slots)
+		{
+			if (cargo && CargoCompartmentSlot.Cast(cargo) && !ordered.Contains(cargo))
+				ordered.Insert(cargo);
+		}
+
+		array<IEntity> members = {};
+		AROR_ForceSpawner.CountLiving(squad.m_Group, members);
+		bool done = true;
+		foreach (IEntity member : members)
+		{
+			CompartmentAccessComponent access = CompartmentAccessComponent.Cast(member.FindComponent(CompartmentAccessComponent));
+			if (!access)
+				continue;
+
+			BaseCompartmentSlot current = access.GetCompartment();
+			if (access.IsInCompartment() && current && current.GetVehicle() == vehicle)
+				continue;
+
+			if (access.IsGettingIn() || access.IsGettingOut())
+			{
+				done = false;
+				continue;
+			}
+
+			// Seated in some other vehicle: out first
+			if (access.IsInCompartment())
+			{
+				access.GetOutVehicle(EGetOutType.TELEPORT, -1, ECloseDoorAfterActions.INVALID, false);
+				done = false;
+				continue;
+			}
+
+			foreach (BaseCompartmentSlot seat : ordered)
+			{
+				if (!seat.IsCompartmentAccessible() || seat.IsOccupied() || seat.GetOccupant())
+					continue;
+
+				access.GetInVehicle(vehicle, seat, true, -1, ECloseDoorAfterActions.CLOSE_DOOR, false);
+				done = false;
+				break;
+			}
+		}
+
+		return done;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Living members seated in the squad's vehicle
+	protected int CountMounted_S(AROR_HighCommandSquad squad)
+	{
+		if (!squad.m_Vehicle || !squad.m_Group)
+			return 0;
+
+		array<IEntity> members = {};
+		AROR_ForceSpawner.CountLiving(squad.m_Group, members);
+		int mounted;
+		foreach (IEntity member : members)
+		{
+			CompartmentAccessComponent access = CompartmentAccessComponent.Cast(member.FindComponent(CompartmentAccessComponent));
+			if (!access || !access.IsInCompartment())
+				continue;
+
+			BaseCompartmentSlot seat = access.GetCompartment();
+			if (seat && seat.GetVehicle() == squad.m_Vehicle)
+				mounted++;
+		}
+
+		return mounted;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Everyone out of the vehicle, and the group no longer counts it as theirs to use (so it does not re-board)
+	protected void DismountMembers_S(AROR_HighCommandSquad squad)
+	{
+		SetUsableVehicle(squad.m_Group, squad.m_Vehicle, false);
+		array<IEntity> members = {};
+		AROR_ForceSpawner.CountLiving(squad.m_Group, members);
+		foreach (IEntity member : members)
+		{
+			CompartmentAccessComponent access = CompartmentAccessComponent.Cast(member.FindComponent(CompartmentAccessComponent));
+			if (access && access.IsInCompartment() && !access.IsGettingOut())
+				access.GetOutVehicle(EGetOutType.ANIMATED, -1, ECloseDoorAfterActions.INVALID, false);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Adds the vehicle to the group's usable vehicles (it drives it on Move orders) or removes it
+	protected static void SetUsableVehicle(SCR_AIGroup group, IEntity vehicle, bool usable)
+	{
+		if (!group || !vehicle)
+			return;
+
+		SCR_AIVehicleUsageComponent usage = SCR_AIVehicleUsageComponent.Cast(vehicle.FindComponent(SCR_AIVehicleUsageComponent));
+		SCR_AIGroupUtilityComponent utility = group.GetGroupUtilityComponent();
+		if (!usage || !utility)
+			return;
+
+		if (usable)
+			utility.AddUsableVehicle(usage);
+		else
+			utility.RemoveUsableVehicle(usage);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	static string VehicleName(IEntity vehicle)
+	{
+		if (!vehicle)
+			return "vehicle";
+
+		EntityPrefabData data = vehicle.GetPrefabData();
+		if (!data)
+			return "vehicle";
+
+		return AROR_PrefabInfo.GetName(data.GetPrefabName(), true);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -419,6 +926,9 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 
 		squad.m_eOrder = order;
 		squad.m_vTarget = position;
+		squad.m_eEmbarkPhase = AROR_EHighCommandEmbarkPhase.NONE;
+		squad.m_iEmbarkEntryId = 0;
+		squad.m_iEmbarkStarted = 0;
 
 		// The squad's leader may have handed command to the host; ordering it takes it over
 		if (squad.m_iOwnerId == 0)
@@ -794,6 +1304,8 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 					economy.AddManpower_S(squad.m_iManpowerCost);
 				}
 
+				// Its vehicle goes back into the garage too
+				ReturnToGarage_S(squad.m_Vehicle);
 				Print(string.Format("[AROR HICOMM] %1 did not spawn within %2 s; refunded", squad.m_sCallsign, m_iFormTimeout), LogLevel.WARNING);
 				if (squad.m_iOwnerId > 0)
 					Reply(squad.m_iOwnerId, squad.m_sCallsign + " could not form up and was refunded");
@@ -821,6 +1333,10 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 					squad.m_vPosition = squad.m_Group.GetOrigin();
 			}
 
+			squad.m_bMounted = CountMounted_S(squad) > 0;
+			if (squad.m_eOrder == AROR_EHighCommandOrder.EMBARK)
+				UpdateEmbark_S(squad, now);
+
 			// Arrived at a Move point: stand by there, defending it, until the next order
 			if (squad.m_eOrder == AROR_EHighCommandOrder.MOVE && vector.DistanceXZ(squad.m_vPosition, squad.m_vTarget) <= m_fMoveArrivalRadius)
 			{
@@ -843,6 +1359,13 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 
 				if (target && vector.DistanceXZ(squad.m_vPosition, target.GetCenter()) <= Math.Max(target.GetRadius(), m_fMoveArrivalRadius * 2))
 				{
+					// A mounted squad gets out to assault on foot
+					if (squad.m_bMounted)
+					{
+						DismountMembers_S(squad);
+						squad.m_bMounted = false;
+					}
+
 					squad.m_bAssaulting = true;
 					IssueWaypoint_S(squad, m_sAttackWaypointPrefab, target.GetCenter(), Math.Max(target.GetRadius() * 0.5, 25));
 					if (squad.m_iOwnerId > 0)
@@ -930,7 +1453,7 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Row per squad: id|owner|type|callsign|order|target|alive|size|formed|x|z|targetX|targetZ
+	//! Row per squad: id|owner|type|callsign|order|target|alive|size|formed|x|z|targetX|targetZ|mounted|hasVehicle
 	protected string BuildSquadSnapshot()
 	{
 		string snapshot;
@@ -946,6 +1469,16 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 			int order = squad.m_eOrder;
 			snapshot += string.Format("%1|%2|%3|%4|%5|%6|%7|%8|%9", squad.m_iId, squad.m_iOwnerId, squad.m_iType, squad.m_sCallsign, order, squad.m_sTargetId, squad.m_iAlive, squad.m_iSize, formed);
 			snapshot += string.Format("|%1|%2|%3|%4", Math.Round(squad.m_vPosition[0]), Math.Round(squad.m_vPosition[2]), Math.Round(squad.m_vTarget[0]), Math.Round(squad.m_vTarget[2]));
+
+			int mounted;
+			if (squad.m_bMounted)
+				mounted = 1;
+
+			int hasVehicle;
+			if (squad.m_Vehicle && !AROR_ForceSpawner.IsDestroyed(squad.m_Vehicle))
+				hasVehicle = 1;
+
+			snapshot += string.Format("|%1|%2", mounted, hasVehicle);
 		}
 
 		return snapshot;
@@ -994,6 +1527,12 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 			info.m_bFormed = fields[8].ToInt() != 0;
 			info.m_vPosition = Vector(fields[9].ToFloat(), 0, fields[10].ToFloat());
 			info.m_vTarget = Vector(fields[11].ToFloat(), 0, fields[12].ToFloat());
+			if (fields.Count() >= 15)
+			{
+				info.m_bMounted = fields[13].ToInt() != 0;
+				info.m_bHasVehicle = fields[14].ToInt() != 0;
+			}
+
 			m_aSquadInfos.Insert(info);
 		}
 	}
