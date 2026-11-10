@@ -1,0 +1,6326 @@
+{
+  "generatedAt": "2026-11-10T07:55:25.455Z",
+  "snapshot": "b7648abc0bdcc9469f4c84efa1a35fcbec4580c4",
+  "cutoff": "2026-11-09T07:47:09Z",
+  "commits": [
+    {
+      "sha": "b7648abc0bdcc9469f4c84efa1a35fcbec4580c4",
+      "committedAt": "2026-11-10T18:42:22+11:00",
+      "subject": "Use int variables for modulo in site life",
+      "claude": true
+    },
+    {
+      "sha": "e2e740131db5f4e3e1d25727ddfdec4400a8931a",
+      "committedAt": "2026-11-10T18:27:52+11:00",
+      "subject": "Rename a site life variable that may be reserved",
+      "claude": true
+    },
+    {
+      "sha": "fc62833c33dbf0d46510fede1a2aac8d1ffc492d",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Read the site's yaw into a variable before indexing it",
+      "claude": true
+    },
+    {
+      "sha": "9c559025894e5123ead895c53083c8a9a514aaac",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Bring every military site to life",
+      "claude": true
+    },
+    {
+      "sha": "deb9a4911a9d06d105292ffad2514eb6e8b3b460",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Build Stone Ridge up and keep it busy",
+      "claude": true
+    },
+    {
+      "sha": "545a6f2ead91b93c70aaa1bd8dbc01fa5cf12361",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Draw tracks for inbound columns and helicopters",
+      "claude": true
+    },
+    {
+      "sha": "5573b0ea80d7409d2f2caa1ce3eedf18ca4b9fc6",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Make Stone Ridge Base a special site",
+      "claude": true
+    },
+    {
+      "sha": "f3026fbfbec2370e30a9cb82d4e3e558acf61111",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Give Stone Ridge Base's castle walls collision",
+      "claude": true
+    },
+    {
+      "sha": "dd94193525b8934d5bb1b7a04e080c710d7c14ac",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Let the Resistance garrison outposts and other sites",
+      "claude": true
+    },
+    {
+      "sha": "1ff9745130552a8ee69edc0a363ab1c362d15f0f",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Recruit riflemen from the phone at any held site",
+      "claude": true
+    },
+    {
+      "sha": "032b33ac6b81dd461a5f881be9cd848c78b14c6d",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Cap town patrol speed and send civilians running",
+      "claude": true
+    },
+    {
+      "sha": "18ca69e76d34302b2cc2a724a7b3bbd4343772bc",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Offer only land vehicles to Mechanized Squads",
+      "claude": true
+    },
+    {
+      "sha": "1244fc45503cb8d25672c63d8a99f81076755b60",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Sell plain cars without an import facility",
+      "claude": true
+    },
+    {
+      "sha": "ec2de354787a7bd7da14d316965bd29aa3145616",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Fix map symbol helper clashing with engine Shape",
+      "claude": true
+    },
+    {
+      "sha": "94393df86259f92e362fe8008bd961dd44f97f1e",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Update town warfare doc for the new map markers",
+      "claude": true
+    },
+    {
+      "sha": "3b2bedcaa8ac060c9e7943ffcbe22ba9f91f3e73",
+      "committedAt": "2026-11-10T18:26:04+11:00",
+      "subject": "Add mechanized squads and Embark/Dismount orders",
+      "claude": true
+    },
+    {
+      "sha": "cddbed2386c433337dc48e399776bdb42da2abde",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Show town flag markers where the flag stands",
+      "claude": true
+    },
+    {
+      "sha": "3b051727d24d3faa5bee573eb68af5ae87392bb2",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Split cars from light vehicles in Imports",
+      "claude": true
+    },
+    {
+      "sha": "fe1c03b49a3d6a58ea446bb29661bf7fc48f5f92",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Sell early FIA gear with no import facility",
+      "claude": true
+    },
+    {
+      "sha": "b504b1d60de872986e7761c12d9f83517e480187",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Draw map locations as type silhouettes",
+      "claude": true
+    },
+    {
+      "sha": "c80d6730983b7aa103d6b1c29b4a91ae1c50530a",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Redraw the leaderboard as a centred A3 scoreboard",
+      "claude": true
+    },
+    {
+      "sha": "ce4e8f187f8dfe32d8f15c38a1bea7cd026773bf",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Fit HICOMM help lines on one line each",
+      "claude": true
+    },
+    {
+      "sha": "81f79f1a928dd70a8537b6d8b76459f872ad3aac",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Open the shops without facilities; list every port",
+      "claude": true
+    },
+    {
+      "sha": "7e91a434942dcb6c6a10290875b30621b5a9679c",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Document town garrisons and the Chicken economy map",
+      "claude": true
+    },
+    {
+      "sha": "1cdbf4762f4fbd34628723e6ee26d60908133780",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Add Resistance town garrisons bought in HICOMM",
+      "claude": true
+    },
+    {
+      "sha": "d2e129896e13f997d3345dfc0e4094281941c15e",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Build outpost towers for the holder, after the campaign loads",
+      "claude": true
+    },
+    {
+      "sha": "dc672ef67d7ab3c8b1adade0babdcf43addb3071",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Move the town lockdown indicator below the headline banner",
+      "claude": true
+    },
+    {
+      "sha": "10b233a8436aada16c5fa1c45690635561bd15b9",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Rebalance Chicken income around towns and vehicles",
+      "claude": true
+    },
+    {
+      "sha": "8f224ef4b6ecb61af67b2b6f44ba95bc134cd25f",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Sell scrappy starter weapons without import facilities",
+      "claude": true
+    },
+    {
+      "sha": "e692e8f7ac40baa9aae114a61db3c5f25358b7a0",
+      "committedAt": "2026-11-10T18:26:03+11:00",
+      "subject": "Tag fuel tankers as fuel trucks, not tanks",
+      "claude": true
+    },
+    {
+      "sha": "5e128eca35465cd73d7bf08ad76963c70d7b09cc",
+      "committedAt": "2026-11-10T10:57:04+11:00",
+      "subject": "Exclude helicopters from garrison activation",
+      "claude": false
+    },
+    {
+      "sha": "91e2f91e4d253f0209fa2ad333fab391314c5a71",
+      "committedAt": "2026-11-10T10:46:24+11:00",
+      "subject": "Preserve phone boot progress and unify hotkeys",
+      "claude": false
+    },
+    {
+      "sha": "68b5a693642a990a3072fba2571b504ddbfec329",
+      "committedAt": "2026-11-10T10:45:50+11:00",
+      "subject": "Keep HICOMM squads active away from players",
+      "claude": false
+    },
+    {
+      "sha": "3e0fbd5a40b7d821abc68999cad557fe118483e6",
+      "committedAt": "2026-11-10T07:27:49+11:00",
+      "subject": "Rename a variable that used the reserved word owned",
+      "claude": true
+    },
+    {
+      "sha": "ff52fcc6e377203b5275883def9c5e44844e4844",
+      "committedAt": "2026-11-09T22:41:56+11:00",
+      "subject": "Document the lockdown retake, wider site search and site audit",
+      "claude": true
+    },
+    {
+      "sha": "87a3488b37f3dc36ec98e6ae21c44a7074470756",
+      "committedAt": "2026-11-09T22:41:26+11:00",
+      "subject": "Close outpost perimeter walls at the corners",
+      "claude": true
+    },
+    {
+      "sha": "bbee53143e06b6bbea3b239b7add688ff60f293c",
+      "committedAt": "2026-11-09T22:39:51+11:00",
+      "subject": "Count landed and escort troops in the town lockdown",
+      "claude": true
+    },
+    {
+      "sha": "e31a8e7c6b6edf841f6a2b2fde3539221c35528c",
+      "committedAt": "2026-11-09T22:38:11+11:00",
+      "subject": "Search further out for garrison post building sites",
+      "claude": true
+    },
+    {
+      "sha": "f24b40656906ed3a8c9125575b0573550e61a36a",
+      "committedAt": "2026-11-09T22:38:11+11:00",
+      "subject": "Hand the town back to the army that wins a lockdown",
+      "claude": true
+    },
+    {
+      "sha": "5562e80923f5fd66a638dbaa9e342832fc74827f",
+      "committedAt": "2026-11-09T22:38:11+11:00",
+      "subject": "Add a static town site audit for town warfare scenarios",
+      "claude": true
+    },
+    {
+      "sha": "6ccb569e9336075f69cfe60283cfb413d69bf788",
+      "committedAt": "2026-11-09T22:29:15+11:00",
+      "subject": "Document town capture, perimeters, icons and depot move",
+      "claude": true
+    },
+    {
+      "sha": "9e363e3311989fd351d7acfd1169d0cd4631beac",
+      "committedAt": "2026-11-09T22:29:15+11:00",
+      "subject": "Wall in outposts, move Montignac depot, tents off roads",
+      "claude": true
+    },
+    {
+      "sha": "be59b6239b46bffb5d71edc6d72234f7069c75bc",
+      "committedAt": "2026-11-09T22:29:15+11:00",
+      "subject": "Use base-game map icons and always show post flags",
+      "claude": true
+    },
+    {
+      "sha": "b9b806a6a42d9274e33bfec179bf26e704d18a01",
+      "committedAt": "2026-11-09T22:29:15+11:00",
+      "subject": "Start town capture at the flag, count only reinforcements",
+      "claude": true
+    },
+    {
+      "sha": "673c9e6a10fb1dc72c8690b624bf37828503b44c",
+      "committedAt": "2026-11-09T22:29:15+11:00",
+      "subject": "Raise the recipe limit that disabled Chicken's executor",
+      "claude": true
+    },
+    {
+      "sha": "d947363776108d9ba50e8cf0e04901385356f328",
+      "committedAt": "2026-11-09T22:01:47+11:00",
+      "subject": "Fix town kill credit and blend US troop helicopters",
+      "claude": true
+    },
+    {
+      "sha": "446ec7897a838ff47723f5388046daf53a297b0b",
+      "committedAt": "2026-11-09T21:28:51+11:00",
+      "subject": "Refine town combat and WCS air responses",
+      "claude": false
+    },
+    {
+      "sha": "bfac81a18a7c77288843775d49817b466cc58d16",
+      "committedAt": "2026-11-09T18:55:22+11:00",
+      "subject": "Add radio addon folder metas and broadcast dumps",
+      "claude": true
+    },
+    {
+      "sha": "d84eff542e6f0c54679775c22d1d44a2ea63d947",
+      "committedAt": "2026-11-09T18:53:29+11:00",
+      "subject": "Pace attack orders: per-army slots and breathing room",
+      "claude": true
+    },
+    {
+      "sha": "7625324c1c1d503b8a1e95d1799c1faaf9320c99",
+      "committedAt": "2026-11-09T18:49:15+11:00",
+      "subject": "Let the US attack towns and fight the Russians",
+      "claude": true
+    }
+  ],
+  "claudeCommits": 46,
+  "nativeVerified": false,
+  "scope": "Local chicken-dev; actual-source counterexamples with mocked native services, static force matrix, existing local suites. No native compilation or dedicated-server stress test.",
+  "observations": [
+    {
+      "id": "militia_dormancy_erases_purchase",
+      "reproduced": true,
+      "savedInfantry": 12,
+      "dormantSurvivors": 12,
+      "observedInfantry": 0
+    },
+    {
+      "id": "destroyed_militia_vehicle_forgets_live_crew",
+      "reproduced": true,
+      "trackedCrews": 0,
+      "crewDeleted": false
+    },
+    {
+      "id": "militia_retirement_deletes_claimed_player_vehicle",
+      "reproduced": true,
+      "claimed": true,
+      "playerAboard": true,
+      "deletionRequested": true
+    },
+    {
+      "id": "site_handover_discards_live_ownership",
+      "reproduced": true,
+      "retainedGroups": 0,
+      "retainedVehicles": 0,
+      "cleanupCalls": 0
+    },
+    {
+      "id": "hicomm_boarding_reuses_unacknowledged_driver_seat",
+      "reproduced": true,
+      "acceptedAsyncRequests": [
+        {
+          "id": 0,
+          "slot": "driver"
+        },
+        {
+          "id": 1,
+          "slot": "driver"
+        },
+        {
+          "id": 2,
+          "slot": "driver"
+        }
+      ]
+    },
+    {
+      "id": "hicomm_passenger_only_counts_as_mounted",
+      "reproduced": true,
+      "livingMembers": 6,
+      "driverPresent": false,
+      "seatedPassengers": 1,
+      "reportedMounted": true
+    },
+    {
+      "id": "joint_track_mislabels_ground_head_as_air",
+      "reproduced": true,
+      "published": {
+        "found": true,
+        "lead": [
+          100,
+          0,
+          0
+        ],
+        "air": true,
+        "landing": [
+          500,
+          0,
+          0
+        ]
+      },
+      "observationRequired": false
+    }
+  ],
+  "matrix": [
+    {
+      "role": 1,
+      "readiness": 1,
+      "crackdown": 1,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "us_motorized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 30,
+          "profiles": [
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 126
+    },
+    {
+      "role": 1,
+      "readiness": 1,
+      "crackdown": 1,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 1,
+      "readiness": 1,
+      "crackdown": 2,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "us_motorized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 30,
+          "profiles": [
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 126
+    },
+    {
+      "role": 1,
+      "readiness": 1,
+      "crackdown": 2,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 1,
+      "readiness": 1,
+      "crackdown": 3,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 1,
+      "readiness": 1,
+      "crackdown": 3,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 74,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 216
+    },
+    {
+      "role": 1,
+      "readiness": 1,
+      "crackdown": 4,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 1,
+      "readiness": 1,
+      "crackdown": 4,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 74,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 216
+    },
+    {
+      "role": 1,
+      "readiness": 1,
+      "crackdown": 5,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 74,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 216
+    },
+    {
+      "role": 1,
+      "readiness": 1,
+      "crackdown": 5,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 6,
+          "resolvedElements": 6,
+          "personnelReservation": 90,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 16,
+      "totalGroundReservation": 254
+    },
+    {
+      "role": 1,
+      "readiness": 2,
+      "crackdown": 1,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "us_motorized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 30,
+          "profiles": [
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 126
+    },
+    {
+      "role": 1,
+      "readiness": 2,
+      "crackdown": 1,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 1,
+      "readiness": 2,
+      "crackdown": 2,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "us_motorized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 30,
+          "profiles": [
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 126
+    },
+    {
+      "role": 1,
+      "readiness": 2,
+      "crackdown": 2,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 1,
+      "readiness": 2,
+      "crackdown": 3,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 1,
+      "readiness": 2,
+      "crackdown": 3,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 74,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 216
+    },
+    {
+      "role": 1,
+      "readiness": 2,
+      "crackdown": 4,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 1,
+      "readiness": 2,
+      "crackdown": 4,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 74,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 216
+    },
+    {
+      "role": 1,
+      "readiness": 2,
+      "crackdown": 5,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 74,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 216
+    },
+    {
+      "role": 1,
+      "readiness": 2,
+      "crackdown": 5,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "us_motorized",
+            "us_light_support",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 6,
+          "resolvedElements": 6,
+          "personnelReservation": 90,
+          "profiles": [
+            "us_light_support",
+            "us_motorized",
+            "us_motorized",
+            "us_light_support",
+            "us_motorized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 16,
+      "totalGroundReservation": 254
+    },
+    {
+      "role": 1,
+      "readiness": 3,
+      "crackdown": 1,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "us_motorized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 34,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 124
+    },
+    {
+      "role": 1,
+      "readiness": 3,
+      "crackdown": 1,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 1,
+      "readiness": 3,
+      "crackdown": 2,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "us_motorized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 34,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 124
+    },
+    {
+      "role": 1,
+      "readiness": 3,
+      "crackdown": 2,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 1,
+      "readiness": 3,
+      "crackdown": 3,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 1,
+      "readiness": 3,
+      "crackdown": 3,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 64,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 66,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 198
+    },
+    {
+      "role": 1,
+      "readiness": 3,
+      "crackdown": 4,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 1,
+      "readiness": 3,
+      "crackdown": 4,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 64,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 66,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 198
+    },
+    {
+      "role": 1,
+      "readiness": 3,
+      "crackdown": 5,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 64,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 66,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 198
+    },
+    {
+      "role": 1,
+      "readiness": 3,
+      "crackdown": 5,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 86,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 76,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 6,
+          "resolvedElements": 6,
+          "personnelReservation": 88,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 16,
+      "totalGroundReservation": 250
+    },
+    {
+      "role": 1,
+      "readiness": 4,
+      "crackdown": 1,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "us_motorized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 34,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 124
+    },
+    {
+      "role": 1,
+      "readiness": 4,
+      "crackdown": 1,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 1,
+      "readiness": 4,
+      "crackdown": 2,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "us_motorized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 34,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 124
+    },
+    {
+      "role": 1,
+      "readiness": 4,
+      "crackdown": 2,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 1,
+      "readiness": 4,
+      "crackdown": 3,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 1,
+      "readiness": 4,
+      "crackdown": 3,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 64,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 66,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 198
+    },
+    {
+      "role": 1,
+      "readiness": 4,
+      "crackdown": 4,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 1,
+      "readiness": 4,
+      "crackdown": 4,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 64,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 66,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 198
+    },
+    {
+      "role": 1,
+      "readiness": 4,
+      "crackdown": 5,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 64,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 66,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 198
+    },
+    {
+      "role": 1,
+      "readiness": 4,
+      "crackdown": 5,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 86,
+          "profiles": [
+            "us_motorized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 76,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 6,
+          "resolvedElements": 6,
+          "personnelReservation": 88,
+          "profiles": [
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 16,
+      "totalGroundReservation": 250
+    },
+    {
+      "role": 1,
+      "readiness": 5,
+      "crackdown": 1,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 34,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 24,
+          "profiles": [
+            "us_mechanized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "us_armour",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 104
+    },
+    {
+      "role": 1,
+      "readiness": 5,
+      "crackdown": 1,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "us_mechanized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 58,
+          "profiles": [
+            "us_armour",
+            "us_mechanized",
+            "us_motorized",
+            "us_armour"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 160
+    },
+    {
+      "role": 1,
+      "readiness": 5,
+      "crackdown": 2,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 34,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 24,
+          "profiles": [
+            "us_mechanized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "us_armour",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 104
+    },
+    {
+      "role": 1,
+      "readiness": 5,
+      "crackdown": 2,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "us_mechanized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 58,
+          "profiles": [
+            "us_armour",
+            "us_mechanized",
+            "us_motorized",
+            "us_armour"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 160
+    },
+    {
+      "role": 1,
+      "readiness": 5,
+      "crackdown": 3,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "us_mechanized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 58,
+          "profiles": [
+            "us_armour",
+            "us_mechanized",
+            "us_motorized",
+            "us_armour"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 160
+    },
+    {
+      "role": 1,
+      "readiness": 5,
+      "crackdown": 3,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 58,
+          "profiles": [
+            "us_mechanized",
+            "us_mechanized",
+            "us_motorized",
+            "us_armour"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 70,
+          "profiles": [
+            "us_armour",
+            "us_mechanized",
+            "us_motorized",
+            "us_armour",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 196
+    },
+    {
+      "role": 1,
+      "readiness": 5,
+      "crackdown": 4,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "us_mechanized",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 58,
+          "profiles": [
+            "us_armour",
+            "us_mechanized",
+            "us_motorized",
+            "us_armour"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 160
+    },
+    {
+      "role": 1,
+      "readiness": 5,
+      "crackdown": 4,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 58,
+          "profiles": [
+            "us_mechanized",
+            "us_mechanized",
+            "us_motorized",
+            "us_armour"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 70,
+          "profiles": [
+            "us_armour",
+            "us_mechanized",
+            "us_motorized",
+            "us_armour",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 196
+    },
+    {
+      "role": 1,
+      "readiness": 5,
+      "crackdown": 5,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 58,
+          "profiles": [
+            "us_mechanized",
+            "us_mechanized",
+            "us_motorized",
+            "us_armour"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 70,
+          "profiles": [
+            "us_armour",
+            "us_mechanized",
+            "us_motorized",
+            "us_armour",
+            "us_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 196
+    },
+    {
+      "role": 1,
+      "readiness": 5,
+      "crackdown": 5,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 76,
+          "profiles": [
+            "us_motorized",
+            "us_mechanized",
+            "us_motorized",
+            "us_mechanized",
+            "us_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 80,
+          "profiles": [
+            "us_mechanized",
+            "us_mechanized",
+            "us_motorized",
+            "us_armour",
+            "us_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 6,
+          "resolvedElements": 6,
+          "personnelReservation": 92,
+          "profiles": [
+            "us_armour",
+            "us_mechanized",
+            "us_motorized",
+            "us_armour",
+            "us_mechanized",
+            "us_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 16,
+      "totalGroundReservation": 248
+    },
+    {
+      "role": 2,
+      "readiness": 1,
+      "crackdown": 1,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 30,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 126
+    },
+    {
+      "role": 2,
+      "readiness": 1,
+      "crackdown": 1,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 2,
+      "readiness": 1,
+      "crackdown": 2,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 30,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 126
+    },
+    {
+      "role": 2,
+      "readiness": 1,
+      "crackdown": 2,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 2,
+      "readiness": 1,
+      "crackdown": 3,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 2,
+      "readiness": 1,
+      "crackdown": 3,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 74,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 216
+    },
+    {
+      "role": 2,
+      "readiness": 1,
+      "crackdown": 4,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 2,
+      "readiness": 1,
+      "crackdown": 4,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 74,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 216
+    },
+    {
+      "role": 2,
+      "readiness": 1,
+      "crackdown": 5,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 74,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 216
+    },
+    {
+      "role": 2,
+      "readiness": 1,
+      "crackdown": 5,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 6,
+          "resolvedElements": 6,
+          "personnelReservation": 90,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 16,
+      "totalGroundReservation": 254
+    },
+    {
+      "role": 2,
+      "readiness": 2,
+      "crackdown": 1,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 30,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 126
+    },
+    {
+      "role": 2,
+      "readiness": 2,
+      "crackdown": 1,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 2,
+      "readiness": 2,
+      "crackdown": 2,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 30,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 126
+    },
+    {
+      "role": 2,
+      "readiness": 2,
+      "crackdown": 2,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 2,
+      "readiness": 2,
+      "crackdown": 3,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 2,
+      "readiness": 2,
+      "crackdown": 3,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 74,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 216
+    },
+    {
+      "role": 2,
+      "readiness": 2,
+      "crackdown": 4,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 52,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 164
+    },
+    {
+      "role": 2,
+      "readiness": 2,
+      "crackdown": 4,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 74,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 216
+    },
+    {
+      "role": 2,
+      "readiness": 2,
+      "crackdown": 5,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 74,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 60,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 216
+    },
+    {
+      "role": 2,
+      "readiness": 2,
+      "crackdown": 5,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 82,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 6,
+          "resolvedElements": 6,
+          "personnelReservation": 90,
+          "profiles": [
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_light_support",
+            "ussr_motorized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 16,
+      "totalGroundReservation": 254
+    },
+    {
+      "role": 2,
+      "readiness": 3,
+      "crackdown": 1,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 34,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 124
+    },
+    {
+      "role": 2,
+      "readiness": 3,
+      "crackdown": 1,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 2,
+      "readiness": 3,
+      "crackdown": 2,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 34,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 124
+    },
+    {
+      "role": 2,
+      "readiness": 3,
+      "crackdown": 2,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 2,
+      "readiness": 3,
+      "crackdown": 3,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 2,
+      "readiness": 3,
+      "crackdown": 3,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 64,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 66,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 198
+    },
+    {
+      "role": 2,
+      "readiness": 3,
+      "crackdown": 4,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 2,
+      "readiness": 3,
+      "crackdown": 4,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 64,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 66,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 198
+    },
+    {
+      "role": 2,
+      "readiness": 3,
+      "crackdown": 5,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 64,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 66,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 198
+    },
+    {
+      "role": 2,
+      "readiness": 3,
+      "crackdown": 5,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 86,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 76,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 6,
+          "resolvedElements": 6,
+          "personnelReservation": 88,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 16,
+      "totalGroundReservation": 250
+    },
+    {
+      "role": 2,
+      "readiness": 4,
+      "crackdown": 1,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 34,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 124
+    },
+    {
+      "role": 2,
+      "readiness": 4,
+      "crackdown": 1,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 2,
+      "readiness": 4,
+      "crackdown": 2,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 44,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 34,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 124
+    },
+    {
+      "role": 2,
+      "readiness": 4,
+      "crackdown": 2,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 2,
+      "readiness": 4,
+      "crackdown": 3,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 2,
+      "readiness": 4,
+      "crackdown": 3,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 64,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 66,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 198
+    },
+    {
+      "role": 2,
+      "readiness": 4,
+      "crackdown": 4,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 166
+    },
+    {
+      "role": 2,
+      "readiness": 4,
+      "crackdown": 4,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 64,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 66,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 198
+    },
+    {
+      "role": 2,
+      "readiness": 4,
+      "crackdown": 5,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 64,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 66,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 198
+    },
+    {
+      "role": 2,
+      "readiness": 4,
+      "crackdown": 5,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 86,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 76,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 6,
+          "resolvedElements": 6,
+          "personnelReservation": 88,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 16,
+      "totalGroundReservation": 250
+    },
+    {
+      "role": 2,
+      "readiness": 5,
+      "crackdown": 1,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 34,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 24,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 42,
+          "profiles": [
+            "ussr_armour",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 100
+    },
+    {
+      "role": 2,
+      "readiness": 5,
+      "crackdown": 1,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 50,
+          "profiles": [
+            "ussr_armour",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_armour"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 152
+    },
+    {
+      "role": 2,
+      "readiness": 5,
+      "crackdown": 2,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 34,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 2,
+          "resolvedElements": 2,
+          "personnelReservation": 24,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 42,
+          "profiles": [
+            "ussr_armour",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 7,
+      "totalGroundReservation": 100
+    },
+    {
+      "role": 2,
+      "readiness": 5,
+      "crackdown": 2,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 50,
+          "profiles": [
+            "ussr_armour",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_armour"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 152
+    },
+    {
+      "role": 2,
+      "readiness": 5,
+      "crackdown": 3,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 50,
+          "profiles": [
+            "ussr_armour",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_armour"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 152
+    },
+    {
+      "role": 2,
+      "readiness": 5,
+      "crackdown": 3,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_armour"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 62,
+          "profiles": [
+            "ussr_armour",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_armour",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 184
+    },
+    {
+      "role": 2,
+      "readiness": 5,
+      "crackdown": 4,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 56,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 3,
+          "resolvedElements": 3,
+          "personnelReservation": 46,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 50,
+          "profiles": [
+            "ussr_armour",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_armour"
+          ]
+        }
+      ],
+      "totalGroundPackages": 10,
+      "totalGroundReservation": 152
+    },
+    {
+      "role": 2,
+      "readiness": 5,
+      "crackdown": 4,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_armour"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 62,
+          "profiles": [
+            "ussr_armour",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_armour",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 184
+    },
+    {
+      "role": 2,
+      "readiness": 5,
+      "crackdown": 5,
+      "city": false,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 68,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 4,
+          "resolvedElements": 4,
+          "personnelReservation": 54,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_armour"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 62,
+          "profiles": [
+            "ussr_armour",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_armour",
+            "ussr_mechanized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 13,
+      "totalGroundReservation": 184
+    },
+    {
+      "role": 2,
+      "readiness": 5,
+      "crackdown": 5,
+      "city": true,
+      "waves": [
+        {
+          "wave": 1,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 76,
+          "profiles": [
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_mechanized",
+            "ussr_light_support"
+          ]
+        },
+        {
+          "wave": 2,
+          "requestedElements": 5,
+          "resolvedElements": 5,
+          "personnelReservation": 76,
+          "profiles": [
+            "ussr_mechanized",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_armour",
+            "ussr_motorized"
+          ]
+        },
+        {
+          "wave": 3,
+          "requestedElements": 6,
+          "resolvedElements": 6,
+          "personnelReservation": 84,
+          "profiles": [
+            "ussr_armour",
+            "ussr_mechanized",
+            "ussr_motorized",
+            "ussr_armour",
+            "ussr_mechanized",
+            "ussr_motorized"
+          ]
+        }
+      ],
+      "totalGroundPackages": 16,
+      "totalGroundReservation": 236
+    }
+  ],
+  "recipes": [
+    {
+      "id": "combined_arms_l1",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_motorized",
+        "us_mechanized"
+      ]
+    },
+    {
+      "id": "combined_arms_l1",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_motorized",
+        "ussr_mechanized"
+      ]
+    },
+    {
+      "id": "invader_ground_l1",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_mechanized",
+        "ussr_armour"
+      ]
+    },
+    {
+      "id": "invader_ground_l2",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_armour"
+      ]
+    },
+    {
+      "id": "invader_ground_l3",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_armour"
+      ]
+    },
+    {
+      "id": "invader_ground_l4",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_armour",
+        "ussr_armour"
+      ]
+    },
+    {
+      "id": "invader_ground_l5",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_armour",
+        "ussr_armour"
+      ]
+    },
+    {
+      "id": "occupier_ground_l1",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_mechanized",
+        "us_armour"
+      ]
+    },
+    {
+      "id": "occupier_ground_l2",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_motorized",
+        "us_mechanized",
+        "us_armour"
+      ]
+    },
+    {
+      "id": "occupier_ground_l3",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_armour"
+      ]
+    },
+    {
+      "id": "occupier_ground_l4",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_armour",
+        "us_armour"
+      ]
+    },
+    {
+      "id": "occupier_ground_l5",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_motorized",
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_armour",
+        "us_armour"
+      ]
+    },
+    {
+      "id": "occupier_light_l1",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_motorized",
+        "us_motorized",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_light_l2",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_motorized",
+        "us_motorized",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_light_l3",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_motorized",
+        "us_motorized",
+        "us_light_support",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_light_l4",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_motorized",
+        "us_motorized",
+        "us_motorized",
+        "us_light_support",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_light_l5",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_motorized",
+        "us_motorized",
+        "us_motorized",
+        "us_light_support",
+        "us_light_support",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_mechanized_l1",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_motorized",
+        "us_mechanized"
+      ]
+    },
+    {
+      "id": "occupier_mechanized_l2",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized"
+      ]
+    },
+    {
+      "id": "occupier_mechanized_l3",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_mechanized_l4",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_motorized",
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_mechanized_l5",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_motorized",
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "invader_light_l1",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_light_l2",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_light_l3",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_light_support",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_light_l4",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_light_support",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_light_l5",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_light_support",
+        "ussr_light_support",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_mechanized_l1",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_motorized",
+        "ussr_mechanized"
+      ]
+    },
+    {
+      "id": "invader_mechanized_l2",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized"
+      ]
+    },
+    {
+      "id": "invader_mechanized_l3",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_mechanized_l4",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_mechanized_l5",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "occupier_joint_l1",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_airborne",
+        "us_mechanized",
+        "us_armour"
+      ]
+    },
+    {
+      "id": "occupier_joint_l2",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_mechanized",
+        "us_armour"
+      ]
+    },
+    {
+      "id": "occupier_joint_l3",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_armour"
+      ]
+    },
+    {
+      "id": "occupier_joint_l4",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_armour",
+        "us_armour"
+      ]
+    },
+    {
+      "id": "occupier_joint_l5",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_armour",
+        "us_armour",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "invader_joint_l1",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_airborne",
+        "ussr_mechanized",
+        "ussr_armour"
+      ]
+    },
+    {
+      "id": "invader_joint_l2",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_armour"
+      ]
+    },
+    {
+      "id": "invader_joint_l3",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_armour"
+      ]
+    },
+    {
+      "id": "invader_joint_l4",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_armour",
+        "ussr_armour"
+      ]
+    },
+    {
+      "id": "invader_joint_l5",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_armour",
+        "ussr_armour",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "occupier_joint_r2_l1",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_motorized",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_joint_r2_l2",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_motorized",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_joint_r2_l3",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_motorized",
+        "us_light_support",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_joint_r2_l4",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_motorized",
+        "us_motorized",
+        "us_light_support",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_joint_r2_l5",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_motorized",
+        "us_motorized",
+        "us_light_support",
+        "us_light_support",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_joint_r3_l1",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_mechanized"
+      ]
+    },
+    {
+      "id": "occupier_joint_r3_l2",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized"
+      ]
+    },
+    {
+      "id": "occupier_joint_r3_l3",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_joint_r3_l4",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_joint_r3_l5",
+      "role": 1,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_airborne",
+        "us_motorized",
+        "us_motorized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_mechanized",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "invader_joint_r2_l1",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_joint_r2_l2",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_joint_r2_l3",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_light_support",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_joint_r2_l4",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_light_support",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_joint_r2_l5",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_light_support",
+        "ussr_light_support",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_joint_r3_l1",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_mechanized"
+      ]
+    },
+    {
+      "id": "invader_joint_r3_l2",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized"
+      ]
+    },
+    {
+      "id": "invader_joint_r3_l3",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_joint_r3_l4",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_joint_r3_l5",
+      "role": 2,
+      "wave": 0,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_airborne",
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "occupier_townwave1_r1",
+      "role": 1,
+      "wave": 1,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_motorized",
+        "us_motorized",
+        "us_light_support",
+        "us_motorized",
+        "us_light_support",
+        "us_motorized"
+      ]
+    },
+    {
+      "id": "occupier_townwave2_r1",
+      "role": 1,
+      "wave": 2,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_motorized",
+        "us_light_support",
+        "us_motorized",
+        "us_light_support",
+        "us_motorized",
+        "us_motorized"
+      ]
+    },
+    {
+      "id": "occupier_townwave3_r1",
+      "role": 1,
+      "wave": 3,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "us_light_support",
+        "us_motorized",
+        "us_motorized",
+        "us_light_support",
+        "us_motorized",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "occupier_townwave1_r3",
+      "role": 1,
+      "wave": 1,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_motorized",
+        "us_motorized",
+        "us_mechanized",
+        "us_light_support",
+        "us_motorized",
+        "us_mechanized"
+      ]
+    },
+    {
+      "id": "occupier_townwave2_r3",
+      "role": 1,
+      "wave": 2,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_motorized",
+        "us_mechanized",
+        "us_motorized",
+        "us_mechanized",
+        "us_light_support",
+        "us_motorized"
+      ]
+    },
+    {
+      "id": "occupier_townwave3_r3",
+      "role": 1,
+      "wave": 3,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "us_mechanized",
+        "us_motorized",
+        "us_mechanized",
+        "us_light_support",
+        "us_mechanized",
+        "us_motorized"
+      ]
+    },
+    {
+      "id": "occupier_townwave1_r5",
+      "role": 1,
+      "wave": 1,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_motorized",
+        "us_mechanized",
+        "us_motorized",
+        "us_mechanized",
+        "us_light_support",
+        "us_motorized"
+      ]
+    },
+    {
+      "id": "occupier_townwave2_r5",
+      "role": 1,
+      "wave": 2,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_mechanized",
+        "us_mechanized",
+        "us_motorized",
+        "us_armour",
+        "us_motorized",
+        "us_mechanized"
+      ]
+    },
+    {
+      "id": "occupier_townwave3_r5",
+      "role": 1,
+      "wave": 3,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "us_armour",
+        "us_mechanized",
+        "us_motorized",
+        "us_armour",
+        "us_mechanized",
+        "us_motorized"
+      ]
+    },
+    {
+      "id": "invader_townwave1_r1",
+      "role": 2,
+      "wave": 1,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_light_support",
+        "ussr_motorized",
+        "ussr_light_support",
+        "ussr_motorized"
+      ]
+    },
+    {
+      "id": "invader_townwave2_r1",
+      "role": 2,
+      "wave": 2,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_motorized",
+        "ussr_light_support",
+        "ussr_motorized",
+        "ussr_light_support",
+        "ussr_motorized",
+        "ussr_motorized"
+      ]
+    },
+    {
+      "id": "invader_townwave3_r1",
+      "role": 2,
+      "wave": 3,
+      "minReadiness": 1,
+      "maxReadiness": 2,
+      "elements": [
+        "ussr_light_support",
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_light_support",
+        "ussr_motorized",
+        "ussr_light_support"
+      ]
+    },
+    {
+      "id": "invader_townwave1_r3",
+      "role": 2,
+      "wave": 1,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_motorized",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_light_support",
+        "ussr_motorized",
+        "ussr_mechanized"
+      ]
+    },
+    {
+      "id": "invader_townwave2_r3",
+      "role": 2,
+      "wave": 2,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_light_support",
+        "ussr_motorized"
+      ]
+    },
+    {
+      "id": "invader_townwave3_r3",
+      "role": 2,
+      "wave": 3,
+      "minReadiness": 3,
+      "maxReadiness": 4,
+      "elements": [
+        "ussr_mechanized",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_light_support",
+        "ussr_mechanized",
+        "ussr_motorized"
+      ]
+    },
+    {
+      "id": "invader_townwave1_r5",
+      "role": 2,
+      "wave": 1,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_motorized",
+        "ussr_mechanized",
+        "ussr_light_support",
+        "ussr_motorized"
+      ]
+    },
+    {
+      "id": "invader_townwave2_r5",
+      "role": 2,
+      "wave": 2,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_mechanized",
+        "ussr_mechanized",
+        "ussr_motorized",
+        "ussr_armour",
+        "ussr_motorized",
+        "ussr_mechanized"
+      ]
+    },
+    {
+      "id": "invader_townwave3_r5",
+      "role": 2,
+      "wave": 3,
+      "minReadiness": 5,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_armour",
+        "ussr_mechanized",
+        "ussr_motorized",
+        "ussr_armour",
+        "ussr_mechanized",
+        "ussr_motorized"
+      ]
+    },
+    {
+      "id": "occupier_townair_r4",
+      "role": 1,
+      "wave": 9,
+      "minReadiness": 1,
+      "maxReadiness": 5,
+      "elements": [
+        "us_airborne",
+        "us_light_support"
+      ]
+    },
+    {
+      "id": "invader_townair_r4",
+      "role": 2,
+      "wave": 9,
+      "minReadiness": 1,
+      "maxReadiness": 5,
+      "elements": [
+        "ussr_airborne",
+        "ussr_light_support"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "name": "Test-MarsAndAttacks.js",
+      "passed": true,
+      "assertions": 1744,
+      "exitCode": 0,
+      "output": "{\"assertions\":1744,\"note\":\"Native AI, REAPER flight, UI and replication require Workbench compile and Play.\"}"
+    },
+    {
+      "name": "Test-OperationAlerts.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "<anonymous_script>:4\r\n\t\tlet executor = AROR_OperationExecutorComponent.Cast(GetOwner().FindComponent(AROR_OperationExecutorComponent));\r\n\t\t               ^\r\n\r\nReferenceError: AROR_OperationExecutorComponent is not defined\r\n    at Object.eval [as PublishThreatBoard_S] (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-OperationAlerts.js:43:10), <anonymous>:4:18)\r\n    at Object.eval [as NotifyChanged] (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-OperationAlerts.js:43:10), <anonymous>:11:8)\r\n    at runOperationAlertsTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-OperationAlerts.js:89:67)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-OperationAlerts.js:132:29)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n\r\nNode.js v24.22.1"
+    },
+    {
+      "name": "Test-QRFReleaseLifecycle.js",
+      "passed": true,
+      "assertions": 20588,
+      "exitCode": 0,
+      "output": "{\"assertions\":20588,\"note\":\"Actual-source state transitions and dispatch/boarding policy; native AI, route reachability and replication remain unverified.\"}"
+    },
+    {
+      "name": "Test-QRFInterruptions.js",
+      "passed": true,
+      "assertions": 958,
+      "exitCode": 0,
+      "output": "{\"assertions\":958,\"settingsEvidence\":[{\"fixture\":\"source defaults\",\"values\":{\"m_fAttackStagingDistance\":500,\"m_iAttackStagingTimeout\":180,\"m_fQRFTownSupportPerMinute\":6,\"m_iOriginLaunchCooldown\":600,\"m_fOriginMaxGarrisonLoss\":0.5,\"m_fMinOriginDistance\":600,\"m_fOriginWaterPenalty\":2,\"m_iQRFSplitTier\":3,\"m_iQRFReinforcementDelay\":60,\"m_iQRFReserveWait\":300,\"m_iQRFMaxLiveGround\":6,\"m_iQRFMaxLiveAircraft\":6,\"m_iQRFTacticalDuration\":600,\"m_iQRFTownHoldDuration\":900,\"m_iQRFOrderInterval\":15,\"m_iQRFApproachAttempts\":12,\"m_fQRFRoadLaunchRadius\":150,\"m_fQRFVehicleArrivalTolerance\":20,\"m_fQRFObjectiveDeliveryRadius\":100,\"m_fQRFMaximumRoadDismount\":300,\"m_iQRFIngressTimeout\":600,\"m_iQRFDetourTimeout\":90,\"m_iQRFExitTimeout\":30,\"m_iQRFExitRetryLimit\":2,\"m_iQRFExitRecoveryDelay\":10,\"m_iQRFInfantryLegTimeout\":180,\"m_fQRFInfantryPlanningSpeed\":1.5,\"m_fQRFRecoveryRadius\":100,\"m_fQRFVehicleRecoveryRadius\":125,\"m_fQRFThreatDismount\":200,\"m_fQRFWithdrawFraction\":0.4,\"m_fQRFLocalWithdrawFraction\":0.5,\"m_iQRFGroundRetention\":120,\"m_fQRFGroundCleanupDistance\":1200,\"m_iReaperPreparationTimeout\":120,\"m_iReaperFlightTimeout\":180,\"m_fReaperInsertionHeight\":120,\"m_fReaperTransportSpeed\":160,\"m_fReaperTransportHeight\":60,\"m_fReaperHoldingDistance\":700,\"m_iReaperTouchdownTicks\":2,\"m_fReaperDepartureSpeed\":180,\"m_vReaperLZOffset\":[0,0,0],\"m_fReaperLZSearchRadius\":400,\"m_fReaperLandingSeparation\":90,\"m_fReaperLZFallbackRadius\":1200,\"m_fReaperLZAdjustmentRadius\":60,\"m_fReaperPadClearance\":18,\"m_fReaperFormationSpacing\":75,\"m_fReaperCleanupDistance\":1500,\"m_iReaperRetainSeconds\":600,\"m_iReaperSupportSeconds\":300,\"m_fReaperFriendlyClearance\":100,\"m_fReaperSupportRadius\":2000,\"m_iReaperContactAge\":90,\"m_fReaperGunshipHeight\":210,\"m_fReaperGunshipBand\":35,\"m_fReaperGunshipRunHeight\":110,\"m_fReaperGunshipRunBand\":20,\"m_fReaperGunshipRunRadius\":450,\"m_fReaperTrafficClearance\":100}},{\"fixture\":\"Worlds/AROR_Everon/AROR_Everon_Chicken_Layers/Managers.layer\",\"values\":{\"m_fAttackStagingDistance\":500,\"m_iAttackStagingTimeout\":180,\"m_fQRFTownSupportPerMinute\":6,\"m_iOriginLaunchCooldown\":600,\"m_fOriginMaxGarrisonLoss\":0.5,\"m_fMinOriginDistance\":600,\"m_fOriginWaterPenalty\":2,\"m_iQRFSplitTier\":5,\"m_iQRFReinforcementDelay\":60,\"m_iQRFReserveWait\":450,\"m_iQRFMaxLiveGround\":8,\"m_iQRFMaxLiveAircraft\":6,\"m_iQRFTacticalDuration\":600,\"m_iQRFTownHoldDuration\":900,\"m_iQRFOrderInterval\":15,\"m_iQRFApproachAttempts\":12,\"m_fQRFRoadLaunchRadius\":300,\"m_fQRFVehicleArrivalTolerance\":20,\"m_fQRFObjectiveDeliveryRadius\":100,\"m_fQRFMaximumRoadDismount\":300,\"m_iQRFIngressTimeout\":600,\"m_iQRFDetourTimeout\":90,\"m_iQRFExitTimeout\":30,\"m_iQRFExitRetryLimit\":2,\"m_iQRFExitRecoveryDelay\":10,\"m_iQRFInfantryLegTimeout\":180,\"m_fQRFInfantryPlanningSpeed\":1.5,\"m_fQRFRecoveryRadius\":100,\"m_fQRFVehicleRecoveryRadius\":125,\"m_fQRFThreatDismount\":200,\"m_fQRFWithdrawFraction\":0.4,\"m_fQRFLocalWithdrawFraction\":0.5,\"m_iQRFGroundRetention\":120,\"m_fQRFGroundCleanupDistance\":1200,\"m_iReaperPreparationTimeout\":120,\"m_iReaperFlightTimeout\":180,\"m_fReaperInsertionHeight\":120,\"m_fReaperTransportSpeed\":160,\"m_fReaperTransportHeight\":60,\"m_fReaperHoldingDistance\":700,\"m_iReaperTouchdownTicks\":2,\"m_fReaperDepartureSpeed\":180,\"m_vReaperLZOffset\":[0,0,0],\"m_fReaperLZSearchRadius\":400,\"m_fReaperLandingSeparation\":90,\"m_fReaperLZFallbackRadius\":1200,\"m_fReaperLZAdjustmentRadius\":60,\"m_fReaperPadClearance\":18,\"m_fReaperFormationSpacing\":75,\"m_fReaperCleanupDistance\":1500,\"m_iReaperRetainSeconds\":600,\"m_iReaperSupportSeconds\":300,\"m_fReaperFriendlyClearance\":100,\"m_fReaperSupportRadius\":2000,\"m_iReaperContactAge\":90,\"m_fReaperGunshipHeight\":210,\"m_fReaperGunshipBand\":35,\"m_fReaperGunshipRunHeight\":110,\"m_fReaperGunshipRunBand\":20,\"m_fReaperGunshipRunRadius\":450,\"m_fReaperTrafficClearance\":100}},{\"fixture\":\"Worlds/AROR_Everon/AROR_Everon_Layers/Managers.layer\",\"values\":{\"m_fAttackStagingDistance\":500,\"m_iAttackStagingTimeout\":180,\"m_fQRFTownSupportPerMinute\":6,\"m_iOriginLaunchCooldown\":600,\"m_fOriginMaxGarrisonLoss\":0.5,\"m_fMinOriginDistance\":600,\"m_fOriginWaterPenalty\":2,\"m_iQRFSplitTier\":3,\"m_iQRFReinforcementDelay\":60,\"m_iQRFReserveWait\":300,\"m_iQRFMaxLiveGround\":6,\"m_iQRFMaxLiveAircraft\":6,\"m_iQRFTacticalDuration\":600,\"m_iQRFTownHoldDuration\":900,\"m_iQRFOrderInterval\":15,\"m_iQRFApproachAttempts\":12,\"m_fQRFRoadLaunchRadius\":150,\"m_fQRFVehicleArrivalTolerance\":20,\"m_fQRFObjectiveDeliveryRadius\":100,\"m_fQRFMaximumRoadDismount\":300,\"m_iQRFIngressTimeout\":600,\"m_iQRFDetourTimeout\":90,\"m_iQRFExitTimeout\":30,\"m_iQRFExitRetryLimit\":2,\"m_iQRFExitRecoveryDelay\":10,\"m_iQRFInfantryLegTimeout\":180,\"m_fQRFInfantryPlanningSpeed\":1.5,\"m_fQRFRecoveryRadius\":100,\"m_fQRFVehicleRecoveryRadius\":125,\"m_fQRFThreatDismount\":200,\"m_fQRFWithdrawFraction\":0.4,\"m_fQRFLocalWithdrawFraction\":0.5,\"m_iQRFGroundRetention\":120,\"m_fQRFGroundCleanupDistance\":1200,\"m_iReaperPreparationTimeout\":120,\"m_iReaperFlightTimeout\":180,\"m_fReaperInsertionHeight\":120,\"m_fReaperTransportSpeed\":160,\"m_fReaperTransportHeight\":60,\"m_fReaperHoldingDistance\":700,\"m_iReaperTouchdownTicks\":2,\"m_fReaperDepartureSpeed\":180,\"m_vReaperLZOffset\":[0,0,0],\"m_fReaperLZSearchRadius\":400,\"m_fReaperLandingSeparation\":90,\"m_fReaperLZFallbackRadius\":1200,\"m_fReaperLZAdjustmentRadius\":60,\"m_fReaperPadClearance\":18,\"m_fReaperFormationSpacing\":75,\"m_fReaperCleanupDistance\":1500,\"m_iReaperRetainSeconds\":600,\"m_iReaperSupportSeconds\":300,\"m_fReaperFriendlyClearance\":100,\"m_fReaperSupportRadius\":2000,\"m_iReaperContactAge\":90,\"m_fReaperGunshipHeight\":210,\"m_fReaperGunshipBand\":35,\"m_fReaperGunshipRunHeight\":110,\"m_fReaperGunshipRunBand\":20,\"m_fReaperGunshipRunRadius\":450,\"m_fReaperTrafficClearance\":100}}],\"note\":\"Actual-source interruption, optional-escort, retention and Economy checks; native physics, spawn queues and multiplayer still require Workbench.\"}"
+    },
+    {
+      "name": "Test-StrongholdIntegration.js",
+      "passed": true,
+      "assertions": 95,
+      "exitCode": 0,
+      "output": "{\"assertions\":95,\"note\":\"Actual-source scripted admission, funding, wave, stronghold lifecycle and save policy. Native placement, flight, garrison queues and multiplayer remain unverified.\"}"
+    },
+    {
+      "name": "Test-QRFManagerSoak.js",
+      "passed": true,
+      "assertions": 60024,
+      "exitCode": 0,
+      "output": "{\"assertions\":60024,\"simulatedTicks\":10000,\"admittedOrDeduplicated\":2082,\"rejected\":27918,\"notifications\":6053,\"maxCallbackDepth\":1,\"note\":\"Deterministic mocked scheduler soak; no native driving, combat, network or real-time performance evidence.\"}"
+    },
+    {
+      "name": "Test-QRFMutations.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFMutations.js:129\r\n  if(!baseline.passed)throw Error('Mutation baseline failed: '+suite+'\\n'+baseline.error);\r\n                      ^\r\n\r\nError: Mutation baseline failed: Test-SpottingAndAirResponse.js\r\n<anonymous_script>:19\r\n\t\t\tif (this.m_aScanReinforcements.Contains(character))\r\n\t\t\t                               ^\r\n\r\nTypeError: Cannot read properties of undefined (reading 'Contains')\r\n    at Object.eval (eval at compile (Test-SpottingAndAirResponse.js:89:9), <anonymous>:19:35)\r\n    at Test-SpottingAndAirResponse.js:222:34\r\n    at Script.runInContext (node:vm:149:12)\r\n    at Script.runInNewContext (node:vm:154:17)\r\n    at Object.runInNewContext (node:vm:310:38)\r\n    at execute (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFMutations.js:152:10)\r\n    at runQRFMutationTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFMutations.js:128:18)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFMutations.js:155:29)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at runQRFMutationTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFMutations.js:129:29)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-QRFMutations.js:155:29)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1"
+    },
+    {
+      "name": "Test-QRFRouteAudit.js",
+      "passed": true,
+      "assertions": 147,
+      "exitCode": 0,
+      "output": "{\"assertions\":147,\"note\":\"Audit scheduling and coverage only. Run the sweep in Workbench for native planning evidence.\"}"
+    },
+    {
+      "name": "Test-QRFStrategy.js",
+      "passed": true,
+      "assertions": 7254,
+      "exitCode": 0,
+      "output": "{\n  assertions: 7254,\n  note: 'Actual-source bodies; native lifecycle, perception, replication and serialization remain mocked/unverified.'\n}"
+    },
+    {
+      "name": "Test-QRFProgression.js",
+      "passed": true,
+      "assertions": 3949,
+      "exitCode": 0,
+      "output": "{\n  assertions: 3949,\n  note: 'Actual source and all Chicken readiness/intensity cells; native compile, driving, crew, replication and balance remain unverified.'\n}"
+    },
+    {
+      "name": "Test-QRFResponseMix.js",
+      "passed": true,
+      "assertions": 1842,
+      "exitCode": 0,
+      "output": "{\"assertions\":1842,\"note\":\"Actual-source mix, routing, accounting and save checks; native execution remains mocked.\"}"
+    },
+    {
+      "name": "Test-ReaperLandingSearch.js",
+      "passed": true,
+      "assertions": 159,
+      "exitCode": 0,
+      "output": "{\"assertions\":159,\"note\":\"Native Lamentin terrain and REAPER landings still require Workbench Play.\"}"
+    },
+    {
+      "name": "Test-QRFBoarding.js",
+      "passed": true,
+      "assertions": 97,
+      "exitCode": 0,
+      "output": "{\"assertions\":97,\"note\":\"Native paused simulation/queue cancellation must be verified in Workbench Play.\"}"
+    },
+    {
+      "name": "Test-QRFIngress.js",
+      "passed": true,
+      "assertions": 53,
+      "exitCode": 0,
+      "output": "{\"assertions\":53,\"note\":\"Mocked native services; Workbench compile and airport driving/unloading required.\"}"
+    },
+    {
+      "name": "Test-QRFUnloading.js",
+      "passed": true,
+      "assertions": 42,
+      "exitCode": 0,
+      "output": "{\"assertions\":42,\"note\":\"Native clearance, animation and replication mocked; compile and Play required.\"}"
+    },
+    {
+      "name": "Test-QRFRetention.js",
+      "passed": true,
+      "assertions": 10,
+      "exitCode": 0,
+      "output": "{\"assertions\":10,\"note\":\"Native distance culling, AI dormancy and deletion require Workbench Play.\"}"
+    },
+    {
+      "name": "Test-QRFSupportAndHeadlines.js",
+      "passed": true,
+      "assertions": 94,
+      "exitCode": 0,
+      "output": "{\"assertions\":94,\"note\":\"Native banner rendering, terrain flight, target spotting and road navigation require Workbench compile and Play.\"}"
+    },
+    {
+      "name": "Test-QRFVehicleFaction.js",
+      "passed": true,
+      "assertions": 14,
+      "exitCode": 0,
+      "output": "{\"assertions\":14,\"note\":\"Compile and combat test required; no vehicle re-factioning or loss-price changes.\"}"
+    },
+    {
+      "name": "Test-QRFTownHold.js",
+      "passed": true,
+      "assertions": 22,
+      "exitCode": 0,
+      "output": "{\"assertions\":22,\"note\":\"Native navigation, dismounting and town occupation still require Play verification.\"}"
+    },
+    {
+      "name": "Test-TownDoctrine.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "<anonymous_script>:10\r\n\t\t\tinterval = Math.Round(scaled);\r\n\t\t\t                ^\r\n\r\nTypeError: Math.Round is not a function\r\n    at Object.eval (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-TownDoctrine.js:77:10), <anonymous>:10:20)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-TownDoctrine.js:98:50)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1"
+    },
+    {
+      "name": "Test-SpottingAndAirResponse.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "<anonymous_script>:19\r\n\t\t\tif (this.m_aScanReinforcements.Contains(character))\r\n\t\t\t                               ^\r\n\r\nTypeError: Cannot read properties of undefined (reading 'Contains')\r\n    at Object.eval (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-SpottingAndAirResponse.js:89:9), <anonymous>:19:35)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-SpottingAndAirResponse.js:222:34)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1"
+    },
+    {
+      "name": "Test-EveronQRFIntegration.js",
+      "passed": true,
+      "assertions": 50,
+      "exitCode": 0,
+      "output": "{\"assertions\":50,\"note\":\"Native events, faction manager and response execution mocked; Play verification required.\"}"
+    },
+    {
+      "name": "Test-InvaderCampaign.js",
+      "passed": true,
+      "assertions": 55,
+      "exitCode": 0,
+      "output": "{\n  assertions: 55,\n  baselineMeanPercent: 39,\n  escalatedMeanPercent: 62.8,\n  note: 'Funded policy model, not native gameplay or sustained income/performance acceptance.'\n}"
+    },
+    {
+      "name": "Test-RebIntel.js",
+      "passed": true,
+      "assertions": 86,
+      "exitCode": 0,
+      "output": "{\n  assertions: 86,\n  note: 'Native rendering, replication/JIP and Enforce compilation still require Workbench.'\n}"
+    },
+    {
+      "name": "Test-MissionLifecycle.js",
+      "passed": true,
+      "assertions": 84,
+      "exitCode": 0,
+      "output": "{\"assertions\":84,\"note\":\"Native spawning, seating and replication mocked; Workbench compile and Play required.\"}"
+    },
+    {
+      "name": "Test-CapturePlacement.js",
+      "passed": true,
+      "assertions": 14,
+      "exitCode": 0,
+      "output": "{\"assertions\":14,\"note\":\"Native traces, navmesh access, replication and driving still require Workbench verification.\"}"
+    },
+    {
+      "name": "Test-GarrisonsAndSupport.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonsAndSupport.js:23\r\n    if(!m)throw Error('Missing '+name);\r\n          ^\r\n\r\nError: Missing InfantryPrefab\r\n    at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonsAndSupport.js:23:17)\r\n    at roster (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonsAndSupport.js:114:140)\r\n    at runGarrisonsAndSupportTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonsAndSupport.js:117:17)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-GarrisonsAndSupport.js:566:30)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n\r\nNode.js v24.22.1"
+    },
+    {
+      "name": "Test-GarrisonCrew.js",
+      "passed": true,
+      "assertions": 37,
+      "exitCode": 0,
+      "output": "{\n  assertions: 37,\n  note: 'Native compartments and AI mocked; Workbench compile and sustained mounted-defence acceptance still required.'\n}"
+    },
+    {
+      "name": "Test-OutpostEquipment.js",
+      "passed": true,
+      "assertions": 27,
+      "exitCode": 0,
+      "output": "{\n  assertions: 27,\n  note: 'Native inventories mocked. Container contents, access, depletion and save/load require Workbench.'\n}"
+    },
+    {
+      "name": "Test-PostsAndPads.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-PostsAndPads.js:42\r\n  if(!m)throw Error('Missing actual method '+name);\r\n        ^\r\n\r\nError: Missing actual method InfantryPrefab\r\n    at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-PostsAndPads.js:42:15)\r\n    at runPostsAndPadsTests (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-PostsAndPads.js:57:219)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-PostsAndPads.js:145:14)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n\r\nNode.js v24.22.1"
+    },
+    {
+      "name": "Test-DefenceLayout.js",
+      "passed": true,
+      "assertions": 177,
+      "exitCode": 0,
+      "output": "{\n  assertions: 177,\n  note: 'Native terrain/trace services mocked; actual bushes, walls, gun height, navigation and AI need Workbench.'\n}"
+    },
+    {
+      "name": "Test-FortifiedOutpostLayouts.js",
+      "passed": true,
+      "assertions": 1477,
+      "exitCode": 0,
+      "output": "{\n  assertions: 1477,\n  note: 'Estimated envelopes only; native bounds, terrain, navigation and loot acceptance required.'\n}"
+    },
+    {
+      "name": "Test-DefenceSiteAudit.js",
+      "passed": true,
+      "assertions": 61,
+      "exitCode": 0,
+      "output": "{\n  assertions: 61,\n  note: 'Editor orchestration and geometry services mocked; native compile and dense scan still required.'\n}"
+    },
+    {
+      "name": "Test-DefenceWallGrounding.js",
+      "passed": true,
+      "assertions": 21,
+      "exitCode": 0,
+      "output": "{\n  assertions: 21,\n  note: 'Editor invalidation reproduced with mocks; native compile/grounding still required.'\n}"
+    },
+    {
+      "name": "Test-CampaignFlagEditor.js",
+      "passed": true,
+      "assertions": 14,
+      "exitCode": 0,
+      "output": "{\"assertions\":14,\"note\":\"Mocked editor API; native plugin compile, terrain collision and actual mesh placement still need Workbench.\"}"
+    },
+    {
+      "name": "Test-HighCommandSimulation.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "<anonymous_script>:62\r\n\t\t\tsquad.m_bMounted = CountMounted_S(squad) > 0;\r\n\t\t\t^\r\n\r\nReferenceError: CountMounted_S is not defined\r\n    at Object.eval [as Update_S] (eval at method (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-HighCommandSimulation.js:37:10), <anonymous>:62:4)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-HighCommandSimulation.js:71:5)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1"
+    },
+    {
+      "name": "Test-PhoneSession.js",
+      "passed": true,
+      "assertions": 111,
+      "exitCode": 0,
+      "output": "{\"assertions\":111,\"note\":\"Actual presentation/lifecycle bodies with native services mocked. Workbench compile, phone input/rendering and real map lifecycle still required.\"}"
+    },
+    {
+      "name": "Test-GarrisonHelicopterProximity.js",
+      "passed": true,
+      "assertions": 29,
+      "exitCode": 0,
+      "output": "{\"assertions\":29,\"note\":\"Actual source with native services mocked; Workbench compile and multiplayer flight acceptance still required.\"}"
+    },
+    {
+      "name": "Test-PlayerSquads.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "<anonymous_script>:15\r\n\t\t\tsiteName = location.GetName();\r\n\t\t\t                    ^\r\n\r\nTypeError: location.GetName is not a function\r\n    at Object.eval [as Recruit_S] (eval at compile (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-PlayerSquads.js:93:10), <anonymous>:15:24)\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-PlayerSquads.js:147:11)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.22.1"
+    },
+    {
+      "name": "Test-PlayerSquadMutations.js",
+      "passed": false,
+      "assertions": 0,
+      "exitCode": 1,
+      "output": "node:internal/assert/utils:77\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: Mutation baseline must pass: location.GetName is not a function\r\n    at Object.<anonymous> (C:\\Open Resistance\\AR-Open-Resistance\\tools\\Test-PlayerSquadMutations.js:27:8)\r\n    at Module._compile (node:internal/modules/cjs/loader:1937:14)\r\n    at Object..js (node:internal/modules/cjs/loader:2070:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1658:32)\r\n    at node:internal/modules/cjs/loader:1450:12\r\n    at Module._load (node:electron/js2c/node_init:2:18263)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:268:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:169:5)\r\n    at node:internal/main/run_main_module:33:47 {\r\n  generatedMessage: false,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '==',\r\n  diff: 'simple'\r\n}\r\n\r\nNode.js v24.22.1"
+    },
+    {
+      "name": "Test-QRFSourceStructure.ps1",
+      "passed": true,
+      "assertions": 0,
+      "exitCode": 0,
+      "output": "Checked balanced delimiters, strings, comments and preprocessor nesting in 282 addon scripts, including Workbench plugins. Not an Enforce compilation."
+    },
+    {
+      "name": "Test-ExecutorSettings.ps1",
+      "passed": true,
+      "assertions": 0,
+      "exitCode": 0,
+      "output": "AROR_Everon_Chicken_Layers: 68 validator terms, 63 layer overrides, 12 vehicle profiles checked against 8 presets\nAROR_Everon_Layers: 68 validator terms, 63 layer overrides, 12 vehicle profiles checked against 8 presets\nWARN AROR_Everon_Chicken_Layers: profile us_airborne always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile us_airborne always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile us_airborne_light always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile us_airborne_light always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile us_light_support always gets UAZ469_PKM.et from USSR_ARMY (one ARMED_CAR)\nWARN AROR_Everon_Chicken_Layers: profile ussr_airborne always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile ussr_airborne always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile ussr_airborne_light always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile ussr_airborne_light always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Chicken_Layers: profile ussr_light_support always gets UAZ469_PKM.et from USSR_ARMY (one ARMED_CAR)\nWARN AROR_Everon_Layers: profile us_airborne always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile us_airborne always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile us_airborne_light always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile us_airborne_light always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile us_light_support always gets UAZ469_PKM.et from USSR_ARMY (one ARMED_CAR)\nWARN AROR_Everon_Layers: profile ussr_airborne always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile ussr_airborne always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile ussr_airborne_light always gets Mi8MT_unarmed_transport.et from USSR_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile ussr_airborne_light always gets UH1H.et from US_ARMY (one HELI_TRANSPORT)\nWARN AROR_Everon_Layers: profile ussr_light_support always gets UAZ469_PKM.et from USSR_ARMY (one ARMED_CAR)\nWARN preset RHS_AFRF_MSV_VPKO3_EMR (OpenResistanceRHSCompat) has no vehicles of its own: an army using it spawns no ground or air responses unless another addon overrides it\nWARN preset RHS_USAF_FORECON (OpenResistanceRHSCompat) has no vehicles of its own: an army using it spawns no ground or air responses unless another addon overrides it\nExecutor settings OK"
+    },
+    {
+      "name": "Test-TownSites.ps1",
+      "passed": true,
+      "assertions": 0,
+      "exitCode": 0,
+      "output": "AROR_Everon_Chicken: 18 towns/cities, 3 kept outposts, 12 military/resource sites\nWARN  everon_military_outpost_lamentin is 317 m from everon_lamentin_town (under 600 m)\nWARN  everon_military_outpost_hospital is 595 m from everon_tyrone (under 600 m)\nWARN  everon_fortress_vostok is 301 m from everon_saint_pierre (under 600 m)\nWARN  everon_military_outpost_levie is 378 m from everon_levie (under 600 m)\nAll site checks passed."
+    }
+  ],
+  "temporaryArtifacts": "C:\\Users\\jaspe\\AppData\\Local\\Temp\\AROR-review-20261110-QXiFaT",
+  "summary": {
+    "suites": 43,
+    "passing": 34,
+    "failing": [
+      "Test-OperationAlerts.js",
+      "Test-QRFMutations.js",
+      "Test-TownDoctrine.js",
+      "Test-SpottingAndAirResponse.js",
+      "Test-GarrisonsAndSupport.js",
+      "Test-PostsAndPads.js",
+      "Test-HighCommandSimulation.js",
+      "Test-PlayerSquads.js",
+      "Test-PlayerSquadMutations.js"
+    ],
+    "counterexamples": 7
+  }
+}
