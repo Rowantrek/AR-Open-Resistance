@@ -198,14 +198,14 @@ on the Chicken game mode); prices are faction funds unless noted.
 | AKS-74U / AK-74 (no facility needed) | 350 / 400 | a few minutes of one town; a new player starts with 600 |
 | RPG-7, PG-7VL / PG-7VM rockets (no facility) | 900, 150 / 200 | |
 | Early FIA kit (no facility): Sa-58P/V, SVD, UK-59, RPG-75, PM, RGD-5 | 150-2,200 | the FIA's own arsenal, available from the start |
-| Light car (UAZ, Imports, x1.5) | ~2,700 | 3 towns for 15 minutes; two in half an hour |
+| Light car (UAZ, Imports, x1.5; no facility) | ~2,700 | 3 towns for 15 minutes; two in half an hour |
 | Armed car | ~7,200 | 3 towns for 35 minutes |
 | APC (Imports) | ~21,750 | 3 towns for ~2 hours, or a city |
 | Town garrison: infantry | 300 + 1 MP a soldier | a full team (4) is ~1,200 |
 | Town garrison: APC / armour | 12,000 / 25,000 + 3 MP | needs 1 / 2 held seaports |
 
 Manpower: 1 per town and 2 per city each payment. Resources (170), factories, ports and the armies' external support
-(170 each) are the old 15-minute rates rescaled. Vehicles keep their import facility requirements; starter weapons do not.
+(170 each) are the old 15-minute rates rescaled. Plain cars (unarmed, base cost up to 1,800: UAZ, S105, M151, M998, MRZR) and starter weapons need no import facility; every other vehicle keeps its requirement.
 
 ## Town garrisons (Resistance)
 
