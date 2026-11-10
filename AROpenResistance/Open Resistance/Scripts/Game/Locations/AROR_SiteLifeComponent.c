@@ -1,7 +1,7 @@
-[ComponentEditorProps(category: "OpenResistance/Locations", description: "Special site: a built-up, high-value installation. Pays its holder extra income, is dressed with a steel-plated yard and base buildings, has helipads with parked helicopters while an AI army holds it, and keeps soldiers and a truck moving around it. Put on a location next to its garrison.")]
-class AROR_SpecialSiteComponentClass : ScriptComponentClass {}
+[ComponentEditorProps(category: "OpenResistance/Locations", description: "Site life for a military site: builds the camp around its garrison (plated yard, camp props, dirt and tracks on the ground), keeps soldiers moving (fire teams walking the outer perimeter, pairs walking between the buildings, an optional truck) and parks helicopters on its helipads while an AI army holds it. Optionally pays its holder extra income. Put on a location next to its garrison.")]
+class AROR_SiteLifeComponentClass : ScriptComponentClass {}
 
-//! One piece of a special site's dressing, placed in the site's own frame (x right, z forward of the location entity)
+//! One piece of a site's authored dressing, placed in the site's own frame (x right, z forward of the location entity)
 [BaseContainerProps()]
 class AROR_SpecialSiteProp
 {
@@ -17,39 +17,92 @@ class AROR_SpecialSiteProp
 	bool m_bWorkPoint;
 }
 
-//! A high-value site (Chicken: Stone Ridge Base).
-//! Every machine: at play start the authored sandbags are removed and the base is built locally from fixed offsets
-//! (a plated yard and the props list), so every player sees the same base without replicating hundreds of props.
-//! Server: extra income for the holder; while an AI army holds it and players are near, a parked helicopter on each
-//! helipad, soldiers walking between the buildings, fire teams walking a loop outside the walls and a truck driving
-//! laps round the base. Lost helicopters, teams and the truck return after the respawn time. Nothing is saved.
-class AROR_SpecialSiteComponent : ScriptComponent
+//! Deterministic random numbers: every machine dresses a site identically from its location ID
+class AROR_SeededRandom
 {
-	[Attribute("1500", desc: "Extra money paid to the holder every income payment", params: "0 100000 50", category: "Income")]
+	protected int m_iState;
+
+	void AROR_SeededRandom(int seed)
+	{
+		m_iState = seed;
+		if (m_iState == 0)
+			m_iState = 0x2545F491;
+	}
+
+	//! 0 .. 2^31-1 (xorshift)
+	int Next()
+	{
+		m_iState = m_iState ^ (m_iState << 13);
+		m_iState = m_iState ^ ((m_iState >> 17) & 0x7FFF);
+		m_iState = m_iState ^ (m_iState << 5);
+		return m_iState & 0x7FFFFFFF;
+	}
+
+	//! 0 .. 1
+	float NextFloat()
+	{
+		return (Next() % 100000) / 100000.0;
+	}
+
+	//! min .. max - 1
+	int Range(int min, int max)
+	{
+		if (max <= min)
+			return min;
+		return min + Next() % (max - min);
+	}
+}
+
+//! Life at a military site (see ARCHITECTURE.md -> Locations).
+//! Every machine, at play start, from fixed data or the location ID (so every player sees the same camp without
+//! replicating hundreds of props): optionally removes the authored sandbags, lays steel plating over the yard (it
+//! hides the grass), places the authored props list and, with auto dressing, rings the garrison with a varied camp
+//! (tents, containers, nets, generators, fuel, stores) on dirt, oil stains and vehicle tracks.
+//! Server: optional extra income for the holder; while an AI army holds the site and players are near, a parked
+//! helicopter on each helipad, pairs of soldiers walking between the buildings, fire teams walking the outer
+//! perimeter and an optional truck driving laps. Lost ones return after the respawn time. Nothing is saved.
+class AROR_SiteLifeComponent : ScriptComponent
+{
+	[Attribute("0", desc: "Extra money paid to the holder every income payment (a special site)", params: "0 100000 50", category: "Income")]
 	protected int m_iMoneyPerPayment;
-	[Attribute("3", desc: "Extra Resistance manpower every income payment while the Resistance holds it", params: "0 50 1", category: "Income")]
+	[Attribute("0", desc: "Extra Resistance manpower every income payment while the Resistance holds it", params: "0 50 1", category: "Income")]
 	protected int m_iManpowerPerPayment;
 
-	[Attribute("1", desc: "Remove the location's authored sandbag walls and positions (direct children whose prefab is a sandbag) at play start", category: "Layout")]
+	[Attribute("0", desc: "Remove the location's authored sandbag walls and positions (direct children with a sandbag model) at play start", category: "Layout")]
 	protected bool m_bRemoveSandbags;
-	[Attribute("{CABCA96DA5450B05}Prefabs/Structures/Military/Camps/AirfieldMatting_01/AirfieldMatting_US_01_long.et", UIWidgets.ResourceNamePicker, desc: "Ground plating laid edge to edge over the yard (empty: none). Covers the grass.", params: "et", category: "Layout")]
+	[Attribute("{6AC9F0A1B2C3D410}Prefabs/Props/Locations/AROR_Prop_YardPlating.et", UIWidgets.ResourceNamePicker, desc: "Ground plating laid edge to edge over the yard (empty: none). Must occlude clutter, or the grass grows through it.", params: "et", category: "Layout")]
 	protected ResourceName m_sFloorPrefab;
-	[Attribute("-37 0 -43", desc: "Yard plating: corner in the site's frame, metres", category: "Layout")]
+	[Attribute("1", desc: "Plate the garrison's compound (its defence square). Off: plate the rectangle below instead.", category: "Layout")]
+	protected bool m_bFloorCompound;
+	[Attribute("-38 0 -44", desc: "Plated rectangle when not plating the compound: corner in the site's frame, metres", category: "Layout")]
 	protected vector m_vFloorMin;
-	[Attribute("31 0 40", desc: "Yard plating: opposite corner in the site's frame, metres", category: "Layout")]
+	[Attribute("49 0 41", desc: "...opposite corner", category: "Layout")]
 	protected vector m_vFloorMax;
+	[Attribute("10", desc: "No plating within this distance of a helipad's centre (the pad has its own deck), metres", params: "0 30 0.5", category: "Layout")]
+	protected float m_fPadPlatingGap;
 	[Attribute(desc: "Buildings, props and helipads placed at play start", category: "Layout")]
 	protected ref array<ref AROR_SpecialSiteProp> m_aProps;
 
+	[Attribute("1", desc: "Ring the garrison's compound with a camp picked from the camp set (seeded by the location ID, so it is the same every time and on every machine)", category: "Auto dressing")]
+	protected bool m_bAutoDressing;
+	[Attribute("7", desc: "Camp ring distance outside the compound edge, metres (sites with a raised perimeter add 10)", params: "2 40 0.5", category: "Auto dressing")]
+	protected float m_fAutoRingOffset;
+	[Attribute("11", desc: "Spacing of camp slots along the ring, metres", params: "5 30 0.5", category: "Auto dressing")]
+	protected float m_fAutoSpacing;
+	[Attribute("0.7", desc: "Share of camp slots that get a prop (the rest only dirt)", params: "0 1 0.05", category: "Auto dressing")]
+	protected float m_fAutoFill;
+	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Camp set to pick from (empty: the built-in US camp set)", params: "et", category: "Auto dressing")]
+	protected ref array<ResourceName> m_aAutoPool;
+
 	[Attribute("", UIWidgets.ComboBox, desc: "Helicopter parked on each helipad while an AI army holds the site, in pad order (empty: transport helicopters). Taken from the holder's faction preset.", enums: ParamEnumArray.FromEnum(AROR_EVehicleType), category: "Activity")]
 	protected ref array<AROR_EVehicleType> m_aHelicopterTypes;
-	[Attribute("3", desc: "Pairs of soldiers walking between the base's buildings", params: "0 8 1", category: "Activity")]
+	[Attribute("2", desc: "Pairs of soldiers walking between the camp's buildings", params: "0 8 1", category: "Activity")]
 	protected int m_iWorkerPairs;
-	[Attribute("2", desc: "Fire teams walking a loop outside the walls", params: "0 6 1", category: "Activity")]
+	[Attribute("1", desc: "Fire teams walking the perimeter outside the compound", params: "0 6 1", category: "Activity")]
 	protected int m_iFootPatrols;
-	[Attribute("75", desc: "Radius of the loop round the base walked by the fire teams and driven by the truck, metres", params: "20 400 5", category: "Activity")]
+	[Attribute("0", desc: "Radius of the perimeter loop round the compound, metres (0: just outside the camp ring)", params: "0 400 5", category: "Activity")]
 	protected float m_fLoopRadius;
-	[Attribute("1", desc: "A truck (or car) driving laps round the base", category: "Activity")]
+	[Attribute("0", desc: "A truck (or car) driving laps of the perimeter loop", category: "Activity")]
 	protected bool m_bSupplyTruck;
 	[Attribute("25", desc: "The truck's top speed, km/h", params: "5 80 1", category: "Activity")]
 	protected float m_fTruckSpeed;
@@ -70,7 +123,37 @@ class AROR_SpecialSiteComponent : ScriptComponent
 	protected static const int LOOP_POINTS = 8;
 	protected static const int MAX_FLOOR_TILES = 900;
 	protected static const float PAD_MOVED = 30;		//!< A helicopter this far off its pad has been taken
-	protected static const float SPAWN_CLEARANCE = 40;	//!< Soldiers and vehicles appear at the spot furthest from players, at least this far if possible
+	protected static const float SLOT_CLEARANCE = 6;	//!< Camp slots keep this far from the site's own pieces (towers, guns, positions)
+
+	// Built-in camp set (US). Big pieces first in each group so the seeded picks spread them out.
+	protected static const ResourceName CAMP_TENT_1 = "{D8B2D92435256291}Prefabs/Compositions/Misc/SubCompositions/Tents/Tent_Barracks_US_01.et";
+	protected static const ResourceName CAMP_TENT_5 = "{89D2C8FCFC8D6488}Prefabs/Compositions/Misc/SubCompositions/Tents/Tent_Barracks_US_05.et";
+	protected static const ResourceName CAMP_COMMAND = "{F09296B9255F6704}Prefabs/Compositions/Misc/SubCompositions/Tents/Tent_CommandPost_US_01.et";
+	protected static const ResourceName CAMP_CONTAINER = "{1B79BB823DC46F9D}Prefabs/Props/Industrial/CargoContainers/CargoContainer_01/CargoContainer_01_20ft_green.et";
+	protected static const ResourceName CAMP_NET_LARGE = "{89230C660A90788F}Prefabs/Structures/Military/CamoNets/US/CamoNet_Large_Top_US.et";
+	protected static const ResourceName CAMP_NET_MEDIUM = "{972F01488E5B23C2}Prefabs/Structures/Military/CamoNets/US/CamoNet_Medium_Top_US.et";
+	protected static const ResourceName CAMP_COVER_LARGE = "{FA9066DE33E8E67D}Prefabs/Structures/Military/Camps/Canvas_Covers/US/CanvasCover_Large_US.et";
+	protected static const ResourceName CAMP_COVER_MEDIUM = "{6204943E9EC70EC2}Prefabs/Structures/Military/Camps/Canvas_Covers/US/CanvasCover_Medium_US.et";
+	protected static const ResourceName CAMP_GENERATOR = "{7F671B405CDBF0A2}Prefabs/Props/Airport/GeneratorAirfield_US_01/GeneratorAirfield_US_01.et";
+	protected static const ResourceName CAMP_FLOODLIGHT = "{0E94F28FD722B1D8}Prefabs/Props/Military/Generators/GeneratorFloodlight_US_01.et";
+	protected static const ResourceName CAMP_WATER = "{DFF391458A7AC773}Prefabs/Props/Military/WaterTanks/MobileWaterTank_US_01.et";
+	protected static const ResourceName CAMP_FUEL = "{9F35A268E0DD98A4}Prefabs/Props/Military/Fuel/MobileWaterTank_US_01_fuel.et";
+	protected static const ResourceName CAMP_KITCHEN = "{FB0F12529D2FD0DA}Prefabs/Props/Military/FieldKitchenTrailerUS_01.et";
+	protected static const ResourceName CAMP_PALLET_FUEL = "{DB4F61D5F37432F7}Prefabs/Props/Military/Camps/PalletFuel_01.et";
+	protected static const ResourceName CAMP_BARRELS = "{B350840088390760}Prefabs/Compositions/Misc/SubCompositions/Decorations/Barrel_Group_Stack_01.et";
+	protected static const ResourceName CAMP_TIRES = "{A00729CC0E1EE305}Prefabs/Props/VehicleParts/Tires/Tire_M998_pile.et";
+	protected static const ResourceName CAMP_TIRES_SMALL = "{CEA239D9E1899899}Prefabs/Props/Garbage/Tires/TirePile_01_small.et";
+	protected static const ResourceName CAMP_CABLE = "{A419F4547954DA05}Prefabs/Props/Construction/CableReel/CableReelWooden_01.et";
+	protected static const ResourceName CAMP_SCRAP = "{8751F77B1038FC72}Prefabs/Props/Industrial/Repair/VehicleGarbage_01_pile_large.et";
+	protected static const ResourceName CAMP_DUCKBOARD = "{CC66836BF4E211F9}Prefabs/Props/Military/Camps/Duckboard_01.et";
+	// Ground: dirt patches, tracks and stains (projected decals)
+	protected static const ResourceName GROUND_DIRT_1 = "{E51E2E1D77B54223}Prefabs/Compositions/Misc/CustomEntities/CompositionDecals/CompositionDecal_Dirt_Patch_01.et";
+	protected static const ResourceName GROUND_DIRT_2 = "{894A1AFDCB71CD0D}Prefabs/Compositions/Misc/CustomEntities/CompositionDecals/CompositionDecal_Dirt_Patch_02.et";
+	protected static const ResourceName GROUND_DIRT_3 = "{6CD65604C7945A66}Prefabs/Compositions/Misc/CustomEntities/CompositionDecals/CompositionDecal_Dirt_Patch_03.et";
+	protected static const ResourceName GROUND_TRACKS_1 = "{F2A6A3DA58AFD5D2}Prefabs/Compositions/Misc/CustomEntities/CompositionDecals/CompositionDecal_Dirt_Tracks_01.et";
+	protected static const ResourceName GROUND_TRACKS_2 = "{9EF2973AE46B5AFC}Prefabs/Compositions/Misc/CustomEntities/CompositionDecals/CompositionDecal_Dirt_Tracks_02.et";
+	protected static const ResourceName GROUND_OIL = "{C977A93D74F5356A}Prefabs/Compositions/Misc/CustomEntities/CompositionDecals/CompositionDecal_OilStain_01_medium.et";
+	protected static const ResourceName GROUND_PETROL = "{9E9221B0DF3E1837}Prefabs/Compositions/Misc/CustomEntities/CompositionDecals/CompositionDecal_PetrolStain_01_V1.et";
 
 	protected AROR_LocationComponent m_Location;
 	protected bool m_bBuilt;
@@ -78,6 +161,10 @@ class AROR_SpecialSiteComponent : ScriptComponent
 	protected int m_iClock;
 	protected int m_iFarSince = -1;
 	protected AROR_EFactionRole m_eRole;
+	protected vector m_vCompound;		//!< World centre of the garrison's compound (its flag), or the location centre
+	protected float m_fCompoundX = 20;	//!< Compound half sizes in the site's frame
+	protected float m_fCompoundZ = 20;
+	protected float m_fLoop;			//!< Perimeter loop radius in use
 	protected ref array<IEntity> m_aDressing = {};		//!< Every machine: props and plating placed here (local entities)
 	protected ref array<vector> m_aPads = {};
 	protected ref array<float> m_aPadYaws = {};
@@ -97,7 +184,7 @@ class AROR_SpecialSiteComponent : ScriptComponent
 	int GetManpowerPerPayment() { return m_iManpowerPerPayment; }
 
 	//------------------------------------------------------------------------------------------------
-	//! Every machine, once: sandbags out, plating and buildings in. Fixed offsets, so all machines build the same base.
+	//! Every machine, once: sandbags out, plating, the authored props and the camp ring in
 	protected void Build()
 	{
 		if (m_bBuilt)
@@ -105,28 +192,54 @@ class AROR_SpecialSiteComponent : ScriptComponent
 		m_bBuilt = true;
 
 		IEntity owner = GetOwner();
+		ReadCompound(owner);
 		if (m_bRemoveSandbags)
 			RemoveSandbags(owner);
 
-		int tiles = LayFloor(owner);
 		int props = PlaceProps(owner);
-		Print(string.Format("[AROR SITE] %1 built: %2 plates, %3 props, %4 helipads", m_Location.GetId(), tiles, props, m_aPads.Count()), LogLevel.NORMAL);
+		int tiles = LayFloor(owner);
+		int camp;
+		if (m_bAutoDressing)
+			camp = DressCamp(owner);
+		Print(string.Format("[AROR SITE] %1 built: %2 plates, %3 props, %4 camp pieces, %5 helipads, perimeter loop %6 m", m_Location.GetId(), tiles, props, camp, m_aPads.Count(), m_fLoop), LogLevel.NORMAL);
 	}
 
+	//! The garrison's compound (centred on its flag) and the perimeter loop round it
+	protected void ReadCompound(IEntity owner)
+	{
+		m_vCompound = m_Location.GetCenter();
+		AROR_GarrisonComponent garrison = AROR_GarrisonComponent.Cast(owner.FindComponent(AROR_GarrisonComponent));
+		if (garrison)
+		{
+			m_vCompound = garrison.GetDefenceCenter();
+			m_fCompoundX = garrison.GetDefenceHalfExtent();
+			m_fCompoundZ = garrison.GetDefenceHalfDepth();
+		}
+
+		m_fLoop = m_fLoopRadius;
+		if (m_fLoop <= 0)
+			m_fLoop = Math.Max(m_fCompoundX, m_fCompoundZ) * 1.42 + RingOffset(owner) + 8;
+	}
+
+	protected float RingOffset(IEntity owner)
+	{
+		// A raised perimeter (walls and wire) stands round the compound: the camp goes outside it
+		if (owner.FindComponent(AROR_PerimeterComponent))
+			return m_fAutoRingOffset + 10;
+		return m_fAutoRingOffset;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Direct children that are sandbags, told by their model (children inherited through a composition do not
+	//! always report their own prefab name). Guard towers and other compositions have no model of their own and stay.
 	protected void RemoveSandbags(IEntity owner)
 	{
 		array<IEntity> doomed = {};
 		IEntity child = owner.GetChildren();
 		while (child)
 		{
-			EntityPrefabData data = child.GetPrefabData();
-			if (data)
-			{
-				string name = data.GetPrefabName();
-				name.ToLower();
-				if (name.Contains("sandbag"))
-					doomed.Insert(child);
-			}
+			if (IsSandbag(child))
+				doomed.Insert(child);
 			child = child.GetSibling();
 		}
 
@@ -134,9 +247,28 @@ class AROR_SpecialSiteComponent : ScriptComponent
 		{
 			SCR_EntityHelper.DeleteEntityAndChildren(sandbag);
 		}
+
+		Print(string.Format("[AROR SITE] %1 removed %2 sandbag pieces", m_Location.GetId(), doomed.Count()), LogLevel.NORMAL);
 	}
 
-	//! Plates laid edge to edge over the yard rectangle, measured from the prefab itself, each levelled on the ground
+	protected static bool IsSandbag(IEntity entity)
+	{
+		string name;
+		VObject model = entity.GetVObject();
+		if (model)
+			name = model.GetResourceName();
+
+		EntityPrefabData data = entity.GetPrefabData();
+		if (data)
+			name += " " + data.GetPrefabName();
+
+		name.ToLower();
+		return name.Contains("sandbag");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Plates laid edge to edge over the compound (or the authored rectangle), measured from the prefab itself, each
+	//! tilted to the ground under it so none floats or sinks on a slope
 	protected int LayFloor(IEntity owner)
 	{
 		if (m_sFloorPrefab.IsEmpty())
@@ -157,11 +289,37 @@ class AROR_SpecialSiteComponent : ScriptComponent
 
 		vector centreOffset = (mins + maxs) * 0.5;
 		centreOffset[1] = 0;
-		vector shift = owner.VectorToParent(centreOffset);
-		float left = Math.Min(m_vFloorMin[0], m_vFloorMax[0]);
-		float right = Math.Max(m_vFloorMin[0], m_vFloorMax[0]);
-		float back = Math.Min(m_vFloorMin[2], m_vFloorMax[2]);
-		float front = Math.Max(m_vFloorMin[2], m_vFloorMax[2]);
+
+		float left, right, back, front;
+		if (m_bFloorCompound)
+		{
+			vector compound = owner.CoordToLocal(m_vCompound);
+			left = compound[0] - m_fCompoundX + 1;
+			right = compound[0] + m_fCompoundX - 1;
+			back = compound[2] - m_fCompoundZ + 1;
+			front = compound[2] + m_fCompoundZ - 1;
+		}
+		else
+		{
+			left = Math.Min(m_vFloorMin[0], m_vFloorMax[0]);
+			right = Math.Max(m_vFloorMin[0], m_vFloorMax[0]);
+			back = Math.Min(m_vFloorMin[2], m_vFloorMax[2]);
+			front = Math.Max(m_vFloorMin[2], m_vFloorMax[2]);
+		}
+
+		// Helipads keep their own deck: no plating under them
+		array<vector> padOffsets = {};
+		if (m_aProps)
+		{
+			foreach (AROR_SpecialSiteProp prop : m_aProps)
+			{
+				if (prop && prop.m_bHelipad)
+					padOffsets.Insert(prop.m_vOffset);
+			}
+		}
+
+		vector siteRight = owner.VectorToParent(Vector(1, 0, 0));
+		vector siteForward = owner.VectorToParent(Vector(0, 0, 1));
 		int columns = Math.Ceil((right - left) / sizeX);
 		int rows = Math.Ceil((front - back) / sizeZ);
 		BaseWorld world = GetGame().GetWorld();
@@ -174,24 +332,35 @@ class AROR_SpecialSiteComponent : ScriptComponent
 					return laid;
 
 				vector local = Vector(left + (column + 0.5) * sizeX, 0, back + (row + 0.5) * sizeZ);
-				vector centre = owner.CoordToParent(local);
-				// Level on the average of its corners so it neither floats nor sinks on a gentle slope
-				float height;
-				for (int corner = 0; corner < 4; corner++)
+				bool underPad;
+				foreach (vector padOffset : padOffsets)
 				{
-					float cornerX = sizeX * 0.5;
-					if (corner == 1 || corner == 2)
-						cornerX = -cornerX;
-					float cornerZ = sizeZ * 0.5;
-					if (corner >= 2)
-						cornerZ = -cornerZ;
-					vector at = owner.CoordToParent(local + Vector(cornerX, 0, cornerZ));
-					height += world.GetSurfaceY(at[0], at[2]);
+					if (Math.AbsFloat(local[0] - padOffset[0]) < m_fPadPlatingGap && Math.AbsFloat(local[2] - padOffset[2]) < m_fPadPlatingGap)
+						underPad = true;
 				}
+				if (underPad)
+					continue;
 
-				vector origin = centre - shift;
-				origin[1] = height * 0.25 + 0.02;
-				IEntity tile = SpawnLocal(m_sFloorPrefab, origin, yaw);
+				// The ground's slope across the plate, from its edge midpoints
+				vector centre = owner.CoordToParent(local);
+				float leftY = SurfaceAt(world, centre - siteRight * (sizeX * 0.5));
+				float rightY = SurfaceAt(world, centre + siteRight * (sizeX * 0.5));
+				float backY = SurfaceAt(world, centre - siteForward * (sizeZ * 0.5));
+				float frontY = SurfaceAt(world, centre + siteForward * (sizeZ * 0.5));
+				float centreY = Math.Max(SurfaceAt(world, centre), (leftY + rightY + backY + frontY) * 0.25);
+
+				vector axisX = siteRight + Vector(0, (rightY - leftY) / sizeX, 0);
+				vector axisZ = siteForward + Vector(0, (frontY - backY) / sizeZ, 0);
+				axisX.Normalize();
+				axisZ.Normalize();
+				vector axisY = Cross(axisZ, axisX);
+				axisY.Normalize();
+				axisZ = Cross(axisX, axisY);
+				axisZ.Normalize();
+
+				centre[1] = centreY;
+				vector origin = centre - axisX * centreOffset[0] - axisZ * centreOffset[2] - axisY * (mins[1] - 0.01);
+				IEntity tile = SpawnLocalTransform(m_sFloorPrefab, axisX, axisY, axisZ, origin);
 				if (!tile)
 					return laid;
 
@@ -203,13 +372,24 @@ class AROR_SpecialSiteComponent : ScriptComponent
 		return laid;
 	}
 
+	//! Cross product a x b
+	protected static vector Cross(vector a, vector b)
+	{
+		return Vector(a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]);
+	}
+
+	protected static float SurfaceAt(BaseWorld world, vector position)
+	{
+		return world.GetSurfaceY(position[0], position[2]);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected int PlaceProps(IEntity owner)
 	{
 		if (!m_aProps)
 			return 0;
 
 		float siteYaw = owner.GetYawPitchRoll()[0];
-		vector centre = owner.GetOrigin();
 		BaseWorld world = GetGame().GetWorld();
 		int placed;
 		foreach (AROR_SpecialSiteProp prop : m_aProps)
@@ -239,24 +419,199 @@ class AROR_SpecialSiteComponent : ScriptComponent
 				m_aHelicopters.Insert(null);
 				m_aHelicopterLostAt.Insert(-1);
 			}
+			else if (prop.m_bWorkPoint)
+				AddWorkPoint(position);
+		}
 
-			if (prop.m_bWorkPoint)
+		return placed;
+	}
+
+	//! Beside a building, on the side facing the compound
+	protected void AddWorkPoint(vector position)
+	{
+		vector toCentre = m_vCompound - position;
+		toCentre[1] = 0;
+		float distance = toCentre.Length();
+		if (distance > 1)
+			position = position + toCentre * (Math.Min(5, distance) / distance);
+		m_aWorkPoints.Insert(position);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The camp ring: slots every few metres on a rectangle just outside the compound, each with dirt on the ground
+	//! and most with a camp piece facing the compound. Slots near roads (the way in), water, steep ground or the
+	//! site's own pieces are left clear. Same location ID, same camp.
+	protected int DressCamp(IEntity owner)
+	{
+		array<ResourceName> pool = {};
+		if (m_aAutoPool && !m_aAutoPool.IsEmpty())
+			pool.InsertAll(m_aAutoPool);
+		else
+			GetCampSet(pool);
+
+		array<ResourceName> ground = {GROUND_DIRT_1, GROUND_DIRT_2, GROUND_DIRT_3, GROUND_DIRT_1, GROUND_TRACKS_1, GROUND_TRACKS_2, GROUND_OIL, GROUND_PETROL};
+		AROR_SeededRandom random = new AROR_SeededRandom(m_Location.GetId().Hash());
+		BaseWorld world = GetGame().GetWorld();
+		float siteYaw = owner.GetYawPitchRoll()[0];
+		vector compound = owner.CoordToLocal(m_vCompound);
+		float ring = RingOffset(owner);
+		float halfX = m_fCompoundX + ring;
+		float halfZ = m_fCompoundZ + ring;
+
+		// Things already standing at the site: towers, guns, defence positions, the flag
+		array<vector> occupied = {};
+		IEntity child = owner.GetChildren();
+		while (child)
+		{
+			occupied.Insert(child.GetOrigin());
+			child = child.GetSibling();
+		}
+		foreach (vector pad : m_aPads)
+		{
+			occupied.Insert(pad);
+		}
+
+		int placed;
+		float perimeter = 4 * (halfX + halfZ);
+		float start = random.NextFloat() * m_fAutoSpacing;
+		for (float along = start; along < perimeter; along += m_fAutoSpacing)
+		{
+			// Walk the rectangle: back edge, right edge, front edge, left edge; face inwards
+			vector local;
+			float facing;
+			float edge = along;
+			if (edge < 2 * halfX)
 			{
-				// Beside it, on the side facing the middle of the base
-				vector toCentre = centre - position;
-				toCentre[1] = 0;
-				float distance = toCentre.Length();
-				if (distance > 1)
-					position = position + toCentre * (Math.Min(6, distance) / distance);
-				m_aWorkPoints.Insert(position);
+				local = Vector(-halfX + edge, 0, -halfZ);
+				facing = 0;
+			}
+			else if (edge < 2 * halfX + 2 * halfZ)
+			{
+				local = Vector(halfX, 0, -halfZ + edge - 2 * halfX);
+				facing = 270;
+			}
+			else if (edge < 4 * halfX + 2 * halfZ)
+			{
+				local = Vector(halfX - (edge - 2 * halfX - 2 * halfZ), 0, halfZ);
+				facing = 180;
+			}
+			else
+			{
+				local = Vector(-halfX, 0, halfZ - (edge - 4 * halfX - 2 * halfZ));
+				facing = 90;
+			}
+
+			// Never right on a corner, where two edges' pieces would meet
+			if (Math.AbsFloat(Math.AbsFloat(local[0]) - halfX) < 3 && Math.AbsFloat(Math.AbsFloat(local[2]) - halfZ) < 3)
+				continue;
+
+			// Draw every slot's numbers even when it stays empty, so one blocked slot never reshuffles the rest
+			int pick = random.Range(0, pool.Count());
+			int groundPick = random.Range(0, ground.Count());
+			bool filled = random.NextFloat() < m_fAutoFill;
+			float jitter = random.Range(-8, 9);
+			float yaw = siteYaw + facing + jitter;
+
+			vector position = owner.CoordToParent(compound + local);
+			position[1] = world.GetSurfaceY(position[0], position[2]);
+			if (!IsCampSlot(world, position, occupied))
+				continue;
+
+			IEntity dirt = SpawnLocal(ground[groundPick], position, yaw);
+			if (dirt)
+				m_aDressing.Insert(dirt);
+
+			if (!filled)
+				continue;
+
+			IEntity piece = SpawnLocal(pool[pick], position, yaw);
+			if (!piece)
+				continue;
+
+			m_aDressing.Insert(piece);
+			occupied.Insert(position);
+			AddWorkPoint(position);
+			placed++;
+
+			// Duckboards in front of a tent's door
+			if (pool[pick] == CAMP_TENT_1 || pool[pick] == CAMP_TENT_5 || pool[pick] == CAMP_COMMAND)
+			{
+				vector front = owner.VectorToParent(Vector(Math.Sin((facing) * Math.DEG2RAD), 0, Math.Cos((facing) * Math.DEG2RAD)));
+				vector step = position + front * 5;
+				step[1] = world.GetSurfaceY(step[0], step[2]);
+				IEntity board = SpawnLocal(CAMP_DUCKBOARD, step, yaw);
+				if (board)
+					m_aDressing.Insert(board);
 			}
 		}
 
 		return placed;
 	}
 
+	//! A camp slot: dry, nearly level, off the roads (the way in stays open) and clear of the site's own pieces
+	protected bool IsCampSlot(BaseWorld world, vector position, notnull array<vector> occupied)
+	{
+		if (position[1] <= world.GetOceanHeight(position[0], position[2]) + 0.5)
+			return false;
+
+		float low = position[1];
+		float high = position[1];
+		for (int corner = 0; corner < 4; corner++)
+		{
+			float angle = corner * Math.PI * 0.5;
+			float y = world.GetSurfaceY(position[0] + Math.Sin(angle) * 4, position[2] + Math.Cos(angle) * 4);
+			low = Math.Min(low, y);
+			high = Math.Max(high, y);
+		}
+		if (high - low > 1.6)
+			return false;
+
+		foreach (vector taken : occupied)
+		{
+			if (vector.DistanceXZ(position, taken) < SLOT_CLEARANCE)
+				return false;
+		}
+
+		return !AROR_ForceSpawner.IsNearRoad(position, 5);
+	}
+
+	//! The built-in US camp set; repeats weight the picks towards the everyday pieces
+	protected static void GetCampSet(notnull array<ResourceName> pool)
+	{
+		pool.Insert(CAMP_TENT_1);
+		pool.Insert(CAMP_TENT_5);
+		pool.Insert(CAMP_COMMAND);
+		pool.Insert(CAMP_CONTAINER);
+		pool.Insert(CAMP_CONTAINER);
+		pool.Insert(CAMP_NET_LARGE);
+		pool.Insert(CAMP_NET_MEDIUM);
+		pool.Insert(CAMP_COVER_LARGE);
+		pool.Insert(CAMP_COVER_MEDIUM);
+		pool.Insert(CAMP_GENERATOR);
+		pool.Insert(CAMP_FLOODLIGHT);
+		pool.Insert(CAMP_FLOODLIGHT);
+		pool.Insert(CAMP_WATER);
+		pool.Insert(CAMP_FUEL);
+		pool.Insert(CAMP_KITCHEN);
+		pool.Insert(CAMP_PALLET_FUEL);
+		pool.Insert(CAMP_BARRELS);
+		pool.Insert(CAMP_BARRELS);
+		pool.Insert(CAMP_TIRES);
+		pool.Insert(CAMP_TIRES_SMALL);
+		pool.Insert(CAMP_CABLE);
+		pool.Insert(CAMP_SCRAP);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Spawned on this machine only (yaw in degrees, position used as given)
 	protected static IEntity SpawnLocal(ResourceName prefab, vector position, float yaw)
+	{
+		vector rotation[3];
+		Math3D.AnglesToMatrix(Vector(yaw, 0, 0), rotation);
+		return SpawnLocalTransform(prefab, rotation[0], rotation[1], rotation[2], position);
+	}
+
+	protected static IEntity SpawnLocalTransform(ResourceName prefab, vector right, vector up, vector forward, vector position)
 	{
 		Resource resource = Resource.Load(prefab);
 		if (!resource || !resource.IsValid())
@@ -264,11 +619,9 @@ class AROR_SpecialSiteComponent : ScriptComponent
 
 		EntitySpawnParams params = new EntitySpawnParams();
 		params.TransformMode = ETransformMode.WORLD;
-		vector rotation[3];
-		Math3D.AnglesToMatrix(Vector(yaw, 0, 0), rotation);
-		params.Transform[0] = rotation[0];
-		params.Transform[1] = rotation[1];
-		params.Transform[2] = rotation[2];
+		params.Transform[0] = right;
+		params.Transform[1] = up;
+		params.Transform[2] = forward;
 		params.Transform[3] = position;
 		return GetGame().SpawnEntityPrefabLocal(resource, GetGame().GetWorld(), params);
 	}
@@ -407,7 +760,7 @@ class AROR_SpecialSiteComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Workers (pairs walking between the base's buildings) or patrols (fire teams walking the outer loop)
+	//! Workers (pairs walking between the camp's buildings) or patrols (fire teams walking the outer perimeter)
 	protected void UpdateGroups(AROR_EFactionRole role, array<ref AROR_SpecialSiteGroup> groups, array<int> lostAt, int wanted, bool workers)
 	{
 		if (workers && m_aWorkPoints.IsEmpty())
@@ -508,14 +861,14 @@ class AROR_SpecialSiteComponent : ScriptComponent
 			added.m_iDirection = -1;
 		added.m_iNextOrderAt = m_iClock + 6;
 		groups.Insert(added);
-		string kind = "foot patrol";
+		string kind = "perimeter patrol";
 		if (workers)
 			kind = "work detail";
 		Print(string.Format("[AROR SITE] %1 %2 raised for role %3", m_Location.GetId(), kind, role), LogLevel.NORMAL);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! A truck with a driver and a passenger driving laps of the outer loop
+	//! A truck with a driver and a passenger driving laps of the perimeter loop
 	protected void UpdateTruck(AROR_EFactionRole role)
 	{
 		if (m_Truck)
@@ -621,10 +974,11 @@ class AROR_SpecialSiteComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! A point on the perimeter loop round the compound
 	protected vector LoopPoint(int point)
 	{
 		float bearing = point * Math.PI2 / LOOP_POINTS;
-		vector spot = m_Location.GetCenter() + Vector(Math.Sin(bearing), 0, Math.Cos(bearing)) * m_fLoopRadius;
+		vector spot = m_vCompound + Vector(Math.Sin(bearing), 0, Math.Cos(bearing)) * m_fLoop;
 		spot[1] = GetGame().GetWorld().GetSurfaceY(spot[0], spot[2]);
 		return spot;
 	}
@@ -721,11 +1075,11 @@ class AROR_SpecialSiteComponent : ScriptComponent
 
 		if (!m_Location)
 		{
-			Print("[AROR SITE] Special site needs a location component; disabled", LogLevel.ERROR);
+			Print("[AROR SITE] Site life needs a location component; disabled", LogLevel.ERROR);
 			return;
 		}
 
-		// Every machine builds the base once the world has settled
+		// Every machine builds the camp once the world has settled
 		GetGame().GetCallqueue().CallLater(Build, 1000);
 		if (!Replication.IsServer())
 			return;
@@ -751,7 +1105,7 @@ class AROR_SpecialSiteComponent : ScriptComponent
 	}
 }
 
-//! Soldiers at a special site: a work detail walking between buildings or a fire team walking the outer loop
+//! Soldiers at a site: a work detail walking between buildings or a fire team walking the perimeter
 class AROR_SpecialSiteGroup
 {
 	SCR_AIGroup m_Group;
@@ -796,7 +1150,7 @@ class AROR_SpecialSiteGroup
 	}
 }
 
-//! The truck driving laps round a special site
+//! The truck driving laps round a site
 class AROR_SpecialSiteTruck : AROR_SpecialSiteGroup
 {
 	IEntity m_Vehicle;

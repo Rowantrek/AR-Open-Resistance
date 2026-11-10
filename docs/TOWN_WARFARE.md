@@ -27,6 +27,11 @@ an occupying presence in the streets, and a fixed three-wave response when playe
 - **All 18 settlements** get `AROR_GarrisonComponent` (`m_bSettlementPost 1`), `AROR_TownWavesComponent`,
   `AROR_TownLifeComponent` and a capture flag that auto-places on a clear spot near the centre at play start.
   Component and entity IDs in the layer were hand-written; Workbench may rewrite them on save.
+- **Military sites come alive** (`AROR_SiteLifeComponent` on every outpost, base, factory and depot): a plated yard
+  inside the walls, a camp of tents, containers, nets, generators and stores round the outside on dirt and tracks
+  (the same at every load), a fire team walking the perimeter and soldiers walking between the buildings.
+  Stone Ridge Base is the special site: sandbags gone, plated, built up, two helipads with a gunship and a transport,
+  three work details, two perimeter teams and a truck, and 1,500 extra income a payment to its holder.
 
 ## Garrison post
 

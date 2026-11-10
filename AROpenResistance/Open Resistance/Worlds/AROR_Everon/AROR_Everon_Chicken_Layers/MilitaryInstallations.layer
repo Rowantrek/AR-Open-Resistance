@@ -9,6 +9,8 @@ $grp GenericEntity : "{0404245051C211B2}Prefabs/Compositions/Locations/AROR_Defe
     m_bGroundOnInit 0
     m_eInitialControllingRole OCCUPIERS
    }
+   AROR_SiteLifeComponent "{6AC9F0A1B2C3D421}" {
+   }
    AROR_GarrisonComponent "{66D30571F98F4BE3}" {
     m_fDefenceHalfExtent 18
     m_iExtraInfantryTeams 3
@@ -243,6 +245,8 @@ $grp GenericEntity : "{0404245051C211B2}Prefabs/Compositions/Locations/AROR_Defe
     m_fRadius 100
     m_bGroundOnInit 0
     m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SiteLifeComponent "{6AC9F0A1B2C3D422}" {
    }
    AROR_GarrisonComponent "{66D30571F98F4BE3}" {
     m_fDefenceHalfExtent 18
@@ -480,6 +484,8 @@ GenericEntity AROR_Location_everon_military_outpost_lamentin : "{0779343A5FF66A5
    m_fRadius 150
    m_bGroundOnInit 0
    m_eInitialControllingRole OCCUPIERS
+  }
+  AROR_SiteLifeComponent "{6AC9F0A1B2C3D423}" {
   }
  }
  coords 1598.5 62.219 5858.45
@@ -778,6 +784,8 @@ $grp GenericEntity : "{3000821C69DD48D8}Prefabs/Compositions/Locations/AROR_Defe
     m_fRadius 150
     m_bGroundOnInit 0
     m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SiteLifeComponent "{6AC9F0A1B2C3D424}" {
    }
   }
   coords 7801.74 133.886 4891.88
@@ -1144,6 +1152,8 @@ $grp GenericEntity : "{3000821C69DD48D8}Prefabs/Compositions/Locations/AROR_Defe
     m_fRadius 150
     m_bGroundOnInit 0
     m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SiteLifeComponent "{6AC9F0A1B2C3D425}" {
    }
   }
   coords 4767.4 85.682 4536.23
@@ -3483,6 +3493,8 @@ GenericEntity AROR_Location_everon_military_outpost_hospital : "{69A0F6EA7E3D584
    m_bGroundOnInit 0
    m_eInitialControllingRole OCCUPIERS
   }
+  AROR_SiteLifeComponent "{6AC9F0A1B2C3D426}" {
+  }
  }
  coords 4604.7 85.063 8590.04
  angles 0 225 0
@@ -4016,7 +4028,11 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
   AROR_GarrisonComponent "{66D30571F98F4BE3}" {
    m_iDefenceLevel 4
   }
-  AROR_SpecialSiteComponent "{6AC9F0A1B2C3D402}" {
+  AROR_SiteLifeComponent "{6AC9F0A1B2C3D402}" {
+   m_iMoneyPerPayment 1500
+   m_iManpowerPerPayment 3
+   m_bRemoveSandbags 1
+   m_bFloorCompound 0
    m_aProps {
     AROR_SpecialSiteProp {
      m_sPrefab "{D8B2D92435256291}Prefabs/Compositions/Misc/SubCompositions/Tents/Tent_Barracks_US_01.et"
@@ -4088,13 +4104,26 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
     }
     AROR_SpecialSiteProp {
      m_sPrefab "{CF1FFB7BAA1A0769}Prefabs/Structures/Military/Camps/HelipadImprovised_01/HelipadImprovised_US_01.et"
-     m_vOffset 41 0 24
+     m_vOffset -14 0 8
      m_bHelipad 1
     }
     AROR_SpecialSiteProp {
      m_sPrefab "{CF1FFB7BAA1A0769}Prefabs/Structures/Military/Camps/HelipadImprovised_01/HelipadImprovised_US_01.et"
-     m_vOffset 41 0 -24
+     m_vOffset 14 0 8
      m_bHelipad 1
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{1B79BB823DC46F9D}Prefabs/Props/Industrial/CargoContainers/CargoContainer_01/CargoContainer_01_20ft_green.et"
+     m_vOffset 44 0 22
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{1B79BB823DC46F9D}Prefabs/Props/Industrial/CargoContainers/CargoContainer_01/CargoContainer_01_20ft_green.et"
+     m_vOffset 44 0 -22
+     m_bWorkPoint 0
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{972F01488E5B23C2}Prefabs/Structures/Military/CamoNets/US/CamoNet_Medium_Top_US.et"
+     m_vOffset 40 0 -34
     }
     AROR_SpecialSiteProp {
      m_sPrefab "{9F35A268E0DD98A4}Prefabs/Props/Military/Fuel/MobileWaterTank_US_01_fuel.et"
@@ -4107,6 +4136,14 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
      m_bWorkPoint 0
     }
    }
+   m_bAutoDressing 0
+   m_aHelicopterTypes {
+    HELI_ATTACK HELI_TRANSPORT
+   }
+   m_iWorkerPairs 3
+   m_iFootPatrols 2
+   m_fLoopRadius 75
+   m_bSupplyTruck 1
   }
   AROR_TownLifeComponent "{6AC9F0A1B2C3D403}" {
    m_bCivilians 0
@@ -5483,6 +5520,8 @@ GenericEntity AROR_Location_everon_factory_north_ridge : "{7DB3028CC7602D89}Pref
    m_bGroundOnInit 0
    m_eInitialControllingRole OCCUPIERS
   }
+  AROR_SiteLifeComponent "{6AC9F0A1B2C3D427}" {
+  }
  }
  coords 6256.08 180.049 7560.61
  {
@@ -5849,6 +5888,8 @@ GenericEntity AROR_Location_everon_resources_north_ridge_east : "{BC294CFD17A22D
    m_bGroundOnInit 0
    m_eInitialControllingRole OCCUPIERS
   }
+  AROR_SiteLifeComponent "{6AC9F0A1B2C3D428}" {
+  }
  }
  coords 6179.36 166.438 6457.14
  angles 0 45 0
@@ -6170,6 +6211,8 @@ GenericEntity AROR_Location_everon_resources_north_ridge_west : "{C3CE3C983BD347
    m_fRadius 250
    m_bGroundOnInit 0
    m_eInitialControllingRole OCCUPIERS
+  }
+  AROR_SiteLifeComponent "{6AC9F0A1B2C3D429}" {
   }
  }
  coords 8605.86 141.588 3388.95
@@ -6517,6 +6560,8 @@ $grp GenericEntity : "{FD619B71CFAFEAA9}Prefabs/Compositions/Locations/AROR_Defe
     m_fRadius 100
     m_bGroundOnInit 0
     m_eInitialControllingRole OCCUPIERS
+   }
+   AROR_SiteLifeComponent "{6AC9F0A1B2C3D430}" {
    }
    AROR_GarrisonComponent "{66D30571F98F4BE3}" {
     m_fDefenceHalfExtent 18

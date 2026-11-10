@@ -12,7 +12,7 @@ class AROR_IncomeTally : Managed
 	int m_iResources;
 	int m_iFactories;
 	int m_iPorts;
-	int m_iSpecialMoney;	//!< Extra money from held special sites (AROR_SpecialSiteComponent)
+	int m_iSpecialMoney;	//!< Extra money from held special sites (AROR_SiteLifeComponent)
 	int m_iSpecialManpower;
 }
 
@@ -126,7 +126,7 @@ class AROR_IncomeComponent : SCR_BaseGameModeComponent
 			if (!location || location.GetControllingRole() != role)
 				continue;
 
-			AROR_SpecialSiteComponent special = AROR_SpecialSiteComponent.Cast(location.GetOwner().FindComponent(AROR_SpecialSiteComponent));
+			AROR_SiteLifeComponent special = AROR_SiteLifeComponent.Cast(location.GetOwner().FindComponent(AROR_SiteLifeComponent));
 			if (special)
 			{
 				tally.m_iSpecialMoney += special.GetMoneyPerPayment();
