@@ -274,7 +274,8 @@ class AROR_SiteLifeComponent : ScriptComponent
 		if (m_sFloorPrefab.IsEmpty())
 			return 0;
 
-		float yaw = owner.GetYawPitchRoll()[0];
+		vector siteAngles = owner.GetYawPitchRoll();
+		float yaw = siteAngles[0];
 		IEntity probe = SpawnLocal(m_sFloorPrefab, owner.GetOrigin(), yaw);
 		if (!probe)
 			return 0;
@@ -389,7 +390,8 @@ class AROR_SiteLifeComponent : ScriptComponent
 		if (!m_aProps)
 			return 0;
 
-		float siteYaw = owner.GetYawPitchRoll()[0];
+		vector siteAngles = owner.GetYawPitchRoll();
+		float siteYaw = siteAngles[0];
 		BaseWorld world = GetGame().GetWorld();
 		int placed;
 		foreach (AROR_SpecialSiteProp prop : m_aProps)
@@ -452,7 +454,8 @@ class AROR_SiteLifeComponent : ScriptComponent
 		array<ResourceName> ground = {GROUND_DIRT_1, GROUND_DIRT_2, GROUND_DIRT_3, GROUND_DIRT_1, GROUND_TRACKS_1, GROUND_TRACKS_2, GROUND_OIL, GROUND_PETROL};
 		AROR_SeededRandom random = new AROR_SeededRandom(m_Location.GetId().Hash());
 		BaseWorld world = GetGame().GetWorld();
-		float siteYaw = owner.GetYawPitchRoll()[0];
+		vector siteAngles = owner.GetYawPitchRoll();
+		float siteYaw = siteAngles[0];
 		vector compound = owner.CoordToLocal(m_vCompound);
 		float ring = RingOffset(owner);
 		float halfX = m_fCompoundX + ring;
