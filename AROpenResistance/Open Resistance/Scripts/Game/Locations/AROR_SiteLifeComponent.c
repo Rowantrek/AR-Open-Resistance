@@ -332,18 +332,18 @@ class AROR_SiteLifeComponent : ScriptComponent
 				if (laid >= MAX_FLOOR_TILES)
 					return laid;
 
-				vector local = Vector(left + (column + 0.5) * sizeX, 0, back + (row + 0.5) * sizeZ);
+				vector siteOffset = Vector(left + (column + 0.5) * sizeX, 0, back + (row + 0.5) * sizeZ);
 				bool underPad;
 				foreach (vector padOffset : padOffsets)
 				{
-					if (Math.AbsFloat(local[0] - padOffset[0]) < m_fPadPlatingGap && Math.AbsFloat(local[2] - padOffset[2]) < m_fPadPlatingGap)
+					if (Math.AbsFloat(siteOffset[0] - padOffset[0]) < m_fPadPlatingGap && Math.AbsFloat(siteOffset[2] - padOffset[2]) < m_fPadPlatingGap)
 						underPad = true;
 				}
 				if (underPad)
 					continue;
 
 				// The ground's slope across the plate, from its edge midpoints
-				vector centre = owner.CoordToParent(local);
+				vector centre = owner.CoordToParent(siteOffset);
 				float leftY = SurfaceAt(world, centre - siteRight * (sizeX * 0.5));
 				float rightY = SurfaceAt(world, centre + siteRight * (sizeX * 0.5));
 				float backY = SurfaceAt(world, centre - siteForward * (sizeZ * 0.5));
@@ -399,9 +399,9 @@ class AROR_SiteLifeComponent : ScriptComponent
 			if (!prop || prop.m_sPrefab.IsEmpty())
 				continue;
 
-			vector local = prop.m_vOffset;
-			local[1] = 0;
-			vector position = owner.CoordToParent(local);
+			vector siteOffset = prop.m_vOffset;
+			siteOffset[1] = 0;
+			vector position = owner.CoordToParent(siteOffset);
 			position[1] = world.GetSurfaceY(position[0], position[2]);
 			float yaw = siteYaw + prop.m_fYaw;
 			IEntity entity = SpawnLocal(prop.m_sPrefab, position, yaw);
@@ -480,32 +480,32 @@ class AROR_SiteLifeComponent : ScriptComponent
 		for (float along = start; along < perimeter; along += m_fAutoSpacing)
 		{
 			// Walk the rectangle: back edge, right edge, front edge, left edge; face inwards
-			vector local;
+			vector siteOffset;
 			float facing;
 			float edge = along;
 			if (edge < 2 * halfX)
 			{
-				local = Vector(-halfX + edge, 0, -halfZ);
+				siteOffset = Vector(-halfX + edge, 0, -halfZ);
 				facing = 0;
 			}
 			else if (edge < 2 * halfX + 2 * halfZ)
 			{
-				local = Vector(halfX, 0, -halfZ + edge - 2 * halfX);
+				siteOffset = Vector(halfX, 0, -halfZ + edge - 2 * halfX);
 				facing = 270;
 			}
 			else if (edge < 4 * halfX + 2 * halfZ)
 			{
-				local = Vector(halfX - (edge - 2 * halfX - 2 * halfZ), 0, halfZ);
+				siteOffset = Vector(halfX - (edge - 2 * halfX - 2 * halfZ), 0, halfZ);
 				facing = 180;
 			}
 			else
 			{
-				local = Vector(-halfX, 0, halfZ - (edge - 4 * halfX - 2 * halfZ));
+				siteOffset = Vector(-halfX, 0, halfZ - (edge - 4 * halfX - 2 * halfZ));
 				facing = 90;
 			}
 
 			// Never right on a corner, where two edges' pieces would meet
-			if (Math.AbsFloat(Math.AbsFloat(local[0]) - halfX) < 3 && Math.AbsFloat(Math.AbsFloat(local[2]) - halfZ) < 3)
+			if (Math.AbsFloat(Math.AbsFloat(siteOffset[0]) - halfX) < 3 && Math.AbsFloat(Math.AbsFloat(siteOffset[2]) - halfZ) < 3)
 				continue;
 
 			// Draw every slot's numbers even when it stays empty, so one blocked slot never reshuffles the rest
@@ -515,7 +515,7 @@ class AROR_SiteLifeComponent : ScriptComponent
 			float jitter = random.Range(-8, 9);
 			float yaw = siteYaw + facing + jitter;
 
-			vector position = owner.CoordToParent(compound + local);
+			vector position = owner.CoordToParent(compound + siteOffset);
 			position[1] = world.GetSurfaceY(position[0], position[2]);
 			if (!IsCampSlot(world, position, occupied))
 				continue;
