@@ -378,6 +378,58 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 	protected ref array<ref AROR_OperationForce> m_aForces = {};
 	protected ref map<string, string> m_mWaitReasons = new map<string, string>();
 
+	//------------------------------------------------------------------------------------------------
+	//! Server, for the map's threat arrows: where an operation's head is (the vehicle or group leader of its package
+	//! nearest the target), whether it flies in, and its helicopter landing zone when one is chosen. False while
+	//! nothing of it stands in the world yet.
+	bool GetOperationTrack_S(string operationId, vector target, out vector lead, out bool air, out vector landing)
+	{
+		float best = -1;
+		foreach (AROR_OperationForce force : m_aForces)
+		{
+			if (!force || force.m_bReservation || force.m_sOperationId != operationId)
+				continue;
+
+			AROR_ReaperAirForce airForce = AROR_ReaperAirForce.Cast(force);
+			if (airForce)
+			{
+				air = true;
+				if (airForce.m_vLanding != vector.Zero)
+					landing = airForce.m_vLanding;
+			}
+
+			vector position;
+			bool found;
+			AROR_GroundOperationForce ground = AROR_GroundOperationForce.Cast(force);
+			if (ground && ground.m_Vehicle && !AROR_ForceSpawner.IsDestroyed(ground.m_Vehicle))
+			{
+				position = ground.m_Vehicle.GetOrigin();
+				found = true;
+			}
+			else if (force.m_Group)
+			{
+				IEntity leader = force.m_Group.GetLeaderEntity();
+				if (leader)
+				{
+					position = leader.GetOrigin();
+					found = true;
+				}
+			}
+
+			if (!found)
+				continue;
+
+			float distance = vector.DistanceXZ(position, target);
+			if (best < 0 || distance < best)
+			{
+				best = distance;
+				lead = position;
+			}
+		}
+
+		return best >= 0;
+	}
+
 	//! Log changed blockers only; requests are retried each second without flooding the console.
 	protected void ReportSpawnWait(AROR_Operation operation, string reason)
 	{

@@ -84,7 +84,9 @@ then runs in phases, after the pattern of RC Dynamic Counter Attacks (ideas from
    - None of this uses the QRF wording, which stays for outposts, bases and the other campaign responses: town waves
      raise no "QRF DISPATCHED" headline, and on the map the town gets one red ring (however many columns are out)
      captioned "CONTACT · NATO REINFORCEMENTS FORMING", then "NATO REINFORCEMENTS INBOUND · ETA 1:20", then
-     "NATO REINFORCEMENTS IN TOWN".
+     "NATO REINFORCEMENTS IN TOWN". Each column and the helicopter flight also draw their own arrow from where they are
+     to the town (dashed to a circled-X landing zone for helicopters), refreshed every 4 s; attack orders and QRFs get
+     the same arrows.
 4. **Outcome**: nothing is declared while any column, armour or the assault is still out there.
    - **Repelled**: every operation has ended (destroyed or withdrawn) with the Resistance still near: +20% Resistance
      support in the town and an HQ headline from a pool ("X HOLDS / …").

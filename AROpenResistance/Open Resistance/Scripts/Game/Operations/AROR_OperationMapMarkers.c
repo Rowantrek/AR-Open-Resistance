@@ -31,6 +31,20 @@ class AROR_OperationMapMarkers
 	protected ref array<ref array<ref CanvasWidgetCommand>> m_aCommands = {};
 	protected float m_fNextCaptionsAt;
 
+	// Threat tracks: one full-map canvas, under the rings, redrawn each frame while anything is inbound
+	protected static const float TRACK_WIDTH = 3;
+	protected static const float TRACK_KEYLINE = 6;
+	protected static const float HEAD_LENGTH = 16;
+	protected static const float HEAD_WIDTH = 15;
+	protected static const float DASH = 14;
+	protected static const float GAP = 9;
+	protected static const int MAX_DASHES = 160;
+	protected static const float LEAD_SIZE = 7;
+	protected static const float LZ_RADIUS = 12;
+	protected Widget m_wTracks;
+	protected ref array<ref CanvasWidgetCommand> m_aTrackCommands = {};
+	protected bool m_bTracksDrawn;
+
 	//------------------------------------------------------------------------------------------------
 	void ClearWidgets()
 	{
@@ -49,6 +63,12 @@ class AROR_OperationMapMarkers
 			if (plate)
 				plate.RemoveFromHierarchy();
 		}
+
+		if (m_wTracks)
+			m_wTracks.RemoveFromHierarchy();
+		m_wTracks = null;
+		m_aTrackCommands.Clear();
+		m_bTracksDrawn = false;
 
 		m_aWidgets.Clear();
 		m_aCaptionWidgets.Clear();
@@ -73,6 +93,8 @@ class AROR_OperationMapMarkers
 
 		array<AROR_OperationThreatInfo> threats = {};
 		manager.GetThreats(threats);
+		// Every column and helicopter flight gets its own track, even where they share one ring
+		UpdateTracks(parent, layout, mapEntity, locations, threats);
 		array<AROR_OperationThreatInfo> shown = {};
 		array<AROR_LocationComponent> targets = {};
 		foreach (AROR_OperationThreatInfo threat : threats)
@@ -249,6 +271,209 @@ class AROR_OperationMapMarkers
 		if (firstActive != secondActive)
 			return firstActive;
 		return manager.GetThreatEtaRemaining(first) < manager.GetThreatEtaRemaining(second);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Where each inbound force is and where it is headed: an arrow from its head (vehicle or leader) to the target's
+	//! ring, solid for ground columns, dashed for helicopters, which point at their landing zone (a circled X) when
+	//! one is chosen. Updated from the threat board every few seconds; the arrow vanishes once the force arrives.
+	protected void UpdateTracks(Widget parent, ResourceName layout, SCR_MapEntity mapEntity, AROR_LocationManagerComponent locations, array<AROR_OperationThreatInfo> threats)
+	{
+		bool any;
+		foreach (AROR_OperationThreatInfo threat : threats)
+		{
+			if (threat.m_bHasLead)
+				any = true;
+		}
+
+		if (!any)
+		{
+			if (m_bTracksDrawn && m_wTracks)
+			{
+				m_aTrackCommands.Clear();
+				CanvasWidget cleared = CanvasWidget.Cast(m_wTracks.FindAnyWidget("Frame"));
+				if (cleared)
+					cleared.SetDrawCommands(m_aTrackCommands);
+			}
+			m_bTracksDrawn = false;
+			return;
+		}
+
+		WorkspaceWidget workspace = GetGame().GetWorkspace();
+		if (!m_wTracks)
+			m_wTracks = CreateTrackCanvas(workspace, layout, parent);
+		if (!m_wTracks)
+			return;
+
+		float width, height;
+		parent.GetScreenSize(width, height);
+		FrameSlot.SetPos(m_wTracks, 0, 0);
+		FrameSlot.SetSize(m_wTracks, workspace.DPIUnscale(width), workspace.DPIUnscale(height));
+		CanvasWidget canvas = CanvasWidget.Cast(m_wTracks.FindAnyWidget("Frame"));
+		if (!canvas)
+			return;
+
+		float pixel = workspace.DPIScale(1);
+		m_aTrackCommands.Clear();
+		foreach (AROR_OperationThreatInfo info : threats)
+		{
+			if (!info.m_bHasLead)
+				continue;
+			AROR_LocationComponent target = locations.GetLocationById(info.m_sTargetId);
+			if (!target)
+				continue;
+
+			int color = AROR_UIColors.WARN;
+			if (info.m_eType == AROR_EOperationType.ATTACK || info.m_bTownResponse)
+				color = AROR_UIColors.DANGER;
+			int argb = AROR_UIColors.Get(color).PackToInt();
+
+			float leadX, leadY, endX, endY;
+			ToScreen(mapEntity, info.m_vLead, leadX, leadY);
+			vector goal = target.GetCenter();
+			float stopShort = (RING_RADIUS + 8) * pixel;
+			if (info.m_bAir && info.m_bHasLanding)
+			{
+				goal = info.m_vLanding;
+				stopShort = (LZ_RADIUS + 5) * pixel;
+			}
+			ToScreen(mapEntity, goal, endX, endY);
+
+			if (info.m_bAir && info.m_bHasLanding)
+				AddLandingZone(endX, endY, pixel, argb);
+
+			float dx = endX - leadX;
+			float dy = endY - leadY;
+			float length = Math.Sqrt(dx * dx + dy * dy);
+			// Arrived (or nearly): the ring says the rest
+			if (length <= stopShort + HEAD_LENGTH * pixel)
+				continue;
+
+			float ux = dx / length;
+			float uy = dy / length;
+			float tipX = endX - ux * stopShort;
+			float tipY = endY - uy * stopShort;
+			float baseX = tipX - ux * HEAD_LENGTH * pixel;
+			float baseY = tipY - uy * HEAD_LENGTH * pixel;
+
+			if (info.m_bAir)
+				AddDashes(leadX, leadY, baseX, baseY, ux, uy, pixel, argb);
+			else
+			{
+				m_aTrackCommands.Insert(Line(TrackPoints(leadX, leadY, baseX, baseY), 0xC0000000, TRACK_KEYLINE * pixel, false));
+				m_aTrackCommands.Insert(Line(TrackPoints(leadX, leadY, baseX, baseY), argb, TRACK_WIDTH * pixel, false));
+			}
+
+			// Arrow head, outlined
+			float halfHead = HEAD_WIDTH * 0.5 * pixel;
+			array<float> head = {};
+			head.Insert(tipX);
+			head.Insert(tipY);
+			head.Insert(baseX - uy * halfHead);
+			head.Insert(baseY + ux * halfHead);
+			head.Insert(baseX + uy * halfHead);
+			head.Insert(baseY - ux * halfHead);
+			m_aTrackCommands.Insert(Line(head, 0xC0000000, 3 * pixel, true));
+			m_aTrackCommands.Insert(TrackFill(head, argb));
+
+			// The head of the column or the helicopter: a diamond
+			float size = LEAD_SIZE * pixel;
+			array<float> diamond = {};
+			diamond.Insert(leadX);
+			diamond.Insert(leadY - size);
+			diamond.Insert(leadX + size);
+			diamond.Insert(leadY);
+			diamond.Insert(leadX);
+			diamond.Insert(leadY + size);
+			diamond.Insert(leadX - size);
+			diamond.Insert(leadY);
+			m_aTrackCommands.Insert(Line(diamond, 0xC0000000, 3 * pixel, true));
+			m_aTrackCommands.Insert(TrackFill(diamond, argb));
+		}
+
+		canvas.SetDrawCommands(m_aTrackCommands);
+		m_bTracksDrawn = true;
+	}
+
+	//! World x, z to the canvas's pixels
+	protected static void ToScreen(SCR_MapEntity mapEntity, vector world, out float x, out float y)
+	{
+		int screenX, screenY;
+		mapEntity.WorldToScreen(world[0], world[2], screenX, screenY, true);
+		x = screenX;
+		y = screenY;
+	}
+
+	protected void AddDashes(float fromX, float fromY, float toX, float toY, float ux, float uy, float pixel, int argb)
+	{
+		float total = Math.Sqrt((toX - fromX) * (toX - fromX) + (toY - fromY) * (toY - fromY));
+		float step = (DASH + GAP) * pixel;
+		float travelled = 0;
+		for (int dash = 0; dash < MAX_DASHES && travelled < total; dash++)
+		{
+			float dashEnd = Math.Min(travelled + DASH * pixel, total);
+			array<float> segment = TrackPoints(fromX + ux * travelled, fromY + uy * travelled, fromX + ux * dashEnd, fromY + uy * dashEnd);
+			m_aTrackCommands.Insert(Line(segment, 0xC0000000, TRACK_KEYLINE * pixel, false));
+			m_aTrackCommands.Insert(Line(TrackPoints(fromX + ux * travelled, fromY + uy * travelled, fromX + ux * dashEnd, fromY + uy * dashEnd), argb, TRACK_WIDTH * pixel, false));
+			travelled += step;
+		}
+	}
+
+	//! A helicopter landing zone: a circle with an X
+	protected void AddLandingZone(float x, float y, float pixel, int argb)
+	{
+		float radius = LZ_RADIUS * pixel;
+		array<float> ring = {};
+		for (int step = 0; step < 24; step++)
+		{
+			float angle = step * Math.PI2 / 24;
+			ring.Insert(x + Math.Cos(angle) * radius);
+			ring.Insert(y + Math.Sin(angle) * radius);
+		}
+		m_aTrackCommands.Insert(Line(ring, 0xC0000000, TRACK_KEYLINE * pixel, true));
+		m_aTrackCommands.Insert(Line(ring, argb, TRACK_WIDTH * pixel, true));
+
+		float arm = radius * 0.6;
+		m_aTrackCommands.Insert(Line(TrackPoints(x - arm, y - arm, x + arm, y + arm), argb, TRACK_WIDTH * pixel, false));
+		m_aTrackCommands.Insert(Line(TrackPoints(x - arm, y + arm, x + arm, y - arm), argb, TRACK_WIDTH * pixel, false));
+	}
+
+	protected static array<float> TrackPoints(float x1, float y1, float x2, float y2)
+	{
+		array<float> points = {};
+		points.Insert(x1);
+		points.Insert(y1);
+		points.Insert(x2);
+		points.Insert(y2);
+		return points;
+	}
+
+	protected static PolygonDrawCommand TrackFill(array<float> points, int color)
+	{
+		PolygonDrawCommand polygon = new PolygonDrawCommand();
+		polygon.m_iColor = color;
+		polygon.m_Vertices = points;
+		return polygon;
+	}
+
+	//! The icon layout with only its canvas showing, spread over the whole map and ignoring the cursor
+	protected static Widget CreateTrackCanvas(notnull WorkspaceWidget workspace, ResourceName layout, notnull Widget parent)
+	{
+		Widget root = workspace.CreateWidgets(layout, parent);
+		if (!root)
+			return null;
+		Widget icon = root.FindAnyWidget("Icon");
+		if (icon)
+			icon.SetVisible(false);
+		Widget label = root.FindAnyWidget("QRFLabel");
+		if (label)
+			label.SetVisible(false);
+		root.SetFlags(WidgetFlags.IGNORE_CURSOR);
+		Widget frame = root.FindAnyWidget("Frame");
+		if (frame)
+			frame.SetFlags(WidgetFlags.IGNORE_CURSOR);
+		FrameSlot.SetAlignment(root, 0, 0);
+		return root;
 	}
 
 	//------------------------------------------------------------------------------------------------
