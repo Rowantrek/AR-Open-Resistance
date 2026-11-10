@@ -24,7 +24,7 @@ for (const [name,fn] of Object.entries({Count(){return this.length;}, IsEmpty(){
 Object.defineProperty(String.prototype,'IsEmpty',{value(){return !this.length;}});
 const env = {
   Math:{Max:Math.max, Min:Math.min, Clamp:(v,a,b)=>Math.max(a,Math.min(b,v)), Ceil:Math.ceil,
-    Mod:(a,b)=>a%b, Atan2:Math.atan2, Sin:Math.sin, Cos:Math.cos, PI2:Math.PI*2,
+    Mod:(a,b)=>a%b, Round:Math.round, Atan2:Math.atan2, Sin:Math.sin, Cos:Math.cos, PI2:Math.PI*2,
     RandomInt:(a,b)=>randomHigh?b-1:a},
   vector:{DistanceXZ:distance}, Vector:(...v)=>v, add, sub, mul, normalize,
   Replication:{IsServer:()=>server,BumpMe:()=>{}}, Print:()=>{},
@@ -35,6 +35,8 @@ const env = {
   AROR_GarrisonPolicy:{IsEnemyRole:r=>r===1||r===2},
   AROR_UIColors:{DANGER:1},
   AROR_TownWavesComponent:{Cast:x=>x},
+  AROR_ResistancePresence:{Nearest:()=>0},AROR_TownMilitiaComponent:{GetInstance:()=>null},AROR_LeaderboardComponent:{GetInstance:()=>null},
+  AROR_TownLifeComponent:{ReportCombat_S(){}},SCR_Faction:{GetEntityFaction:e=>e?.FindComponent()?.GetAffiliatedFaction()},
   FactionAffiliationComponent:{Cast:x=>x},
   AROR_FactionRolesComponent:{GetInstance:()=>({GetRoleOfFaction:(f)=>f.role===1})},
   AROR_QRFSearchPlan:class {ReportContact_S(){} BeginSearch_S(){}},
@@ -71,7 +73,7 @@ function compile(source,name) {
     'BoundTownPoint','ResistanceSupport','Executor','SkipWave','WaveElements','FindStaging','PostPosition',
     'CompassSide','TrackOperation','NextInterval','LogResponseEnd','ResetResponse','ClearWatches','IsReady',
     'RefreshWatches','EndResponse','KillThreshold','IsResistanceNear','StartResponse','ReportContact_S',
-    'ResistancePlayersNear','ContactNames','Headline'];
+    'BeginCapture_S','ResistancePlayersNear','ContactNames','Headline'];
   body = body.replace(new RegExp('(?<![.\\w])('+methods.join('|')+')\\(', 'g'),'this.$1(');
   const args = match[1].replace(/\b(?:AROR_\w+|BaseDamageContext|int|float|bool|vector|string) /g,'');
   return new Function(...Object.keys(env),'MathNative','return function('+args+'){'+body+'}')(...Object.values(env), Math);
@@ -190,14 +192,14 @@ Object.assign(post,{m_Location:{GetControllingRole:()=>0,GetId:()=> 'town'},PHAS
 compile(town,'Tick').call(post);
 check(started,'Immediate support flip and zero processed kills cannot swallow post response');
 post.m_iAlertDelayMin=30;post.m_iAlertDelayMax=90;post.m_iLockdownSeconds=600;
-post.m_aSeen=[];post.ResetResponse=()=>{};post.ResistancePlayersNear=()=>1;post.ContactNames=()=>'';post.Headline=()=>{};
+post.m_aSeen=[];post.BeginCapture_S=()=>{};post.ResetResponse=()=>{};post.ResistancePlayersNear=()=>1;post.ContactNames=()=>'';post.Headline=()=>{};
 manager=null;
 compile(town,'StartResponse').call(post);
 check(post.m_fSupportAtContact===25 && !post.m_bPostTakenTrigger,'Response rollback baseline precedes capture support reward');
 let contacts=[];
 manager={ReportCombatContact_S:(...args)=>contacts.push(args)};
 const victimFaction={role:1,IsFactionEnemy:other=>other.role!==1};
-const victim={FindComponent:()=>({GetAffiliatedFaction:()=>victimFaction})};
+const victim={GetOrigin:()=>[0,0,0],FindComponent:()=>({GetAffiliatedFaction:()=>victimFaction})};
 let attackerRole=0;
 const attacker={FindComponent:()=>({GetAffiliatedFaction:()=>({role:attackerRole})}),GetOrigin:()=>[80,0,40]};
 const damage={damageValue:5,damageType:0,instigator:{GetInstigatorEntity:()=>attacker,GetInstigatorType:()=>0,GetInstigatorPlayerID:()=>1}};

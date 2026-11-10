@@ -215,11 +215,11 @@ for(const role of ['occupier','invader'])check(new RegExp('m_sId "'+role+'_towna
 for(const name of ['Frame','Icon','QRFLabel'])check(read('UI/Layouts/Map/AROR_MapIcon.layout').includes('Name "'+name+'"'),'Shared layout contains '+name);
 env.AROR_LocationForces={IsInAircraft:compile(read('Scripts/Game/Capture/AROR_LocationForces.c'),'IsInAircraft')};
 const contest=compile(town,'OnContestEntity');let watched=0;
-const scan={m_ScanRoles:env.AROR_FactionRolesComponent.GetInstance(),m_eRole:1,m_iScanEnemies:0,m_iScanFriendlies:0,Watch:()=>watched++};
+const scan={m_aScanReinforcements:[],m_ScanRoles:env.AROR_FactionRolesComponent.GetInstance(),m_eRole:1,m_iScanEnemies:0,m_iScanFriendlies:0,Watch:()=>watched++};
 const seatedEnemy=entity(1,[0,0,0],true);seatedEnemy.seated=true;
 seatedEnemy.aircraft={GetRootParent:()=>null,FindComponent:t=>t===env.HelicopterControllerComponent?{}:null};
 contest.call(scan,seatedEnemy);check(scan.m_iScanEnemies===0&&watched===0,'Seated helicopter squad cannot progress town lockdown');
-seatedEnemy.seated=false;contest.call(scan,seatedEnemy);check(scan.m_iScanEnemies===1&&watched===1,'The squad counts only after disembarkation');
+seatedEnemy.seated=false;scan.m_aScanReinforcements.push(seatedEnemy);contest.call(scan,seatedEnemy);check(scan.m_iScanEnemies===1&&watched===1,'The landed reinforcement counts only after disembarkation');
 const hostile=compile(read('Scripts/Game/Operations/AROR_OperationManagerComponent.c'),'IsHostileAttackTarget');
 for(const [attacker,defender,debug,expected]of [[2,1,false,true],[1,2,false,true],[2,0,false,true],[1,1,false,false],[2,1,true,false],[2,0,true,true],[2,3,false,false]]){
  check(!!hostile({GetRole:()=>attacker,m_bDebugRequest:debug},{GetControllingRole:()=>defender})===expected,'Attack admission respects diplomacy and debug target policy '+[attacker,defender,debug]);

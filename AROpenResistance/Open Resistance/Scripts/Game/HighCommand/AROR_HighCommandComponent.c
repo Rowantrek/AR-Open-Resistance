@@ -196,6 +196,21 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	void AppendPresencePositions_S(notnull array<vector> positions)
+	{
+		if (!Replication.IsServer())
+			return;
+		foreach (AROR_HighCommandSquad squad : m_aSquads)
+		{
+			array<IEntity> members = {};
+			AROR_ForceSpawner.CountLiving(squad.m_Group, members);
+			foreach (IEntity member : members)
+				AROR_ResistancePresence.AddPosition(member, positions);
+			if (squad.m_Group && squad.m_Group.IsDormant() && squad.m_Group.GetDormantAliveCount() > 0)
+				positions.Insert(squad.m_vPosition);
+		}
+	}
+
 	int GetSquads(notnull array<AROR_HighCommandSquadInfo> outSquads)
 	{
 		outSquads.Clear();
@@ -694,9 +709,9 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 			return;
 
 		squad.m_bMounted = CountMounted_S(squad) > 0;
-		if (!squad.m_bMounted)
+		if (!squad.m_bMounted || !HasDriver_S(squad))
 		{
-			FinishEmbark_S(squad, squad.m_sCallsign + " could not board the " + VehicleName(squad.m_Vehicle), false);
+			FinishEmbark_S(squad, squad.m_sCallsign + " could not ready a driver for the " + VehicleName(squad.m_Vehicle), false);
 			return;
 		}
 
@@ -711,6 +726,8 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 	//! Embark is over: the squad stands by where it is, mounted or not
 	protected void FinishEmbark_S(AROR_HighCommandSquad squad, string message, bool mounted)
 	{
+		squad.m_aBoardingMembers.Clear();
+		squad.m_aBoardingSeats.Clear();
 		squad.m_eEmbarkPhase = AROR_EHighCommandEmbarkPhase.NONE;
 		squad.m_iEmbarkStarted = 0;
 		squad.m_iEmbarkEntryId = 0;
@@ -718,7 +735,11 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 		if (mounted)
 			SetUsableVehicle(squad.m_Group, squad.m_Vehicle, true);
 		else
+		{
+			DismountMembers_S(squad);
+			squad.m_bMounted = false;
 			IssueWaypoint_S(squad, m_sDefendWaypointPrefab, squad.m_vPosition, m_fHoldRadius);
+		}
 
 		squad.m_eOrder = AROR_EHighCommandOrder.HOLD;
 		squad.m_vTarget = squad.m_vPosition;
@@ -764,6 +785,14 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 
 		array<IEntity> members = {};
 		AROR_ForceSpawner.CountLiving(squad.m_Group, members);
+		for (int assignment = squad.m_aBoardingMembers.Count() - 1; assignment >= 0; assignment--)
+		{
+			if (!members.Contains(squad.m_aBoardingMembers[assignment]) || !ordered.Contains(squad.m_aBoardingSeats[assignment]))
+			{
+				squad.m_aBoardingMembers.Remove(assignment);
+				squad.m_aBoardingSeats.Remove(assignment);
+			}
+		}
 		bool done = true;
 		foreach (IEntity member : members)
 		{
@@ -793,8 +822,20 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 			{
 				if (!seat.IsCompartmentAccessible() || seat.IsOccupied() || seat.GetOccupant())
 					continue;
+				int assigned = squad.m_aBoardingSeats.Find(seat);
+				if (assigned >= 0 && squad.m_aBoardingMembers[assigned] != member)
+					continue;
+				int previous = squad.m_aBoardingMembers.Find(member);
+				if (previous >= 0 && squad.m_aBoardingSeats[previous] != seat)
+					continue;
 
-				access.GetInVehicle(vehicle, seat, true, -1, ECloseDoorAfterActions.CLOSE_DOOR, false);
+				if (!access.GetInVehicle(vehicle, seat, true, -1, ECloseDoorAfterActions.CLOSE_DOOR, true))
+					continue;
+				if (assigned < 0)
+				{
+					squad.m_aBoardingSeats.Insert(seat);
+					squad.m_aBoardingMembers.Insert(member);
+				}
 				done = false;
 				break;
 			}
@@ -805,6 +846,32 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Living members seated in the squad's vehicle
+	//! A passenger alone cannot make a squad ready to drive.
+	protected bool HasDriver_S(AROR_HighCommandSquad squad)
+	{
+		if (!squad.m_Vehicle)
+			return false;
+		BaseCompartmentManagerComponent compartments = BaseCompartmentManagerComponent.Cast(squad.m_Vehicle.FindComponent(BaseCompartmentManagerComponent));
+		if (!compartments)
+			return false;
+		array<BaseCompartmentSlot> seats = {};
+		compartments.GetCompartments(seats);
+		SCR_AIVehicleUsageComponent usage = SCR_AIVehicleUsageComponent.Cast(squad.m_Vehicle.FindComponent(SCR_AIVehicleUsageComponent));
+		array<IEntity> members = {};
+		AROR_ForceSpawner.CountLiving(squad.m_Group, members);
+		foreach (BaseCompartmentSlot seat : seats)
+		{
+			if (!seat)
+				continue;
+			bool driver = PilotCompartmentSlot.Cast(seat) != null;
+			if (usage && usage.GetPilotCompartmentSlot() == seat)
+				driver = true;
+			if (driver && AROR_ForceSpawner.IsAlive(seat.GetOccupant()) && members.Contains(seat.GetOccupant()))
+				return true;
+		}
+		return false;
+	}
+
 	protected int CountMounted_S(AROR_HighCommandSquad squad)
 	{
 		if (!squad.m_Vehicle || !squad.m_Group)
@@ -831,11 +898,15 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 	//! Everyone out of the vehicle, and the group no longer counts it as theirs to use (so it does not re-board)
 	protected void DismountMembers_S(AROR_HighCommandSquad squad)
 	{
+		squad.m_aBoardingMembers.Clear();
+		squad.m_aBoardingSeats.Clear();
 		SetUsableVehicle(squad.m_Group, squad.m_Vehicle, false);
 		array<IEntity> members = {};
 		AROR_ForceSpawner.CountLiving(squad.m_Group, members);
 		foreach (IEntity member : members)
 		{
+			if (GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(member) > 0)
+				continue;
 			CompartmentAccessComponent access = CompartmentAccessComponent.Cast(member.FindComponent(CompartmentAccessComponent));
 			if (access && access.IsInCompartment() && !access.IsGettingOut())
 				access.GetOutVehicle(EGetOutType.ANIMATED, -1, ECloseDoorAfterActions.INVALID, false);

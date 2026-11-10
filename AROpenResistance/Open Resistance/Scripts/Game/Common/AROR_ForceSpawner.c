@@ -18,10 +18,12 @@ class AROR_ForceSpawner
 	//! An AI group of the role with one member per unit type, each spawned as the role's base character and dressed
 	//! from its preset loadout at the role's current Readiness (through the engine's queue, not all this frame).
 	//! Null if the group prefab, faction or any character cannot be set up.
-	static SCR_AIGroup SpawnGroup(ResourceName groupPrefab, AROR_EFactionRole role, notnull array<AROR_EUnitType> types, vector position)
+	static SCR_AIGroup SpawnGroup(ResourceName groupPrefab, AROR_EFactionRole role, notnull array<AROR_EUnitType> types, vector position, bool trackPopulation = true)
 	{
 		AROR_FactionPresetsComponent presets = AROR_FactionPresetsComponent.GetInstance();
 		if (types.IsEmpty() || !presets)
+			return null;
+		if (!Replication.IsServer() || types.Count() > AROR_PopulationBudget.GetAvailable_S())
 			return null;
 
 		string factionKey = FactionKey(role);
@@ -66,6 +68,8 @@ class AROR_ForceSpawner
 			return null;
 		}
 
+		if (trackPopulation)
+			AROR_PopulationBudget.RegisterGroup_S(group, slots);
 		group.RequestSpawn(slots);
 		return group;
 	}
@@ -336,6 +340,82 @@ class AROR_ForceSpawner
 
 		CharacterControllerComponent controller = character.GetCharacterController();
 		return controller && !controller.IsDead();
+	}
+
+	//! Finite leases for already materialized defenders on an active front; never activate a player character.
+	static void RenewSimulation_S(SCR_AIGroup group)
+	{
+		if (!Replication.IsServer() || !group)
+			return;
+		array<AIAgent> agents = {};
+		group.GetAgents(agents);
+		foreach (AIAgent agent : agents)
+		{
+			if (!agent)
+				continue;
+			IEntity member = agent.GetControlledEntity();
+			if (!IsAlive(member) || GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(member) > 0)
+				continue;
+			agent.PreventMaxLOD(15);
+			agent.ActivateAI(true);
+		}
+	}
+
+	//! Native virtualisation is not a casualty. Does not count queued, never-spawned slots.
+	static int CountStrength(SCR_AIGroup group)
+	{
+		if (!group)
+			return 0;
+		if (group.IsDormant())
+			return group.GetDormantAliveCount();
+		array<IEntity> members = {};
+		return CountLiving(group, members);
+	}
+
+	//! Fleet ownership and player occupancy independently protect a vehicle from cleanup.
+	static bool IsVehicleInUse(IEntity vehicle)
+	{
+		if (!vehicle)
+			return false;
+		if (AROR_ResistanceFleet.IsClaimed(vehicle))
+			return true;
+		array<int> players = {};
+		GetGame().GetPlayerManager().GetPlayers(players);
+		foreach (int playerId : players)
+		{
+			IEntity player = GetGame().GetPlayerManager().GetPlayerControlledEntity(playerId);
+			if (!player)
+				continue;
+			CompartmentAccessComponent access = CompartmentAccessComponent.Cast(player.FindComponent(CompartmentAccessComponent));
+			if (access && access.IsInCompartment() && access.GetCompartment() && access.GetCompartment().GetVehicle() == vehicle)
+				return true;
+		}
+		return false;
+	}
+
+	//! An owned group may retire only after players and protected vehicles have stopped using its members.
+	static bool RemoveGroup_S(SCR_AIGroup group)
+	{
+		if (!Replication.IsServer())
+			return false;
+		if (!group)
+			return true;
+		if (group.GetPlayerCount() > 0)
+			return false;
+		array<IEntity> members = {};
+		CountLiving(group, members);
+		foreach (IEntity member : members)
+		{
+			if (GetGame().GetPlayerManager().GetPlayerIdFromControlledEntity(member) > 0)
+				return false;
+			CompartmentAccessComponent access = CompartmentAccessComponent.Cast(member.FindComponent(CompartmentAccessComponent));
+			if (access && access.IsInCompartment() && access.GetCompartment() && IsVehicleInUse(access.GetCompartment().GetVehicle()))
+				return false;
+		}
+		foreach (IEntity soldier : members)
+			SCR_EntityHelper.DeleteEntityAndChildren(soldier);
+		SCR_EntityHelper.DeleteEntityAndChildren(group);
+		return true;
 	}
 
 	//------------------------------------------------------------------------------------------------

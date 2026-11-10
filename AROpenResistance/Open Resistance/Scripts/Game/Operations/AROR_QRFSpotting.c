@@ -46,6 +46,18 @@ class AROR_QRFSpotting
 		}
 		return null;
 	}
+	//! Reuse the confirmed snapshot for threat tracks; never sample an unobserved entity's current origin.
+	bool GetConfirmedPosition_S(IEntity entity, int now, int lifetime, out vector position)
+	{
+		if (!Replication.IsServer() || !entity || AROR_ResistanceFleet.IsClaimed(entity) || AROR_ForceSpawner.IsDestroyed(entity))
+			return false;
+		AROR_QRFSighting report = Find(entity);
+		if (!report || !report.m_bConfirmed || now - report.m_iLastSeen >= lifetime)
+			return false;
+		position = report.m_vPosition;
+		return true;
+	}
+
 	protected void RecordLook(IEntity entity, int kind, int observerId, int now, int lifetime, int side)
 	{
 		AROR_QRFSighting report = Find(entity);

@@ -63,6 +63,7 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_fQRFRoadLaunchRadius 300
    m_bReaperQRFTest 0
    m_bAllowAirborneResponses 1
+   m_iReaperSupportSeconds 120
    m_bAllowJointResponses 1
    m_iJointTransportPercent 100
    m_bQRFTacticalCommander 1
@@ -1726,8 +1727,8 @@ SCR_BaseGameMode AROR_GameMode_Base1 : "{49BA4199470D70DA}Prefabs/GameModes/AROR
    m_iCaptureReadinessPressure 50
    m_iCaptureCrackdown 100
    m_iCrackdownQuietTime 600
-   m_iCrackdownDecay 5
-   m_iReadinessDecay 2
+   m_iCrackdownDecay 40
+   m_iReadinessDecay 30
    m_iQRFBaseOverhead 50
    m_iQRFTierOverhead 10
    m_iQRFThreatLifetime 180

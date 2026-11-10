@@ -54,6 +54,7 @@ const env = {
     }
   },
   SCR_EntityHelper: { DeleteEntityAndChildren: e => { deleted.push(e); if (e) e.deleted = true; } },
+  Print(){},LogLevel:{NORMAL:0,WARNING:1},
   AROR_NotificationManagerComponent: { SendHint_S: (id, message) => hints.push({ id, message }) }
 };
 for (const type of types) env[type] = { Cast: x => x };
@@ -70,7 +71,7 @@ env.AROR_GameFlowComponent.GetInstance = () => ({ IsPlaythroughReady: () => read
 env.AROR_FactionRolesComponent.GetInstance = () => ({ GetFaction: () => 'resistance' });
 
 const methods = ['GetLimit', 'GetRoster', 'GetFlagLocation', 'IsReadyPlayer', 'CanRecruit', 'CountNativeMembers', 'CountMembers', 'EnsureSquad_S',
-  'Recruit_S', 'Rename_S', 'GetLedSquad', 'Dismiss_S', 'IsPlayerControlled', 'GetCharacterGroup', 'CanRetireRecruit', 'Update_S', 'RemoveRecruit_S', 'Hint',
+  'Recruit_S', 'SpawnRecruit_S', 'IsInCommandGroup', 'MarkJoined', 'Rename_S', 'GetLedSquad', 'Dismiss_S', 'IsPlayerControlled', 'GetCharacterGroup', 'CanRetireRecruit', 'Update_S', 'RemoveRecruit_S', 'Hint',
   'Publish_S', 'OnRosterReplicated'];
 function compile(name, code = source, inherited = []) {
   const m = code.match(new RegExp('^\\t[^\\r\\n]*\\b' + name + '\\(([^\\r\\n]*)\\)\\r?\\n\\t\\{([\\s\\S]*?)^\\t\\}', 'm'));
@@ -124,7 +125,7 @@ function fixture(hasGroup = true) {
     RemoveAiFromSlaveGroup(p, group) { group.slave.members = group.slave.members.filter(e => e !== p); }
   };
   nativeControllers.set(1, controller); nativeControllers.set(2, controller);
-  const location = { role: 0, GetControllingRole() { return this.role; } };
+  const location = { role: 0, GetName:()=>'HQ', GetControllingRole() { return this.role; } };
   const parent = { FindComponent: () => location };
   const flag = { GetOrigin: () => [1, 0, 0], GetParent: () => parent,
     FindComponent: type => type === env.AROR_CaptureFlagPlacementComponent ? {} : null };
@@ -343,7 +344,7 @@ function appFixture() {
   return { ...appMethods, m_wName: field, m_iGroupId: -1, m_iPage: 0, m_iConfirmDismiss: -1,
     m_bShown: false, m_aMembers: [], m_fScale: 1, buttons: [], texts: [],
     BaseSetVisible() {}, BeginFrame(_x, _y, scale) { this.m_fScale = scale; this.buttons = []; this.texts = []; },
-    EndFrame() {}, Panel() {}, PlaceRaw() {}, Text(...args) { this.texts.push(args); },
+    DrawRecruit(){},EndFrame() {}, Panel() {}, PlaceRaw() {}, Text(...args) { this.texts.push(args); },
     Button(...args) { this.buttons.push({ label: args[4], action: args[5], x: args[0], y: args[1], width: args[2], height: args[3] }); }
   };
 }

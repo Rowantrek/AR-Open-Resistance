@@ -44,6 +44,12 @@ class AROR_TownWavesComponent : ScriptComponent
 	protected int m_iKillCrackdown;
 	[Attribute("4", desc: "Army readiness pressure per enemy killed in the town (levels at 100, 250, 450, 700)", params: "0 100 1", category: "Escalation")]
 	protected int m_iKillReadiness;
+	[Attribute("1", desc: "Cap new ground waves against nearby players, commanded squads and this site's militia; never remove already committed enemies", category: "Balance")]
+	protected bool m_bScaleToDefenders;
+	[Attribute("8", desc: "Nearby friendly fighters per ground element before final-wave and city bonuses", params: "4 16 1", category: "Balance")]
+	protected int m_iFightersPerElement;
+	[Attribute("1000", desc: "Count commanded ground forces within this distance when planning each new wave, metres", params: "300 2000 50", category: "Balance")]
+	protected float m_fDefenderScaleDistance;
 	[Attribute("0", desc: "Radius counted for the lockdown, metres; 0 uses the town's radius (kept within 120-300)", params: "0 600 10", category: "Lockdown")]
 	protected float m_fContestRadius;
 	[Attribute("600", desc: "Seconds the army must outnumber the Resistance in the town (in total; it counts back down while it does not) to retake it", params: "60 3600 30", category: "Lockdown")]
@@ -968,7 +974,31 @@ class AROR_TownWavesComponent : ScriptComponent
 			elements++;
 		if (m_Location.GetLocationType() == AROR_ELocationType.CITY)
 			elements++;
+		if (m_bScaleToDefenders)
+			elements = Math.Min(elements, DefenderElementLimit(wave));
 		return Math.Clamp(elements, 1, 8);
+	}
+
+	protected int DefenderElementLimit(int wave)
+	{
+		array<vector> positions = {};
+		AROR_ResistancePresence.GetPositions(positions);
+		int fighters;
+		foreach (vector position : positions)
+		{
+			if (vector.DistanceXZ(position, m_Location.GetCenter()) <= m_fDefenderScaleDistance)
+				fighters++;
+		}
+		AROR_TownMilitiaComponent militia = AROR_TownMilitiaComponent.GetInstance();
+		if (militia)
+			fighters += militia.CountDefenders_S(m_Location.GetId());
+		int perElement = Math.Max(1, m_iFightersPerElement);
+		int limit = Math.Max(1, (fighters + perElement - 1) / perElement);
+		if (wave >= m_iWaves)
+			limit++;
+		if (m_Location.GetLocationType() == AROR_ELocationType.CITY)
+			limit++;
+		return Math.Clamp(limit, 1, 8);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1104,6 +1134,11 @@ class AROR_TownWavesComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	protected bool IsResistanceNear()
 	{
+		if (AROR_ResistancePresence.Nearest(m_Location.GetCenter()) <= m_fAbandonDistance)
+			return true;
+		AROR_TownMilitiaComponent militia = AROR_TownMilitiaComponent.GetInstance();
+		if (militia && militia.HasDefenders_S(m_Location.GetId()))
+			return true;
 		array<int> players = {};
 		GetGame().GetPlayerManager().GetPlayers(players);
 		foreach (int playerId : players)
@@ -1317,11 +1352,24 @@ class AROR_TownCasualtyWatch
 		// Anyone hit in town sends its civilians running
 		if (m_Entity)
 			AROR_TownLifeComponent.ReportCombat_S(m_Entity.GetOrigin());
+		IEntity source = context.instigator.GetInstigatorEntity();
+		Faction victimFaction = SCR_Faction.GetEntityFaction(m_Entity);
+		Faction sourceFaction;
+		if (source)
+			sourceFaction = SCR_Faction.GetEntityFaction(source);
+		if (victimFaction && sourceFaction && !victimFaction.IsFactionEnemy(sourceFaction))
+			return;
 		// The contact report is best effort (it needs both sides' factions, which some weapons and vehicles do not
 		// carry); a player's hit always counts towards the kill, so the trigger and escalation never miss it
 		if (!m_sReportingTownId.IsEmpty())
 			ReportContact_S(context);
 		int playerId = context.instigator.GetInstigatorPlayerID();
+		if (playerId <= 0)
+		{
+			AROR_LeaderboardComponent leaderboard = AROR_LeaderboardComponent.GetInstance();
+			if (leaderboard)
+				playerId = leaderboard.ResolveInstigator_S(context.instigator);
+		}
 		if (playerId <= 0)
 			return;
 		m_iPlayerId = playerId;

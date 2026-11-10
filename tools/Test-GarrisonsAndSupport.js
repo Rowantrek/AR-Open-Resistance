@@ -9,6 +9,8 @@ function runGarrisonsAndSupportTests(sources) {
   let server=true;
   const types={TOWN:0,HQ:1,AIRPORT:2,CITY:3,FACTORY:4,MILITARY_BASE:5,PORT:6,RESOURCES:7,OUTPOST:8};
   const roles={RESISTANCE:0,OCCUPIERS:1,INVADERS:2};
+  const unitTypes={RIFLEMAN:0,TEAMLEADER:1,AUTORIFLEMAN:2,LAT:3,MARKSMAN:4,CREW:5};
+  let spawnBase='role-base';
   const env={Replication:{IsServer:()=>server},AROR_ELocationType:types,AROR_EFactionRole:roles,AROR_LocationForces:{IsInAircraft:()=>false},
     Math:{Clamp:(n,a,b)=>Math.max(a,Math.min(b,n)),Max:Math.max,Min:Math.min,AbsFloat:Math.abs,RandomInt:(a,b)=>a,Mod:(a,b)=>a%b},
     vector:{DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])},
@@ -16,6 +18,12 @@ function runGarrisonsAndSupportTests(sources) {
     AROR_GarrisonSlot:class{constructor(){Object.assign(this,{m_bLost:false,m_fHealth:1,m_bSpawned:false,m_Entity:null,m_iGroup:-1,m_iVehicle:-1,m_iSeat:-1,m_bPlacementUnavailable:false,m_iPlacementFailureSince:-1,m_iVariant:0,m_bCrewRecorded:false});}},
     AROR_GarrisonPolicy:{},SENTRY_VARIANT:1000,AROR_DefencePositionComponent:{Cast:x=>x},AROR_SentryPostComponent:{Cast:x=>x},AROR_GarrisonManagerComponent:{GetInstance:()=>({CanDefendRole:()=>true})}};
   const methods=['SentryPosts','SetValues','UpdateControl_S','IsEligible','AddSlot','ReservedPersonnel','ReportFailure','AssignMembers','CrewAndOrder','IsPlayerOrForeignAsset','Observe_S','ClearAssignments_S','HasDormantReserve','IsDefencePending','GetDefenceCaptureBlockReason','GetLocation','GetOwner','PlayerNear','FactionFor'];
+  env.AROR_EUnitType=unitTypes;
+  env.AROR_EFormation={RIFLE_FIRE_TEAM:0,WEAPONS_FIRE_TEAM:1,AT_FIRE_TEAM:2,AA_FIRE_TEAM:3};
+  env.AROR_Formations={GetUnits:(formation,out)=>{out.Clear();out.push(1,0,2,3);}};
+  env.AROR_FactionPresetsComponent={GetInstance:()=>({GetSpawnPrefab:()=>spawnBase,FillGroup_S:(group,role,types)=>{group.m_aUnitPrefabSlots=types.map(()=>spawnBase);return types.length;}})};
+  env.AROR_PopulationBudget={GetAvailable_S:()=>10000};
+  Object.defineProperty(Array.prototype,'InsertAll',{value:function(xs){this.push(...xs)},configurable:true});
   for(const source of Object.values(sources))for(const m of source.matchAll(/^\t(?:override )?(?:protected )?(?:static )?\w+ (\w+)\(/gm))if(!methods.includes(m[1]))methods.push(m[1]);
   for(const [name,fn]of Object.entries({Clear(){this.length=0;},Copy(a){this.length=0;this.push(...a);},Contains(x){return this.includes(x);},Find(x){return this.indexOf(x);},RemoveItem(x){const i=this.indexOf(x);if(i<0)return false;this.splice(i,1);return true;},Remove(i){this.splice(i,1);}}))Object.defineProperty(Array.prototype,name,{value:fn,configurable:true});
   function compile(source,name){
@@ -46,6 +54,7 @@ function runGarrisonsAndSupportTests(sources) {
   const player={GetOrigin:()=>playerPosition,GetCharacterController:()=>({IsDead:()=>playerDead})};
   const centre={GetCenter:()=>[0,0,0]};
   const playerManager={GetPlayers:out=>out.push(1),GetPlayerControlledEntity:()=>player};
+  env.AROR_ResistancePresence={GetPositions:out=>{out.Clear();if(!playerDead)out.push(player.GetOrigin());}};
   let clock=10000;
   const game={GetPlayerManager:()=>playerManager,GetWorld:()=>({GetWorldTime:()=>clock})};
   Object.assign(env,{GetGame:()=>game,ChimeraCharacter:{Cast:x=>x},
@@ -76,7 +85,7 @@ function runGarrisonsAndSupportTests(sources) {
     IsCapacityWaiting:()=>false,CommittedPersonnel:()=>reserved,NextPersonnelCost:()=>4,SetCapacityWait_S:()=>{},
     Retire_S:()=>retired++,OutsideLongEnough:(outside,now)=>{retirementTime=now;return false;},RefreshPending_S:()=>{},ClearAssignments_S:()=>{},
     HasRoster:()=>true,GetRosterRole:()=>1,GetLocation:()=>teleportSite,ReservedPersonnel:()=>reserved,
-    HasSuitableDefenceTerrain_S:()=>terrainFits,
+    RenewSimulation_S(){},HasSuitableDefenceTerrain_S:()=>terrainFits,
     SpawnNextAsset_S:(binding,clearance)=>{assets++;lastClearance=clearance;return false;},
     SpawnNextGroup_S:(now,clearance)=>{groups++;lastClearance=clearance;lastGroupTime=now;return true;}};
   const callbacks={Insert:()=>{},Remove:()=>{}};
@@ -86,7 +95,7 @@ function runGarrisonsAndSupportTests(sources) {
     m_Flow:{IsPlaythroughReady:()=>ready},EnsureRegistry_S:()=>true,CanDefendRole:()=>true,
     m_fPlayerSpawnClearance:6,m_fRetirementRadius:2500,m_iRetirementDelay:120,m_iMaxPersonnel:96,
     PlayerNear:playerNear,FactionFor:()=>({}),HasRecentCombat:()=>false,NearestPlayerDistance:compile(sources.manager,'NearestPlayerDistance'),ScanProximity_S(...args){scans++;return scan.call(this,...args);}};
-  for(const name of ['DefenceLevel','InfantryTeams','StaticCount','MannedCount','IsEnemyRole'])env.AROR_GarrisonPolicy[name]=compile(sources.policy,name);
+  for(const name of ['DefenceLevel','InfantryTeams','StaticCount','MannedCount','IsEnemyRole','TeamFormation'])env.AROR_GarrisonPolicy[name]=compile(sources.policy,name);
   playerPosition=[0,0,0];managerTick.call(managerState);
   check(assets===0&&groups===1&&lastClearance===6,'teleport onto flag admits infantry before optional hulls within the proximity scan interval');
   for(let i=0;i<3;i++){clock+=250;managerTick.call(managerState);}
@@ -106,12 +115,14 @@ function runGarrisonsAndSupportTests(sources) {
     check(env.AROR_GarrisonPolicy.DefenceLevel(types.TOWN,roll)===0,'no town garrison recipe');
   }
   check([0,1,2].map(r=>env.AROR_GarrisonPolicy.DefenceLevel(types.RESOURCES,r)).join(',')==='1,2,3','resources roll three stored defence levels');
-  const faction={m_eRole:1,m_sFactionKey:'AROR_OCCUPIERS',m_sAssetFactionKey:'US',m_sInfantry:'rifle',m_sMarksman:'',m_sStaticMG:'mg',m_sCrew:'crew',m_sParkedArmour:'lav',m_aMannedVehicles:['lav','humvee']};
+  const faction={m_eRole:1,m_sFactionKey:'AROR_OCCUPIERS',m_sAssetFactionKey:'US',m_sInfantry:'rifle',m_sMarksman:'',m_sStaticMG:'mg',m_sCrew:'crew',m_sParkedArmour:'lav',m_aMannedVehicles:['lav','humvee'],StaticVariantCount(){return 1+(this.m_aStaticVariants?.length||0)},MannedVariantCount(){return this.m_aMannedVehicles.length}};
   const add=compile(sources.garrison,'AddSlot'),reserve=compile(sources.garrison,'ReservedPersonnel'),generate=compile(sources.garrison,'Generate_S');
   function roster(type,override=0,staticOverride=0,omitParked=false,extraTeams=0,parked=[],posts=0){
     const state={m_aSlots:[],m_bGenerated:false,m_iDefenceLevel:override,m_iStaticWeaponCountOverride:staticOverride,m_bOmitParkedArmour:omitParked,IsEligible:()=>true,
       m_aExtraParkedVehicles:parked,GetExtraInfantryTeams:()=>extraTeams,SentryPosts:()=>Array.from({length:posts},()=>({})),GetOwner:()=>({}),stocked:0,StockStores_S(entity,depth){this.stocked++;},GetExtraParkedCount:()=>parked.length,
-      m_Location:{GetControllingRole:()=>1,GetLocationType:()=>type,GetId:()=>'site'},AddSlot:add,ReservedPersonnel:reserve,InfantryPrefab:compile(sources.garrison,'InfantryPrefab'),StaticPrefab:compile(sources.garrison,'StaticPrefab'),GetStaticWeaponCount:compile(sources.garrison,'GetStaticWeaponCount')};
+      m_Location:{GetControllingRole:()=>1,GetLocationType:()=>type,GetId:()=>'site'},IsSettlementPost:()=>false,AddSlot:add,ReservedPersonnel:reserve,
+      CharacterPrefab:compile(sources.garrison,'CharacterPrefab'),InfantryType:compile(sources.garrison,'InfantryType'),StaticPrefab:compile(sources.garrison,'StaticPrefab'),
+      ParkedPrefab:compile(sources.garrison,'ParkedPrefab'),MannedPrefab:compile(sources.garrison,'MannedPrefab'),PresetVehicle:prefab=>prefab,GetStaticWeaponCount:compile(sources.garrison,'GetStaticWeaponCount')};
     generate.call(state,faction);return state;
   }
   const towered=roster(types.OUTPOST,1,0,false,0,[],2),plain=roster(types.OUTPOST,1);
@@ -120,7 +131,7 @@ function runGarrisonsAndSupportTests(sources) {
   const sentries=towered.m_aSlots.filter(s=>s.m_iKind===0&&s.m_iVariant>=1000);
   check(sentries.length===2&&sentries.map(s=>s.m_iVariant).join(',')==='1000,1001','one marksman per guard tower, recording its post');
   check(new Set(sentries.map(s=>s.m_iGroup)).size===2&&sentries.every(s=>s.m_iGroup>Math.max(...plain.m_aSlots.map(p=>p.m_iGroup))),'each sentry is its own group after every authored group');
-  check(sentries.every(s=>s.m_sPrefab==='rifle'),'sentry falls back to the infantry character without a marksman');
+  check(sentries.every(s=>s.m_sPrefab==='role-base'),'sentry uses the role base character for later preset dressing');
   check(JSON.stringify(towered.m_aSlots.slice(0,plain.m_aSlots.length).map(s=>[s.m_iKind,s.m_iGroup]))===JSON.stringify(plain.m_aSlots.map(s=>[s.m_iKind,s.m_iGroup])),'towers leave the team, gun and crew ordinals unchanged');
   const outpost=roster(types.OUTPOST,4);
   check(outpost.m_aSlots.filter(s=>s.m_iKind===2||s.m_iKind===3).length===0,'even strong outpost overrides never add vehicles');
@@ -152,10 +163,10 @@ function runGarrisonsAndSupportTests(sources) {
   check(equippedMilitary.m_aSlots.filter(s=>s.m_iKind===0).length===24,'extra static does not increase the infantry recipe');
   check(equippedMilitary.ReservedPersonnel()===32,'extra gun reserves its crew before physical spawning');
   const staticPrefab=compile(sources.garrison,'StaticPrefab');
-  check(staticPrefab(faction,99)==='mg','removed static variants safely use the current default gun');
-  check(staticPrefab({...faction,m_aStaticVariants:['']},1)==='mg','empty static variant retains a usable default');
+  check(staticPrefab.call({PresetVehicle:p=>p},faction,99)==='mg','removed static variants safely use the current default gun');
+  check(staticPrefab.call({PresetVehicle:p=>p},{...faction,m_aStaticVariants:['']},1)==='mg','empty static variant retains a usable default');
   const bindStatic=compile(sources.garrison,'BindAssets_S');
-  const staticRestore={m_aSlots:guns.map(s=>({...s,m_bLost:s.m_iVariant===1})),m_eRosterRole:1,m_bAssetsBound:false,StaticPrefab:staticPrefab};
+  const staticRestore={PresetVehicle:p=>p,m_aSlots:guns.map(s=>({...s,m_bLost:s.m_iVariant===1})),m_eRosterRole:1,m_bAssetsBound:false,StaticPrefab:staticPrefab};
   check(bindStatic.call(staticRestore,{...faction,m_aStaticVariants:['new-medium','new-heavy']})&&staticRestore.m_aSlots[2].m_sPrefab==='new-heavy','restored static slots bind their recorded variant to current role assets');
   check(staticRestore.m_aSlots[1].m_bLost,'static asset rebinding never replenishes a destroyed gun');
   delete faction.m_aStaticVariants;
@@ -252,7 +263,7 @@ function runGarrisonsAndSupportTests(sources) {
   const status={m_bPendingDefense:true,m_sPendingDefenseReason:'Defenders awaiting deployment',IsDefencePending:()=>true,GetDefenceCaptureBlockReason:()=>'Defence site unsuitable - relocation required'};
   status.UpdateDeployment_S=()=>{};compile(sources.garrison,'RefreshPending_S').call(status);check(bumps===1&&status.m_sPendingDefenseReason.startsWith('Defence site unsuitable'),'reason-only changes replicate while pending remains true');
   let livingHostile=false;Object.assign(env,{AROR_HostilesQuery:{HasHostilesInRadius:()=>livingHostile},GetGame:()=>({GetWorld:()=>({GetWorldTime:()=>10000})})});
-  const physical=compile(sources.capture,'HasHostiles'),captureState={m_fLastHostileCheckTime:0,m_bHostilesPresent:false,GetLocation:()=>({GetCenter:()=>[0,0,0],GetRadius:()=>100})};
+  const physical=compile(sources.capture,'HasHostiles'),captureState={GetSettlementPost:()=>null,m_fLastHostileCheckTime:0,m_bHostilesPresent:false,GetLocation:()=>({GetCenter:()=>[0,0,0],GetRadius:()=>100})};
   check(!physical.call(captureState,{},false),'virtual/unspawned roster is not evidence of a physical hostile');
   livingHostile=true;check(physical.call(captureState,{},false),'living hostile query still blocks capture');
   check(sources.capture.includes('garrison.GetDefenceCaptureBlockReason()'),'deployment remains a separate authoritative capture check');
@@ -289,10 +300,10 @@ function runGarrisonsAndSupportTests(sources) {
   const playerIds=new Map();
   env.GetGame=()=>({GetWorld:()=>({GetWorldTime:()=>worldTime}),GetPlayerManager:()=>({GetPlayerIdFromControlledEntity:e=>playerIds.get(e)||0})});
   env.AROR_QRFDefenseComponent={Cast:x=>x};env.SCR_EntityHelper={};
-  const lifecycleNames=['BeginDeployment_S','UpdateDeployment_S','CloseDeployment_S','HasUnresolvedQueue','CancelQueuedGroup_S','DetachOrphanedCrew_S','QuarantineRoster_S','BindAssets_S','InfantryPrefab','StaticPrefab','ParkedPrefab','GetStaticWeaponCount'];
+  const lifecycleNames=['BeginDeployment_S','UpdateDeployment_S','CloseDeployment_S','HasUnresolvedQueue','CancelQueuedGroup_S','DetachOrphanedCrew_S','QuarantineRoster_S','BindAssets_S','CharacterPrefab','InfantryType','SlotUnitType','StaticPrefab','ParkedPrefab','MannedPrefab','GetStaticWeaponCount'];
   const lifecycle=Object.fromEntries(lifecycleNames.map(n=>[n,compile(sources.garrison,n)]));
   function newDeployment(slots=[]){
-    return {...lifecycle,m_aSlots:slots,m_aGroups:[],GetExtraParkedCount:()=>0,m_iDeploymentStartedAt:-1,m_iDeploymentGraceSeconds:60,m_iSpawnQueueTimeoutSeconds:30,
+    return {...lifecycle,PresetVehicle:p=>p,m_aSlots:slots,m_aGroups:[],GetExtraParkedCount:()=>0,m_iDeploymentStartedAt:-1,m_iDeploymentGraceSeconds:60,m_iSpawnQueueTimeoutSeconds:30,
       m_iCapacityWaitSeconds:180,m_iCapacityWaitSince:-1,m_iCapacityWaited:0,m_iNextCapacityLog:0,m_bCapacityLimited:false,m_bHadDeployedPersonnel:false,
       m_bDeploymentClosed:false,m_bRestoreQuarantined:false,m_eRosterRole:1,m_bGenerated:true,
       m_Location:{GetControllingRole:()=>1,GetId:()=>'failure-site'},IsEligible:()=>true,AssignMembers:()=>{},IsPlayerOrForeignAsset:e=>!!e.foreign};
@@ -365,7 +376,8 @@ function runGarrisonsAndSupportTests(sources) {
   check(!Object.keys(newSave).some(k=>/(prefab|position|angles|placed)$/.test(k)),'new roster saves contain no prefab or transform fields');
   const rebinding=newDeployment(restored[4]);rebinding.m_bAssetsBound=false;
   const changedFaction={...faction,m_sFactionKey:'NEW_OCCUPIERS',m_sAssetFactionKey:'NEW',m_sInfantry:'new-rifle',m_sCrew:'new-crew',m_sStaticMG:'new-mg',m_sParkedArmour:'new-armour',m_aMannedVehicles:['new-hull']};
-  check(rebinding.BindAssets_S(changedFaction)&&rebinding.m_aSlots[2].m_sPrefab==='new-rifle','restored survivors bind to current role assets');
+  spawnBase='new-role-base';
+  check(rebinding.BindAssets_S(changedFaction)&&rebinding.m_aSlots[2].m_sPrefab==='new-role-base','restored survivors bind to the current role preset base character');
   check(rebinding.m_aSlots[0].m_bLost&&rebinding.m_aSlots[1].m_bLost&&!rebinding.m_aSlots[2].m_bPlaced,'asset remapping neither refills casualties nor restores obsolete pads');
   const invalidRoster=newDeployment();invalidRoster.m_bActive=false;invalidRoster.QuarantineRoster_S('unsupported fixture');
   check(invalidRoster.m_bGenerated&&invalidRoster.m_bRestoreQuarantined&&invalidRoster.m_bDeploymentClosed,'unrecoverable save section cannot silently generate a new roster');
@@ -373,7 +385,7 @@ function runGarrisonsAndSupportTests(sources) {
   const crewHull={...new env.AROR_GarrisonSlot(),m_iKind:3,m_iGroup:2,m_bCrewRecorded:true};
   const oldCrew={...new env.AROR_GarrisonSlot(),m_iKind:4,m_iGroup:2,m_iVehicle:0,m_iSeat:0,m_bLost:true};
   env.CargoCompartmentSlot={Cast:s=>s.cargo?s:null};
-  const seatState={m_aSlots:[crewHull,oldCrew],AddSlot:add};
+  const seatState={CharacterPrefab:compile(sources.garrison,'CharacterPrefab'),m_aSlots:[crewHull,oldCrew],AddSlot:add};
   compile(sources.garrison,'ReconcileCrew_S').call(seatState,0,[{},{}],faction);
   check(seatState.m_aSlots[1].m_bLost&&seatState.m_aSlots[2].m_bLost,'a replacement catalogue hull with extra seats grants no free crew');
   seatState.m_aSlots[1].m_bLost=false;seatState.m_aSlots[2].m_bLost=false;
@@ -471,9 +483,9 @@ function runGarrisonsAndSupportTests(sources) {
   check(partialCommitted===8&&waited,'a 31-person virtual recipe can establish eight defenders in the remaining eight slots instead of staying empty');
   check(partialCommitted+occupied.CommittedPersonnel()===96,'incremental admission cannot exceed the hard global cap');
   const enriched={...faction,m_aInfantryVariants:['automatic','grenadier','leader']};
-  const infantryPrefab=compile(sources.garrison,'InfantryPrefab');
-  check([0,1,2,3].map(v=>infantryPrefab(enriched,v)).join(',')==='rifle,automatic,grenadier,leader','configured teams combine rifleman, automatic rifleman, grenadier and leader');
-  check(infantryPrefab(faction,3)==='rifle','extenders without specialist configuration retain their existing rifleman');
+  const infantryType=compile(sources.garrison,'InfantryType');
+  check([0,1,2,3].map(v=>infantryType(v)).join(',')==='0,1,2,3','saved team variants retain the preset unit types that formations requested');
+  check(infantryType(1000)===unitTypes.MARKSMAN,'tower variants request the role preset marksman rather than an obsolete direct prefab');
   // Moving from Chotain to Levie must release safely distant actors before the
   // new site's extended deployment window expires, without deleting combatants nearby.
   env.GetGame=()=>game;playerPosition=[0,0,0];playerDead=false;
@@ -532,7 +544,7 @@ function runGarrisonsAndSupportTests(sources) {
       HasDeploymentStarted:()=>site.m_iDeploymentStartedAt>=0,IsDeploymentClosed:()=>site.m_bDeploymentClosed,
       IsCapacityWaiting:()=>site.m_iCapacityWaitSince>=0&&!site.m_bDeploymentClosed,GetLocation:()=>site.m_Location,
       CommittedPersonnel:committed,NextPersonnelCost:nextCost,IsGroupRequested:requestKnown,SetCapacityWait_S:capacityWait,
-      Observe_S(){},RefreshPending_S(){site.UpdateDeployment_S(clock);},ClearAssignments_S(){},HasSuitableDefenceTerrain_S:()=>true,
+      RenewSimulation_S(){},Observe_S(){},RefreshPending_S(){site.UpdateDeployment_S(clock);},ClearAssignments_S(){},HasSuitableDefenceTerrain_S:()=>true,
       CanRetire:compile(sources.garrison,'CanRetire'),OutsideLongEnough:compile(sources.garrison,'OutsideLongEnough'),Retire_S(){throw Error('Nearby defence retired under pressure');},
       SpawnNextGroup_S:submitTeam,SpawnNextAsset_S:()=>false,PlaceSlot:()=>true,
       CreateGroup_S(){return {m_aUnitPrefabSlots:[],FindComponent:()=>null,m_iReadyAt:clock+500,RequestSpawn(){nativeRequests++;}};},

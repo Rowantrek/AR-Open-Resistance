@@ -379,44 +379,35 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 	protected ref map<string, string> m_mWaitReasons = new map<string, string>();
 
 	//------------------------------------------------------------------------------------------------
-	//! Server, for the map's threat arrows: where an operation's head is (the vehicle or group leader of its package
-	//! nearest the target), whether it flies in, and its helicopter landing zone when one is chosen. False while
-	//! nothing of it stands in the world yet.
+	//! Server: nearest confirmed last-seen element and its own type. Planned landing zones remain private;
+	//! individual aircraft and ground contacts continue to use the spotting markers.
 	bool GetOperationTrack_S(string operationId, vector target, out vector lead, out bool air, out vector landing)
 	{
+		air = false;
+		landing = vector.Zero;
+		if (!Replication.IsServer() || !m_Operations)
+			return false;
 		float best = -1;
 		foreach (AROR_OperationForce force : m_aForces)
 		{
 			if (!force || force.m_bReservation || force.m_sOperationId != operationId)
 				continue;
 
-			AROR_ReaperAirForce airForce = AROR_ReaperAirForce.Cast(force);
-			if (airForce)
-			{
-				air = true;
-				if (airForce.m_vLanding != vector.Zero)
-					landing = airForce.m_vLanding;
-			}
-
+			IEntity candidate;
+			bool candidateAir;
 			vector position;
-			bool found;
 			AROR_GroundOperationForce ground = AROR_GroundOperationForce.Cast(force);
 			if (ground && ground.m_Vehicle && !AROR_ForceSpawner.IsDestroyed(ground.m_Vehicle))
 			{
-				position = ground.m_Vehicle.GetOrigin();
-				found = true;
+				candidate = ground.m_Vehicle;
+				candidateAir = AROR_ReaperAirForce.Cast(force) != null;
 			}
 			else if (force.m_Group)
 			{
-				IEntity leader = force.m_Group.GetLeaderEntity();
-				if (leader)
-				{
-					position = leader.GetOrigin();
-					found = true;
-				}
+				candidate = force.m_Group.GetLeaderEntity();
 			}
 
-			if (!found)
+			if (!candidate || !m_Operations.GetSightedPosition_S(candidate, position))
 				continue;
 
 			float distance = vector.DistanceXZ(position, target);
@@ -424,6 +415,7 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 			{
 				best = distance;
 				lead = position;
+				air = candidateAir;
 			}
 		}
 
@@ -761,12 +753,33 @@ class AROR_OperationExecutorComponent : SCR_BaseGameModeComponent
 		return count;
 	}
 
-	protected int GetReservedMembers()
+	[Attribute("320", desc: "Shared reserved AI personnel limit across operations, military garrisons, militia, HICOMM, recruits, missions and ambient groups", params: "96 768 1", category: "Population")]
+	protected int m_iPopulationLimit;
+	[Attribute("72", desc: "Shared personnel slots ambient site activity leaves free for combat forces", params: "0 220 1", category: "Population")]
+	protected int m_iCombatPersonnelReserve;
+
+	int GetPopulationLimit(bool ambient)
+	{
+		int limit = Math.Clamp(m_iPopulationLimit, 96, 768);
+		if (ambient)
+			return limit - Math.Clamp(m_iCombatPersonnelReserve, 0, limit);
+		return limit;
+	}
+
+	int GetCommittedPersonnel_S()
 	{
 		int count;
 		foreach (AROR_OperationForce force : m_aForces)
 			count += force.m_iReservedMembers;
 		return count;
+	}
+
+	protected int GetReservedMembers()
+	{
+		int own = GetCommittedPersonnel_S();
+		// Retain the existing operation limit while also respecting shared free capacity. GetAvailable uses the
+		// raw commitment above, never this effective value, so accounting cannot recurse or double-count.
+		return own + Math.Max(0, m_iMaxMembers - own - AROR_PopulationBudget.GetAvailable_S());
 	}
 
 	protected int GetReservedVehicles()

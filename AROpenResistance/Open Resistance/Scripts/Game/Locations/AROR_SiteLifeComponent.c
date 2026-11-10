@@ -43,7 +43,7 @@ class AROR_SeededRandom
 	{
 		int value = Next();
 		int span = 100000;
-		value = value % span;
+		value = Math.Mod(value, span);
 		return value / 100000.0;
 	}
 
@@ -54,7 +54,7 @@ class AROR_SeededRandom
 			return min;
 		int value = Next();
 		int span = max - min;
-		value = value % span;
+		value = Math.Mod(value, span);
 		return min + value;
 	}
 }
@@ -184,6 +184,11 @@ class AROR_SiteLifeComponent : ScriptComponent
 	protected ref array<int> m_aWorkerLostAt = {};
 	protected ref AROR_SpecialSiteTruck m_Truck;
 	protected int m_iTruckLostAt = -1;
+	protected ref array<ref AROR_SpecialSiteGroup> m_aRetiringGroups = {};
+	protected ref array<IEntity> m_aRetiringHelicopters = {};
+	protected static ref array<AROR_SiteLifeComponent> s_aSites = {};
+	[Attribute("48", desc: "Shared personnel ceiling for site activity, including pending groups and former holders. Garrisons and operations retain their own budgets.", params: "8 144 1", category: "Activity")]
+	protected int m_iActivityPersonnelBudget;
 
 	//------------------------------------------------------------------------------------------------
 	int GetMoneyPerPayment() { return m_iMoneyPerPayment; }
@@ -676,8 +681,10 @@ class AROR_SiteLifeComponent : ScriptComponent
 			Forget();
 			m_eRole = role;
 		}
+		ReapFormerForces(false);
 
-		if (!AROR_GarrisonPolicy.IsEnemyRole(role))
+		// Former defenders retain ownership and count against capacity until removed or legitimately taken.
+		if (!AROR_GarrisonPolicy.IsEnemyRole(role) || !m_aRetiringGroups.IsEmpty() || !m_aRetiringHelicopters.IsEmpty())
 			return;
 
 		UpdateHelicopters(role);
@@ -779,20 +786,33 @@ class AROR_SiteLifeComponent : ScriptComponent
 		{
 			AROR_SpecialSiteGroup entry = groups[index];
 			array<IEntity> living = {};
-			int alive = AROR_ForceSpawner.CountLiving(entry.m_Group, living);
+			AROR_ForceSpawner.CountLiving(entry.m_Group, living);
+			int alive = AROR_ForceSpawner.CountStrength(entry.m_Group);
 			if (!entry.m_Group || (alive == 0 && (entry.m_bSeen || m_iClock - entry.m_iRaisedAt > 60)))
 			{
 				// Also after a failed spawn, so a broken preset never retries every tick
-				lostAt.Insert(m_iClock);
-				entry.Remove_S();
-				groups.Remove(index);
+				if (entry.Remove_S())
+				{
+					lostAt.Insert(m_iClock);
+					groups.Remove(index);
+				}
 				continue;
 			}
 
 			if (alive > 0)
 				entry.m_bSeen = true;
+			AROR_ForceSpawner.RenewSimulation_S(entry.m_Group);
 
-			bool arrived = alive > 0 && vector.DistanceXZ(living[0].GetOrigin(), entry.m_vGoal) < 8;
+			if (living.IsEmpty())
+			{
+				if (alive > 0 && m_iClock >= entry.m_iNextWake)
+				{
+					entry.m_iNextWake = m_iClock + 30;
+					entry.m_Group.RequestSpawn();
+				}
+				continue;
+			}
+			bool arrived = vector.DistanceXZ(living[0].GetOrigin(), entry.m_vGoal) < 8;
 			if (m_iClock < entry.m_iNextOrderAt && !arrived)
 				continue;
 
@@ -815,7 +835,7 @@ class AROR_SiteLifeComponent : ScriptComponent
 			{
 				int points = LOOP_POINTS;
 				int stepped = entry.m_iPoint + entry.m_iDirection + points;
-				entry.m_iPoint = stepped % points;
+				entry.m_iPoint = Math.Mod(stepped, points);
 				entry.m_vGoal = LoopPoint(entry.m_iPoint);
 				entry.m_iNextOrderAt = m_iClock + 120;
 			}
@@ -857,6 +877,8 @@ class AROR_SiteLifeComponent : ScriptComponent
 		}
 		else
 			AROR_Formations.GetUnits(AROR_EFormation.RIFLE_FIRE_TEAM, units);
+		if (!HasActivityCapacity(units.Count()))
+			return;
 
 		SCR_AIGroup group = AROR_ForceSpawner.SpawnGroup(m_sGroupPrefab, role, units, spawn);
 		if (!group)
@@ -864,12 +886,13 @@ class AROR_SiteLifeComponent : ScriptComponent
 
 		AROR_SpecialSiteGroup added = new AROR_SpecialSiteGroup();
 		added.m_Group = group;
+		added.m_iSize = units.Count();
 		added.m_iRaisedAt = m_iClock;
 		added.m_iPoint = start;
 		added.m_vGoal = spawn;
 		added.m_iDirection = 1;
 		int existing = groups.Count();
-		if (existing % 2 == 1)
+		if (Math.Mod(existing, 2) == 1)
 			added.m_iDirection = -1;
 		added.m_iNextOrderAt = m_iClock + 6;
 		groups.Insert(added);
@@ -886,7 +909,18 @@ class AROR_SiteLifeComponent : ScriptComponent
 		if (m_Truck)
 		{
 			array<IEntity> crew = {};
-			int alive = AROR_ForceSpawner.CountLiving(m_Truck.m_Group, crew);
+			AROR_ForceSpawner.CountLiving(m_Truck.m_Group, crew);
+			int alive = AROR_ForceSpawner.CountStrength(m_Truck.m_Group);
+			AROR_ForceSpawner.RenewSimulation_S(m_Truck.m_Group);
+			if (m_Truck.m_Group && m_Truck.m_Group.IsDormant() && alive > 0)
+			{
+				if (m_iClock >= m_Truck.m_iNextWake)
+				{
+					m_Truck.m_iNextWake = m_iClock + 30;
+					m_Truck.m_Group.RequestSpawn();
+				}
+				return;
+			}
 			bool lost = !m_Truck.m_Vehicle || AROR_ForceSpawner.IsDestroyed(m_Truck.m_Vehicle) || AROR_ResistanceFleet.IsClaimed(m_Truck.m_Vehicle);
 			if (m_Truck.m_bSeated && alive == 0)
 				lost = true;
@@ -898,7 +932,8 @@ class AROR_SiteLifeComponent : ScriptComponent
 
 			if (lost)
 			{
-				m_Truck.Remove_S();
+				if (!m_Truck.Remove_S())
+					m_aRetiringGroups.Insert(m_Truck);
 				m_Truck = null;
 				m_iTruckLostAt = m_iClock;
 				return;
@@ -922,7 +957,7 @@ class AROR_SiteLifeComponent : ScriptComponent
 			{
 				int loopPoints = LOOP_POINTS;
 				int nextPoint = m_Truck.m_iPoint + 1;
-				m_Truck.m_iPoint = nextPoint % loopPoints;
+				m_Truck.m_iPoint = Math.Mod(nextPoint, loopPoints);
 				m_Truck.m_vGoal = LoopPoint(m_Truck.m_iPoint);
 				m_Truck.Order_S(m_sMoveWaypointPrefab, m_Truck.m_vGoal, 20);
 				m_Truck.m_iNextOrderAt = m_iClock + 120;
@@ -931,7 +966,7 @@ class AROR_SiteLifeComponent : ScriptComponent
 			return;
 		}
 
-		if (!m_bSupplyTruck || (m_iTruckLostAt >= 0 && m_iClock - m_iTruckLostAt < m_iRespawnSeconds))
+		if (!m_bSupplyTruck || !HasActivityCapacity(2) || (m_iTruckLostAt >= 0 && m_iClock - m_iTruckLostAt < m_iRespawnSeconds))
 			return;
 
 		ResourceName prefab = AROR_ForceSpawner.VehiclePrefab(role, AROR_EVehicleType.MOTOR_TRUCK);
@@ -979,6 +1014,7 @@ class AROR_SiteLifeComponent : ScriptComponent
 		}
 
 		m_Truck = new AROR_SpecialSiteTruck();
+		m_Truck.m_iSize = 2;
 		m_Truck.m_Vehicle = vehicle;
 		m_Truck.m_Group = group;
 		m_Truck.m_iRaisedAt = m_iClock;
@@ -1000,7 +1036,7 @@ class AROR_SiteLifeComponent : ScriptComponent
 	//! Distance to the nearest player (a large number when there is none)
 	protected float NearestPlayer(vector position)
 	{
-		float nearest = 100000;
+		float nearest = AROR_ResistancePresence.Nearest(position);
 		array<int> players = {};
 		GetGame().GetPlayerManager().GetPlayers(players);
 		foreach (int playerId : players)
@@ -1036,29 +1072,9 @@ class AROR_SiteLifeComponent : ScriptComponent
 	//! Nobody near: soldiers and the truck go, and helicopters still on their pads (unclaimed) are put away
 	protected void Retire()
 	{
-		m_bActive = false;
-		foreach (AROR_SpecialSiteGroup patrol : m_aPatrols)
-		{
-			patrol.Remove_S();
-		}
-		m_aPatrols.Clear();
-
-		foreach (AROR_SpecialSiteGroup worker : m_aWorkers)
-		{
-			worker.Remove_S();
-		}
-		m_aWorkers.Clear();
-
-		if (m_Truck)
-			m_Truck.Remove_S();
-		m_Truck = null;
-
-		foreach (int index, IEntity helicopter : m_aHelicopters)
-		{
-			if (helicopter && !AROR_ForceSpawner.IsDestroyed(helicopter) && !AROR_ResistanceFleet.IsClaimed(helicopter) && vector.DistanceXZ(helicopter.GetOrigin(), m_aPads[index]) <= PAD_MOVED)
-				SCR_EntityHelper.DeleteEntityAndChildren(helicopter);
-			m_aHelicopters[index] = null;
-		}
+		Forget();
+		ReapFormerForces(true);
+		m_bActive = !m_aRetiringGroups.IsEmpty() || !m_aRetiringHelicopters.IsEmpty();
 
 		Print(string.Format("[AROR SITE] %1 retired", m_Location.GetId()), LogLevel.NORMAL);
 	}
@@ -1066,6 +1082,10 @@ class AROR_SiteLifeComponent : ScriptComponent
 	//! Control changed while players are here: stop managing the old holder's helicopters and soldiers
 	protected void Forget()
 	{
+		m_aRetiringGroups.InsertAll(m_aPatrols);
+		m_aRetiringGroups.InsertAll(m_aWorkers);
+		if (m_Truck)
+			m_aRetiringGroups.Insert(m_Truck);
 		m_aPatrols.Clear();
 		m_aWorkers.Clear();
 		m_aPatrolLostAt.Clear();
@@ -1074,9 +1094,73 @@ class AROR_SiteLifeComponent : ScriptComponent
 		m_iTruckLostAt = -1;
 		for (int index = 0; index < m_aHelicopters.Count(); index++)
 		{
+			if (m_aHelicopters[index])
+				m_aRetiringHelicopters.Insert(m_aHelicopters[index]);
 			m_aHelicopters[index] = null;
 			m_aHelicopterLostAt[index] = -1;
 		}
+	}
+
+	//! Retirement owns former holders too. Keep live fighters near commanded units or active opposing forces.
+	protected void ReapFormerForces(bool retiring)
+	{
+		for (int index = m_aRetiringGroups.Count() - 1; index >= 0; index--)
+		{
+			AROR_SpecialSiteGroup entry = m_aRetiringGroups[index];
+			bool living = AROR_ForceSpawner.CountStrength(entry.m_Group) > 0;
+			if (living && (!retiring || !CanRetireGroup(entry.m_Group)))
+				continue;
+			if (!living && entry.m_Group && !entry.m_bSeen && m_iClock - entry.m_iRaisedAt < 180)
+				continue;
+			if (entry.Remove_S())
+				m_aRetiringGroups.Remove(index);
+		}
+		for (int air = m_aRetiringHelicopters.Count() - 1; air >= 0; air--)
+		{
+			IEntity helicopter = m_aRetiringHelicopters[air];
+			if (helicopter && AROR_ResistanceFleet.IsClaimed(helicopter))
+			{
+				m_aRetiringHelicopters.Remove(air);
+				continue;
+			}
+			if (helicopter && (!retiring || AROR_ForceSpawner.IsVehicleInUse(helicopter) || NearestPlayer(helicopter.GetOrigin()) <= m_fRetireDistance))
+				continue;
+			if (helicopter)
+				SCR_EntityHelper.DeleteEntityAndChildren(helicopter);
+			m_aRetiringHelicopters.Remove(air);
+		}
+	}
+
+	protected bool CanRetireGroup(SCR_AIGroup group)
+	{
+		if (!group)
+			return true;
+		array<IEntity> members = {};
+		AROR_ForceSpawner.CountLiving(group, members);
+		foreach (IEntity member : members)
+		{
+			if (NearestPlayer(member.GetOrigin()) <= m_fRetireDistance)
+				return false;
+		}
+		Faction faction = group.GetFaction();
+		return !faction || !AROR_HostilesQuery.HasHostilesInRadius(faction, group.GetOrigin(), 300);
+	}
+
+	protected bool HasActivityCapacity(int requested)
+	{
+		int committed;
+		foreach (AROR_SiteLifeComponent site : s_aSites)
+		{
+			foreach (AROR_SpecialSiteGroup worker : site.m_aWorkers)
+				committed += worker.m_iSize;
+			foreach (AROR_SpecialSiteGroup patrol : site.m_aPatrols)
+				committed += patrol.m_iSize;
+			foreach (AROR_SpecialSiteGroup former : site.m_aRetiringGroups)
+				committed += former.m_iSize;
+			if (site.m_Truck)
+				committed += site.m_Truck.m_iSize;
+		}
+		return committed + requested <= m_iActivityPersonnelBudget && requested <= AROR_PopulationBudget.GetAvailable_S(true);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1094,9 +1178,11 @@ class AROR_SiteLifeComponent : ScriptComponent
 		}
 
 		// Every machine builds the camp once the world has settled
-		GetGame().GetCallqueue().CallLater(Build, 1000);
+		int buildSlot = Math.Mod(m_Location.GetId().Hash() & 0x7FFFFFFF, 20);
+		GetGame().GetCallqueue().CallLater(Build, 1000 + buildSlot * 500);
 		if (!Replication.IsServer())
 			return;
+		s_aSites.Insert(this);
 
 		m_eRole = m_Location.GetControllingRole();
 		GetGame().GetCallqueue().CallLater(Tick, TICK_SECONDS * 1000, true);
@@ -1105,6 +1191,7 @@ class AROR_SiteLifeComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	override void OnDelete(IEntity owner)
 	{
+		s_aSites.RemoveItem(this);
 		GetGame().GetCallqueue().Remove(Build);
 		GetGame().GetCallqueue().Remove(Tick);
 		if (Replication.IsServer() && m_bActive)
@@ -1123,6 +1210,8 @@ class AROR_SiteLifeComponent : ScriptComponent
 class AROR_SpecialSiteGroup
 {
 	SCR_AIGroup m_Group;
+	int m_iSize;
+	int m_iNextWake;
 	AIWaypoint m_Waypoint;
 	int m_iRaisedAt;
 	int m_iPoint;
@@ -1146,21 +1235,15 @@ class AROR_SpecialSiteGroup
 		m_Waypoint = AROR_ForceSpawner.AddWaypoint(m_Group, prefab, goal, radius);
 	}
 
-	void Remove_S()
+	bool Remove_S()
 	{
-		array<IEntity> living = {};
-		AROR_ForceSpawner.CountLiving(m_Group, living);
-		foreach (IEntity member : living)
-		{
-			SCR_EntityHelper.DeleteEntityAndChildren(member);
-		}
-
-		if (m_Group)
-			SCR_EntityHelper.DeleteEntityAndChildren(m_Group);
+		if (!AROR_ForceSpawner.RemoveGroup_S(m_Group))
+			return false;
 		if (m_Waypoint)
 			SCR_EntityHelper.DeleteEntityAndChildren(m_Waypoint);
 		m_Group = null;
 		m_Waypoint = null;
+		return true;
 	}
 }
 
@@ -1170,11 +1253,13 @@ class AROR_SpecialSiteTruck : AROR_SpecialSiteGroup
 	IEntity m_Vehicle;
 	bool m_bSeated;
 
-	override void Remove_S()
+	override bool Remove_S()
 	{
-		super.Remove_S();
-		if (m_Vehicle && !AROR_ForceSpawner.IsDestroyed(m_Vehicle) && !AROR_ResistanceFleet.IsClaimed(m_Vehicle))
+		if (!super.Remove_S())
+			return false;
+		if (m_Vehicle && !AROR_ForceSpawner.IsVehicleInUse(m_Vehicle))
 			SCR_EntityHelper.DeleteEntityAndChildren(m_Vehicle);
 		m_Vehicle = null;
+		return true;
 	}
 }

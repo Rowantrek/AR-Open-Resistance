@@ -32,7 +32,7 @@ function method(name) {
     .replace(/\b(?:AROR_\w+) (\w+);/g, 'let $1 = null;')
     .replace(/\bint (\w+);/g, 'let $1 = 0;')
     .replace(/(?<![.\w])m_\w+/g, x => 'this.' + x);
-  for (const n of ['RefreshLeaders_S', 'GetResistanceFactionKey', 'CountAlive', 'RemoveSquad_S', 'IssueWaypoint_S', 'Reply', 'PublishSnapshot_S', 'GridReference'])
+  for (const n of ['ReturnToGarage_S', 'CountMounted_S', 'UpdateEmbark_S', 'DismountMembers_S', 'RefreshLeaders_S', 'GetResistanceFactionKey', 'CountAlive', 'RemoveSquad_S', 'IssueWaypoint_S', 'Reply', 'PublishSnapshot_S', 'GridReference'])
     body = body.replace(new RegExp('(?<![.\\w])' + n + '\\(', 'g'), 'this.' + n + '(');
   return new Function(...Object.keys(env), 'return function(' + args + '){' + body + '}')(...Object.values(env));
 }
@@ -51,6 +51,7 @@ function squad(agents = []) {
       GetAgents: out => out.push(...agents), GetLeaderEntity: () => null, GetOrigin: () => [100, 0, 200] } };
 }
 const ctx = { m_iUpdateInterval: 2, m_iFormTimeout: 90, m_fMoveArrivalRadius: 25, m_aSquads: [], removed: 0, published: 0,
+  CountMounted_S:()=>0,ReturnToGarage_S:()=>{},
   RefreshLeaders_S() {}, GetResistanceFactionKey: () => 'RESISTANCE', Reply() {},
   RemoveSquad_S(i) { this.removed++; this.m_aSquads.splice(i, 1); }, PublishSnapshot_S() { this.published++; },
   CountAlive: method('CountAlive'), Update_S: method('Update_S') };

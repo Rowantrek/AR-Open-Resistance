@@ -48,6 +48,8 @@ class AROR_HighCommandSquad
 	AROR_EHighCommandEmbarkPhase m_eEmbarkPhase;
 	int m_iEmbarkEntryId;	//!< Garage entry to collect at the site (TO_SITE)
 	int m_iEmbarkStarted;	//!< World time (ms) boarding began at the vehicle; 0 while still walking to it
+	ref array<IEntity> m_aBoardingMembers = {};
+	ref array<BaseCompartmentSlot> m_aBoardingSeats = {};	//!< Accepted native actions retain exclusive assignments until acknowledged
 }
 
 //! Client: a squad as read from the replicated HICOMM snapshot

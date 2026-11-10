@@ -5,6 +5,16 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 {
 	protected static AROR_GarrisonManagerComponent s_Instance;
 	static AROR_GarrisonManagerComponent GetInstance() { return s_Instance; }
+	int GetCommittedPersonnel_S()
+	{
+		int count;
+		foreach (AROR_GarrisonComponent garrison : m_aGarrisons)
+		{
+			if (garrison)
+				count += garrison.CommittedPersonnel();
+		}
+		return count;
+	}
 	bool CanDefendRole(AROR_EFactionRole role) { return m_bGarrisonsActive && FactionFor(role) != null; }
 	[Attribute("1", desc: "Garrisons Active: allow proximity activation of hostile military-site defenders.")]
 	protected bool m_bGarrisonsActive;
@@ -145,6 +155,9 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 			if (player && player.GetCharacterController() && !player.GetCharacterController().IsDead() && !AROR_LocationForces.IsInAircraft(player))
 				activationPlayers.Insert(player.GetOrigin());
 		}
+		// Commanded ground squads can activate defenders; airborne humans still only retain existing defenders.
+		AROR_ResistancePresence.GetPositions(activationPlayers);
+		allPlayers.InsertAll(activationPlayers);
 		bool pressure;
 		foreach (AROR_GarrisonComponent waiting : m_aGarrisons)
 		{
@@ -190,6 +203,8 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 					m_aNearby.Insert(garrison);
 			}
 			garrison.RefreshPending_S();
+			if (PlayerNear(location, activationPlayers))
+				garrison.RenewSimulation_S();
 		}
 		// Stable insertion sort over nearby sites; construction still rotates through
 		// all of them so a large base cannot monopolise the native spawn queue.
@@ -239,7 +254,7 @@ class AROR_GarrisonManagerComponent : SCR_BaseGameModeComponent
 			if (!m_bInfantryFallback || !next.PrepareInfantryFallback_S())
 				return;
 		}
-		int available = Math.Max(0, m_iMaxPersonnel - reserved);
+		int available = Math.Min(Math.Max(0, m_iMaxPersonnel - reserved), AROR_PopulationBudget.GetAvailable_S());
 		bool waiting = next.NextPersonnelCost() > available;
 		next.SetCapacityWait_S(now, waiting, reserved, m_iMaxPersonnel);
 		if (waiting)

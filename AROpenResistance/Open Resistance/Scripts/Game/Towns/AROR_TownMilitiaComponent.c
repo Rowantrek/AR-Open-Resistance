@@ -13,13 +13,19 @@ class AROR_TownMilitiaComponentClass : ScriptComponentClass {}
 class AROR_MilitiaPost : Managed
 {
 	string m_sTownId;
-	ref array<SCR_AIGroup> m_aGroups = {};
+	ref array<ref AROR_MilitiaTeam> m_aGroups = {};
 	ref array<IEntity> m_aVehicles = {};
 	ref array<int> m_aVehicleKinds = {};
 	ref array<SCR_AIGroup> m_aCrews = {};
+	ref array<AIWaypoint> m_aCrewWaypoints = {};
 	ref array<bool> m_aSeated = {};
+	ref array<SCR_AIGroup> m_aDismountedCrews = {};
+	ref array<AIWaypoint> m_aDismountedWaypoints = {};
+	ref array<IEntity> m_aWrecks = {};
 	int m_iRaisedAt;
 	int m_iLastBusy;
+	int m_iNextRetry;
+	int m_iNextWake;
 }
 
 //! Resistance town garrisons (see ARCHITECTURE.md -> Towns). A Resistance Leader buys infantry, APCs and armour for a
@@ -241,6 +247,8 @@ class AROR_TownMilitiaComponent : ScriptComponent
 	{
 		if (!Replication.IsServer())
 			return;
+		if (kind != AROR_EMilitiaKind.INFANTRY && kind != AROR_EMilitiaKind.APC && kind != AROR_EMilitiaKind.ARMOUR)
+			return;
 		AROR_HighCommandComponent highCommand = AROR_HighCommandComponent.GetInstance();
 		if (!highCommand || !highCommand.IsLeader(playerId))
 		{
@@ -374,7 +382,10 @@ class AROR_TownMilitiaComponent : ScriptComponent
 				if (town)
 					busy = IsBusy(town);
 				if (busy)
+				{
 					post.m_iLastBusy = m_iClock;
+					RenewPost_S(post);
+				}
 				else if (m_iClock - post.m_iLastBusy >= m_iStandDownSeconds)
 				{
 					StandDown_S(post);
@@ -390,10 +401,15 @@ class AROR_TownMilitiaComponent : ScriptComponent
 				continue;
 			}
 			if (busy)
+			{
 				post.m_iLastBusy = m_iClock;
+				RenewPost_S(post);
+			}
 			SeatCrews_S(post);
-			if (m_iClock - post.m_iRaisedAt >= FORM_UP_SECONDS && CountLosses_S(post, row))
+			if (CountLosses_S(post, row))
 				changed = true;
+			if (busy && m_iClock >= post.m_iNextRetry)
+				Reconcile_S(post, town, row);
 			if (m_iClock - post.m_iLastBusy >= m_iStandDownSeconds)
 			{
 				StandDown_S(post);
@@ -404,20 +420,93 @@ class AROR_TownMilitiaComponent : ScriptComponent
 			Changed_S();
 	}
 
-	//! A Resistance player, or an enemy soldier, is near the town
+	//! Keep an active front simulated without replacing its dormant or queued soldiers.
+	protected void RenewPost_S(AROR_MilitiaPost post)
+	{
+		array<SCR_AIGroup> groups = {};
+		foreach (AROR_MilitiaTeam team : post.m_aGroups)
+			groups.Insert(team.m_Group);
+		groups.InsertAll(post.m_aCrews);
+		groups.InsertAll(post.m_aDismountedCrews);
+		foreach (SCR_AIGroup group : groups)
+		{
+			AROR_ForceSpawner.RenewSimulation_S(group);
+			if (group && m_iClock >= post.m_iNextWake && group.IsDormant() && group.GetDormantAliveCount() > 0)
+				group.RequestSpawn();
+		}
+		if (m_iClock >= post.m_iNextWake)
+			post.m_iNextWake = m_iClock + 30;
+	}
+
+	//! A Resistance player, commanded squad, or enemy soldier is near the town
 	protected bool IsBusy(AROR_LocationComponent town)
 	{
 		vector center = town.GetCenter();
-		array<int> playerIds = {};
-		GetGame().GetPlayerManager().GetPlayers(playerIds);
-		foreach (int playerId : playerIds)
-		{
-			IEntity player = GetGame().GetPlayerManager().GetPlayerControlledEntity(playerId);
-			if (player && vector.DistanceXZ(player.GetOrigin(), center) <= m_fPlayerDistance)
-				return true;
-		}
+		if (AROR_ResistancePresence.Nearest(center) <= m_fPlayerDistance)
+			return true;
 		Faction resistance = GetGame().GetFactionManager().GetFactionByKey(AROR_ForceSpawner.FactionKey(AROR_EFactionRole.RESISTANCE));
 		return resistance && AROR_HostilesQuery.HasHostilesInRadius(resistance, center, m_fEnemyDistance);
+	}
+
+	//! Physical or native-virtual defenders keep a contested town defended without a nearby human.
+	bool HasDefenders_S(string townId)
+	{
+		return CountDefenders_S(townId) > 0;
+	}
+
+	int CountDefenders_S(string townId)
+	{
+		if (!Replication.IsServer())
+			return 0;
+		AROR_MilitiaPost post = FindPost(townId);
+		if (!post)
+			return 0;
+		int count;
+		foreach (AROR_MilitiaTeam team : post.m_aGroups)
+		{
+			count += AROR_ForceSpawner.CountStrength(team.m_Group);
+		}
+		foreach (SCR_AIGroup crew : post.m_aCrews)
+		{
+			count += AROR_ForceSpawner.CountStrength(crew);
+		}
+		foreach (SCR_AIGroup dismounted : post.m_aDismountedCrews)
+		{
+			count += AROR_ForceSpawner.CountStrength(dismounted);
+		}
+		return count;
+	}
+
+	//! Missing deliveries remain in the purchased book and retry at a bounded rate, rather than becoming losses.
+	protected void Reconcile_S(AROR_MilitiaPost post, AROR_LocationComponent town, int row)
+	{
+		post.m_iNextRetry = m_iClock + FORM_UP_SECONDS;
+		int assigned;
+		for (int index = post.m_aGroups.Count() - 1; index >= 0; index--)
+		{
+			AROR_MilitiaTeam team = post.m_aGroups[index];
+			bool stalled = m_iClock - team.m_iRaisedAt > 180 && team.m_aMembers.IsEmpty() && AROR_ForceSpawner.CountStrength(team.m_Group) == 0;
+			if ((!team.m_Group || stalled || team.GetStrength() == 0) && team.Remove_S())
+			{
+				post.m_aGroups.Remove(index);
+				continue;
+			}
+			assigned += team.GetStrength();
+		}
+		if (assigned < m_aInfantry[row])
+			RaiseInfantry_S(post, town, m_aInfantry[row] - assigned);
+		int apcs, armour;
+		foreach (int kind : post.m_aVehicleKinds)
+		{
+			if (kind == AROR_EMilitiaKind.ARMOUR)
+				armour++;
+			else
+				apcs++;
+		}
+		if (apcs < m_aApcs[row])
+			RaiseVehicle_S(post, town, AROR_EMilitiaKind.APC);
+		if (armour < m_aArmour[row])
+			RaiseVehicle_S(post, town, AROR_EMilitiaKind.ARMOUR);
 	}
 
 	protected AROR_MilitiaPost FindPost(string townId)
@@ -463,8 +552,10 @@ class AROR_TownMilitiaComponent : ScriptComponent
 			SCR_AIGroup group = AROR_ForceSpawner.SpawnGroup(m_sGroupPrefab, AROR_EFactionRole.RESISTANCE, units, position);
 			if (!group)
 				continue;
-			AROR_ForceSpawner.AddWaypoint(group, m_sDefendWaypoint, center, Math.Min(town.GetRadius() * 0.5, 120));
-			post.m_aGroups.Insert(group);
+			AROR_MilitiaTeam team = new AROR_MilitiaTeam();
+			team.Attach(group, size, m_iClock);
+			team.m_Waypoint = AROR_ForceSpawner.AddWaypoint(group, m_sDefendWaypoint, center, Math.Min(town.GetRadius() * 0.5, 120));
+			post.m_aGroups.Insert(team);
 		}
 		post.m_iRaisedAt = m_iClock;
 	}
@@ -487,9 +578,15 @@ class AROR_TownMilitiaComponent : ScriptComponent
 			return;
 		array<AROR_EUnitType> crew = {AROR_EUnitType.CREW, AROR_EUnitType.CREW};
 		SCR_AIGroup group = AROR_ForceSpawner.SpawnGroup(m_sGroupPrefab, AROR_EFactionRole.RESISTANCE, crew, position);
+		if (!group)
+		{
+			SCR_EntityHelper.DeleteEntityAndChildren(vehicle);
+			return;
+		}
 		post.m_aVehicles.Insert(vehicle);
 		post.m_aVehicleKinds.Insert(kind);
 		post.m_aCrews.Insert(group);
+		post.m_aCrewWaypoints.Insert(null);
 		post.m_aSeated.Insert(false);
 		post.m_iRaisedAt = m_iClock;
 	}
@@ -503,7 +600,7 @@ class AROR_TownMilitiaComponent : ScriptComponent
 			if (AROR_ForceSpawner.SeatGroup(post.m_aCrews[index], vehicle, 2))
 			{
 				post.m_aSeated[index] = true;
-				AROR_ForceSpawner.AddWaypoint(post.m_aCrews[index], m_sDefendWaypoint, vehicle.GetOrigin(), 60);
+				post.m_aCrewWaypoints[index] = AROR_ForceSpawner.AddWaypoint(post.m_aCrews[index], m_sDefendWaypoint, vehicle.GetOrigin(), 60);
 			}
 		}
 	}
@@ -512,22 +609,19 @@ class AROR_TownMilitiaComponent : ScriptComponent
 	protected bool CountLosses_S(AROR_MilitiaPost post, int row)
 	{
 		bool changed;
-		int alive;
-		foreach (SCR_AIGroup group : post.m_aGroups)
+		foreach (AROR_MilitiaTeam team : post.m_aGroups)
 		{
-			array<IEntity> members = {};
-			if (group)
-				alive += AROR_ForceSpawner.CountLiving(group, members);
-		}
-		if (alive < m_aInfantry[row])
-		{
-			m_aInfantry[row] = alive;
-			changed = true;
+			int losses = team.TakeLosses();
+			if (losses > 0)
+			{
+				m_aInfantry[row] = Math.Max(0, m_aInfantry[row] - losses);
+				changed = true;
+			}
 		}
 		for (int index = post.m_aVehicles.Count() - 1; index >= 0; index--)
 		{
 			IEntity vehicle = post.m_aVehicles[index];
-			if (vehicle && !AROR_ForceSpawner.IsDestroyed(vehicle))
+			if (vehicle && !AROR_ForceSpawner.IsDestroyed(vehicle) && !AROR_ForceSpawner.IsVehicleInUse(vehicle))
 				continue;
 			if (post.m_aVehicleKinds[index] == AROR_EMilitiaKind.ARMOUR)
 			{
@@ -536,9 +630,19 @@ class AROR_TownMilitiaComponent : ScriptComponent
 			}
 			else if (m_aApcs[row] > 0)
 				m_aApcs[row] = m_aApcs[row] - 1;
+			if (post.m_aCrews[index])
+			{
+				post.m_aDismountedCrews.Insert(post.m_aCrews[index]);
+				post.m_aDismountedWaypoints.Insert(post.m_aCrewWaypoints[index]);
+			}
+			else if (post.m_aCrewWaypoints[index])
+				SCR_EntityHelper.DeleteEntityAndChildren(post.m_aCrewWaypoints[index]);
+			if (vehicle && !AROR_ForceSpawner.IsVehicleInUse(vehicle))
+				post.m_aWrecks.Insert(vehicle);
 			post.m_aVehicles.Remove(index);
 			post.m_aVehicleKinds.Remove(index);
 			post.m_aCrews.Remove(index);
+			post.m_aCrewWaypoints.Remove(index);
 			post.m_aSeated.Remove(index);
 			changed = true;
 		}
@@ -549,23 +653,50 @@ class AROR_TownMilitiaComponent : ScriptComponent
 	protected void StandDown_S(AROR_MilitiaPost post)
 	{
 		int row = m_aTownIds.Find(post.m_sTownId);
-		if (row >= 0 && m_iClock - post.m_iRaisedAt >= FORM_UP_SECONDS)
+		if (row >= 0)
 			CountLosses_S(post, row);
-		foreach (SCR_AIGroup group : post.m_aGroups)
+		for (int index = post.m_aGroups.Count() - 1; index >= 0; index--)
 		{
-			if (group)
-				SCR_EntityHelper.DeleteEntityAndChildren(group);
+			if (post.m_aGroups[index].Remove_S())
+				post.m_aGroups.Remove(index);
 		}
-		foreach (SCR_AIGroup crew : post.m_aCrews)
+		// Keep the post as cleanup owner when a crew is being used in a claimed/occupied vehicle.
+		for (int crew = post.m_aDismountedCrews.Count() - 1; crew >= 0; crew--)
 		{
-			if (crew)
-				SCR_EntityHelper.DeleteEntityAndChildren(crew);
+			if (AROR_ForceSpawner.RemoveGroup_S(post.m_aDismountedCrews[crew]))
+			{
+				if (post.m_aDismountedWaypoints[crew])
+					SCR_EntityHelper.DeleteEntityAndChildren(post.m_aDismountedWaypoints[crew]);
+				post.m_aDismountedCrews.Remove(crew);
+				post.m_aDismountedWaypoints.Remove(crew);
+			}
 		}
-		foreach (IEntity vehicle : post.m_aVehicles)
+		for (int active = post.m_aVehicles.Count() - 1; active >= 0; active--)
 		{
+			IEntity vehicle = post.m_aVehicles[active];
+			if (AROR_ForceSpawner.IsVehicleInUse(vehicle) || !AROR_ForceSpawner.RemoveGroup_S(post.m_aCrews[active]))
+				continue;
 			if (vehicle)
 				SCR_EntityHelper.DeleteEntityAndChildren(vehicle);
+			if (post.m_aCrewWaypoints[active])
+				SCR_EntityHelper.DeleteEntityAndChildren(post.m_aCrewWaypoints[active]);
+			post.m_aVehicles.Remove(active);
+			post.m_aVehicleKinds.Remove(active);
+			post.m_aCrews.Remove(active);
+			post.m_aCrewWaypoints.Remove(active);
+			post.m_aSeated.Remove(active);
 		}
+		for (int wreckIndex = post.m_aWrecks.Count() - 1; wreckIndex >= 0; wreckIndex--)
+		{
+			IEntity wreck = post.m_aWrecks[wreckIndex];
+			if (AROR_ForceSpawner.IsVehicleInUse(wreck))
+				continue;
+			if (wreck)
+				SCR_EntityHelper.DeleteEntityAndChildren(wreck);
+			post.m_aWrecks.Remove(wreckIndex);
+		}
+		if (!post.m_aGroups.IsEmpty() || !post.m_aDismountedCrews.IsEmpty() || !post.m_aVehicles.IsEmpty() || !post.m_aWrecks.IsEmpty())
+			return;
 		m_aPosts.RemoveItem(post);
 		Print(string.Format("[AROR MILITIA] %1 garrison stood down", post.m_sTownId), LogLevel.NORMAL);
 	}
@@ -576,12 +707,17 @@ class AROR_TownMilitiaComponent : ScriptComponent
 	//! Server: the book as it stands, survivors of raised garrisons counted
 	void GetBook_S(notnull array<string> townIds, notnull array<int> infantry, notnull array<int> apcs, notnull array<int> armour)
 	{
+		if (!Replication.IsServer())
+			return;
+		bool changed;
 		foreach (AROR_MilitiaPost post : m_aPosts)
 		{
 			int row = m_aTownIds.Find(post.m_sTownId);
-			if (row >= 0 && m_iClock - post.m_iRaisedAt >= FORM_UP_SECONDS)
-				CountLosses_S(post, row);
+			if (row >= 0 && CountLosses_S(post, row))
+				changed = true;
 		}
+		if (changed)
+			Changed_S();
 		townIds.Copy(m_aTownIds);
 		infantry.Copy(m_aInfantry);
 		apcs.Copy(m_aApcs);
@@ -637,6 +773,11 @@ class AROR_TownMilitiaComponent : ScriptComponent
 
 	override void OnDelete(IEntity owner)
 	{
+		foreach (AROR_MilitiaPost post : m_aPosts)
+		{
+			foreach (AROR_MilitiaTeam team : post.m_aGroups)
+				team.Detach();
+		}
 		if (GetGame())
 			GetGame().GetCallqueue().Remove(Update_S);
 		if (s_Instance == this)

@@ -201,6 +201,26 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Every machine: the Resistance-held site (the HQ, a town, an outpost...) whose ground a position is on, or null
+	void AppendPresencePositions_S(notnull array<vector> positions)
+	{
+		if (!Replication.IsServer())
+			return;
+		foreach (AROR_SquadRecruit recruit : m_aRecruits)
+			AROR_ResistancePresence.AddPosition(recruit.m_Character, positions);
+	}
+
+	//! Native command groups outlive their temporary spawn groups, so account for recruits at their owner.
+	int GetCommittedPersonnel_S()
+	{
+		int count;
+		foreach (AROR_SquadRecruit recruit : m_aRecruits)
+		{
+			if (!recruit.m_bJoined || AROR_ForceSpawner.IsAlive(recruit.m_Character))
+				count++;
+		}
+		return count;
+	}
+
 	static AROR_LocationComponent FindHeldSiteAt(vector position)
 	{
 		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
@@ -293,7 +313,7 @@ class AROR_SquadManagerComponent : SCR_BaseGameModeComponent
 		}
 
 		array<AROR_EUnitType> types = {AROR_EUnitType.RIFLEMAN};
-		SCR_AIGroup spawned = AROR_ForceSpawner.SpawnGroup(m_sRecruitGroup, AROR_EFactionRole.RESISTANCE, types, position);
+		SCR_AIGroup spawned = AROR_ForceSpawner.SpawnGroup(m_sRecruitGroup, AROR_EFactionRole.RESISTANCE, types, position, false);
 		if (!spawned)
 		{
 			Hint(playerId, "Rifleman could not be spawned from the Resistance preset");

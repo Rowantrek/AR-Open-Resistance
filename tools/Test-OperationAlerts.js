@@ -18,7 +18,9 @@ function runOperationAlertsTests(sources) {
  class ThreatInfo{constructor(){this.m_iEtaSeconds=-1;}}
  const env={AROR_EFactionRole:roles,AROR_EOperationType:types,AROR_EOperationState:states,
   Replication:{IsServer:()=>true,BumpMe:()=>bumps++},System:{GetTickCount:()=>tick},
-  Math:{Max:Math.max,Min:Math.min,Round:Math.round,Ceil:Math.ceil,floor:Math.floor},vector:{DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])},
+  Math:{Max:Math.max,Min:Math.min,Round:Math.round,Ceil:Math.ceil,floor:Math.floor},vector:{Zero:[0,0,0],DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])},
+  AROR_OperationExecutorComponent:{Cast:x=>x},THREAT_TRACK_RESYNC:4,
+  Vector:(...v)=>v,
   string:{Empty:'',Format:(s,...a)=>s.replace(/%(\d+)/g,(_,n)=>String(a[n-1]))},Print:x=>printed.push(x),LogLevel:{NORMAL:0},
   AROR_LocationManagerComponent:{GetInstance:()=>({GetLocationById:id=>targets[id]||null})},
   AROR_RebIntelHud:{ArmyName:r=>r===1?'US ARMY':'SOVIET ARMY'},AROR_FactionPresetsComponent:{GetInstance:()=>({GetPresetId:r=>r===1?'US_ARMY':(r===2?'USSR_ARMY':'OTHER')})},AROR_UIColors:{WARN:1,DANGER:2,Get:c=>'color'+c},
@@ -26,16 +28,18 @@ function runOperationAlertsTests(sources) {
   AROR_OperationThreatInfo:ThreatInfo,THREAT_ROW:';',THREAT_FIELD:'|',THREAT_BOARD_RESYNC:15,
   GROUND_SPEED:11,ROAD_FACTOR:1.35,GROUND_DISMOUNT:30,AIR_SPEED:40,AIR_LANDING:60,
   AROR_OperationManagerComponent:{ThreatArmyName:r=>r===1?'NATO':'USSR'},  AROR_GroundOperationForce:{Cast:f=>f&&f.ground?f:null},AROR_ReaperAirForce:{Cast:f=>f&&f.air?f:null}};
- const methods=new Set(['ThreatArmyName','Estimate','Describe','Countdown','DispatchHeadline','PublishThreatBoard_S','OnThreatBoardReplicated','AnnounceDispatch_S','GetEtaRemaining','EstimateArrival']);
+ const methods=new Set(['GetOwner','TrackCoordinate','ThreatArmyName','Estimate','Describe','Countdown','DispatchHeadline','PublishThreatBoard_S','OnThreatBoardReplicated','AnnounceDispatch_S','GetEtaRemaining','EstimateArrival']);
  function compile(source,name){
   const m=source.match(new RegExp('^\\t[^\\r\\n]*\\b'+name+'\\(([^\\r\\n]*)\\)\\r?\\n\\t\\{([\\s\\S]*?)^\\t\\}','m'));
   if(!m)throw Error('Missing actual method '+name);
   const args=m[1].replace(/\bnotnull /g,'').replace(/array<[^>]+>\s+/g,'').replace(/\b(?:vector|bool|float|int|string|IEntity|AROR_\w+)\s+/g,'');
   let body=m[2].replace(/array<[^>]+> (\w+) = \{\};/g,'let $1=[];')
+   .replace(/landing != vector.Zero/g,'landing.some((v,i)=>v!==vector.Zero[i])')
    .replace(/foreach \(\w+ (\w+) : ([^)]+)\)/g,'for(const $1 of $2)')
    .replace(/int (\w+) = (\w+) \/ 60;/g,'let $1 = Math.floor($2 / 60);')
    .replace(/\bstring (\w+);/g,"let $1='';").replace(/\b(?:bool|int|float) (\w+);/g,'let $1=0;')
-   .replace(/\b(?:vector|IEntity|AROR_\w+) (\w+);/g,'let $1=null;')
+   .replace(/\bvector (\w+);/g,'let $1=[0,0,0];')
+   .replace(/\b(?:IEntity|AROR_\w+) (\w+);/g,'let $1=null;')
    .replace(/\b(?:bool|int|float|string|vector|IEntity|AROR_\w+) (\w+) =/g,'let $1 =')
    .replace(/super\.(\w+)\(/g,'this.Base$1(')
    .replace(/(?<![.\w])m_\w+/g,x=>'this.'+x).replace(/(?<![.\w])s_Instance/g,'this.s_Instance');
@@ -84,6 +88,8 @@ function runOperationAlertsTests(sources) {
  targets={levie:{GetName:()=>'Levie',GetCenter:()=>[0,0,0]},quarry:{GetName:()=>'Quarry',GetCenter:()=>[0,0,0]}};
  const manager={m_aOperations:[],m_iClock:100,m_sThreatBoard:'',m_sThreatBoardStructure:'',m_iThreatBoardResync:0,m_aThreatInfos:[],m_iThreatBoardReceivedAt:0,s_Instance:null,BaseNotifyChanged(){},BaseTick(){}};
  manager.s_Instance=manager;
+ manager.GetOwner=()=>({FindComponent:()=>null});manager.m_iThreatTrackResync=0;
+ manager.TrackCoordinate=compile(sources.alerts,'TrackCoordinate');
  for(const n of ['ThreatArmyName','NotifyChanged','AnnounceDispatch_S','PublishThreatBoard_S','OnThreatBoardReplicated','GetThreats','GetThreatEtaRemaining','Tick'])manager[n]=compile(sources.alerts,n);
  manager.DispatchHeadline=headline;
  manager.m_aOperations.push(qrf);qrf.state=states.PLANNED;manager.NotifyChanged(qrf);

@@ -7,7 +7,7 @@ const garrison = read('Garrisons/AROR_GarrisonComponent.c');
 const forces = read('Capture/AROR_LocationForces.c');
 let assertions = 0, server = true, clock = 0, ready = true;
 const check = (condition, why) => { assertions++; assert.ok(condition, why); };
-for (const [name, fn] of Object.entries({ Clear() { this.length = 0; }, Insert(x) { this.push(x); }, Count() { return this.length; }, IsEmpty() { return !this.length; } }))
+for (const [name, fn] of Object.entries({ InsertAll(xs) { this.push(...xs); }, Clear() { this.length = 0; }, Insert(x) { this.push(x); }, Count() { return this.length; }, IsEmpty() { return !this.length; } }))
   Object.defineProperty(Array.prototype, name, { value: fn, configurable: true });
 let players = [];
 const playerManager = { GetPlayers: out => players.forEach((_, i) => out.push(i)), GetPlayerControlledEntity: i => players[i] };
@@ -19,6 +19,8 @@ const env = {
   ChimeraCharacter: { Cast: e => e?.character ? e : null },
   CompartmentAccessComponent: { Cast: x => x }, HelicopterControllerComponent: 'helicopter',
   AROR_GarrisonPolicy: { IsEnemyRole: role => role === 1 || role === 2 }, AROR_LocationForces: {},
+  AROR_PopulationBudget:{GetAvailable_S:()=>10000},
+  AROR_ResistancePresence:{GetPositions:out=>{out.Clear();for(const e of players){if(e.character&&!e.dead&&!env.AROR_LocationForces.IsInAircraft(e))out.Insert(e.GetOrigin());}}},
   Print() {}, string: { Format: () => '' }, LogLevel: { NORMAL: 0 }
 };
 function compile(source, name) {
@@ -57,7 +59,7 @@ function fixture(pressure = false) {
     GetLocation: () => location, IsEligible: () => true, IsCapacityWaiting: () => pressure,
     IsGarrisonActive() { return this.active; }, HasDeploymentStarted() { return this.started; },
     BeginDeployment_S() { this.started = true; this.starts++; },
-    IsDeploymentClosed: () => false, UpdateDeployment_S() {}, RefreshPending_S() {},
+    RenewSimulation_S(){},IsDeploymentClosed: () => false, UpdateDeployment_S() {}, RefreshPending_S() {},
     HasRoster() { return this.active; }, GetRosterRole: () => 1, CommittedPersonnel: () => 4,
     Observe_S() { this.observed++; },
     CanRetire: compile(garrison, 'CanRetire'), OutsideLongEnough: compile(garrison, 'OutsideLongEnough'),

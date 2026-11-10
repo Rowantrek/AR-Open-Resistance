@@ -30,6 +30,14 @@ class AROR_OperationManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("90", desc: "Seconds before unrefreshed last-seen QRF markers expire", params: "15 300 5")]
 	protected int m_iQRFSpotLifetime;
 	protected ref AROR_QRFSpotting m_QRFSpotting = new AROR_QRFSpotting();
+
+	//! Server-side consumers share the confirmed, expiring intel used by Resistance map markers.
+	bool GetSightedPosition_S(IEntity entity, out vector position)
+	{
+		if (!Replication.IsServer() || (!m_bQRFSpotting && !m_bQRFDebugMarkers))
+			return false;
+		return m_QRFSpotting.GetConfirmedPosition_S(entity, m_iClock, m_iQRFSpotLifetime, position);
+	}
 	[Attribute("2", desc: "Initial equipment-pool readiness for each AI role; saved capture progress drives levels 1-5", params: "1 5 1")]
 	protected int m_iStartingReadinessLevel;
 	[Attribute("30", desc: "Target percentage of ordinary dispatched QRFs containing airborne forces, separately per army. Counts standalone air and joint responses; funding and launch safety still apply.", params: "0 100 1")]

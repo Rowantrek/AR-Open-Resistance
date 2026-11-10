@@ -294,6 +294,8 @@ class AROR_TownLifeComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	protected bool PlayerWithin(vector position, float distance)
 	{
+		if (AROR_ResistancePresence.Nearest(position) <= distance)
+			return true;
 		array<int> players = {};
 		GetGame().GetPlayerManager().GetPlayers(players);
 		foreach (int playerId : players)

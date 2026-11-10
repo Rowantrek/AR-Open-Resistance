@@ -1703,6 +1703,15 @@ class AROR_GarrisonComponent : ScriptComponent
 		return reachable;
 	}
 
+	//! Commanded ground forces can hold an active front without a nearby human observer.
+	void RenewSimulation_S()
+	{
+		if (!Replication.IsServer())
+			return;
+		foreach (AROR_GarrisonGroup group : m_aGroups)
+			AROR_ForceSpawner.RenewSimulation_S(group.m_Group);
+	}
+
 	//! Native dormancy is not a confirmed death. Keep its reserve until the engine rematerialises it.
 	protected bool HasDormantReserve(AROR_GarrisonSlot slot)
 	{

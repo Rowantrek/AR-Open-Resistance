@@ -79,7 +79,7 @@ const cases=[
  {name:'nested finance traversal removes an account twice',file:'AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_QRFFinance.c',suite:'Test-QRFInterruptions.js',
   mutate:s=>s.replace(' || m_bReconciling','')},
  {name:'reserve window expires before gunship egress',file:'AROpenResistance/Open Resistance/Worlds/AROR_Everon/AROR_Everon_Chicken_Layers/Managers.layer',suite:'Test-QRFInterruptions.js',
-  mutate:s=>s.replace('m_iQRFReserveWait 450','m_iQRFReserveWait 300')},
+  mutate:s=>s.replace('m_iQRFReserveWait 450','m_iQRFReserveWait 120')},
  {name:'partially validated aircraft have no boarding hold',file:'AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_ReaperQRFExecutor.c',suite:'Test-QRFInterruptions.js',
   mutate:s=>s.replace('force.m_bAircraftHeld = true;','force.m_bAircraftHeld = false;')},
  {name:'empty failed construction keeps its collateral',file:'AROpenResistance/Open Resistance/Scripts/Game/Operations/AROR_OperationExecutorComponent.c',suite:'Test-QRFInterruptions.js',
