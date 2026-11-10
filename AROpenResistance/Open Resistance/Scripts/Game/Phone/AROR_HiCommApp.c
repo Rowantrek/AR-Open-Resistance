@@ -701,7 +701,7 @@ class AROR_HiCommApp
 		// Left: catalogue
 		Box(30, 110, 790, 770);
 		Header(55, 125, "// RAISE SQUADS");
-		Text(55, 165, 740, 34, 20, "Squads form up at the HQ. Cost: Resistance funds AND manpower.", m_GreenDim);
+		Text(55, 165, 740, 34, 20, "Squads form up at the HQ. Costs funds and manpower.", m_GreenDim);
 
 		array<AROR_HighCommandSquadType> types = {};
 		highCommand.GetSquadTypes(types);
@@ -796,7 +796,8 @@ class AROR_HiCommApp
 			manpower = economy.GetManpower();
 		}
 		int ports = AROR_ImportPoints.CountPorts(AROR_EFactionRole.RESISTANCE);
-		Text(55, 165, 1580, 34, 20, string.Format("One-time cost; units stay in the town until they die or it is lost, and turn out when you or the enemy come near. Seaports held: %1 (APCs need %2, armour %3).", ports, militia.GetPortsNeeded(AROR_EMilitiaKind.APC), militia.GetPortsNeeded(AROR_EMilitiaKind.ARMOUR)), m_GreenDim);
+		Text(55, 160, 1580, 26, 18, "Paid once. Units stay until killed or the town is lost, and turn out when players or the enemy come near.", m_GreenDim);
+		Text(55, 186, 1580, 26, 18, string.Format("Seaports held: %1  //  APCs need %2, armour %3", ports, militia.GetPortsNeeded(AROR_EMilitiaKind.APC), militia.GetPortsNeeded(AROR_EMilitiaKind.ARMOUR)), m_GreenDim);
 
 		Text(55, 215, 330, 30, 18, "TOWN", m_GreenFaint);
 		Text(390, 215, 180, 30, 18, "INFANTRY", m_GreenFaint);
