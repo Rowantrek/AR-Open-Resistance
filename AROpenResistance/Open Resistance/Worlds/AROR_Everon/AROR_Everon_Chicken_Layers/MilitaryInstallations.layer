@@ -4017,6 +4017,96 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
    m_iDefenceLevel 4
   }
   AROR_SpecialSiteComponent "{6AC9F0A1B2C3D402}" {
+   m_aProps {
+    AROR_SpecialSiteProp {
+     m_sPrefab "{D8B2D92435256291}Prefabs/Compositions/Misc/SubCompositions/Tents/Tent_Barracks_US_01.et"
+     m_vOffset -29 0 -38
+     m_fYaw 90
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{89D2C8FCFC8D6488}Prefabs/Compositions/Misc/SubCompositions/Tents/Tent_Barracks_US_05.et"
+     m_vOffset -15 0 -38
+     m_fYaw 90
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{F09296B9255F6704}Prefabs/Compositions/Misc/SubCompositions/Tents/Tent_CommandPost_US_01.et"
+     m_vOffset 0 0 -38
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{FB0F12529D2FD0DA}Prefabs/Props/Military/FieldKitchenTrailerUS_01.et"
+     m_vOffset 11 0 -37
+     m_fYaw 90
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{7F671B405CDBF0A2}Prefabs/Props/Airport/GeneratorAirfield_US_01/GeneratorAirfield_US_01.et"
+     m_vOffset 18 0 -41
+     m_bWorkPoint 0
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{DFF391458A7AC773}Prefabs/Props/Military/WaterTanks/MobileWaterTank_US_01.et"
+     m_vOffset 24 0 -38
+     m_fYaw 90
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{1B79BB823DC46F9D}Prefabs/Props/Industrial/CargoContainers/CargoContainer_01/CargoContainer_01_20ft_green.et"
+     m_vOffset -31 0 36
+     m_fYaw 90
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{1B79BB823DC46F9D}Prefabs/Props/Industrial/CargoContainers/CargoContainer_01/CargoContainer_01_20ft_green.et"
+     m_vOffset -22 0 36
+     m_fYaw 90
+     m_bWorkPoint 0
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{89230C660A90788F}Prefabs/Structures/Military/CamoNets/US/CamoNet_Large_Top_US.et"
+     m_vOffset -8 0 35
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{0E94F28FD722B1D8}Prefabs/Props/Military/Generators/GeneratorFloodlight_US_01.et"
+     m_vOffset 15 0 37
+     m_fYaw 180
+     m_bWorkPoint 0
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{FA9066DE33E8E67D}Prefabs/Structures/Military/Camps/Canvas_Covers/US/CanvasCover_Large_US.et"
+     m_vOffset 22 0 35
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{0E94F28FD722B1D8}Prefabs/Props/Military/Generators/GeneratorFloodlight_US_01.et"
+     m_vOffset -35 0 0
+     m_fYaw 90
+     m_bWorkPoint 0
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{DB4F61D5F37432F7}Prefabs/Props/Military/Camps/PalletFuel_01.et"
+     m_vOffset -35 0 -15
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{B350840088390760}Prefabs/Compositions/Misc/SubCompositions/Decorations/Barrel_Group_Stack_01.et"
+     m_vOffset -35 0 15
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{CF1FFB7BAA1A0769}Prefabs/Structures/Military/Camps/HelipadImprovised_01/HelipadImprovised_US_01.et"
+     m_vOffset 41 0 24
+     m_bHelipad 1
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{CF1FFB7BAA1A0769}Prefabs/Structures/Military/Camps/HelipadImprovised_01/HelipadImprovised_US_01.et"
+     m_vOffset 41 0 -24
+     m_bHelipad 1
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{9F35A268E0DD98A4}Prefabs/Props/Military/Fuel/MobileWaterTank_US_01_fuel.et"
+     m_vOffset 46 0 0
+    }
+    AROR_SpecialSiteProp {
+     m_sPrefab "{0E94F28FD722B1D8}Prefabs/Props/Military/Generators/GeneratorFloodlight_US_01.et"
+     m_vOffset 36 0 0
+     m_fYaw 270
+     m_bWorkPoint 0
+    }
+   }
   }
   AROR_TownLifeComponent "{6AC9F0A1B2C3D403}" {
    m_bCivilians 0
