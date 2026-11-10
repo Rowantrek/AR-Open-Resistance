@@ -810,6 +810,16 @@ class AROR_HiCommApp
 		array<float> healths = {};
 		array<float> fuels = {};
 		garage.GetEntries(ids, prefabs, healths, fuels);
+		// Land vehicles only: squads cannot fly or sail
+		for (int i = ids.Count() - 1; i >= 0; i--)
+		{
+			if (!AROR_HighCommandComponent.IsSquadVehicle(prefabs[i]))
+			{
+				ids.RemoveOrdered(i);
+				prefabs.RemoveOrdered(i);
+			}
+		}
+
 		count = ids.Count();
 		if (count == 0)
 			return false;

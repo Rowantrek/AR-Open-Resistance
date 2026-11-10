@@ -518,25 +518,48 @@ class AROR_HighCommandComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The requested garage entry while it is still there, else the first garage vehicle; 0 when the garage is empty
+	//! The requested garage entry while it is still there, else the first garage vehicle a squad can ride; 0 when
+	//! there is none
 	protected int PickGarageEntry_S(int requested)
 	{
 		AROR_ResistanceGarageComponent garage = AROR_ResistanceGarageComponent.GetInstance();
 		if (!garage)
 			return 0;
 
-		if (requested > 0 && garage.GetEntry_S(requested))
-			return requested;
-
 		array<int> ids = {};
 		array<ResourceName> prefabs = {};
 		array<float> healths = {};
 		array<float> fuels = {};
 		garage.GetEntries(ids, prefabs, healths, fuels);
-		if (ids.IsEmpty())
-			return 0;
+		int first;
+		foreach (int i, int id : ids)
+		{
+			if (!IsSquadVehicle(prefabs[i]))
+				continue;
+			if (id == requested)
+				return id;
+			if (first == 0)
+				first = id;
+		}
 
-		return ids[0];
+		return first;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every machine: whether a garage vehicle can carry a High Command squad. Land vehicles only: AI squads cannot
+	//! fly helicopters or sail boats (WCS and RHS add many helicopters to the garage).
+	static bool IsSquadVehicle(ResourceName prefab)
+	{
+		if (prefab.IsEmpty())
+			return false;
+
+		AROR_ShopOffer offer = AROR_Imports.FindOffer(prefab);
+		if (offer)
+			return offer.m_iCategory != 4;
+
+		string path = prefab;
+		path.ToLower();
+		return !path.Contains("/helicopters/") && !path.Contains("/boats/") && !path.Contains("/aircraft/") && !path.Contains("/planes/");
 	}
 
 	//------------------------------------------------------------------------------------------------
