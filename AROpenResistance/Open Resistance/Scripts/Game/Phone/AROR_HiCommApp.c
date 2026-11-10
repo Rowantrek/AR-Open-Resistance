@@ -886,10 +886,10 @@ class AROR_HiCommApp
 		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
 		AROR_EconomyComponent economy = AROR_EconomyComponent.GetInstance();
 		Box(30, 110, 1645, 770);
-		Header(55, 125, "// TOWN GARRISONS");
+		Header(55, 125, "// GARRISONS");
 		if (!militia || !locations)
 		{
-			Text(55, 175, 1580, 34, 22, "Town garrisons are not enabled in this scenario.", m_GreenDim);
+			Text(55, 175, 1580, 34, 22, "Garrisons are not enabled in this scenario.", m_GreenDim);
 			return;
 		}
 		int funds, manpower;
@@ -899,33 +899,42 @@ class AROR_HiCommApp
 			manpower = economy.GetManpower();
 		}
 		int ports = AROR_ImportPoints.CountPorts(AROR_EFactionRole.RESISTANCE);
-		Text(55, 160, 1580, 26, 18, "Paid once. Units stay until killed or the town is lost, and turn out when players or the enemy come near.", m_GreenDim);
+		Text(55, 160, 1580, 26, 18, "Towns, outposts and every site you hold. Paid once; units stay until killed or the site is lost, and turn out when players or the enemy come near.", m_GreenDim);
 		Text(55, 186, 1580, 26, 18, string.Format("Seaports held: %1  //  APCs need %2, armour %3", ports, militia.GetPortsNeeded(AROR_EMilitiaKind.APC), militia.GetPortsNeeded(AROR_EMilitiaKind.ARMOUR)), m_GreenDim);
 
-		Text(55, 215, 330, 30, 18, "TOWN", m_GreenFaint);
+		Text(55, 215, 330, 30, 18, "SITE", m_GreenFaint);
 		Text(390, 215, 180, 30, 18, "INFANTRY", m_GreenFaint);
 		Text(570, 215, 200, 30, 18, "VEHICLES", m_GreenFaint);
 
-		// GetLocationsOfType clears its output, so gather cities and towns separately
+		// Military sites first (outposts, bases, airfields...), then cities and towns
+		array<AROR_LocationComponent> all = {};
+		locations.GetLocations(all);
 		array<AROR_LocationComponent> towns = {};
-		array<AROR_LocationComponent> ofType = {};
-		locations.GetLocationsOfType(AROR_ELocationType.CITY, towns);
-		locations.GetLocationsOfType(AROR_ELocationType.TOWN, ofType);
-		towns.InsertAll(ofType);
+		array<AROR_LocationComponent> settlements = {};
+		foreach (AROR_LocationComponent site : all)
+		{
+			if (!site || site.GetControllingRole() != AROR_EFactionRole.RESISTANCE || !AROR_TownMilitiaComponent.CanGarrison(site))
+				continue;
+			AROR_ELocationType siteType = site.GetLocationType();
+			if (siteType == AROR_ELocationType.TOWN || siteType == AROR_ELocationType.CITY)
+				settlements.Insert(site);
+			else
+				towns.Insert(site);
+		}
+		towns.InsertAll(settlements);
+
 		float y = 250;
 		int shown;
 		foreach (AROR_LocationComponent town : towns)
 		{
-			if (!town || town.GetControllingRole() != AROR_EFactionRole.RESISTANCE)
-				continue;
 			if (y > 820)
 				break;
 			shown++;
 			int infantry, apcs, armour;
 			militia.GetGarrison(town.GetId(), infantry, apcs, armour);
 			string name = Upper(town.GetName());
-			if (town.GetLocationType() == AROR_ELocationType.CITY)
-				name += " (CITY)";
+			if (town.GetLocationType() != AROR_ELocationType.TOWN)
+				name += " (" + SiteKind(town.GetLocationType()) + ")";
 			Text(55, y + 10, 330, 36, 22, name, m_Green, true);
 			Text(390, y + 10, 180, 36, 22, string.Format("%1 / %2", infantry, militia.GetMaxInfantry(town)), m_Green);
 			Text(570, y + 10, 200, 36, 22, string.Format("%1 APC  %2 ARM  / %3", apcs, armour, militia.GetMaxVehicles(town)), m_Green);
@@ -938,7 +947,24 @@ class AROR_HiCommApp
 			y += 60;
 		}
 		if (shown == 0)
-			Text(55, 260, 1580, 40, 22, "The Resistance holds no towns yet. Take a town's garrison flag to hold it.", m_GreenDim);
+			Text(55, 260, 1580, 40, 22, "The Resistance holds no sites yet. Take an outpost's or a town's flag to hold it.", m_GreenDim);
+	}
+
+	//! Short site kind after a garrison's name: "OUTPOST", "BASE", "CITY"...
+	protected static string SiteKind(AROR_ELocationType type)
+	{
+		switch (type)
+		{
+			case AROR_ELocationType.CITY: return "CITY";
+			case AROR_ELocationType.OUTPOST: return "OUTPOST";
+			case AROR_ELocationType.MILITARY_BASE: return "BASE";
+			case AROR_ELocationType.AIRPORT: return "AIRFIELD";
+			case AROR_ELocationType.HELIPORT: return "HELIPORT";
+			case AROR_ELocationType.PORT: return "PORT";
+			case AROR_ELocationType.FACTORY: return "FACTORY";
+			case AROR_ELocationType.RESOURCES: return "RESOURCES";
+		}
+		return "SITE";
 	}
 
 	//! One buy button: label and price, or why it cannot be bought

@@ -209,10 +209,10 @@ Manpower: 1 per town and 2 per city each payment. Resources (170), factories, po
 
 ## Town garrisons (Resistance)
 
-HICOMM → **Garrisons** lists every town and city the Resistance holds. Buy infantry (a team of up to four), APCs or
+HICOMM → **Garrisons** lists every town, city and military site (outposts, bases, ports, airfields and the rest; not the HQ) the Resistance holds. Buy infantry (a team of up to four), APCs or
 armour; the cost is paid once and the units stay in the town, saved with the campaign, until they die or the town is
 lost. Seaports bring the heavy kit: one held seaport unlocks APCs, two unlock armour (armour only exists with RHS or
-WCS loaded; the base game has none for the Resistance). Towns hold 12 infantry and 2 vehicles, cities 20 and 3.
+WCS loaded; the base game has none for the Resistance). Towns and small sites hold 12 infantry and 2 vehicles; cities, bases and airfields 20 and 3.
 
 The garrison turns out while a Resistance player is within 1,200 m or an enemy soldier within 700 m (an attack order
 arriving), holding the town on a defend waypoint; vehicles park at the roadside with a crew of two. After 90 quiet

@@ -106,16 +106,38 @@ class AROR_TownMilitiaComponent : ScriptComponent
 		armour = m_aArmour[row];
 	}
 
+	//------------------------------------------------------------------------------------------------
+	//! Every machine: whether the Resistance can garrison a site: towns, cities and every capturable site (outposts,
+	//! bases, ports, airfields, heliports, factories, resources). Not the HQ.
+	static bool CanGarrison(AROR_LocationComponent site)
+	{
+		if (!site)
+			return false;
+
+		AROR_ELocationType type = site.GetLocationType();
+		return type == AROR_ELocationType.TOWN || type == AROR_ELocationType.CITY || AROR_CaptureLocationAction.IsCapturableType(type);
+	}
+
+	//! Cities, military bases and airfields hold the larger garrison
+	static bool IsLargeSite(AROR_LocationComponent site)
+	{
+		if (!site)
+			return false;
+
+		AROR_ELocationType type = site.GetLocationType();
+		return type == AROR_ELocationType.CITY || type == AROR_ELocationType.MILITARY_BASE || type == AROR_ELocationType.AIRPORT;
+	}
+
 	int GetMaxInfantry(AROR_LocationComponent town)
 	{
-		if (town && town.GetLocationType() == AROR_ELocationType.CITY)
+		if (IsLargeSite(town))
 			return m_iCityInfantry;
 		return m_iTownInfantry;
 	}
 
 	int GetMaxVehicles(AROR_LocationComponent town)
 	{
-		if (town && town.GetLocationType() == AROR_ELocationType.CITY)
+		if (IsLargeSite(town))
 			return m_iCityVehicles;
 		return m_iTownVehicles;
 	}
@@ -222,7 +244,7 @@ class AROR_TownMilitiaComponent : ScriptComponent
 		AROR_HighCommandComponent highCommand = AROR_HighCommandComponent.GetInstance();
 		if (!highCommand || !highCommand.IsLeader(playerId))
 		{
-			AROR_NotificationManagerComponent.SendHint_S(playerId, "Only a Resistance Leader can garrison towns");
+			AROR_NotificationManagerComponent.SendHint_S(playerId, "Only a Resistance Leader can buy garrisons");
 			return;
 		}
 		AROR_LocationManagerComponent locations = AROR_LocationManagerComponent.GetInstance();
@@ -230,7 +252,7 @@ class AROR_TownMilitiaComponent : ScriptComponent
 		AROR_LocationComponent town;
 		if (locations)
 			town = locations.GetLocationById(townId);
-		if (!town || !economy || (town.GetLocationType() != AROR_ELocationType.TOWN && town.GetLocationType() != AROR_ELocationType.CITY))
+		if (!economy || !CanGarrison(town))
 			return;
 		string reason = WhyNot(town, kind);
 		if (!reason.IsEmpty())
