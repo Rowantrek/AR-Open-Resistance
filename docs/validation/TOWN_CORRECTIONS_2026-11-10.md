@@ -40,8 +40,8 @@ The shared limit applies to actors produced by these mod systems, not unrelated 
 
 Run `node tools/Validate-TownCorrections.js` with a Node-compatible runtime. The runner returns failure unless every selected child finishes its assertion/check report. Existing suite artifacts are redirected to temporary storage so historical checked-in validation results are preserved.
 
-- **44/44 checks pass**, reporting **113,239 assertions** in passing JavaScript suites, plus the three successful PowerShell checks.
-- `Test-TownCorrections.js`: 12,564 assertions, including 500 repeated handover/retirement cycles and 10,000 mixed queued-admission ticks. Executes extracted current methods against explicit mocked native services, including reservation before native enqueue.
+- **44/44 checks pass**, reporting **113,246 assertions** in passing JavaScript suites, plus the three successful PowerShell checks.
+- `Test-TownCorrections.js`: 12,571 assertions, including 500 repeated handover/retirement cycles and 10,000 mixed queued-admission ticks. Executes extracted current methods against explicit mocked native services, including reservation before native enqueue and signed startup hashes.
 - Existing lifecycle, interruption, manager-soak, recipe/strategy/progression, boarding/ingress/unloading, capture/garrison, geometry, HICOMM, player-squad, phone and mutation checks pass.
 - Previously stale adapters now reflect current formation/preset spawning, reinforcement-only contests, track serialization, mechanized status and recruitment methods. Their assertions continue exercising current code; native UI rendering and native kit application are not inferred from fixture success.
 - The reserve-window mutation now shortens the window to 120 seconds. A 300-second window is no longer necessarily invalid with the new 120-second gunship setting, so the old mutation did not represent the claimed regression.
@@ -75,4 +75,12 @@ Start a fresh world/server session after compiling; hot-reloading an already pop
 6. Verify spotting requires observation, stale tracks expire, returning/claimed assets have correct symbols, and late joiners receive coherent map state.
 7. Run the review's 45–60 minute dedicated soak around overlapping town/military sites. Measure server frame-time percentiles, live/dormant/queued population, entity and waypoint trends, replication traffic and failed routes/landings against a warmed-up baseline.
 
-No Workbench compilation, native flight test or dedicated-server performance measurement was possible in this environment. Automated policy checks do not certify those outcomes.
+No native flight test or dedicated-server performance measurement was possible in this environment. Automated policy checks do not certify those outcomes.
+
+### Follow-up to the supplied Workbench compile
+
+The user's 20:19:36 Workbench log for `4034ff4` reports five Open Resistance diagnostics: two owned-reference-array `InsertAll` calls each produce a type/conversion error, and the inline hash/mask argument produces an incompatible-parameter error. These were missed by the JavaScript native-service mocks.
+
+The follow-up replaces both bulk transfers with per-element insertion, retaining ownership before the original collections are cleared. Startup delay now uses a typed hash variable and a signed-modulo helper with no inline bit mask. Regression checks cover signed integer boundaries and reject `InsertAll` calls supplied with locally declared owned-reference arrays. The source guard tests its own rejection/acceptance against invalid bulk, valid weak-array, and valid per-element examples.
+
+The same failed log contains base-game diagnostics. They may be cascading; a new Workbench compile is required to distinguish them from independent addon/tool issues. The corrected source has not been natively recompiled by this agent, and a successful current compile is not claimed.

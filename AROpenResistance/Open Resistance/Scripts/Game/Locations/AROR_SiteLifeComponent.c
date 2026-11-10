@@ -1082,8 +1082,11 @@ class AROR_SiteLifeComponent : ScriptComponent
 	//! Control changed while players are here: stop managing the old holder's helicopters and soldiers
 	protected void Forget()
 	{
-		m_aRetiringGroups.InsertAll(m_aPatrols);
-		m_aRetiringGroups.InsertAll(m_aWorkers);
+		// InsertAll expects an array of weak references; owned arrays must transfer elements individually.
+		foreach (AROR_SpecialSiteGroup patrol : m_aPatrols)
+			m_aRetiringGroups.Insert(patrol);
+		foreach (AROR_SpecialSiteGroup worker : m_aWorkers)
+			m_aRetiringGroups.Insert(worker);
 		if (m_Truck)
 			m_aRetiringGroups.Insert(m_Truck);
 		m_aPatrols.Clear();
@@ -1164,6 +1167,15 @@ class AROR_SiteLifeComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Normalize signed hashes without bitwise expressions inside native call arguments.
+	protected static int BuildSlot(int seed)
+	{
+		int slot = Math.Mod(seed, 20);
+		if (slot < 0)
+			slot += 20;
+		return slot;
+	}
+
 	override void OnPostInit(IEntity owner)
 	{
 		super.OnPostInit(owner);
@@ -1178,7 +1190,8 @@ class AROR_SiteLifeComponent : ScriptComponent
 		}
 
 		// Every machine builds the camp once the world has settled
-		int buildSlot = Math.Mod(m_Location.GetId().Hash() & 0x7FFFFFFF, 20);
+		int siteSeed = m_Location.GetId().Hash();
+		int buildSlot = BuildSlot(siteSeed);
 		GetGame().GetCallqueue().CallLater(Build, 1000 + buildSlot * 500);
 		if (!Replication.IsServer())
 			return;

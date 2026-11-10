@@ -13,7 +13,7 @@ Object.defineProperty(String.prototype,'IsEmpty',{value(){return !this.length},c
 const methods=new Set(Object.values(source).flatMap(s=>[...s.matchAll(/^\t[^\r\n]*?\b(\w+)\([^\r\n]*\)\r?\n\t\{/gm)].map(m=>m[1])));
 const type='(?:bool|int|float|string|vector|IEntity|Faction|Instigator|ResourceName|Base\\w+|CompartmentAccessComponent|ChimeraCharacter|CharacterControllerComponent|AIAgent|SCR_\\w+|AROR_\\w+)';
 const components={access:{Cast:x=>x},compartments:{Cast:x=>x},usage:{Cast:x=>x},damage:{Cast:x=>x}};
-const env={Replication:{IsServer:()=>server},Math:{Max:Math.max,Min:Math.min,Clamp:(v,a,b)=>Math.max(a,Math.min(b,v)),Floor:Math.floor,Mod:(a,b)=>a%b},
+const env={Replication:{IsServer:()=>server},Math:{Max:Math.max,Min:Math.min,Clamp:(v,a,b)=>Math.max(a,Math.min(b,v)),Floor:Math.floor,Mod:(a,b)=>{const value=a%b;return value===0?0:value;}},
  vector:{Zero:[0,0,0],DistanceXZ:(a,b)=>Math.hypot(a[0]-b[0],a[2]-b[2])},GetGame:()=>({GetGameMode:()=>mode,GetFactionManager:()=>({GetFactionByKey:()=>({})}),GetCallqueue:()=>({CallLater(){},Remove(){}}),GetPlayerManager:()=>({GetPlayerIdFromControlledEntity:e=>e?.player||0,GetPlayers(){}})}),
  Print(){},LogLevel:{NORMAL:0},string:{Empty:'',Format:()=>''},FORM_UP_SECONDS:30,
  AROR_EFactionRole:{RESISTANCE:0},AROR_ELocationType:{TOWN:0,CITY:3},AROR_EMilitiaKind:{INFANTRY:0,APC:1,ARMOUR:2},
@@ -69,6 +69,8 @@ const stand=compile(source.militia,'StandDown_S');let owner={...b,m_aTownIds:['t
 check(!deleted.includes(claimed),'claimed player hull is not deleted');equal(owner.m_aApcs[0],0,'claimed hull transfers out of saved militia book');equal(owner.m_aPosts.length,0,'completed cleanup owner retires');
 p=post();crew.inUse=true;p.m_aDismountedCrews=[crew];owner={...book(),m_aTownIds:['town'],m_aPosts:[p],CountLosses_S:losses};stand.call(owner,p);equal(owner.m_aPosts.length,1,'protected crew retains cleanup owner');crew.inUse=false;stand.call(owner,p);equal(owner.m_aPosts.length,0,'crew retires after use ends');
 const forget=compile(source.site,'Forget'),reap=compile(source.site,'ReapFormerForces');
+const buildSlot=compile(source.site,'BuildSlot');
+for(const [seed,expected]of [[-2147483648,12],[-1001,19],[-20,0],[-1,19],[0,0],[1,1],[2147483647,7]])equal(buildSlot(seed),expected,'signed site hash yields a valid deterministic startup slot');
 function site(){return{m_aPatrols:[],m_aWorkers:[],m_aRetiringGroups:[],m_aRetiringHelicopters:[],m_aPatrolLostAt:[],m_aWorkerLostAt:[],m_aHelicopters:[],m_aHelicopterLostAt:[],m_Truck:null,m_iClock:200,m_fRetireDistance:1600,CanRetireGroup:()=>true,NearestPlayer:()=>10000}}
 for(let cycle=0;cycle<500;cycle++){
  const s=site(),old={m_Group:group([{}]),m_bSeen:true,Remove_S(){deleted.push(this);return true}};s.m_aPatrols=[old];s.m_aWorkers=[{...old}];s.m_Truck={...old};s.m_aHelicopters=[{claimed:true},{claimed:false,GetOrigin:()=>[0,0,0]}];
