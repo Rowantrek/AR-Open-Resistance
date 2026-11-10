@@ -4013,6 +4013,15 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
    m_bGroundOnInit 0
    m_eInitialControllingRole OCCUPIERS
   }
+  AROR_GarrisonComponent "{66D30571F98F4BE3}" {
+   m_iDefenceLevel 4
+  }
+  AROR_SpecialSiteComponent "{6AC9F0A1B2C3D402}" {
+  }
+  AROR_TownLifeComponent "{6AC9F0A1B2C3D403}" {
+   m_bCivilians 0
+   m_bParkedCars 0
+  }
  }
  coords 6819.06 125.733 6712.6
  angles 0 45 0

@@ -12,6 +12,8 @@ class AROR_IncomeTally : Managed
 	int m_iResources;
 	int m_iFactories;
 	int m_iPorts;
+	int m_iSpecialMoney;	//!< Extra money from held special sites (AROR_SpecialSiteComponent)
+	int m_iSpecialManpower;
 }
 
 //! Resource income (see ARCHITECTURE.md -> Economy). Every interval the server counts what each faction role holds and
@@ -124,6 +126,13 @@ class AROR_IncomeComponent : SCR_BaseGameModeComponent
 			if (!location || location.GetControllingRole() != role)
 				continue;
 
+			AROR_SpecialSiteComponent special = AROR_SpecialSiteComponent.Cast(location.GetOwner().FindComponent(AROR_SpecialSiteComponent));
+			if (special)
+			{
+				tally.m_iSpecialMoney += special.GetMoneyPerPayment();
+				tally.m_iSpecialManpower += special.GetManpowerPerPayment();
+			}
+
 			switch (location.GetLocationType())
 			{
 				case AROR_ELocationType.TOWN:
@@ -156,7 +165,7 @@ class AROR_IncomeComponent : SCR_BaseGameModeComponent
 		float multiplier = 1 + m_fFactoryBonus * tally.m_iFactories + m_fPortBonus * tally.m_iPorts;
 		float resourceMoney = tally.m_iResources * m_iResourceIncome * multiplier;
 		int money = Math.Round(resourceMoney);
-		return money + tally.m_iPopulation * m_iMoneyPerInhabitant;
+		return money + tally.m_iPopulation * m_iMoneyPerInhabitant + tally.m_iSpecialMoney;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -182,7 +191,7 @@ class AROR_IncomeComponent : SCR_BaseGameModeComponent
 	//! Resistance manpower for one payment
 	int GetManpower(notnull AROR_IncomeTally tally)
 	{
-		return tally.m_iTowns * m_iManpowerPerTown + tally.m_iCities * m_iManpowerPerCity;
+		return tally.m_iTowns * m_iManpowerPerTown + tally.m_iCities * m_iManpowerPerCity + tally.m_iSpecialManpower;
 	}
 
 	//------------------------------------------------------------------------------------------------
