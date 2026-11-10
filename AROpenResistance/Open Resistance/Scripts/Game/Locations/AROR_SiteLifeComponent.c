@@ -41,7 +41,10 @@ class AROR_SeededRandom
 	//! 0 .. 1
 	float NextFloat()
 	{
-		return (Next() % 100000) / 100000.0;
+		int value = Next();
+		int span = 100000;
+		value = value % span;
+		return value / 100000.0;
 	}
 
 	//! min .. max - 1
@@ -49,7 +52,10 @@ class AROR_SeededRandom
 	{
 		if (max <= min)
 			return min;
-		return min + Next() % (max - min);
+		int value = Next();
+		int span = max - min;
+		value = value % span;
+		return min + value;
 	}
 }
 
@@ -807,7 +813,9 @@ class AROR_SiteLifeComponent : ScriptComponent
 			}
 			else
 			{
-				entry.m_iPoint = (entry.m_iPoint + entry.m_iDirection + LOOP_POINTS) % LOOP_POINTS;
+				int points = LOOP_POINTS;
+				int stepped = entry.m_iPoint + entry.m_iDirection + points;
+				entry.m_iPoint = stepped % points;
 				entry.m_vGoal = LoopPoint(entry.m_iPoint);
 				entry.m_iNextOrderAt = m_iClock + 120;
 			}
@@ -860,7 +868,8 @@ class AROR_SiteLifeComponent : ScriptComponent
 		added.m_iPoint = start;
 		added.m_vGoal = spawn;
 		added.m_iDirection = 1;
-		if (groups.Count() % 2 == 1)
+		int existing = groups.Count();
+		if (existing % 2 == 1)
 			added.m_iDirection = -1;
 		added.m_iNextOrderAt = m_iClock + 6;
 		groups.Insert(added);
@@ -911,7 +920,9 @@ class AROR_SiteLifeComponent : ScriptComponent
 			bool arrived = vector.DistanceXZ(m_Truck.m_Vehicle.GetOrigin(), m_Truck.m_vGoal) < 25;
 			if (m_iClock >= m_Truck.m_iNextOrderAt || arrived)
 			{
-				m_Truck.m_iPoint = (m_Truck.m_iPoint + 1) % LOOP_POINTS;
+				int loopPoints = LOOP_POINTS;
+				int nextPoint = m_Truck.m_iPoint + 1;
+				m_Truck.m_iPoint = nextPoint % loopPoints;
 				m_Truck.m_vGoal = LoopPoint(m_Truck.m_iPoint);
 				m_Truck.Order_S(m_sMoveWaypointPrefab, m_Truck.m_vGoal, 20);
 				m_Truck.m_iNextOrderAt = m_iClock + 120;
