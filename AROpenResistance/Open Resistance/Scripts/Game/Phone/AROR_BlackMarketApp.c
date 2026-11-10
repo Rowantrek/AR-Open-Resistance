@@ -96,15 +96,8 @@ class AROR_BlackMarketApp : AROR_ShopAppBase
 		DropUnavailableLines();
 		DrawTopBar("SMUGGLERS' NET", "BLACK MARKET");
 
-		if (m_iFacilities < 1)
-		{
-			ShowSearch(false, 0, 0, 0, 0);
-			DrawNoAccess("shipped in");
-		}
-		else
-		{
-			DrawMarket();
-		}
+		// Always open: starter weapons need no facility; everything else shows what it needs
+		DrawMarket();
 
 		DrawPopup();
 		EndFrame();

@@ -802,9 +802,12 @@ class AROR_HiCommApp
 		Text(390, 215, 180, 30, 18, "INFANTRY", m_GreenFaint);
 		Text(570, 215, 200, 30, 18, "VEHICLES", m_GreenFaint);
 
+		// GetLocationsOfType clears its output, so gather cities and towns separately
 		array<AROR_LocationComponent> towns = {};
+		array<AROR_LocationComponent> ofType = {};
 		locations.GetLocationsOfType(AROR_ELocationType.CITY, towns);
-		locations.GetLocationsOfType(AROR_ELocationType.TOWN, towns);
+		locations.GetLocationsOfType(AROR_ELocationType.TOWN, ofType);
+		towns.InsertAll(ofType);
 		float y = 250;
 		int shown;
 		foreach (AROR_LocationComponent town : towns)

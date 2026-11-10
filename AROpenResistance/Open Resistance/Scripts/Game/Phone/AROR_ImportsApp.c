@@ -52,21 +52,15 @@ class AROR_ImportsApp : AROR_ShopAppBase
 		ShowSearch(false, 0, 0, 0, 0);
 		DrawTopBar("USED IMPORTS", "IMPORTS");
 
-		if (m_iFacilities < 1)
+		// Always open: the list shows each vehicle's facility requirement, so the player sees what to capture
+		BuildShown();
+		if (!m_Popup)
 		{
-			DrawNoAccess("imported");
+			DrawFacilityStrip(WIDTH - MARGIN * 2, true);
+			DrawTabs();
 		}
-		else
-		{
-			BuildShown();
-			if (!m_Popup)
-			{
-				DrawFacilityStrip(WIDTH - MARGIN * 2, true);
-				DrawTabs();
-			}
 
-			DrawList();
-		}
+		DrawList();
 
 		DrawPopup();
 		EndFrame();

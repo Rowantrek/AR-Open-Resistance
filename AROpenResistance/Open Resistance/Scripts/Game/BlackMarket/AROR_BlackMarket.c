@@ -114,12 +114,6 @@ class AROR_BlackMarket
 			return;
 		}
 
-		if (AROR_ImportPoints.CountFacilities(AROR_EFactionRole.RESISTANCE) < 1)
-		{
-			result.Fail("No import facilities", "Hold a seaport, heliport or airport to import.");
-			return;
-		}
-
 		int lines = Math.Min(prefabs.Count(), quantities.Count());
 		if (lines < 1 || lines > MAX_CART_LINES)
 		{
