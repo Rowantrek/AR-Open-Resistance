@@ -450,4 +450,54 @@ class AROR_ForceSpawner
 
 		return true;
 	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Caps how fast AI drive a vehicle (km/h; 0 or less lifts the cap). Set on the vehicle and on every member's
+	//! car movement, because the engine drives through whichever of them is at the wheel. Re-apply after the
+	//! driver changes.
+	static void SetCruiseSpeed(IEntity vehicle, SCR_AIGroup group, float speedKmH)
+	{
+		if (vehicle)
+			ApplyCruiseSpeed(AICarMovementComponent.Cast(vehicle.FindComponent(AICarMovementComponent)), speedKmH);
+
+		if (!group)
+			return;
+
+		array<AIAgent> agents = {};
+		group.GetAgents(agents);
+		foreach (AIAgent agent : agents)
+		{
+			if (agent)
+				ApplyCruiseSpeed(AICarMovementComponent.Cast(agent.GetMovementComponent()), speedKmH);
+		}
+	}
+
+	protected static void ApplyCruiseSpeed(AICarMovementComponent movement, float speedKmH)
+	{
+		if (!movement)
+			return;
+
+		if (speedKmH > 0)
+			movement.SetCruiseSpeed(speedKmH);
+		else
+			movement.ResetCruiseSpeed();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Makes a group's characters run (true) or move at their own chosen pace again (false), through the group's AI
+	//! settings, as a waypoint's speed setting would
+	static void SetGroupRunning(SCR_AIGroup group, bool run)
+	{
+		if (!group)
+			return;
+
+		SCR_AIGroupSettingsComponent settings = SCR_AIGroupSettingsComponent.Cast(group.FindComponent(SCR_AIGroupSettingsComponent));
+		if (!settings)
+			return;
+
+		if (run)
+			settings.AddSetting(SCR_AIGroupCharactersMovementSpeedSetting.Create(SCR_EAISettingOrigin.SCENARIO, EMovementType.RUN), false, true);
+		else
+			settings.RemoveSettingsOfTypeAndOrigin(SCR_AIGroupCharactersMovementSpeedSettingBase, SCR_EAISettingOrigin.SCENARIO);
+	}
 }

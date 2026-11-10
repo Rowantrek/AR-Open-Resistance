@@ -1314,6 +1314,9 @@ class AROR_TownCasualtyWatch
 			return;
 		if (context.instigator.GetInstigatorType() == InstigatorType.INSTIGATOR_GM)
 			return;
+		// Anyone hit in town sends its civilians running
+		if (m_Entity)
+			AROR_TownLifeComponent.ReportCombat_S(m_Entity.GetOrigin());
 		// The contact report is best effort (it needs both sides' factions, which some weapons and vehicles do not
 		// carry); a player's hit always counts towards the kill, so the trigger and escalation never miss it
 		if (!m_sReportingTownId.IsEmpty())

@@ -256,7 +256,9 @@ the newest Workbench log folder).
 Spawned while a player is within 900 m; removed half a minute after everyone is beyond 1150 m.
 
 - **Civilians**: 15% of population (3–10), one per group, walking between street road points. A player killing one
-  costs 3% Resistance support there and gets a hint.
+  costs 3% Resistance support there and gets a hint. When anyone in or near town is hit (soldier, crew or civilian),
+  every civilian runs 60–110 m away from that spot and no new ones walk out; 90 s after the last hit they slow to a
+  walk and go back to the streets (`[AROR TOWN] ... gunfire: civilians take cover`).
 - **Parked cars**: 8% of population (2–6) from the Civilians preset; players can take them. Each is parked on the
   roadside of the nearest road, lined up with it and facing the traffic direction for its side, at least 12 m from
   the next. Moved cars are left alone.
@@ -264,7 +266,8 @@ Spawned while a player is within 900 m; removed half a minute after everyone is 
   cross the town edge. Two sandbag walls and a guard team holding the spot.
 - **Patrol vehicle** (AI-held towns): one (two from Crackdown 4), Readiness picks armed car, then APC, then IFV. It
   spawns on the road, lined up with it. The crew loops the town's road points; if someone cannot board within 90 s
-  it drives with whoever got in, as long as the driver did.
+  it drives with whoever got in, as long as the driver did. It keeps to 30 km/h on the streets, 55 km/h while
+  civilians are sheltering from gunfire (AI cruise speed; `m_fPatrolSpeed`, `m_fPatrolAlertSpeed`).
 - Wiped-out checkpoints and patrols stay gone for 45 minutes.
 
 ## Also changed
@@ -310,5 +313,5 @@ drawing.
 5. Clear the post and take the flag: expect the headline and a support jump, and no QRF.
 6. Watch server FPS with a wave, a QRF and town life at once.
 
-Known gaps: the patrol has no speed cap (no `SetCruiseSpeed` call); checkpoint placement is a road-snap estimate;
-civilians do not react to combat beyond native AI; kill progress and town life are not saved.
+Known gaps: checkpoint placement is a road-snap estimate; civilians run away from a hit but do not enter buildings;
+kill progress and town life are not saved.

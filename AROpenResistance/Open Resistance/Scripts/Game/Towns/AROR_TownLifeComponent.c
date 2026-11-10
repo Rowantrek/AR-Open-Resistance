@@ -24,6 +24,10 @@ class AROR_TownLifeComponent : ScriptComponent
 	protected int m_iMaxCivilians;
 	[Attribute("3", desc: "Resistance support lost here (percentage points) when a player kills a civilian", params: "0 25 0.5", category: "Civilians")]
 	protected float m_fCivilianKillSupport;
+	[Attribute("90", desc: "Civilians run from gunfire (anyone in town being hit) and stay off the streets this long after the last hit, seconds (0 = they ignore it)", params: "0 600 10", category: "Civilians")]
+	protected int m_iPanicSeconds;
+	[Attribute("250", desc: "Hits this far outside the town's radius still scare its civilians, metres", params: "0 1000 25", category: "Civilians")]
+	protected float m_fPanicReach;
 
 	[Attribute("1", desc: "Unmanned civilian cars parked along the streets; players can take them", category: "Parked cars")]
 	protected bool m_bParkedCars;
@@ -44,6 +48,10 @@ class AROR_TownLifeComponent : ScriptComponent
 	protected bool m_bPatrol;
 	[Attribute("2", desc: "Riflemen riding in the patrol vehicle besides its crew", params: "0 6 1", category: "Military")]
 	protected int m_iPatrolRiders;
+	[Attribute("30", desc: "Top speed of the patrol vehicle while it loops the town, km/h (0 = no cap). Raised to the alert speed while the town is fighting.", params: "0 120 1", category: "Military")]
+	protected float m_fPatrolSpeed;
+	[Attribute("55", desc: "Top speed of the patrol vehicle while the town is under a garrison response or alert, km/h (0 = no cap)", params: "0 120 1", category: "Military")]
+	protected float m_fPatrolAlertSpeed;
 	[Attribute("2700", desc: "Seconds before a wiped-out checkpoint or patrol stands again", params: "300 14400 60", category: "Military")]
 	protected int m_iMilitaryRespawnSeconds;
 
@@ -80,6 +88,85 @@ class AROR_TownLifeComponent : ScriptComponent
 	protected ref array<int> m_aCheckpointLostAt = {};	//!< Per entry point: clock when its checkpoint was wiped out
 	protected ref array<int> m_aPatrolLostAt = {};
 	protected ref array<IEntity> m_aLeftovers = {};	//!< Props of wiped-out checkpoints, removed on retirement
+	protected int m_iPanicUntil = -1;	//!< Clock until which civilians shelter from gunfire; -1 when calm
+	protected vector m_vPanicFrom;		//!< Where the latest hit was
+
+	protected static ref array<AROR_TownLifeComponent> s_aTowns = {};	//!< Server: every town with town life
+
+	//------------------------------------------------------------------------------------------------
+	//! Server: someone was hit here (soldier, civilian, crew). Civilians of the town around it run from that spot
+	//! and keep off the streets for the panic time. Patrols speed up meanwhile.
+	static void ReportCombat_S(vector position)
+	{
+		if (!Replication.IsServer())
+			return;
+
+		foreach (AROR_TownLifeComponent town : s_aTowns)
+		{
+			if (town && town.m_bActive && town.m_Location && vector.DistanceXZ(position, town.m_Location.GetCenter()) <= town.m_Location.GetRadius() + town.m_fPanicReach)
+				town.OnCombat(position);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void OnCombat(vector position)
+	{
+		if (m_iPanicSeconds <= 0)
+			return;
+
+		bool wasCalm = !IsPanicking();
+		m_iPanicUntil = m_iClock + m_iPanicSeconds;
+		m_vPanicFrom = position;
+		if (!wasCalm)
+			return;
+
+		Print(string.Format("[AROR TOWN] %1 gunfire: civilians take cover", m_Location.GetId()), LogLevel.NORMAL);
+		foreach (AROR_TownCivilian civilian : m_aCivilians)
+		{
+			Flee(civilian);
+		}
+	}
+
+	protected bool IsPanicking()
+	{
+		return m_iPanicUntil >= 0 && m_iClock <= m_iPanicUntil;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Runs from the latest hit: 60-110 m directly away from it, to a clear spot (doorways and yards, not the road
+	//! when one is free), staying within reach of the town
+	protected void Flee(AROR_TownCivilian civilian)
+	{
+		if (!civilian.m_Member || !civilian.m_Group || !AROR_ForceSpawner.IsAlive(civilian.m_Member))
+			return;
+
+		vector from = civilian.m_Member.GetOrigin();
+		vector away = from - m_vPanicFrom;
+		away[1] = 0;
+		if (away.Length() < 3)
+			away = Vector(Math.RandomFloat(-1, 1), 0, Math.RandomFloat(-1, 1));
+		away.Normalize();
+		// A little sideways spread so they scatter rather than file down one line
+		vector side = Vector(away[2], 0, -away[0]) * Math.RandomFloat(-0.4, 0.4);
+		vector goal = from + (away + side) * Math.RandomFloat(60, 110);
+		vector centre = m_Location.GetCenter();
+		float limit = m_Location.GetRadius() * 1.4 + 60;
+		if (vector.DistanceXZ(goal, centre) > limit)
+		{
+			vector back = goal - centre;
+			back[1] = 0;
+			back.Normalize();
+			goal = centre + back * limit;
+		}
+
+		vector clear;
+		if (AROR_ForceSpawner.FindClearPosition(goal, 20, 1, clear))
+			goal = clear;
+
+		AROR_ForceSpawner.SetGroupRunning(civilian.m_Group, true);
+		civilian.Order_S(m_sMoveWaypointPrefab, goal);
+		civilian.m_bFleeing = true;
+	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Living checkpoint guards and patrol crews (for the town's wave response)
@@ -247,6 +334,13 @@ class AROR_TownLifeComponent : ScriptComponent
 	//! One civilian spawns per tick until the town has its share; each wanders between street points
 	protected void UpdateCivilians()
 	{
+		bool panicking = IsPanicking();
+		if (!panicking && m_iPanicUntil >= 0)
+		{
+			m_iPanicUntil = -1;
+			Print(string.Format("[AROR TOWN] %1 quiet again: civilians come back out", m_Location.GetId()), LogLevel.NORMAL);
+		}
+
 		for (int index = m_aCivilians.Count() - 1; index >= 0; index--)
 		{
 			AROR_TownCivilian civilian = m_aCivilians[index];
@@ -267,6 +361,20 @@ class AROR_TownLifeComponent : ScriptComponent
 				m_aCivilians.Remove(index);
 				continue;
 			}
+			if (panicking)
+			{
+				// A civilian who spawned after the first hit runs too
+				if (!civilian.m_bFleeing)
+					Flee(civilian);
+				continue;
+			}
+			if (civilian.m_bFleeing)
+			{
+				// Calm again: back to a walking pace, out again after a while
+				civilian.m_bFleeing = false;
+				AROR_ForceSpawner.SetGroupRunning(civilian.m_Group, false);
+				civilian.m_iNextOrderAt = m_iClock + Math.RandomInt(20, 60);
+			}
 			if (m_iClock >= civilian.m_iNextOrderAt)
 			{
 				vector street = m_aStreets.GetRandomElement();
@@ -275,7 +383,8 @@ class AROR_TownLifeComponent : ScriptComponent
 				civilian.m_iNextOrderAt = m_iClock + Math.RandomInt(45, 120);
 			}
 		}
-		if (!m_bCivilians || m_aCivilians.Count() >= ScaledCount(m_fCiviliansPerResident, m_iMinCivilians, m_iMaxCivilians))
+		// Nobody new walks out into a gunfight
+		if (panicking || !m_bCivilians || m_aCivilians.Count() >= ScaledCount(m_fCiviliansPerResident, m_iMinCivilians, m_iMaxCivilians))
 			return;
 		vector spot;
 		if (!FindSpawnSpot(1, spot))
@@ -533,6 +642,16 @@ class AROR_TownLifeComponent : ScriptComponent
 				patrol.m_bHasGoal = true;
 				patrol.m_iNextOrderAt = m_iClock + 120;
 			}
+			// Street speed while quiet, faster once there is shooting; re-applied as the driver may have changed
+			float speed = m_fPatrolSpeed;
+			if (IsPanicking())
+				speed = m_fPatrolAlertSpeed;
+			if (speed != patrol.m_fSpeed || m_iClock >= patrol.m_iSpeedCheckAt)
+			{
+				AROR_ForceSpawner.SetCruiseSpeed(patrol.m_Vehicle, patrol.m_Group, speed);
+				patrol.m_fSpeed = speed;
+				patrol.m_iSpeedCheckAt = m_iClock + 20;
+			}
 		}
 		// Forget losses older than the respawn time
 		for (int lost = m_aPatrolLostAt.Count() - 1; lost >= 0; lost--)
@@ -717,12 +836,14 @@ class AROR_TownLifeComponent : ScriptComponent
 			return;
 		}
 		m_eMilitaryRole = m_Location.GetControllingRole();
+		s_aTowns.Insert(this);
 		GetGame().GetCallqueue().CallLater(Tick, TICK_SECONDS * 1000, true);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	override void OnDelete(IEntity owner)
 	{
+		s_aTowns.RemoveItem(this);
 		GetGame().GetCallqueue().Remove(Tick);
 		if (Replication.IsServer() && m_bActive)
 			Deactivate();
@@ -739,6 +860,7 @@ class AROR_TownCivilian
 	IEntity m_Member;
 	int m_iSpawnedAt;
 	int m_iNextOrderAt;
+	bool m_bFleeing;	//!< Running from gunfire (panic)
 
 	//! Attach the watch once the member has spawned
 	void Observe_S()
@@ -832,6 +954,8 @@ class AROR_TownPatrol
 	bool m_bSeated;
 	bool m_bHasGoal;
 	vector m_vGoal;
+	float m_fSpeed = -1;	//!< Cruise speed last applied, km/h
+	int m_iSpeedCheckAt;
 
 	void Remove_S()
 	{
