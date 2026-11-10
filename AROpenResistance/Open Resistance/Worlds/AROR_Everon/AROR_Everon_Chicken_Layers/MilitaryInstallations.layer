@@ -4041,6 +4041,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
      }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
+     }
     }
     coords 44.459 0.168 -46.958
     angles 0 0.67 0
@@ -4049,6 +4053,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
     components {
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
+     }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
      }
     }
     coords 23.643 0.258 -46.837
@@ -4059,6 +4067,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
      }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
+     }
     }
     coords 2.785 0.255 -46.687
     angles 0 0.67 0
@@ -4067,6 +4079,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
     components {
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
+     }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
      }
     }
     coords -18.204 0.362 -46.282
@@ -4077,6 +4093,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
      }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
+     }
     }
     coords -38.646 0.384 -46.046
     angles 0 0.67 0
@@ -4085,6 +4105,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
     components {
      MeshObject "{6AB2758963C3A80D}" {
       Object "{01836CBDDAD1394B}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01_Corner.xob"
+     }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
      }
     }
     coords -41.387 0.37 -43.236
@@ -4095,6 +4119,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
      }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
+     }
     }
     coords -40.482 0.364 -22.169
     angles 0 92.344 0
@@ -4103,6 +4131,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
     components {
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
+     }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
      }
     }
     coords -39.642 0.272 -1.133
@@ -4113,6 +4145,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
      }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
+     }
     }
     coords -38.781 0.174 19.073
     angles 0 92.344 0
@@ -4121,6 +4157,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
     components {
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
+     }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
      }
     }
     coords -38.209 0.034 39.695
@@ -4131,6 +4171,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
      }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
+     }
     }
     coords -14.6 -0.007 42.425
     angles 0 178.67 0
@@ -4139,6 +4183,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
     components {
      MeshObject "{6AB27589DD71C0EB}" {
       Object "{01836CBDDAD1394B}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01_Corner.xob"
+     }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
      }
     }
     coords -35.328 -0.062 41.875
@@ -4149,6 +4197,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
      }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
+     }
     }
     coords 6.703 0.082 42.37
     angles 0 178.67 0
@@ -4157,6 +4209,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
     components {
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
+     }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
      }
     }
     coords 27.548 -0.078 43.128
@@ -4167,6 +4223,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
      }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
+     }
     }
     coords 48.513 -0.013 43.979
     angles 0 177.139 0
@@ -4175,6 +4235,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
     components {
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
+     }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
      }
     }
     coords 50.853 -0.269 20.401
@@ -4185,6 +4249,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
      MeshObject "{6AB2758A03926AA4}" {
       Object "{01836CBDDAD1394B}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01_Corner.xob"
      }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
+     }
     }
     coords 51.355 0.017 41.288
     angles 0 -92.185 0
@@ -4193,6 +4261,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
     components {
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
+     }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
      }
     }
     coords 50.773 -0.433 -0.288
@@ -4203,6 +4275,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
      MeshObject "{6AB27588C1003B12}" {
       Object "{B3D7FDA92D4BDEC6}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01.xob"
      }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
+     }
     }
     coords 73.466 -0.583 -0.72
     angles 0 179.186 0
@@ -4211,6 +4287,10 @@ GenericEntity AROR_Location_everon_military_outpost_chotain : "{6B5025C036D84B66
     components {
      MeshObject "{6AB2758A5B27924E}" {
       Object "{01836CBDDAD1394B}Assets/Structures/Cultural/Castles/Castle_01/Castle_01_OuterWall_01_Corner.xob"
+     }
+     RigidBody "{6AC9F0A1B2C3D401}" {
+      ModelGeometry 1
+      Static 1
      }
     }
     coords 52.29 -0.907 -3.067
